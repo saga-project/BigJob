@@ -57,17 +57,17 @@ BACKEND = "REDIS" #{REDIS, ZMQ}
 
 if BACKEND=="ZMQ":
     try:
-        import bigjob_coordination_zmq
+        from bigjob_coordination_zmq import bigjob_coordination
         logging.debug("Utilizing ZMQ Backend")
     except:
         logging.error("ZMQ Backend not found. Please install ZeroMQ (http://www.zeromq.org/intro:get-the-software) and " 
                       +"PYZMQ (http://zeromq.github.com/pyzmq/)")
 else:
     try:
-        import bigjob_coordination_redis        
-        logging.debug("Utilizing Redis Backend. Please make sure Redis server is configured in bigjob_coordination_redis.py")
+        from bigjob_coordination_redis import bigjob_coordination        
+        logging.debug("Utilizing Redis Backend. Please make sure Redis server is configured in bigjob_coordination_redis.py.")
     except:
-        logging.error("Error loading pyredis.")
+        logging.error("Error loading PyRedis.")
 
 
 #for legacy purposes and support for old BJ API
@@ -88,10 +88,7 @@ class bigjob(api.base.bigjob):
         print "init advert service session at host: " + database_host
         self.uuid = get_uuid()
         
-        if BACKEND == "ZMQ":
-            self.coordination = bigjob_coordination_zmq.bigjob_coordination_zmq()
-        else:
-            self.coordination = bigjob_coordination_redis.bigjob_coordination_redis()        
+        self.coordination = bigjob_coordination()
         
         self.app_url = APPLICATION_NAME +":" + str(self.uuid) 
         

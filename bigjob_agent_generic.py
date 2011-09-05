@@ -14,8 +14,6 @@ import types
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
-import bigjob_coordination_redis
-import bigjob_coordination_zmq
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/../ext/threadpool-1.2.7/src/")
 
@@ -40,10 +38,23 @@ import subprocess
 CONFIG_FILE="bigjob_agent.conf"
 THREAD_POOL_SIZE=4
 APPLICATION_NAME="bigjob"
-REDIS_SERVER="localhost"
-REDIS_SERVER_PORT=6379
+
 
 BACKEND = "REDIS" #{REDIS, ZMQ}
+if BACKEND=="ZMQ":
+    try:
+        from bigjob_coordination_zmq import bigjob_coordination
+        logging.debug("Utilizing ZMQ Backend")
+    except:
+        logging.error("ZMQ Backend not found. Please install ZeroMQ (http://www.zeromq.org/intro:get-the-software) and " 
+                      +"PYZMQ (http://zeromq.github.com/pyzmq/)")
+else:
+    try:
+        from bigjob_coordination_redis import bigjob_coordination      
+        logging.debug("Utilizing Redis Backend. Please make sure Redis server is configured in bigjob_coordination_redis.py")
+    except:
+        logging.error("Error loading pyredis.")
+        
 
 class bigjob_agent:
     
@@ -89,12 +100,8 @@ class bigjob_agent:
         print "Initialize C&C subsystem to pilot-url: " + self.base_url
         #self.coordination = bigjob_coordination_redis.bigjob_coordination_redis()
 
-        if BACKEND=="ZMQ":
-            self.coordination = bigjob_coordination_zmq.bigjob_coordination_zmq(server_connect_url=self.database_host)
-        else:
-            self.coordination = bigjob_coordination_redis.bigjob_coordination_redis(server_connect_url=self.database_host)      
-
-
+        self.coordination = bigjob_coordination(server_connect_url=self.database_host)
+    
         # update state of pilot job to running
         self.coordination.set_pilot_state(self.base_url, str(saga.job.Running), "false")
 

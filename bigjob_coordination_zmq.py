@@ -35,7 +35,7 @@ class message:
     def __repr__(self):
         return ("command: %s, key: %s, value: %s "%(self.command, self.key, self.value))
 
-class bigjob_coordination_zmq(object):
+class bigjob_coordination(object):
     '''
     Encapsulates communication and coordination
     Implementation based on ZMQ 

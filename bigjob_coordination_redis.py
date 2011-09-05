@@ -26,7 +26,7 @@ REDIS_SERVER="localhost"
 REDIS_SERVER_PORT=6379
 
 
-class bigjob_coordination_redis(object):
+class bigjob_coordination(object):
     '''
     Encapsulates communication and coordination
     Implementation based on Redis (http://redis.io)
