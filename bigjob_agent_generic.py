@@ -40,7 +40,7 @@ THREAD_POOL_SIZE=4
 APPLICATION_NAME="bigjob"
 
 
-BACKEND = "REDIS" #{REDIS, ZMQ}
+BACKEND = "ADVERT" #{REDIS, ZMQ, ADVERT}
 if BACKEND=="ZMQ":
     try:
         from bigjob_coordination_zmq import bigjob_coordination
@@ -48,6 +48,12 @@ if BACKEND=="ZMQ":
     except:
         logging.error("ZMQ Backend not found. Please install ZeroMQ (http://www.zeromq.org/intro:get-the-software) and " 
                       +"PYZMQ (http://zeromq.github.com/pyzmq/)")
+elif BACKEND=="ADVERT":
+    try:
+        from bigjob_coordination_advert import bigjob_coordination
+        logging.debug("Utilizing ADVERT Backend")
+    except:
+        logging.error("Advert Backend could not be loaded")
 else:
     try:
         from bigjob_coordination_redis import bigjob_coordination      

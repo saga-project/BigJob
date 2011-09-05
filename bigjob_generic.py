@@ -53,7 +53,7 @@ APPLICATION_NAME="bigjob"
 CLEANUP=True
 
 # Support for multiple coordination backends (ZMQ and Redis)
-BACKEND = "REDIS" #{REDIS, ZMQ}
+BACKEND = "ADVERT" #{REDIS, ZMQ, ADVERT}
 
 if BACKEND=="ZMQ":
     try:
@@ -62,6 +62,12 @@ if BACKEND=="ZMQ":
     except:
         logging.error("ZMQ Backend not found. Please install ZeroMQ (http://www.zeromq.org/intro:get-the-software) and " 
                       +"PYZMQ (http://zeromq.github.com/pyzmq/)")
+elif BACKEND=="ADVERT":
+    try:
+        from bigjob_coordination_advert import bigjob_coordination
+        logging.debug("Utilizing ADVERT Backend")
+    except:
+        logging.error("Advert Backend could not be loaded")
 else:
     try:
         from bigjob_coordination_redis import bigjob_coordination        
@@ -191,7 +197,7 @@ class bigjob(api.base.bigjob):
         logging.debug("add subjob to queue of PJ: " + str(self.pilot_url))        
         for i in range(0,3):
             try:
-                logging.debug("initialized redis dictionary for job: " + job_url)
+                logging.debug("initialized dictionary for job: " + job_url)
                 # put job description attributes to Redis
                 job_dict = {}
                 attributes = jd.list_attributes()                
