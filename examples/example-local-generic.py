@@ -25,7 +25,7 @@ else:
 sys.path.insert(0, BIGJOB_HOME)
 sys.path.append("..") # for api.base
 
-from bigjob_generic import bigjob, subjob
+from bigjob.bigjob_manager import bigjob, subjob
 
 
 """ Test Job Submission via Advert """
@@ -34,7 +34,7 @@ if __name__ == "__main__":
     ##########################################################################################
     # Start BigJob
     # Parameter for BigJob
-    bigjob_agent = os.getcwd() + "/bigjob_agent_launcher.sh" # path to agent
+    bigjob_agent = os.getcwd() + "/../bigjob_agent_launcher.sh" # path to agent
     #bigjob_agent = "/bin/echo"
     nodes = 1 # number nodes for agent
     lrms_url = "fork://localhost" # resource url
