@@ -20,5 +20,8 @@ export SAGA_VERBOSE=100
 #scp $PBS_O_HOST:/tmp/x509up_u`id -u` /tmp/
 
 # run the bigjob_agent
-python `dirname $0`/bigjob_agent_generic.py $*
+# python `dirname $0`/bigjob_agent_generic.py $*
+
+export PYTHONPATH=`dirname $0`:$PYTHONPATH
+python -m bigjob.bigjob_agent $*
 

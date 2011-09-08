@@ -15,17 +15,17 @@ import logging
 logging.basicConfig(level=logging.DEBUG)
 
 
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/../ext/threadpool-1.2.7/src/")
+sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/../../ext/threadpool-1.2.7/src/")
 
 logging.debug(str(sys.path))
 from threadpool import *
 
 
 if sys.version_info < (2, 5):
-    sys.path.append(os.path.dirname( __file__ ) + "/../ext/uuid-1.30/")
+    sys.path.append(os.path.dirname( __file__ ) + "/../../ext/uuid-1.30/")
     sys.stderr.write("Warning: Using unsupported Python version\n")
 if sys.version_info < (2, 4):
-    sys.path.append(os.path.dirname( __file__ ) + "/../ext/subprocess-2.6.4/")
+    sys.path.append(os.path.dirname( __file__ ) + "/../../ext/subprocess-2.6.4/")
     sys.stderr.write("Warning: Using unsupported Python version\n")
 if sys.version_info < (2, 3):
     sys.stderr.write("Warning: Python versions <2.3 not supported\n")
@@ -82,7 +82,8 @@ class bigjob_agent:
 
         # read config file
         # conf_file = os.path.dirname(args[0]) + "/" + CONFIG_FILE
-        conf_file = os.path.dirname(os.path.abspath( __file__ )) + "/" + CONFIG_FILE
+        # conf_file = os.path.dirname(os.path.abspath( __file__ )) + "/" + CONFIG_FILE
+        conf_file = os.path.dirname(os.path.abspath( __file__ )) + "/../" + CONFIG_FILE
         config = ConfigParser.ConfigParser()
         logging.debug ("read configfile: " + conf_file)
         config.read(conf_file)

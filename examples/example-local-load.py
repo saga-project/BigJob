@@ -24,9 +24,9 @@ else:
 
 sys.path.insert(0, BIGJOB_HOME)
 #from bigjob import bigjob, subjob
-from bigjob_generic import bigjob, subjob
+from bigjob.bigjob_manager import bigjob, subjob
 
-NUMBER_JOBS=128
+NUMBER_JOBS=8
 
 def has_finished(state):
         state = state.lower()
@@ -45,7 +45,7 @@ if __name__ == "__main__":
     # Start BigJob
     # Parameter for BigJob
     #bigjob_agent = BIGJOB_HOME + "/bigjob_agent_launcher.sh" # path to agent
-    bigjob_agent = os.getcwd() + "/bigjob_agent_launcher.sh"
+    bigjob_agent = os.getcwd() + "/../bigjob_agent_launcher.sh"
     #bigjob_agent = "/bin/echo"
     nodes = 1 # number nodes for agent
     lrms_url = "fork://localhost" # resource url

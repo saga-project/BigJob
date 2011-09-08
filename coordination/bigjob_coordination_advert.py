@@ -97,10 +97,10 @@ class bigjob_coordination(object):
         
         
     def get_job_state(self, job_url):        
-        job_url = self.get_url(job_url)
-        logging.debug("Get state of job: " + str(job_url))
+        job_url = self.get_url(job_url)        
         job_dir = saga.advert.directory(saga.url(job_url), saga.advert.Create | saga.advert.CreateParents | saga.advert.ReadWrite)
         state = job_dir.get_attribute("state")  
+        logging.debug("Get state of job: " + str(job_url) + " state: " + str(state))
         return state      
     
     
@@ -160,11 +160,12 @@ class bigjob_coordination(object):
             job_dir_url = new_job_dir_url + "/" + job_entry.get_string()       
             logging.debug("open job at " + str(job_dir_url))
             job_dir = saga.advert.directory(saga.url(job_dir_url), 
-                                       saga.advert.Create | saga.advert.CreateParents | saga.advert.ReadWrite) 
+                                       saga.advert.Create | saga.advert.CreateParents | saga.advert.ReadWrite)
             
-            #new_job_dir.open_dir(job_entry)
-                        
+            #new_job_dir.open_dir(job_entry)                        
             job_url = job_dir.get_attribute("joburl")
+            #remove old job entry
+            job_dir.remove(job_dir_url, saga.name_space.Recursive)    
             logging.debug("new job: " + str(job_url))
             return job_url
         else:
