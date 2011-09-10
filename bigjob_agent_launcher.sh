@@ -22,6 +22,29 @@ export SAGA_VERBOSE=100
 # run the bigjob_agent
 # python `dirname $0`/bigjob_agent_generic.py $*
 
+
+# bootstrap bigjob
+# check whether SAGA, SAGA Python and BigJob is available on the respective machine
+python -c "import saga"
+if [ $? -ne 0 ]
+then
+        echo "SAGA / SAGA Python not found"
+        exit 1
+fi
+
+BIGJOB_INSTALL_DIR=$HOME/.bigjob/python
+BOOTSTRAP_URL=http://localhost/~luckow/bigjob-bootstrap.py
+python -c "import bigjob.bigjob_manager"
+if [ $? -ne 0 ]
+then
+        echo "BigJob not found. Attempting to install it to ~/.bigjob/python"
+        curl $BOOTSTRAP_URL -o bigjob-bootstrap.py
+        echo "Installing to ${BIGJOB_INSTALL_DIR}"
+        rm -rf $BIGJOB_INSTALL_DIR
+        python bigjob-bootstrap.py ${BIGJOB_INSTALL_DIR}
+        echo "Activate virtualenv"
+        . $BIGJOB_INSTALL_DIR/bin/activate
+fi
+
 export PYTHONPATH=`dirname $0`:$PYTHONPATH
 python -m bigjob.bigjob_agent $*
-
