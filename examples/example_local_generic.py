@@ -12,18 +12,8 @@ import pdb
 import sys
 
 
-
 # configurationg
 advert_host = "localhost"
-
-if os.getenv("BIGJOB_HOME")!=None:
-    BIGJOB_HOME= os.getenv("BIGJOB_HOME") 
-else:
-    BIGJOB_HOME= os.getcwd() + "."
-    os.environ["BIGJOB_HOME"]=BIGJOB_HOME
-
-sys.path.insert(0, BIGJOB_HOME)
-sys.path.append("..") # for api.base
 
 from bigjob.bigjob_manager import bigjob, subjob
 
@@ -31,8 +21,6 @@ def main():
     ##########################################################################################
     # Start BigJob
     # Parameter for BigJob
-    bigjob_agent = os.getcwd() + "/../bigjob_agent_launcher.sh" # path to agent
-    #bigjob_agent = "/bin/echo"
     nodes = 1 # number nodes for agent
     lrms_url = "fork://localhost" # resource url
     workingdirectory=os.getcwd() +"/agent"  # working directory for agent
@@ -42,7 +30,7 @@ def main():
     print "Start Pilot Job/BigJob: " + bigjob_agent + " at: " + lrms_url
     bj = bigjob(advert_host)
     bj.start_pilot_job(lrms_url,
-                            bigjob_agent,
+                            None,
                             nodes,
                             None,
                             None,

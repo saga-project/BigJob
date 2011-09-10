@@ -11,19 +11,9 @@ import pdb
 # e.g. condor, cloud, azure
 import sys
 
-
-
 # configurationg
 advert_host = "localhost"
 
-if os.getenv("BIGJOB_HOME")!=None:
-    BIGJOB_HOME= os.getenv("BIGJOB_HOME") 
-else:
-    BIGJOB_HOME= os.getcwd() + "/../"
-    os.environ["BIGJOB_HOME"]=BIGJOB_HOME
-
-sys.path.insert(0, BIGJOB_HOME)
-#from bigjob import bigjob, subjob
 from bigjob.bigjob_manager import bigjob, subjob
 
 NUMBER_JOBS=8
