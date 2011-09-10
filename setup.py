@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
-from distutils.core import setup
+#from distutils.core import setup
 import sys
+from setuptools import setup, find_packages
 
 try:
     import saga
@@ -10,19 +11,20 @@ except:
     sys.exit(1)
     
 setup(name='BigJob',
-      version='0.1',
+      version='0.11',
       description='SAGA-based Pilot-Job Implementation',
       author='Andre Luckow',
       author_email='aluckow@cct.lsu.edu',
       url='http://faust.cct.lsu.edu/trac/bigjob',
       classifiers = ['Development Status :: 4 - Beta',                    
                     'Programming Language :: Python',
-                    'Intended Audience :: Developer',
                     'Environment :: Console',                    
                     'Topic :: Utilities',
                     ],
       platforms = ('Unix', 'Linux', 'Mac OS'),
-      packages=['bigjob', 'coordination', 'examples', 'api'],
+      packages=['bigjob', 'coordination', 'examples', 'api', 'bootstrap'],
       data_files=['bigjob_agent.conf', 'bigjob_agent_launcher.sh'],
-      requires=['redis', 'uuid', 'threadpool']
+      install_requires=['redis', 'uuid', 'threadpool', 'virtualenv']
+      
+      
 )

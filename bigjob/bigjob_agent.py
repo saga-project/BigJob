@@ -104,6 +104,7 @@ class bigjob_agent:
         # initialization of coordination and communication subsystem
         # Redis initialization
         self.base_url = args[2]
+        print "BigJob Agent arguments: " + str(args)
         print "Initialize C&C subsystem to pilot-url: " + self.base_url
         #self.coordination = bigjob_coordination_redis.bigjob_coordination_redis()
 
@@ -561,7 +562,7 @@ if __name__ == "__main__" :
     args = sys.argv
     num_args = len(args)
     if (num_args!=3):
-        print "Usage: \n " + args[0] + " <advert-host> <advert-director>"
+        print "Usage: \n " + args[0] + " <coordination host url> <coordination namespace url>"
         sys.exit(1)
     
     bigjob_agent = bigjob_agent(args)    

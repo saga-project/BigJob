@@ -23,6 +23,7 @@ import pdb
 import os
 import traceback
 import logging
+import textwrap
 logging.basicConfig(level=logging.DEBUG)
 
 # import other BigJob packages
@@ -151,8 +152,9 @@ class bigjob(api.base.bigjob):
         jd.number_of_processes = str(number_nodes)
         jd.processes_per_host=str(processes_per_node)
         jd.spmd_variation = "single"
-        jd.arguments = [bigjob_agent_executable, self.coordination.get_address(), self.pilot_url]
-        jd.executable = "/bin/bash"
+        #jd.arguments = [bigjob_agent_executable, self.coordination.get_address(), self.pilot_url]
+        jd.arguments = ["-c", self.generate_bootstrap_script(self.coordination.get_address(), self.pilot_url)]
+        jd.executable = "python"
         #jd.executable = bigjob_agent_executable
         if queue != None:
             jd.queue = queue
@@ -192,6 +194,48 @@ class bigjob(api.base.bigjob):
         print "Submit pilot job to: " + str(lrms_saga_url)
         self.job.run()
         #return self.job
+        
+    def generate_bootstrap_script(self, coordination_host, coordination_namespace):
+        script = textwrap.dedent("""import sys
+import os
+import urllib
+
+home = os.environ['HOME']
+
+BIGJOB_AGENT_DIR= home+ "/.bigjob"
+BIGJOB_PYTHON_DIR=BIGJOB_AGENT_DIR+"/python/"
+BOOTSTRAP_URL="https://svn.cct.lsu.edu/repos/saga-projects/applications/bigjob/trunk/generic/bootstrap/bigjob-bootstrap.py"
+BOOTSTRAP_FILE=BIGJOB_AGENT_DIR+"/bigjob-bootstrap.py"
+
+try:
+    import saga
+except:
+    print "SAGA and SAGA Python Bindings not found: Please install SAGA first (http://saga.cct.lsu.edu)."
+    sys.exit(1)
+    
+try:
+    import bigjob.bigjob_agent
+except:
+    print "BigJob not installed. Attempting to install it."
+    opener = urllib.FancyURLopener({})
+    opener.retrieve(BOOTSTRAP_URL, BOOTSTRAP_FILE)
+    os.system("python " + BOOTSTRAP_FILE + " " + BIGJOB_PYTHON_DIR)
+    
+
+activate_this = BIGJOB_PYTHON_DIR+'bin/activate_this.py'
+execfile(activate_this, dict(__file__=activate_this))
+
+#try to import BJ once again
+import bigjob.bigjob_agent
+    
+# execute bj agent
+args = ["bigjob_agent.py", \"%s\", \"%s\"]
+print "Starting BigJob Agents with following args: " + str(args)
+bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)           
+""" % (coordination_host, coordination_namespace))
+        logging.debug(script)
+        return script
+        
      
     def add_subjob(self, jd, job_url, job_id):
         logging.debug("add subjob to queue of PJ: " + str(self.pilot_url))        
