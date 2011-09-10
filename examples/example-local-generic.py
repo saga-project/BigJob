@@ -27,10 +27,7 @@ sys.path.append("..") # for api.base
 
 from bigjob.bigjob_manager import bigjob, subjob
 
-
-""" Test Job Submission via Advert """
-if __name__ == "__main__":
-
+def main():
     ##########################################################################################
     # Start BigJob
     # Parameter for BigJob
@@ -82,3 +79,9 @@ if __name__ == "__main__":
     # Cleanup - stop BigJob
     bj.cancel()
     #time.sleep(30)
+
+
+""" Test Job Submission via Advert """
+if __name__ == "__main__":
+    main()
+    
