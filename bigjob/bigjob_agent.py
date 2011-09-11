@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 import sys
 import os
 import saga
@@ -16,10 +15,8 @@ logging.basicConfig(level=logging.DEBUG)
 
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/../../ext/threadpool-1.2.7/src/")
-
 logging.debug(str(sys.path))
 from threadpool import *
-
 
 if sys.version_info < (2, 5):
     sys.path.append(os.path.dirname( __file__ ) + "/../../ext/uuid-1.30/")
@@ -40,26 +37,26 @@ THREAD_POOL_SIZE=4
 APPLICATION_NAME="bigjob"
 
 
-BACKEND = "ADVERT" #{REDIS, ZMQ, ADVERT}
-if BACKEND=="ZMQ":
-    try:
-        from coordination.bigjob_coordination_zmq import bigjob_coordination
-        logging.debug("Utilizing ZMQ Backend")
-    except:
-        logging.error("ZMQ Backend not found. Please install ZeroMQ (http://www.zeromq.org/intro:get-the-software) and " 
-                      +"PYZMQ (http://zeromq.github.com/pyzmq/)")
-elif BACKEND=="ADVERT":
-    try:
-        from coordination.bigjob_coordination_advert import bigjob_coordination
-        logging.debug("Utilizing ADVERT Backend")
-    except:
-        logging.error("Advert Backend could not be loaded")
-else:
-    try:
-        from coordination.bigjob_coordination_redis import bigjob_coordination      
-        logging.debug("Utilizing Redis Backend. Please make sure Redis server is configured in bigjob_coordination_redis.py")
-    except:
-        logging.error("Error loading pyredis.")
+#BACKEND = "ADVERT" #{REDIS, ZMQ, ADVERT}
+#if BACKEND=="ZMQ":
+#    try:
+#        from coordination.bigjob_coordination_zmq import bigjob_coordination
+#        logging.debug("Utilizing ZMQ Backend")
+#    except:
+#        logging.error("ZMQ Backend not found. Please install ZeroMQ (http://www.zeromq.org/intro:get-the-software) and " 
+#                      +"PYZMQ (http://zeromq.github.com/pyzmq/)")
+#elif BACKEND=="ADVERT":
+#    try:
+#        from coordination.bigjob_coordination_advert import bigjob_coordination
+#        logging.debug("Utilizing ADVERT Backend")
+#    except:
+#        logging.error("Advert Backend could not be loaded")
+#else:
+#    try:
+#        from coordination.bigjob_coordination_redis import bigjob_coordination      
+#        logging.debug("Utilizing Redis Backend. Please make sure Redis server is configured in bigjob_coordination_redis.py")
+#    except:
+#        logging.error("Error loading pyredis.")
         
 
 class bigjob_agent:
@@ -72,7 +69,7 @@ class bigjob_agent:
     """Constructor"""
     def __init__(self, args):
         
-        self.database_host = args[1]
+        self.coordination_url = args[1]
         # objects to store running jobs and processes
         self.jobs = []
         self.processes = {}
@@ -91,7 +88,7 @@ class bigjob_agent:
         self.CPR = default_dict["cpr"]
         self.SHELL=default_dict["shell"]
         self.MPIRUN=default_dict["mpirun"]
-        print "cpr: " + self.CPR + " mpi: " + self.MPIRUN + " shell: " + self.SHELL
+        logging.debug("cpr: " + self.CPR + " mpi: " + self.MPIRUN + " shell: " + self.SHELL)
         
         # init cpr monitoring
         self.init_cpr()
@@ -104,11 +101,31 @@ class bigjob_agent:
         # initialization of coordination and communication subsystem
         # Redis initialization
         self.base_url = args[2]
-        print "BigJob Agent arguments: " + str(args)
-        print "Initialize C&C subsystem to pilot-url: " + self.base_url
-        #self.coordination = bigjob_coordination_redis.bigjob_coordination_redis()
+        logging.debug("BigJob Agent arguments: " + str(args))
+        logging.debug("Initialize C&C subsystem to pilot-url: " + self.base_url)
+        
+        
+        if(self.coordination_url.startswith("advert://")):
+            try:
+                from coordination.bigjob_coordination_advert import bigjob_coordination
+                logging.debug("Utilizing ADVERT Backend")
+            except:
+                logging.error("Advert Backend could not be loaded")
+        elif (self.coordination_url.startswith("redis://")):
+            try:
+                from coordination.bigjob_coordination_redis import bigjob_coordination      
+                logging.debug("Utilizing Redis Backend. Please make sure Redis server is configured in bigjob_coordination_redis.py")
+            except:
+                logging.error("Error loading pyredis.")
+        elif (self.coordination_url.startswith("tcp://")):
+            try:
+                from coordination.bigjob_coordination_zmq import bigjob_coordination
+                logging.debug("Utilizing ZMQ Backend")
+            except:
+                logging.error("ZMQ Backend not found. Please install ZeroMQ (http://www.zeromq.org/intro:get-the-software) and " 
+                      +"PYZMQ (http://zeromq.github.com/pyzmq/)")
 
-        self.coordination = bigjob_coordination(server_connect_url=self.database_host)
+        self.coordination = bigjob_coordination(server_connect_url=self.coordination_url)
     
         # update state of pilot job to running
         self.coordination.set_pilot_state(self.base_url, str(saga.job.Running), "false")

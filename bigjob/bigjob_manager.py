@@ -124,16 +124,14 @@ class bigjob(api.base.bigjob):
 
         ##############################################################################
         # initialization of coordination and communication subsystem
-        # Redis initialization
+        # Communication & Coordination initialization
         lrms_saga_url = saga.url(lrms_url)
         self.pilot_url = self.app_url + ":" + lrms_saga_url.host
         pilot_url_dict[self.pilot_url]=self
         
         logging.debug("create pilot job entry on backend server: " + self.pilot_url)
         self.coordination.set_pilot_state(self.pilot_url, str(saga.job.Unknown), False)
-        
-        #self.redis.hmset(self.pilot_url, {"state":str(saga.job.Unknown), "stopped":"false"}) 
-        
+                
         logging.debug("set pilot state to: " + str(saga.job.Unknown))
         ##############################################################################
                 
@@ -199,6 +197,7 @@ class bigjob(api.base.bigjob):
         script = textwrap.dedent("""import sys
 import os
 import urllib
+import sys
 
 home = os.environ['HOME']
 
@@ -213,6 +212,10 @@ except:
     print "SAGA and SAGA Python Bindings not found: Please install SAGA first (http://saga.cct.lsu.edu)."
     sys.exit(1)
     
+
+sys.path.insert(0, os.getcwd() + "/../")
+sys.path.insert(0, os.getcwd() + "/../../")
+    
 try:
     import bigjob.bigjob_agent
 except:
@@ -220,10 +223,8 @@ except:
     opener = urllib.FancyURLopener({})
     opener.retrieve(BOOTSTRAP_URL, BOOTSTRAP_FILE)
     os.system("python " + BOOTSTRAP_FILE + " " + BIGJOB_PYTHON_DIR)
-    
-
-activate_this = BIGJOB_PYTHON_DIR+'bin/activate_this.py'
-execfile(activate_this, dict(__file__=activate_this))
+    activate_this = BIGJOB_PYTHON_DIR+'bin/activate_this.py'
+    execfile(activate_this, dict(__file__=activate_this))
 
 #try to import BJ once again
 import bigjob.bigjob_agent
@@ -273,6 +274,9 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
     
     def get_subjob_state(self, job_url):
         return self.coordination.get_job_state(job_url) 
+    
+    def get_subjob_details(self, job_url):
+        return self.coordination.get_job(job_url) 
      
     def get_state(self):        
         """ duck typing for get_state of saga.cpr.job and saga.job.job  """
@@ -283,7 +287,7 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
     
     def get_state_detail(self): 
         try:
-            return self.coordination.get_pilot_state(self.pilot_url)
+            return self.coordination.get_pilot_state(self.pilot_url)["state"]
         except:
             return None
     
@@ -337,7 +341,7 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
                     
 class subjob(api.base.subjob):
     
-    def __init__(self, database_host):
+    def __init__(self, database_host=None):
         """Constructor"""
         self.database_host = database_host
         self.job_url=None
@@ -376,6 +380,24 @@ class subjob(api.base.subjob):
             self.pilot_url = pilot_url
             self.bj=pilot_url_dict[pilot_url]  
         self.bj.delete_subjob(self.job_url)        
+        
+    def get_exe(self, pilot_url=None):
+        if self.pilot_url==None:
+            self.pilot_url = pilot_url
+            self.bj=pilot_url_dict[pilot_url]  
+        sj = self.bj.get_subjob_details(self.job_url)
+        return sj["Executable"]
+   
+    def get_arguments(self, pilot_url=None):
+        if self.pilot_url==None:
+            self.pilot_url = pilot_url
+            self.bj=pilot_url_dict[pilot_url]  
+        sj = self.bj.get_subjob_details(self.job_url)  
+        #logging.debug("Subjob details: " + str(sj))              
+        arguments=""
+        for  i in  sj["Arguments"]:
+            arguments = arguments + " " + i
+        return arguments
 
     def __del__(self):
         self.cancel()

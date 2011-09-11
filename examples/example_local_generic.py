@@ -1,5 +1,4 @@
 """ Example application demonstrating job submission via bigjob 
-    advert_job implementation of BigJob is used
 """
 
 import saga
@@ -15,6 +14,9 @@ import sys
 # configurationg
 advert_host = "localhost"
 
+# for running BJ from local dir
+sys.path.insert(0, os.getcwd() + "/../")
+
 from bigjob.bigjob_manager import bigjob, subjob
 
 def main():
@@ -27,7 +29,7 @@ def main():
     userproxy = None # userproxy (not supported yet due to context issue w/ SAGA)
 
     # start pilot job (bigjob_agent)
-    print "Start Pilot Job/BigJob: " + bigjob_agent + " at: " + lrms_url
+    print "Start Pilot Job/BigJob at: " + lrms_url
     bj = bigjob(advert_host)
     bj.start_pilot_job(lrms_url,
                             None,
@@ -51,7 +53,7 @@ def main():
     jd.working_directory = os.getcwd() 
     jd.output = "stdout.txt"
     jd.error = "stderr.txt"
-    sj = subjob(advert_host)
+    sj = subjob()
     sj.submit_job(bj.pilot_url, jd)
     
     # busy wait for completion

@@ -1,15 +1,16 @@
 """ Example application demonstrating job submission via bigjob 
-    advert_job implementation of BigJob is used
 """
 
 import saga
 import os
 import time
-import pdb
+
 
 # BigJob implementation can be swapped here by importing another implementation,
 # e.g. condor, cloud, azure
 import sys
+
+sys.path.insert(0, os.getcwd() + "/../")
 
 # configurationg
 advert_host = "localhost"
@@ -72,7 +73,7 @@ if __name__ == "__main__":
         jd.output = "sj-stdout-"+str(i)+".txt"
         jd.error = "sj-stderr-"+str(i)+".txt"
 
-        sj = subjob(advert_host)
+        sj = subjob()
         sj.submit_job(bj.pilot_url, jd)
         jobs.append(sj)
         job_start_times[sj]=time.time()
@@ -93,9 +94,9 @@ if __name__ == "__main__":
             if old_state != state:
                 print "Job " + str(jobs[i]) + " changed from: " + old_state + " to " + state
             if old_state != state and has_finished(state)==True:
-                 print "Job: " + str(jobs[i]) + " Runtime: " + str(time.time()-job_start_times[jobs[i]]) + " s."
+                print "Job: " + str(jobs[i]) + " Runtime: " + str(time.time()-job_start_times[jobs[i]]) + " s."
             if has_finished(state)==True:
-                 finish_counter = finish_counter + 1
+                finish_counter = finish_counter + 1
             job_states[jobs[i]]=state
 
         if finish_counter == NUMBER_JOBS:
