@@ -37,7 +37,11 @@ class bigjob_coordination(object):
         '''
         Constructor
         '''
-        self.address = ADVERT_URL_SCHEME+"%s:%i"%(server, server_port)
+        if server_port != None:
+            self.address = ADVERT_URL_SCHEME+"%s:%i"%(server, server_port)
+        else:
+            self.address = ADVERT_URL_SCHEME+"%s"%(server)
+            
         self.pilot_url = self.address
         
     def get_address(self):

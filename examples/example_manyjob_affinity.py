@@ -21,6 +21,15 @@ sys.path.insert(0, os.getcwd() + "/../")
 from bigjob.bigjob_manager import *
 from bigjob_dynamic.many_job_affinity import *
 
+""" This variable defines the coordination system that is used by BigJob
+    e.g. 
+        advert://localhost (SAGA/Advert SQLITE)
+        advert://advert.cct.lsu.edu:8080 (SAGA/Advert POSTGRESQL)
+        redis://localhost:6379 (Redis at localhost)
+        tcp://localhost (ZMQ)
+"""
+COORDINATION_URL = "advert://advert.cct.lsu.edu:8080"
+
 NUMBER_JOBS=8
 
 
@@ -49,7 +58,7 @@ if __name__ == "__main__":
         #                       "working_directory": (os.getcwd() + "/agent"), "walltime":10, "affinity" : "affinity1"})
 
         print "Create manyjob service "
-        mjs = many_job_affinity_service(resource_list, "localhost")
+        mjs = many_job_affinity_service(resource_list, COORDINATION_URL)
         
         jobs = []
         job_start_times = {}

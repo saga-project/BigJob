@@ -82,7 +82,7 @@ if __name__ == "__main__":
                               "walltime":4320 }) 
 
         print "Create manyjob service "
-        mjs = many_job_service(resource_list, "advert.cct.lsu.edu")
+        mjs = many_job_service(resource_list, "advert://advert.cct.lsu.edu")
         jobs = []
         job_start_times = {}
         job_states = {}
@@ -119,8 +119,7 @@ if __name__ == "__main__":
                 if result_map.has_key(state) == False:
                     result_map[state]=0
                 result_map[state] = result_map[state]+1
-                k = str(jobs[i])
-                print k
+                k = str(jobs[i])                
                 if k is not "None":                    
                     jobid = (k.split(":"))[4]
                     machine = (k.split(":"))[2] 

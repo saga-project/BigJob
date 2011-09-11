@@ -24,6 +24,7 @@ import os
 import traceback
 import logging
 import textwrap
+import urlparse
 logging.basicConfig(level=logging.DEBUG)
 
 # import other BigJob packages
@@ -53,30 +54,6 @@ def get_uuid():
 APPLICATION_NAME="bigjob"
 CLEANUP=True
 
-# Support for multiple coordination backends (ZMQ and Redis)
-BACKEND = "ADVERT" #{REDIS, ZMQ, ADVERT}
-
-if BACKEND=="ZMQ":
-    try:
-        from coordination.bigjob_coordination_zmq import bigjob_coordination
-        logging.debug("Utilizing ZMQ Backend")
-    except:
-        logging.error("ZMQ Backend not found. Please install ZeroMQ (http://www.zeromq.org/intro:get-the-software) and " 
-                      +"PYZMQ (http://zeromq.github.com/pyzmq/)")
-elif BACKEND=="ADVERT":
-    try:
-        from coordination.bigjob_coordination_advert import bigjob_coordination
-        logging.debug("Utilizing ADVERT Backend")
-    except:
-        logging.error("Advert Backend could not be loaded")
-else:
-    try:
-        from coordination.bigjob_coordination_redis import bigjob_coordination        
-        logging.debug("Utilizing Redis Backend. Please make sure Redis server is configured in bigjob_coordination_redis.py.")
-    except:
-        logging.error("Error loading PyRedis.")
-
-
 #for legacy purposes and support for old BJ API
 pilot_url_dict={} # stores a mapping of pilot_url to bigjob
 
@@ -90,12 +67,19 @@ class BigJobError(Exception):
 
 class bigjob(api.base.bigjob):
     
-    def __init__(self, database_host):        
-        self.database_host = database_host
-        print "init advert service session at host: " + database_host
+    def __init__(self, coordination_url="advert://localhost/"):    
+        """ Initializes BigJob's coordination system
+            e.g.:
+            advert://localhost (SAGA/Advert SQLITE)
+            advert://advert.cct.lsu.edu:8080 (SAGA/Advert POSTGRESQL)
+            redis://localhost:6379 (Redis at localhost)
+            tcp://localhost (ZMQ)
+        """    
         self.uuid = get_uuid()
         
-        self.coordination = bigjob_coordination()
+        print "init BigJob w/: " + coordination_url
+        self.coordination_url = coordination_url
+        self.coordination = self.__init_coordination(coordination_url)
         
         self.app_url = APPLICATION_NAME +":" + str(self.uuid) 
         
@@ -105,6 +89,35 @@ class bigjob(api.base.bigjob):
         self.pilot_url=""
         self.job = None
         print "initialized BigJob: " + self.app_url
+        
+    def __init_coordination(self, coordination_url):        
+        if(coordination_url.startswith("advert://")):
+            try:
+                from coordination.bigjob_coordination_advert import bigjob_coordination
+                logging.debug("Utilizing ADVERT Backend")
+            except:
+                logging.error("Advert Backend could not be loaded")
+        elif (coordination_url.startswith("redis://")):
+            try:
+                from coordination.bigjob_coordination_redis import bigjob_coordination      
+                logging.debug("Utilizing Redis Backend")
+            except:
+                logging.error("Error loading pyredis.")
+        elif (coordination_url.startswith("tcp://")):
+            try:
+                from coordination.bigjob_coordination_zmq import bigjob_coordination
+                logging.debug("Utilizing ZMQ Backend")
+            except:
+                logging.error("ZMQ Backend not found. Please install ZeroMQ (http://www.zeromq.org/intro:get-the-software) and " 
+                      +"PYZMQ (http://zeromq.github.com/pyzmq/)")
+        else:
+            logging.error("No suitable coordination backend found.")
+        
+        port = urlparse.urlparse(coordination_url).port
+        host = urlparse.urlparse(coordination_url).hostname
+        
+        coordination = bigjob_coordination(server=host, server_port=port)
+        return coordination
     
     def start_pilot_job(self, 
                  lrms_url, 
@@ -139,11 +152,11 @@ class bigjob(api.base.bigjob):
         self.number_nodes=int(number_nodes)        
         
         # discover location of agent executable
-        if bigjob_agent_executable==None:            
-            if os.getenv("BIGJOB_HOME", None)!=None:
-                bigjob_agent_executable=os.getenv("BIGJOB_HOME")+"/bigjob_agent_launcher.sh"
-            else:
-                bigjob_agent_executable=os.getcwd()+"/bigjob_agent_launcher.sh"
+        #if bigjob_agent_executable==None:            
+        #    if os.getenv("BIGJOB_HOME", None)!=None:
+        #        bigjob_agent_executable=os.getenv("BIGJOB_HOME")+"/bigjob_agent_launcher.sh"
+        #    else:
+        #        bigjob_agent_executable=os.getcwd()+"/bigjob_agent_launcher.sh"
  
         # create job description
         jd = saga.job.description()
@@ -341,9 +354,9 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
                     
 class subjob(api.base.subjob):
     
-    def __init__(self, database_host=None):
+    def __init__(self, coordination_url=None):
         """Constructor"""
-        self.database_host = database_host
+        self.coordination_url = coordination_url
         self.job_url=None
         self.uuid = get_uuid()
         self.job_url = None

@@ -30,21 +30,21 @@ import bigjob.bigjob_manager
 # Log everything, and send it to stderr.
 logging.basicConfig(level=logging.DEBUG)
 
-DEFAULT_ADVERT_HOST="advert.cct.lsu.edu"
+COORDINATION_URL="advert://advert.cct.lsu.edu:8080"
 
 class many_job_service(object):
 
-    def __init__(self, bigjob_list, advert_host):
+    def __init__(self, bigjob_list, coordination_url):
         """ accepts resource list as key/value pair:
             ( {"resource_url" : "gram://qb1.loni.org/jobmanager-pbs", "number_nodes" : "32", "allocation" : "loni_stopgap2", "queue" : "workq", "bigjob_agent": "$(HOME)/src/REMDgManager/bigjob/advert_launcher.sh",  "walltime":1000},
               {"resource_url" : "gram://qb1.loni.org/jobmanager-pbs", "number_nodes" : "32", "allocation" : "loni_stopgap2", "queue" : "workq", "bigjob_agent": "$(HOME)/src/REMDgManager/bigjob/advert_launcher.sh", "walltime":1000})
         """        
         self.uuid = uuid.uuid1()
         
-        if advert_host==None:
-            self.advert_host=DEFAULT_ADVERT_HOST   
+        if coordination_url==None:
+            self.advert_host=COORDINATION_URL   
         else:
-            self.advert_host=advert_host
+            self.advert_host=coordination_url
 
         # list of resource dicts (1 dict per resource) 
         # will also store state of bigjob

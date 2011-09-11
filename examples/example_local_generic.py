@@ -11,8 +11,15 @@ import pdb
 import sys
 
 
-# configurationg
-advert_host = "localhost"
+# configuration
+""" This variable defines the coordination system that is used by BigJob
+    e.g. 
+        advert://localhost (SAGA/Advert SQLITE)
+        advert://advert.cct.lsu.edu:8080 (SAGA/Advert POSTGRESQL)
+        redis://localhost:6379 (Redis at localhost)
+        tcp://localhost (ZMQ)
+"""
+COORDINATION_URL = "advert://advert.cct.lsu.edu:8080"
 
 # for running BJ from local dir
 sys.path.insert(0, os.getcwd() + "/../")
@@ -30,7 +37,7 @@ def main():
 
     # start pilot job (bigjob_agent)
     print "Start Pilot Job/BigJob at: " + lrms_url
-    bj = bigjob(advert_host)
+    bj = bigjob(COORDINATION_URL)
     bj.start_pilot_job(lrms_url,
                             None,
                             nodes,
