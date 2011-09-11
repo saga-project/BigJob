@@ -13,7 +13,7 @@ import sys
 sys.path.insert(0, os.getcwd() + "/../")
 
 # configurationg
-advert_host = "localhost"
+COORDINATION_URL = "advert://advert.cct.lsu.edu:8080"
 
 from bigjob.bigjob_manager import bigjob, subjob
 
@@ -45,7 +45,7 @@ if __name__ == "__main__":
 
     # start pilot job (bigjob_agent)
     print "Start Pilot Job/BigJob: " + bigjob_agent + " at: " + lrms_url
-    bj = bigjob(advert_host)
+    bj = bigjob(COORDINATION_URL)
     bj.start_pilot_job(lrms_url,
                             bigjob_agent,
                             nodes,

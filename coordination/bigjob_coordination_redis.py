@@ -36,6 +36,8 @@ class bigjob_coordination(object):
         '''
         Constructor
         '''
+        if server_port==None:
+            server_port=6379
         self.address = "redis://%s:%i"%(server, server_port)
         self.redis = Redis(host=server, port=server_port, db=0)
         self.redis_pubsub = self.redis.pubsub() # redis pubsub client       

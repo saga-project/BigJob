@@ -25,6 +25,15 @@ sys.path.insert(0, os.getcwd() + "/../")
 from bigjob.bigjob_manager import *
 from bigjob_dynamic.many_job import *
 
+
+""" This variable defines the coordination system that is used by BigJob
+    e.g. 
+        advert://localhost (SAGA/Advert SQLITE)
+        advert://advert.cct.lsu.edu:8080 (SAGA/Advert POSTGRESQL)
+        redis://localhost:6379 (Redis at localhost)
+        tcp://localhost (ZMQ)
+"""
+COORDINATION_URL = "advert://advert.cct.lsu.edu:8080"
     
 NUMBER_JOBS=8
 
@@ -54,7 +63,7 @@ def main():
         
 
         print "Create Dynamic BigJob Service "
-        mjs = many_job_service(resource_list, "advert.cct.lsu.edu")
+        mjs = many_job_service(resource_list, COORDINATION_URL)
         
         jobs = []
         job_start_times = {}
