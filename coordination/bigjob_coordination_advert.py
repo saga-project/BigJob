@@ -37,13 +37,14 @@ class bigjob_coordination(object):
         '''
         Constructor
         '''
+        logging.debug("Server: " + str(server) + " Port " + str(server_port) 
+                      + " server_connect_url: " + str(server_connect_url))
         if server_connect_url!=None:
             self.address=server_connect_url
         elif server_port != None:
             self.address = ADVERT_URL_SCHEME+"%s:%i"%(server, server_port)
         elif server != None:
-            self.address = ADVERT_URL_SCHEME+"%s"%(server)
-            
+            self.address = ADVERT_URL_SCHEME+"%s"%(server)            
         self.pilot_url = self.address
         
     def get_address(self):

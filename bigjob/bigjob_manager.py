@@ -77,7 +77,7 @@ class bigjob(api.base.bigjob):
         """    
         self.uuid = get_uuid()
         
-        print "init BigJob w/: " + coordination_url
+        logging.debug("init BigJob w/: " + coordination_url)
         self.coordination_url = coordination_url
         self.coordination = self.__init_coordination(coordination_url)
         
@@ -88,7 +88,7 @@ class bigjob(api.base.bigjob):
         self.state=saga.job.Unknown
         self.pilot_url=""
         self.job = None
-        print "initialized BigJob: " + self.app_url
+        logging.debug("initialized BigJob: " + self.app_url)
         
     def __init_coordination(self, coordination_url):        
         if(coordination_url.startswith("advert://")):
@@ -113,9 +113,12 @@ class bigjob(api.base.bigjob):
         else:
             logging.error("No suitable coordination backend found.")
         
-        port = urlparse.urlparse(coordination_url).port
-        host = urlparse.urlparse(coordination_url).hostname
-        
+        logging.debug("Parsing URL: " + coordination_url)
+        surl = saga.url(coordination_url)
+        host = surl.host
+        port = surl.port
+        if port == -1:
+            port = None
         coordination = bigjob_coordination(server=host, server_port=port)
         return coordination
     
