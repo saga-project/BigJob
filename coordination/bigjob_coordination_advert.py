@@ -33,13 +33,15 @@ class bigjob_coordination(object):
     Implementation based on Redis (http://redis.io)
     '''
 
-    def __init__(self, server=ADVERT_SERVER, server_port=ADVERT_SERVER_PORT, server_connect_url=""):
+    def __init__(self, server=ADVERT_SERVER, server_port=ADVERT_SERVER_PORT, server_connect_url=None):
         '''
         Constructor
         '''
-        if server_port != None:
+        if server_connect_url!=None:
+            self.address=server_connect_url
+        elif server_port != None:
             self.address = ADVERT_URL_SCHEME+"%s:%i"%(server, server_port)
-        else:
+        elif server != None:
             self.address = ADVERT_URL_SCHEME+"%s"%(server)
             
         self.pilot_url = self.address

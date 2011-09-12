@@ -13,7 +13,7 @@ import sys
 sys.path.insert(0, os.getcwd() + "/../")
 
 # configurationg
-COORDINATION_URL = "advert://advert.cct.lsu.edu:8080"
+COORDINATION_URL = "advert://localhost"
 
 from bigjob.bigjob_manager import bigjob, subjob
 

@@ -108,13 +108,13 @@ class bigjob_agent:
         if(self.coordination_url.startswith("advert://")):
             try:
                 from coordination.bigjob_coordination_advert import bigjob_coordination
-                logging.debug("Utilizing ADVERT Backend")
+                logging.debug("Utilizing ADVERT Backend: " + self.coordination_url)
             except:
                 logging.error("Advert Backend could not be loaded")
         elif (self.coordination_url.startswith("redis://")):
             try:
                 from coordination.bigjob_coordination_redis import bigjob_coordination      
-                logging.debug("Utilizing Redis Backend. Please make sure Redis server is configured in bigjob_coordination_redis.py")
+                logging.debug("Utilizing Redis Backend: " + self.coordination_url + ". Please make sure Redis server is configured in bigjob_coordination_redis.py")
             except:
                 logging.error("Error loading pyredis.")
         elif (self.coordination_url.startswith("tcp://")):
