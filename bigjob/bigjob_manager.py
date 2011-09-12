@@ -121,13 +121,13 @@ class bigjob(api.base.bigjob):
     
     def start_pilot_job(self, 
                  lrms_url, 
-                 bigjob_agent_executable,
-                 number_nodes,
-                 queue,
-                 project,
-                 working_directory,
-                 userproxy,
-                 walltime,
+                 bigjob_agent_executable=None,
+                 number_nodes=1,
+                 queue=None,
+                 project=None,
+                 working_directory=None,
+                 userproxy=None,
+                 walltime=None,
                  processes_per_node=1):
         
         
@@ -211,6 +211,9 @@ class bigjob(api.base.bigjob):
 import os
 import urllib
 import sys
+import time
+
+start_time = time.time()
 
 home = os.environ['HOME']
 
@@ -244,6 +247,7 @@ import bigjob.bigjob_agent
     
 # execute bj agent
 args = ["bigjob_agent.py", \"%s\", \"%s\"]
+print "Bootstrap time: " + str(time.time()-start_time)
 print "Starting BigJob Agents with following args: " + str(args)
 bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)           
 """ % (coordination_host, coordination_namespace))
