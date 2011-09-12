@@ -19,7 +19,7 @@ import sys
         redis://localhost:6379 (Redis at localhost)
         tcp://localhost (ZMQ)
 """
-COORDINATION_URL = "advert://localhost"
+COORDINATION_URL = "advert://localhost/"
 
 # for running BJ from local dir
 sys.path.insert(0, os.getcwd() + "/../")
