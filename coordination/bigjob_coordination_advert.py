@@ -50,15 +50,12 @@ class bigjob_coordination(object):
     def get_address(self):
         return self.address
     
-    def get_url(self, id_string):
-        try:
-            path = urlparse.urlparse(id_string).path  
-        except:
-            pass        
-        
-        path = path.replace(":", "/")
-        url_string = self.address + "/" + path
-        return url_string
+    def get_url(self, id_string):        
+        if not id_string.startswith("advert"): 
+            path = id_string.replace(":", "/")
+            url_string = self.address + "/" + path
+            return url_string
+        return id_string
         
         
     #####################################################################################
