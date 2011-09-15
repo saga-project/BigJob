@@ -480,14 +480,14 @@ class bigjob_agent:
                     print self.print_job(i) + " failed.  "
                     # do not free nodes => very likely the job will fail on these nodes
                     # self.free_nodes(i)                    
-                    if self.restarted.has_key(i)==False:
-                        logging.debug("Try to restart job " + self.print_job(i))
-                        self.restarted[i]=True
-                        self.execute_job(i)                        
-                    else:
-                        print "do not restart job " + self.print_job(i)
-                        self.coordination.set_job_state(i, str(saga.job.Failed))
-                        del self.processes[i]
+                    #if self.restarted.has_key(i)==False:
+                    #    logging.debug("Try to restart job " + self.print_job(i))
+                    #    self.restarted[i]=True
+                    #    self.execute_job(i)                        
+                    #else:
+                    print "do not restart job " + self.print_job(i)
+                    self.coordination.set_job_state(i, str(saga.job.Failed))
+                    del self.processes[i]
     
     def print_job(self, job_url):
         job_dict = self.coordination.get_job(job_url)
