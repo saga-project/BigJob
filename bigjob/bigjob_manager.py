@@ -169,8 +169,13 @@ class bigjob(api.base.bigjob):
         #jd.arguments = [bigjob_agent_executable, self.coordination.get_address(), self.pilot_url]
         
         bootstrap_script = self.generate_bootstrap_script(self.coordination.get_address(), self.pilot_url)
+        
+        print "Adaptor specific modifications: "  + str(lrms_saga_url.scheme)
         if lrms_saga_url.scheme == "gram":
             bootstrap_script = self.escape_rsl(bootstrap_script)
+        elif lrms_saga_url.scheme == "pbspro":
+            print "Using PBSPro"
+            bootstrap_script = self.escape_pbs(bootstrap_script)
         logging.debug(bootstrap_script)
         jd.arguments = ["-c", bootstrap_script]
         jd.executable = "python"
@@ -223,7 +228,7 @@ import time
 
 start_time = time.time()
 
-home = os.environ['HOME']
+home = os.environ["HOME"]
 
 BIGJOB_AGENT_DIR= home+ "/.bigjob"
 BIGJOB_PYTHON_DIR=BIGJOB_AGENT_DIR+"/python/"
@@ -262,7 +267,13 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
         return script
     
     def escape_rsl(self, bootstrap_script):
+        logging.debug("Escape RSL")
         bootstrap_script = bootstrap_script.replace("\"", "\"\"")
+        return bootstrap_script
+    
+    def escape_pbs(self, bootstrap_script):
+        logging.debug("Escape PBS")
+        bootstrap_script = "\'" + bootstrap_script+ "\'"
         return bootstrap_script
      
     def add_subjob(self, jd, job_url, job_id):
