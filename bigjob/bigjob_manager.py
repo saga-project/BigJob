@@ -167,7 +167,12 @@ class bigjob(api.base.bigjob):
         jd.processes_per_host=str(processes_per_node)
         jd.spmd_variation = "single"
         #jd.arguments = [bigjob_agent_executable, self.coordination.get_address(), self.pilot_url]
-        jd.arguments = ["-c", self.generate_bootstrap_script(self.coordination.get_address(), self.pilot_url)]
+        
+        bootstrap_script = self.generate_bootstrap_script(self.coordination.get_address(), self.pilot_url)
+        if lrms_saga_url.scheme == "gram":
+            bootstrap_script = self.escape_rsl(bootstrap_script)
+        logging.debug(bootstrap_script)
+        jd.arguments = ["-c", bootstrap_script]
         jd.executable = "python"
         #jd.executable = bigjob_agent_executable
         if queue != None:
@@ -254,9 +259,11 @@ print "Bootstrap time: " + str(time.time()-start_time)
 print "Starting BigJob Agents with following args: " + str(args)
 bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)           
 """ % (coordination_host, coordination_namespace))
-        logging.debug(script)
         return script
-        
+    
+    def escape_rsl(self, bootstrap_script):
+        bootstrap_script = bootstrap_script.replace("\"", "\"\"")
+        return bootstrap_script
      
     def add_subjob(self, jd, job_url, job_id):
         logging.debug("add subjob to queue of PJ: " + str(self.pilot_url))        
