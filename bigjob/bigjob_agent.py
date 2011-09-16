@@ -485,8 +485,9 @@ class bigjob_agent:
                     #    self.restarted[i]=True
                     #    self.execute_job(i)                        
                     #else:
-                    print "do not restart job " + self.print_job(i)
+                    print "do not restart job " + self.print_job(i)                    
                     self.coordination.set_job_state(i, str(saga.job.Failed))
+                    self.free_nodes(i)
                     del self.processes[i]
     
     def print_job(self, job_url):
