@@ -347,8 +347,7 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
         """ mark in advert directory of pilot-job as stopped """
         try:
             print "stop pilot job: " + self.pilot_url
-            self.coordination.set_pilot_state(str(saga.job.Done), True)
-            self.cancel()
+            self.coordination.set_pilot_state(self.pilot_url, str(saga.job.Done), True)            
             self.job=None
         except:
             pass
@@ -362,7 +361,8 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
             pass
             #traceback.print_stack()
         try:            
-            print "delete pilot job: " + str(self.pilot_url)                      
+            self.stop_pilot_job()
+            logging.debug("delete pilot job: " + str(self.pilot_url))                      
             if CLEANUP:
                 self.coordination.delete_pilot(self.pilot_url)                
         except:
