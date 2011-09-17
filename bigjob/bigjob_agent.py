@@ -533,7 +533,7 @@ class bigjob_agent:
         print "Free nodes: " + str(len(self.freenodes)) + " Busy Nodes: " + str(len(self.busynodes))
         while True and self.stop==False:
             if self.is_stopped(self.base_url)==True:
-                logging.debug("Pilot job entry deleted - terminate agent")
+                logging.debug("Pilot job stopped - terminate agent")
                 break
             else:
                 logging.debug("Pilot job entry: " + str(self.base_url) + " exists. Pilot job not in state stopped.")
