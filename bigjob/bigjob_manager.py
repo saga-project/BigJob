@@ -132,7 +132,12 @@ class bigjob(api.base.bigjob):
                  userproxy=None,
                  walltime=None,
                  processes_per_node=1):
+        """ Start a batch job (using SAGA Job API) at resource manager. Currently, the following resource manager are supported:
+            fork://localhost/ (Default Job Adaptor
+            gram://qb1.loni.org/jobmanager-pbs (Globus Adaptor)
+            pbspro://localhost (PBS Prop Adaptor)
         
+        """
         
         if self.job != None:
             raise BigJobError("One BigJob already active. Please stop BigJob first.") 
@@ -280,19 +285,19 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
         logging.debug("add subjob to queue of PJ: " + str(self.pilot_url))        
         for i in range(0,3):
             try:
-                logging.debug("initialized dictionary for job: " + job_url)
+                logging.debug("initializing dictionary for job description. Job-URL: " + job_url)
                 # put job description attributes to Redis
                 job_dict = {}
                 attributes = jd.list_attributes()                
                 for i in attributes:          
                         if jd.attribute_is_vector(i):
-                            logging.debug("Add attribute: " + str(i) + " Value: " + str(jd.get_vector_attribute(i)))
+                            #logging.debug("Add attribute: " + str(i) + " Value: " + str(jd.get_vector_attribute(i)))
                             vector_attr = []
                             for j in jd.get_vector_attribute(i):
                                 vector_attr.append(j)
                             job_dict[i]=vector_attr
                         else:
-                            logging.debug("Add attribute: " + str(i) + " Value: " + jd.get_attribute(i))
+                            #logging.debug("Add attribute: " + str(i) + " Value: " + jd.get_attribute(i))
                             job_dict[i] = jd.get_attribute(i)
                 
                 job_dict["state"] = str(saga.job.Unknown)
@@ -317,13 +322,16 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
         return self.coordination.get_job(job_url) 
      
     def get_state(self):        
-        """ duck typing for get_state of saga.cpr.job and saga.job.job  """
+        """ duck typing for get_state of saga.job.job  
+            state of saga job that is used to spawn the pilot agent
+        """
         try:
             return self.job.get_state()
         except:
             return None
     
     def get_state_detail(self): 
+        """ internal state of BigJob agent """ 
         try:
             return self.coordination.get_pilot_state(self.pilot_url)["state"]
         except:
@@ -417,7 +425,8 @@ class subjob(api.base.subjob):
         if self.pilot_url==None:
             self.pilot_url = pilot_url
             self.bj=pilot_url_dict[pilot_url]  
-        self.bj.delete_subjob(self.job_url)        
+        if str(self.bj.get_state())=="Running":
+            self.bj.delete_subjob(self.job_url)        
         
     def get_exe(self, pilot_url=None):
         if self.pilot_url==None:

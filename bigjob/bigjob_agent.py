@@ -36,29 +36,6 @@ CONFIG_FILE="bigjob_agent.conf"
 THREAD_POOL_SIZE=4
 APPLICATION_NAME="bigjob"
 
-
-#BACKEND = "ADVERT" #{REDIS, ZMQ, ADVERT}
-#if BACKEND=="ZMQ":
-#    try:
-#        from coordination.bigjob_coordination_zmq import bigjob_coordination
-#        logging.debug("Utilizing ZMQ Backend")
-#    except:
-#        logging.error("ZMQ Backend not found. Please install ZeroMQ (http://www.zeromq.org/intro:get-the-software) and " 
-#                      +"PYZMQ (http://zeromq.github.com/pyzmq/)")
-#elif BACKEND=="ADVERT":
-#    try:
-#        from coordination.bigjob_coordination_advert import bigjob_coordination
-#        logging.debug("Utilizing ADVERT Backend")
-#    except:
-#        logging.error("Advert Backend could not be loaded")
-#else:
-#    try:
-#        from coordination.bigjob_coordination_redis import bigjob_coordination      
-#        logging.debug("Utilizing Redis Backend. Please make sure Redis server is configured in bigjob_coordination_redis.py")
-#    except:
-#        logging.error("Error loading pyredis.")
-        
-
 class bigjob_agent:
     
     """BigJob Agent:
@@ -194,8 +171,8 @@ class bigjob_agent:
         num_cpus = self.get_num_cpus()
         node_dict={}
         for i in set(self.freenodes):
-           node_dict[i] = self.freenodes.count(i)
-           if node_dict[i] < num_cpus:
+            node_dict[i] = self.freenodes.count(i)
+            if node_dict[i] < num_cpus:
                 node_dict[i] = num_cpus
     
         self.freenodes=[]
@@ -298,9 +275,9 @@ class bigjob_agent:
 
                 # start application process
                 if (spmdvariation.lower( )=="mpi"):
-                     command = "cd " + workingdirectory + "; " + self.MPIRUN + " -np " + numberofprocesses + " -machinefile " + machinefile + " " + command
-                     #if (host != socket.gethostname()):
-                     #    command ="ssh  " + host + " \"cd " + workingdirectory + "; " + command +"\""     
+                    command = "cd " + workingdirectory + "; " + self.MPIRUN + " -np " + numberofprocesses + " -machinefile " + machinefile + " " + command
+                    #if (host != socket.gethostname()):
+                    #    command ="ssh  " + host + " \"cd " + workingdirectory + "; " + command +"\""     
                 else:
                     command ="ssh  " + host + " \"cd " + workingdirectory + "; " + command +"\""     
                 shell = self.SHELL 
@@ -387,35 +364,35 @@ class bigjob_agent:
         job.wait()
     
     def print_machine_file(self, filename):
-         fh = open(filename, "r")
-         lines = fh.readlines()
-         fh.close
-         print "Machinefile: " + filename + " Hosts: " + str(lines)
+        fh = open(filename, "r")
+        lines = fh.readlines()
+        fh.close
+        print "Machinefile: " + filename + " Hosts: " + str(lines)
          
     def free_nodes(self, job_url):
-         job_dict = self.coordination.get_job(job_url)
-         self.resource_lock.acquire()
-         number_nodes = int(job_dict["NumberOfProcesses"])
-         machine_file_name = self.get_machine_file_name(job_dict)
-         print "Machine file: " + machine_file_name
-         allocated_nodes = ["localhost\n"]
-         try:
-                 machine_file = open(machine_file_name, "r")
-                 allocated_nodes = machine_file.readlines()
-                 machine_file.close()
-         except:	
-	     traceback.print_exc(file=sys.stderr)
+        job_dict = self.coordination.get_job(job_url)
+        self.resource_lock.acquire()
+        number_nodes = int(job_dict["NumberOfProcesses"])
+        machine_file_name = self.get_machine_file_name(job_dict)
+        print "Machine file: " + machine_file_name
+        allocated_nodes = ["localhost\n"]
+        try:
+            machine_file = open(machine_file_name, "r")
+            allocated_nodes = machine_file.readlines()
+            machine_file.close()
+        except:	
+            traceback.print_exc(file=sys.stderr)
 
-         print "Free nodes: " + str(allocated_nodes)         
-	
-         for i in allocated_nodes:
-             print "free node: " + str(i) + " current busy nodes: " + str(self.busynodes) + " free nodes: " + str(self.freenodes)             
-             self.busynodes.remove(i)
-             self.freenodes.append(i)
-         print "Delete " + machine_file_name
-         if os.path.exists(machine_file_name):
-             os.remove(machine_file_name)
-         self.resource_lock.release()
+        print "Free nodes: " + str(allocated_nodes)         
+
+        for i in allocated_nodes:
+            print "free node: " + str(i) + " current busy nodes: " + str(self.busynodes) + " free nodes: " + str(self.freenodes)             
+            self.busynodes.remove(i)
+            self.freenodes.append(i)
+        print "Delete " + machine_file_name
+        if os.path.exists(machine_file_name):
+            os.remove(machine_file_name)
+        self.resource_lock.release()
                
             
     def get_machine_file_name(self, job_dict):
@@ -508,9 +485,9 @@ class bigjob_agent:
         for i in dir_listing:
             filename = dir+"/"+i
             if (os.path.isfile(filename)):
-                if(check_file(files, filename==False)):
-                      url = self.build_url(filename)
-                      print str(self.build_url(filename))
+                if(self.check_file(files, filename==False)):
+                    url = self.build_url(filename)
+                    print str(self.build_url(filename))
                         
     def build_url(self, filename):
         """ build gsiftp url from file path """
@@ -522,9 +499,9 @@ class bigjob_agent:
         """ check whether file has already been registered with CPR """
         for i in files:
             file_path = i.get_path()
-            if (filename == filepath):
-                return true
-        return false
+            if (filename == file_path):
+                return True
+        return False
                         
     def start_background_thread(self):        
         self.stop=False                
@@ -533,7 +510,7 @@ class bigjob_agent:
         print "Free nodes: " + str(len(self.freenodes)) + " Busy Nodes: " + str(len(self.busynodes))
         while True and self.stop==False:
             if self.is_stopped(self.base_url)==True:
-                logging.debug("Pilot job stopped - terminate agent")
+                logging.debug("Pilot job entry deleted - terminate agent")
                 break
             else:
                 logging.debug("Pilot job entry: " + str(self.base_url) + " exists. Pilot job not in state stopped.")
@@ -547,6 +524,8 @@ class bigjob_agent:
                 self.failed_polls=self.failed_polls+1
                 if self.failed_polls>3: # after 3 failed attempts exit
                     break
+        logging.debug("Terminating Agent. Calling sys.exit")
+        sys.exit(0)
     
     def is_stopped(self, base_url):
         state = None
@@ -554,7 +533,8 @@ class bigjob_agent:
             state = self.coordination.get_pilot_state(base_url)
         except:
             pass
-        if state==None or state["stopped"]==True:
+        logging.debug("Pilot State: " + str(state))
+        if state==None or state.has_key("stopped")==False or state["stopped"]==True:
             return True
         else:
             return False
