@@ -24,7 +24,7 @@ import uuid
 
 REDIS_SERVER="localhost"
 REDIS_SERVER_PORT=6379
-
+REDIS_URL_SCHEME="redis://"
 
 class bigjob_coordination(object):
     '''
@@ -32,13 +32,25 @@ class bigjob_coordination(object):
     Implementation based on Redis (http://redis.io)
     '''
 
-    def __init__(self, server=REDIS_SERVER, server_port=REDIS_SERVER_PORT, server_connect_url=""):
+    def __init__(self, server=REDIS_SERVER, server_port=REDIS_SERVER_PORT, server_connect_url=None):
         '''
         Constructor
         '''
         if server_port==None:
             server_port=6379
-        self.address = "redis://%s:%i"%(server, server_port)
+            
+        self.address = "%s%s:%i"%(REDIS_URL_SCHEME, server, server_port)
+        if server_connect_url!=None:
+            self.address=server_connect_url    
+            start_index = self.address.find(REDIS_URL_SCHEME)+len(REDIS_URL_SCHEME)
+            server_and_port = self.address[start_index:]
+            if server_and_port.find(":")==-1:
+                server=server_and_port
+                server_port = REDIS_SERVER_PORT
+            else:
+                server = server_and_port.split(":")[0]
+                server_port = int(server_and_port.split(":")[1])
+        logging.debug("Connect to Redis: " + server + " Port: " + str(server_port))
         self.redis = Redis(host=server, port=server_port, db=0)
         self.redis_pubsub = self.redis.pubsub() # redis pubsub client       
         self.resource_lock = threading.RLock()
@@ -50,7 +62,7 @@ class bigjob_coordination(object):
             raise e
         
     def get_address(self):
-        return ("redis://")
+        return self.address
     #####################################################################################
     # Pilot-Job State
     def set_pilot_state(self, pilot_url, new_state, stopped=False):     
@@ -60,6 +72,12 @@ class bigjob_coordination(object):
     def get_pilot_state(self, pilot_url):
         state = self.redis.hgetall(pilot_url)
         return state
+    
+    #def is_pilot_stopped(self,pilot_url):
+    #    state = self.redis.hgetall(pilot_url)
+    #    if state==None or not state.has_key("stopped"):
+    #        return True        
+    #    return state["stopped"]
     
     def get_jobs_of_pilot(self, pilot_url):
         """ returns array of job_url that are associated with a pilot """

@@ -1,12 +1,25 @@
 BigJob Generic (with plugable communication & coordination backends)
 
-current supported backends:
+Installation:
+http://faust.cct.lsu.edu/trac/bigjob
 
-A) REDIS, http://redis.io/
-B) ZMQ (ZeroMQ), http://www.zeromq.org/
+Currently supported backends:
+
+A) SAGA Advert Service
+B) REDIS, http://redis.io/
+C) ZMQ (ZeroMQ), http://www.zeromq.org/
 
 ***************************************************************************
-A REDIS
+A) SAGA Advert Service
+
+1) Utilise coordination url parameter of BigJob to utilize the Advert Service:
+
+advert://advert.cct.lsu.edu:8080/ (Postgresql)
+advert://localhost/ (SQLite)
+
+
+***************************************************************************
+B) REDIS
 
 1.) Install and run Redis (http://redis.io/)
 
@@ -26,18 +39,19 @@ Start Redis (redis-server executable is located in src/ dir):
 cd src
 ./redis-server
 
-2) Adjust backend config in bigjob_generic.py and bigjob_agent_generic.py
 
-3) Configure Redis server: Adjust parameter 
+2) Utilise coordination url parameter of BigJob to connect to Redis instance:
 
+redis://cyder.cct.lsu.edu:6379
+
+Standard settings are:
 REDIS_SERVER="localhost"
 REDIS_SERVER_PORT=6379
 
-on top of bigjob_coordination_redis.py
 
 
 ***************************************************************************
-B ZMQ
+C) ZMQ
 
 1.) Install ZeroMQ and pyzmq
 
@@ -45,4 +59,8 @@ http://www.zeromq.org/intro:get-the-software
 http://zeromq.github.com/pyzmq/index.html
 
 
-2.) Adjust backend config in bigjob_generic.py and bigjob_agent_generic.py 
+2) Utilise coordination url parameter of BigJob to utilize ZMQ:
+
+tcp://*
+
+will start a local tcp server.
