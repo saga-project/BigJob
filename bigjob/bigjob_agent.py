@@ -33,7 +33,7 @@ import subprocess
 
 """ Config parameters (will move to config file in future) """
 CONFIG_FILE="bigjob_agent.conf"
-THREAD_POOL_SIZE=4
+THREAD_POOL_SIZE=2
 APPLICATION_NAME="bigjob"
 
 class bigjob_agent:
@@ -152,7 +152,7 @@ class bigjob_agent:
             columns = i.split()                
             try:
                 for j in range(0, int(columns[1])):
-                    print "add host: " + columns[0]
+                    logging.debug("add host: " + columns[0].strip())
                     self.freenodes.append(columns[0]+"\n")
             except:
                     pass
@@ -177,9 +177,9 @@ class bigjob_agent:
     
         self.freenodes=[]
         for i in node_dict.keys():
-            print "host: " + i + " nodes: " + str(node_dict[i])
+            logging.debug("host: " + i + " nodes: " + str(node_dict[i]))
             for j in range(0, node_dict[i]):
-                print "add host: " + i
+                logging.debug("add host: " + i.strip())
                 self.freenodes.append(i)
 
     def get_num_cpus(self):
@@ -195,12 +195,15 @@ class bigjob_agent:
      
     def execute_job(self, job_url, job_dict):
         """ obtain job attributes from c&c and execute process """
-        state=None
+        state=str(job_dict["state"])
        
-        try:
-            state = self.coordination.get_job_state(job_url)
-        except:
-            logging.error("Could not access job state... skip execution attempt")
+        #try:
+        #   state = self.coordination.get_job_state(job_url)
+        #except:
+        #    logging.error("Could not access job state... skip execution attempt and requeuing job")
+        #    result = self.coordination.queue_job(self.base_url, job_url)
+        #    if result == False:
+        #        self.coordination.set_job_state(job_url, str(saga.job.Failed))
         
         if(state==str(saga.job.Unknown) or
             state==str(saga.job.New)):
@@ -305,7 +308,9 @@ class bigjob_agent:
             unique_nodes=set(self.freenodes)
             for i in unique_nodes:
                 number = self.freenodes.count(i)
-                print "allocate: " + i + " number nodes: " + str(number) + " current busy nodes: " + str(self.busynodes) + " free nodes: " + str(self.freenodes)
+                logging.debug("allocate: " + i + " number nodes: " + str(number) 
+                              + " current busy nodes: " + str(self.busynodes) 
+                              + " free nodes: " + str(self.freenodes))
                 for j in range(0, number):
                     if(number_nodes > 0):
                         nodes.append(i)
@@ -386,7 +391,8 @@ class bigjob_agent:
         logging.debug("Free nodes: " + str(allocated_nodes))         
 
         for i in allocated_nodes:
-            print "free node: " + str(i) + " current busy nodes: " + str(self.busynodes) + " free nodes: " + str(self.freenodes)             
+            logging.debug("free node: " + str(i) + " current busy nodes: " + str(self.busynodes) 
+                          + " free nodes: " + str(self.freenodes))       
             self.busynodes.remove(i)
             self.freenodes.append(i)
         logging.debug("Delete " + machine_file_name)
@@ -403,7 +409,7 @@ class bigjob_agent:
         
     def dequeue_new_jobs(self):	    
         """Subscribe to new jobs from Redis. """                
-        while True and self.is_stopped(self.base_url)==False:     
+        while self.is_stopped(self.base_url)==False:     
             if len(self.freenodes)==0:
                 time.sleep(3)
                 continue
@@ -442,13 +448,14 @@ class bigjob_agent:
     def monitor_jobs(self):
         """Monitor running processes. """   
         #pdb.set_trace()
+        logging.debug("Monitor jobs - # current jobs: %d"%len(self.jobs))
         for i in self.jobs:
             if self.processes.has_key(i): # only if job has already been starteds
                 p = self.processes[i]
                 p_state = p.poll()
                 logging.debug(self.print_job(i) + " state: " + str(p_state) + " return code: " + str(p.returncode))
                 if (p_state != None and (p_state==0 or p_state==255)):
-                    logging.debug(self.print_job(i)  + " finished. ")
+                    logging.debug("Job successful: " + self.print_job(i))
                     self.coordination.set_job_state(i, str(saga.job.Done))
                     #i.set_attribute("state", str(saga.job.Done))
                     self.free_nodes(i)
@@ -462,7 +469,7 @@ class bigjob_agent:
                     #    self.restarted[i]=True
                     #    self.execute_job(i)                        
                     #else:
-                    logging.debug("do not restart job " + self.print_job(i))                    
+                    logging.debug("Job failed " + self.print_job(i))                    
                     self.coordination.set_job_state(i, str(saga.job.Failed))
                     self.free_nodes(i)
                     del self.processes[i]

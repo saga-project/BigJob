@@ -18,6 +18,7 @@ import sys
         advert://advert.cct.lsu.edu:8080 (SAGA/Advert POSTGRESQL)
         redis://localhost:6379 (Redis at localhost)
         tcp://localhost (ZMQ)
+        tcp://* (ZMQ - listening to all interfaces)
 """
 #COORDINATION_URL = "advert://localhost/"
 COORDINATION_URL = "tcp://*"
