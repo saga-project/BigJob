@@ -1,7 +1,12 @@
 BigJob Generic (with plugable communication & coordination backends)
 
 Installation:
-http://faust.cct.lsu.edu/trac/bigjob
+
+$ curl https://svn.cct.lsu.edu/repos/saga-projects/applications/bigjob/trunk/generic/bootstrap/bigjob-bootstrap.py -o bigjob-bootstrap.py
+$ python bigjob-bootstrap.py $HOME/.bigjob/python/
+$ . $HOME/.bigjob/python/bin/activate
+
+see http://faust.cct.lsu.edu/trac/bigjob for further information
 
 Currently supported backends:
 
@@ -29,9 +34,10 @@ brew install redis redis-tools hiredis
 Linux:
 Download Redis http://redis.io/download
 Currently only tested with Redis 2.2.12
-1.1) untar 
-1.2) make
-1.3) make install (if root)
+$ tar -xzvf redis-2.2.12.tar.gz
+$ cd redis-2.2.12 
+$ make
+$ make install (if root)
 
 
 Start Redis (redis-server executable is located in src/ dir):
@@ -40,7 +46,7 @@ cd src
 ./redis-server
 
 
-2) Utilise coordination url parameter of BigJob to connect to Redis instance:
+2) Utilise coordination URL parameter of BigJob to connect to Redis instance:
 
 redis://cyder.cct.lsu.edu:6379
 
@@ -57,6 +63,25 @@ C) ZMQ
 
 http://www.zeromq.org/intro:get-the-software
 http://zeromq.github.com/pyzmq/index.html
+
+1.1 Install ZMQ:
+
+$ wget http://download.zeromq.org/zeromq-2.1.7.tar.gz
+$ tar -xzvf zeromq-2.1.7.tar.gz
+$ cd zeromq-2.1.7
+$ ./configure --prefix=$HOME/sw/zeromq-2.1.7
+$ make install
+
+
+1.2 Activate BigJob virtualenv:
+
+. $HOME/.bigjob/python/bin/activate
+
+1.3 Install Python bindings:
+
+$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/sw/zeromq-2.1.7/lib/
+$ export ZMQ_DIR=$HOME/sw/zeromq-2.1.9/
+$ pip install pyzmq
 
 
 2) Utilise coordination url parameter of BigJob to utilize ZMQ:

@@ -12,6 +12,7 @@ import pdb
 import zmq
 import traceback
 import Queue
+import socket
 from zmq.eventloop import ioloop, zmqstream
 import zlib, cPickle as pickle
 
@@ -51,31 +52,39 @@ class bigjob_coordination(object):
         # set up ZMQ client / server communication
         self.context = zmq.Context()
        
-        self.server = False               
+        self.server_role = False  
+        self.address = None    
+        if server == "*":
+            server = socket.gethostname()        
+        logging.debug("Server: " + server)         
         if server_connect_url==None: # role = Server
-            self.server = True
+            self.server_role = True
             # start eventloop
             self.startup_condition = threading.Condition()
             self.eventloop_thread=threading.Thread(target=self.__server, args=(server, server_port))
             self.eventloop_thread.start()
             
+            logging.debug("Setting up socket for notifications")
             # socket for sending notification
             self.push_socket = self.context.socket(zmq.PUSH)
             push_port = self.push_socket.bind_to_random_port("tcp://*")    
             self.push_address = "tcp://"+server+":"+str(push_port)                
             
             
+            logging.debug("Waiting for server to complete startup")
             # wait for server thread to complete startup
             self.startup_condition.acquire()
-            self.startup_condition.wait()
+            while self.address == None:
+                self.startup_condition.wait()
             self.startup_condition.release()                       
         else: # role client
             urls = server_connect_url.split(",")
             self.address = urls[0]
             self.push_address = urls[1]           
-            self.server = False
+            self.server_role = False
             #self.address = "tcp://"+server+":"+str(server_port)
         
+        logging.debug("Connect sockets to server: " + self.address + " push: " + self.push_address)
         # connect to REP server
         self.client_socket = self.context.socket(zmq.REQ)
         self.client_socket.connect(self.address)
@@ -105,6 +114,7 @@ class bigjob_coordination(object):
     # Pilot-Job State
     def set_pilot_state(self, pilot_url, new_state, stopped=False):     
         logging.debug("BEGIN update state of pilot job to: " + str(new_state))
+        #pdb.set_trace()
         self.resource_lock.acquire()   
         self.stopped=stopped     
         msg = message("set_pilot_state", pilot_url, {"state":str(new_state), "stopped":str(stopped)})
@@ -196,7 +206,7 @@ class bigjob_coordination(object):
         self.resource_lock.release()  
         
         # notify server
-        if self.server == True:
+        if self.server_role == True:
             msg2 = message("notification", "", job_url)
             self.push_socket.send_pyobj(msg2)             
              
@@ -282,11 +292,11 @@ class bigjob_coordination(object):
             self.server_address = "tcp://"+server+":"+str(server_port)
             self.address = self.server_address
             service_socket.bind(self.server_address)
-        logging.debug("Starting service at: " + self.address)
-        
+        logging.debug("Starting service at: " + self.address)        
         self.startup_condition.acquire()
-        self.startup_condition.notify()   
+        self.startup_condition.notifyAll()   
         self.startup_condition.release()
+        logging.debug("Startup condition signaled")
         while self.stopped == False:
             #logging.debug("Waiting for messages...")
             msg = service_socket.recv_pyobj()
