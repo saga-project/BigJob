@@ -64,6 +64,7 @@ class bigjob_coordination(object):
             # start eventloop
             self.startup_condition = threading.Condition()
             self.eventloop_thread=threading.Thread(target=self.__server, args=(server, server_port))
+            self.eventloop_thread.daemon=True
             self.eventloop_thread.start()
             
             logging.debug("Setting up socket for notifications")
@@ -168,7 +169,7 @@ class bigjob_coordination(object):
         """ local only - used only by manager """
         # stop everything
         self.stopped=True
-        self.eventloop_thread.join()
+        #self.eventloop_thread.join()
         logging.debug("Has stopped: " + str(self.has_stopped))
         self.__shutdown()
         
