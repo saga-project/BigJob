@@ -1,18 +1,21 @@
 #!/usr/bin/env python
 import sys
 import os
-import saga
+import bigjob.state
 import socket
 import threading
 import time
 import pdb
 import traceback
-import signal
 import ConfigParser
 import types
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
+try:
+    import saga
+except:
+    logging.warning("SAGA could not be found. Not all functionalities working")
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/../../ext/threadpool-1.2.7/src/")
 logging.debug(str(sys.path))
@@ -29,7 +32,6 @@ if sys.version_info < (2, 3):
     sys.exit(-1)
 
 import subprocess
-
 
 """ Config parameters (will move to config file in future) """
 CONFIG_FILE="bigjob_agent.conf"
@@ -67,8 +69,6 @@ class bigjob_agent:
         self.MPIRUN=default_dict["mpirun"]
         logging.debug("cpr: " + self.CPR + " mpi: " + self.MPIRUN + " shell: " + self.SHELL)
         
-        # init cpr monitoring
-        self.init_cpr()
         # init rms (SGE/PBS)
         self.init_rms()
 
@@ -105,7 +105,7 @@ class bigjob_agent:
         self.coordination = bigjob_coordination(server_connect_url=self.coordination_url)
     
         # update state of pilot job to running
-        self.coordination.set_pilot_state(self.base_url, str(saga.job.Running), "false")
+        self.coordination.set_pilot_state(self.base_url, str(bigjob.state.Running), "false")
 
         
         ##############################################################################
@@ -205,8 +205,8 @@ class bigjob_agent:
         #    if result == False:
         #        self.coordination.set_job_state(job_url, str(saga.job.Failed))
         
-        if(state==str(saga.job.Unknown) or
-            state==str(saga.job.New)):
+        if(state==str(bigjob.state.Unknown) or
+            state==str(bigjob.state.New)):
             try:
                 #job_dict["state"]=str(saga.job.New)                
                 logging.debug("Start job: " + str(job_dict))        
@@ -291,7 +291,7 @@ class bigjob_agent:
                                      env=environment, shell=True)
                 logging.debug("started " + command)
                 self.processes[job_url] = p
-                self.coordination.set_job_state(job_url, str(saga.job.Running))
+                self.coordination.set_job_state(job_url, str(bigjob.state.Running))
             except:
                 traceback.print_exc(file=sys.stderr)
     
@@ -439,9 +439,9 @@ class bigjob_agent:
             job_dict = self.coordination.get_job(job_url)
             logging.debug("start job: " + job_url + " data: " + str(job_dict))  
             #pdb.set_trace()          
-            if(job_dict["state"]==str(saga.job.Unknown)):
-                job_dict["state"]=str(saga.job.New)
-                self.coordination.set_job_state(job_url, str(saga.job.New))
+            if(job_dict["state"]==str(bigjob.state.Unknown)):
+                job_dict["state"]=str(bigjob.state.New)
+                self.coordination.set_job_state(job_url, str(bigjob.state.New))
             self.execute_job(job_url, job_dict)
             #print "Execute: " + str(job_dict)
     
@@ -456,7 +456,7 @@ class bigjob_agent:
                 logging.debug(self.print_job(i) + " state: " + str(p_state) + " return code: " + str(p.returncode))
                 if (p_state != None and (p_state==0 or p_state==255)):
                     logging.debug("Job successful: " + self.print_job(i))
-                    self.coordination.set_job_state(i, str(saga.job.Done))
+                    self.coordination.set_job_state(i, str(bigjob.state.Done))
                     #i.set_attribute("state", str(saga.job.Done))
                     self.free_nodes(i)
                     del self.processes[i]
@@ -470,7 +470,7 @@ class bigjob_agent:
                     #    self.execute_job(i)                        
                     #else:
                     logging.debug("Job failed " + self.print_job(i))                    
-                    self.coordination.set_job_state(i, str(saga.job.Failed))
+                    self.coordination.set_job_state(i, str(bigjob.state.Failed))
                     self.free_nodes(i)
                     del self.processes[i]
     
@@ -480,36 +480,7 @@ class bigjob_agent:
                  + job_dict["WorkingDirectory"] 
                  + " Excutable: " + job_dict["Executable"])
                                 
-    def monitor_checkpoints(self):
-        """ parses all job working directories and registers files with Migol via SAGA/CPR """
-        #get current files from AIS
-        url = saga.url("advert_launcher_checkpoint");
-        checkpoint = saga.cpr.checkpoint(url);
-        files = checkpoint.list_files()
-        for i in files:
-            logging.debug(i)      
-        dir_listing = os.listdir(os.getcwd())
-        for i in dir_listing:
-            filename = dir+"/"+i
-            if (os.path.isfile(filename)):
-                if(self.check_file(files, filename==False)):
-                    url = self.build_url(filename)
-                    print str(self.build_url(filename))
-                        
-    def build_url(self, filename):
-        """ build gsiftp url from file path """
-        hostname = socket.gethostname()
-        file_url = saga.url("gsiftp://"+hostname+"/"+filename)
-        return file_url
-                
-    def check_file(self, files, filename):
-        """ check whether file has already been registered with CPR """
-        for i in files:
-            file_path = i.get_path()
-            if (filename == file_path):
-                return True
-        return False
-                        
+                            
     def start_background_thread(self):        
         self.stop=False                
         logging.debug("##################################### New POLL/MONITOR cycle ##################################")
@@ -525,7 +496,7 @@ class bigjob_agent:
                 self.monitor_jobs()            
                 time.sleep(5)
                 self.failed_polls=0
-            except saga.exception:
+            except:
                 traceback.print_exc(file=sys.stdout)
                 self.failed_polls=self.failed_polls+1
                 if self.failed_polls>3: # after 3 failed attempts exit
@@ -549,16 +520,7 @@ class bigjob_agent:
     def stop_background_thread(self):        
         self.stop=True
     
-    def init_cpr(self):
-        # init cpr
-        self.js=None
-        if self.CPR == True:
-            try:
-                print "init CPR monitoring for Agent"
-                js = saga.cpr.service()
-            except:
-                sys.exc_traceback
-
+  
 #########################################################
 #  main                                                 #
 #########################################################

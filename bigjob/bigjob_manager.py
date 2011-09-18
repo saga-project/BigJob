@@ -243,10 +243,10 @@ BOOTSTRAP_FILE=BIGJOB_AGENT_DIR+"/bigjob-bootstrap.py"
 try:
     import saga
 except:
-    print "SAGA and SAGA Python Bindings not found: Please install SAGA first (http://saga.cct.lsu.edu)."
+    print "SAGA and SAGA Python Bindings not found: BigJob only work w/ non-SAGA backends (e.g. Redis, ZMQ)."
     print "Python version: " + os.system("python --version")
     print "Python path: " + str(sys.path)
-    sys.exit(1)
+    
     
 
 sys.path.insert(0, os.getcwd() + "/../")

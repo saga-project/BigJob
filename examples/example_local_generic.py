@@ -21,7 +21,8 @@ import sys
         tcp://* (ZMQ - listening to all interfaces)
 """
 #COORDINATION_URL = "advert://localhost/"
-COORDINATION_URL = "tcp://*"
+COORDINATION_URL = "advert://advert.cct.lsu.edu:8080/"
+#COORDINATION_URL = "tcp://*"
 
 # for running BJ from local dir
 sys.path.insert(0, os.getcwd() + "/../")
