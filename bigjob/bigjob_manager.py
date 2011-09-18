@@ -244,6 +244,8 @@ try:
     import saga
 except:
     print "SAGA and SAGA Python Bindings not found: Please install SAGA first (http://saga.cct.lsu.edu)."
+    print "Python version: " + os.system("python --version")
+    print "Python path: " + str(sys.path)
     sys.exit(1)
     
 
@@ -285,7 +287,7 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
         logging.debug("add subjob to queue of PJ: " + str(self.pilot_url))        
         for i in range(0,3):
             try:
-                logging.debug("initializing dictionary for job description. Job-URL: " + job_url)
+                logging.debug("create dictionary for job description. Job-URL: " + job_url)
                 # put job description attributes to Redis
                 job_dict = {}
                 attributes = jd.list_attributes()                
@@ -303,7 +305,7 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
                 job_dict["state"] = str(saga.job.Unknown)
                 job_dict["job-id"] = str(job_id)
                 
-                logging.debug("update job description at communication & coordination sub-system")
+                #logging.debug("update job description at communication & coordination sub-system")
                 self.coordination.set_job(job_url, job_dict)                                                
                 self.coordination.queue_job(self.pilot_url, job_url)
                 break

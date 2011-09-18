@@ -46,6 +46,7 @@ class bigjob_coordination(object):
         elif server != None:
             self.address = ADVERT_URL_SCHEME+"%s"%(server)            
         self.pilot_url = self.address
+        self.resource_lock = threading.RLock()
         
     def get_address(self):
         return self.address
@@ -93,12 +94,13 @@ class bigjob_coordination(object):
     
     #####################################################################################
     # Sub-Job State    
-    def set_job_state(self, job_url, new_state):        
+    def set_job_state(self, job_url, new_state):   
+        self.resource_lock.acquire()     
         job_url = self.get_url(job_url)
-        logging.debug("Set state of job: " + str(job_url))
+        logging.debug("Set state of job: " + str(job_url) + " to: " + str(new_state))
         job_dir = saga.advert.directory(saga.url(job_url), saga.advert.Create | saga.advert.CreateParents | saga.advert.ReadWrite)
         job_dir.set_attribute("state", str(new_state))
-        
+        self.resource_lock.release()
         
     def get_job_state(self, job_url):        
         job_url = self.get_url(job_url)        
@@ -141,6 +143,7 @@ class bigjob_coordination(object):
     #####################################################################################
     # Distributed queue for sub-jobs
     def queue_job(self, pilot_url, job_url):
+        self.resource_lock.acquire()
         pilot_url = self.get_url(pilot_url)
         job_url = self.get_url(job_url)
         """ queue new job to pilot """
@@ -148,21 +151,23 @@ class bigjob_coordination(object):
         new_job_dir = saga.advert.directory(saga.url(new_job_url), 
                                             saga.advert.Create | saga.advert.CreateParents | saga.advert.ReadWrite)
         new_job_dir.set_attribute("joburl", job_url)
-                
+        self.resource_lock.release()
         
     def dequeue_job(self, pilot_url):
         """ deque to new job  of a certain pilot """
+        self.resource_lock.acquire()
         pilot_url = self.get_url(pilot_url)
         jobs = []        
         new_job_dir_url = pilot_url + "/new/" 
         new_job_dir = saga.advert.directory(saga.url(new_job_dir_url), 
                                             saga.advert.Create | saga.advert.CreateParents | saga.advert.ReadWrite)
         new_jobs = new_job_dir.list()
-        logging.debug("Base dir: " + new_job_dir_url + " Number New jobs: " + str(len(new_jobs)));
+        logging.debug("Pilot Job base dir: " + new_job_dir_url + " #new jobs: " + str(len(new_jobs))
+                      + " jobs: " + str(new_jobs));
         if len(new_jobs)>=1:
             job_entry=new_jobs[0]     
             job_dir_url = new_job_dir_url + "/" + job_entry.get_string()       
-            logging.debug("open job at " + str(job_dir_url))
+            logging.debug("Open job at " + str(job_dir_url))
             job_dir = saga.advert.directory(saga.url(job_dir_url), 
                                        saga.advert.Create | saga.advert.CreateParents | saga.advert.ReadWrite)
             
@@ -170,9 +175,11 @@ class bigjob_coordination(object):
             job_url = job_dir.get_attribute("joburl")
             #remove old job entry
             job_dir.remove(job_dir_url, saga.name_space.Recursive)    
-            logging.debug("new job: " + str(job_url))
+            logging.debug("Dequeued new job: " + str(job_url))
+            self.resource_lock.release()
             return job_url
         else:
+            self.resource_lock.release()
             time.sleep(1)
             return 
             

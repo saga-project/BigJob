@@ -251,7 +251,7 @@ class bigjob_agent:
                 # create stdout/stderr file descriptors
                 output_file = os.path.abspath(output)
                 error_file = os.path.abspath(error)
-                print "stdout: " + output_file + " stderr: " + error_file + " env: " + str(environment)
+                logging.debug("stdout: " + output_file + " stderr: " + error_file + " env: " + str(environment))
                 stdout = open(output_file, "w")
                 stderr = open(error_file, "w")
                 command = executable + " " + arguments
@@ -269,7 +269,7 @@ class bigjob_agent:
 
 
                 if(machinefile==None):
-                    print "Not enough resources to run: " + job_url
+                    logging.debug("Not enough resources to run: " + job_url)
                     self.coordination.queue_job(self.base_url, job_url)
                     return # job cannot be run at the moment
 
@@ -281,12 +281,12 @@ class bigjob_agent:
                 else:
                     command ="ssh  " + host + " \"cd " + workingdirectory + "; " + command +"\""     
                 shell = self.SHELL 
-                print "execute: " + command + " in " + workingdirectory + " from: " + str(socket.gethostname()) + " (Shell: " + shell +")"
+                logging.debug("execute: " + command + " in " + workingdirectory + " from: " + str(socket.gethostname()) + " (Shell: " + shell +")")
                 # bash works fine for launching on QB but fails for Abe :-(
                 p = subprocess.Popen(args=command, executable=shell, stderr=stderr,
                                      stdout=stdout, cwd=workingdirectory, 
                                      env=environment, shell=True)
-                print "started " + command
+                logging.debug("started " + command)
                 self.processes[job_url] = p
                 self.coordination.set_job_state(job_url, str(saga.job.Running))
             except:
@@ -320,7 +320,7 @@ class bigjob_agent:
             #machine_file.writelines(self.freenodes[:number_nodes])
             machine_file.writelines(nodes)
             machine_file.close() 
-            print "wrote machinefile: " + machine_file_name + " Nodes: " + str(nodes)
+            logging.debug("wrote machinefile: " + machine_file_name + " Nodes: " + str(nodes))
             # update node structures
             #self.busynodes.extend(self.freenodes[:number_nodes])
             #del(self.freenodes[:number_nodes])            
@@ -367,14 +367,14 @@ class bigjob_agent:
         fh = open(filename, "r")
         lines = fh.readlines()
         fh.close
-        print "Machinefile: " + filename + " Hosts: " + str(lines)
+        logging.debug("Machinefile: " + filename + " Hosts: " + str(lines))
          
     def free_nodes(self, job_url):
         job_dict = self.coordination.get_job(job_url)
         self.resource_lock.acquire()
         number_nodes = int(job_dict["NumberOfProcesses"])
         machine_file_name = self.get_machine_file_name(job_dict)
-        print "Machine file: " + machine_file_name
+        logging.debug("Machine file: " + machine_file_name)
         allocated_nodes = ["localhost\n"]
         try:
             machine_file = open(machine_file_name, "r")
@@ -383,13 +383,13 @@ class bigjob_agent:
         except:	
             traceback.print_exc(file=sys.stderr)
 
-        print "Free nodes: " + str(allocated_nodes)         
+        logging.debug("Free nodes: " + str(allocated_nodes))         
 
         for i in allocated_nodes:
             print "free node: " + str(i) + " current busy nodes: " + str(self.busynodes) + " free nodes: " + str(self.freenodes)             
             self.busynodes.remove(i)
             self.freenodes.append(i)
-        print "Delete " + machine_file_name
+        logging.debug("Delete " + machine_file_name)
         if os.path.exists(machine_file_name):
             os.remove(machine_file_name)
         self.resource_lock.release()
@@ -454,7 +454,7 @@ class bigjob_agent:
                     self.free_nodes(i)
                     del self.processes[i]
                 elif p_state!=0 and p_state!=255 and p_state != None:
-                    print self.print_job(i) + " failed.  "
+                    logging.debug(self.print_job(i) + " failed.  ")
                     # do not free nodes => very likely the job will fail on these nodes
                     # self.free_nodes(i)                    
                     #if self.restarted.has_key(i)==False:
@@ -462,7 +462,7 @@ class bigjob_agent:
                     #    self.restarted[i]=True
                     #    self.execute_job(i)                        
                     #else:
-                    print "do not restart job " + self.print_job(i)                    
+                    logging.debug("do not restart job " + self.print_job(i))                    
                     self.coordination.set_job_state(i, str(saga.job.Failed))
                     self.free_nodes(i)
                     del self.processes[i]
@@ -480,7 +480,7 @@ class bigjob_agent:
         checkpoint = saga.cpr.checkpoint(url);
         files = checkpoint.list_files()
         for i in files:
-            print i      
+            logging.debug(i)      
         dir_listing = os.listdir(os.getcwd())
         for i in dir_listing:
             filename = dir+"/"+i
@@ -505,9 +505,8 @@ class bigjob_agent:
                         
     def start_background_thread(self):        
         self.stop=False                
-        print "\n"
-        print "##################################### New POLL/MONITOR cycle ##################################"
-        print "Free nodes: " + str(len(self.freenodes)) + " Busy Nodes: " + str(len(self.busynodes))
+        logging.debug("##################################### New POLL/MONITOR cycle ##################################")
+        logging.debug("Free nodes: " + str(len(self.freenodes)) + " Busy Nodes: " + str(len(self.busynodes)))
         while True and self.stop==False:
             if self.is_stopped(self.base_url)==True:
                 logging.debug("Pilot job entry deleted - terminate agent")
