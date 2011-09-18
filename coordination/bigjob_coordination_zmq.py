@@ -13,6 +13,7 @@ import zmq
 import traceback
 import Queue
 import socket
+import time
 from zmq.eventloop import ioloop, zmqstream
 import zlib, cPickle as pickle
 
@@ -26,6 +27,7 @@ import uuid
 SERVER_IP="localhost"
 SERVER_PORT=0
 
+NUMBER_RETRIES=2
 
 class message:    
     def __init__(self, command, key, value):
@@ -102,9 +104,11 @@ class bigjob_coordination(object):
         self.job_states = {}
         self.new_job_queue = Queue.Queue()
         
-        self.resource_lock = threading.RLock()
+        self.resource_lock = threading.Lock()
        
         logging.debug("C&C ZMQ system initialized")
+        
+
         
     def get_address(self):
         """ return handle to c&c subsystems """
@@ -113,25 +117,47 @@ class bigjob_coordination(object):
     #####################################################################################
     # Pilot-Job State
     def set_pilot_state(self, pilot_url, new_state, stopped=False):     
-        logging.debug("BEGIN update state of pilot job to: " + str(new_state))
-        #pdb.set_trace()
-        self.resource_lock.acquire()   
-        self.stopped=stopped     
-        msg = message("set_pilot_state", pilot_url, {"state":str(new_state), "stopped":str(stopped)})
-        self.client_socket.send_pyobj(msg, zmq.NOBLOCK)        
-        self.client_socket.recv_pyobj()
-        self.resource_lock.release()    
+        logging.debug("BEGIN update state of pilot job to: " + str(new_state) 
+                       + " Lock: " + str(self.resource_lock))
+        counter = 0
+        result = None
+        while result != "SUCCESS" and counter < NUMBER_RETRIES:
+            with self.resource_lock:  
+                msg = message("set_pilot_state", pilot_url, {"state":str(new_state), "stopped":str(stopped)})
+                try:
+                    self.client_socket.send_pyobj(msg, zmq.NOBLOCK)        
+                    result = self.client_socket.recv_pyobj()
+                except:
+                    traceback.print_exc(file=sys.stderr)
+            # stop background thread running the server (if True)
+            self.stopped=stopped             
+            if result == None:
+                logging.error("RETRY set_pilot_state")
+                counter = counter + 1
+                time.sleep(1) 
         logging.debug("END update state of pilot job to: " + str(new_state))
         
     def get_pilot_state(self, pilot_url):
         logging.debug("BEGIN get_pilot_state: %s lock: %s" % (pilot_url, str(self.resource_lock)))
-        self.resource_lock.acquire()
-        msg = message("get_pilot_state", pilot_url, "")
-        self.client_socket.send_pyobj(msg, zmq.NOBLOCK)
-        result = self.client_socket.recv_pyobj()
-        self.resource_lock.release()        
-        logging.debug("END get_pilot_state: %s lock: %s" % (pilot_url, str(self.resource_lock)))
+        counter = 0
+        result = None
+        while result ==None and counter < NUMBER_RETRIES:
+            with self.resource_lock:   
+                msg = message("get_pilot_state", pilot_url, " Lock: ")
+                try:
+                    self.client_socket.send_pyobj(msg, zmq.NOBLOCK)
+                    result = self.client_socket.recv_pyobj()
+                except:
+                    pass
+                  
+            logging.debug("END get_pilot_state: %s state: %s, lock: %s" % 
+                          (pilot_url, str(result.value), str(self.resource_lock)))
+            if result == None:               
+                counter = counter + 1
+                logging.error("RETRY get_pilot_state - Retry # %d"%counter)
+                time.sleep(1) 
         return result.value
+        logging.debug("END get_pilot_state: %s lock: %s" % (pilot_url, str(self.resource_lock)))
     
     def get_jobs_of_pilot(self, pilot_url):
         """ returns array of job_url that are associated with a pilot """
@@ -150,20 +176,36 @@ class bigjob_coordination(object):
     #####################################################################################
     # Sub-Job State    
     def set_job_state(self, job_url, new_state):
-        logging.debug("set_job_state")
-        self.resource_lock.acquire()
-        msg = message("set_job_state", job_url, new_state)
-        self.client_socket.send_pyobj(msg, zmq.NOBLOCK)
-        self.client_socket.recv_pyobj()
-        self.resource_lock.release()        
+        logging.debug("Set job state: %s to %s"%(job_url, new_state))
+        counter = 0
+        result = None
+        while result == None and counter < NUMBER_RETRIES:
+            with self.resource_lock:   
+                msg = message("set_job_state", job_url, new_state)
+                try:
+                    self.client_socket.send_pyobj(msg, zmq.NOBLOCK)
+                    result = self.client_socket.recv_pyobj()
+                except:
+                    traceback.print_exc(file=sys.stderr)
+      
+            if result == None:
+                counter = counter + 1
+                logging.error("RETRY %d set_job_state %s to %s"%(counter, job_url, new_state))
+                if counter == NUMBER_RETRIES-1:
+                    self.__reset_client_socket()              
+                time.sleep(2)
+                continue # retry
+            else:
+                logging.debug("SUCCESS set_job_state (%s to %s)"%(job_url, new_state))
+            
+        
         
     def get_job_state(self, job_url):
-        logging.debug("get_job_state")
-        self.resource_lock.acquire()
-        msg = message("get_job_state", job_url, "")
-        self.client_socket.send_pyobj(msg, zmq.NOBLOCK)
-        result = self.client_socket.recv_pyobj()
-        self.resource_lock.release()
+        #logging.debug("get_job_state")
+        with self.resource_lock:   
+            msg = message("get_job_state", job_url, "")
+            self.client_socket.send_pyobj(msg, zmq.NOBLOCK)
+            result = self.client_socket.recv_pyobj()            
         return result.value      
         
     #####################################################################################
@@ -177,14 +219,13 @@ class bigjob_coordination(object):
     def get_job(self, job_url):       
         if self.jobs.has_key(job_url)==False:
             logging.debug("get_job: " + str(self.resource_lock))
-            self.resource_lock.acquire()
-            logging.debug("get_job (lock acquired): " + str(self.resource_lock))
-            msg = message("get_job", job_url, "")
-            self.client_socket.send_pyobj(msg)
-            result = self.client_socket.recv_pyobj()
-            self.jobs[job_url] = result.value
-            logging.debug("received job: "  + str(result.value))
-            self.resource_lock.release()
+            with self.resource_lock: 
+                logging.debug("get_job (lock acquired): " + str(self.resource_lock))
+                msg = message("get_job", job_url, "")
+                self.client_socket.send_pyobj(msg)
+                result = self.client_socket.recv_pyobj()
+                self.jobs[job_url] = result.value
+                logging.debug("received job: "  + str(result.value))
         return self.jobs[job_url] 
     
     def delete_job(self, job_url):
@@ -199,36 +240,72 @@ class bigjob_coordination(object):
         """ queue new job to pilot """
         logging.debug("queue_job " + str(self.resource_lock))
         #pdb.set_trace()
-        self.resource_lock.acquire()
-        msg = message("queue_job", "", job_url)
-        self.client_socket.send_pyobj(msg, zmq.NOBLOCK)
-        self.client_socket.recv_pyobj()
-        self.resource_lock.release()  
-        
+        counter = 0
+        result = None
+        success = False
+        while result ==None and counter < NUMBER_RETRIES:
+            with self.resource_lock:   
+                msg = message("queue_job", "", job_url)
+                try:
+                    self.client_socket.send_pyobj(msg, zmq.NOBLOCK)
+                    result = self.client_socket.recv_pyobj()
+                    success=True
+                except:
+                    traceback.print_exc(file=sys.stderr)                
+                
+           
+            if result == None:
+                counter = counter + 1
+                logging.error("RETRY %d queue_job"%counter)
+                if counter == NUMBER_RETRIES and success==False:
+                    self.__reset_client_socket()
+                time.sleep(2)
+            
+              
         # notify server
         if self.server_role == True:
             msg2 = message("notification", "", job_url)
-            self.push_socket.send_pyobj(msg2)             
+            self.push_socket.send_pyobj(msg2)
+        
+        return success             
              
         
     def dequeue_job(self, pilot_url):
         """ dequeue to new job  of a certain pilot """
+        counter = 0
         result = None
-        while result==None:
+        
+        while result==None and counter < NUMBER_RETRIES:
+            success = False
             # read object from queue        
             logging.debug("dequeue_job " + str(self.resource_lock))
-            self.resource_lock.acquire()
-            msg = message ("dequeue_job", pilot_url, "")
-            self.client_socket.send_pyobj(msg, zmq.NOBLOCK)
-            result = self.client_socket.recv_pyobj()
+            with self.resource_lock: 
+                msg = message ("dequeue_job", pilot_url, "")
+                try:
+                    self.client_socket.send_pyobj(msg, zmq.NOBLOCK)
+                    result = self.client_socket.recv_pyobj().value
+                    success = True
+                except:                
+                    traceback.print_exc(file=sys.stderr)
+                    counter = counter + 1
+                    logging.error("Error dequeuing job - Retry # %d"% counter)
+                    
+            if counter == NUMBER_RETRIES-1 and success == False:
+                self.__reset_client_socket()              
+                time.sleep(2)
+                continue # retry
             
-            if result == None:
-                logging.debug("wait for notification")
-                self.pull_socket.recv_pyobj()
-                logging.debug("received notification")
-        
-        self.resource_lock.release()
-        return result.value
+            #if counter == NUMBER_RETRIES and success == False:
+            #    return result
+            
+            # wait for next job notification
+            #if result == None:
+            #    logging.debug("wait for notification")
+            #    self.pull_socket.recv_pyobj()
+            #    logging.debug("received notification")
+            
+            
+        return result
     
     
     
@@ -246,14 +323,14 @@ class bigjob_coordination(object):
             command = msg.command        
             if command == "set_pilot_state":
                 self.pilot_states[msg.key] = msg.value
-                reply_socket.send_pyobj("")
+                reply_socket.send_pyobj("SUCCESS")
                 #self.service_socket.send("")            
             elif command == "get_pilot_state":
                 result = message ("", "", self.pilot_states[msg.key])
                 reply_socket.send_pyobj(result, zmq.NOBLOCK)                
             elif command == "set_job_state":
                 self.job_states[msg.key] = msg.value
-                reply_socket.send_pyobj("", zmq.NOBLOCK)       
+                reply_socket.send_pyobj("SUCCESS", zmq.NOBLOCK)       
             elif command == "get_job_state":
                 result=message("", "", self.job_states[msg.key])
                 reply_socket.send_pyobj(result, zmq.NOBLOCK)            
@@ -262,7 +339,7 @@ class bigjob_coordination(object):
                 reply_socket.send_pyobj(result, zmq.NOBLOCK)
             elif command == "queue_job":                
                 self.new_job_queue.put(msg.value)
-                reply_socket.send_pyobj("", zmq.NOBLOCK)                       
+                reply_socket.send_pyobj("SUCCESS", zmq.NOBLOCK)                       
             elif command == "dequeue_job":
                 new_job=None
                 try:
@@ -302,7 +379,7 @@ class bigjob_coordination(object):
             msg = service_socket.recv_pyobj()
             #logging.debug("Message received: " + str(msg))
             self.__handle_message(msg, service_socket)
-            logging.debug("Message handled: " + str(msg) + " stopped = " + str(self.stopped))
+            #logging.debug("Message handled: " + str(msg) + " stopped = " + str(self.stopped))
             #pdb.set_trace()
         logging.debug("__server thread stopped: " + str(self.stopped))
         self.has_stopped = True
@@ -315,6 +392,17 @@ class bigjob_coordination(object):
         self.stream.on_recv(self.__server_handler)
         logging.debug("Start event loop")
         self.loop.start()
+        
+    def __reset_client_socket(self):
+        logging.error("RESETING client socket")
+        with self.resource_lock: 
+            try:
+                self.client_socket.close()
+            except:
+                traceback.print_exc(file=sys.stderr)
+            self.client_socket = self.context.socket(zmq.REQ)
+            self.client_socket.connect(self.address)
+        
         
     def __shutdown(self):
         logging.debug("shutdown ZMQ")
