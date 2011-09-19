@@ -240,27 +240,14 @@ BIGJOB_PYTHON_DIR=BIGJOB_AGENT_DIR+"/python/"
 BOOTSTRAP_URL="https://svn.cct.lsu.edu/repos/saga-projects/applications/bigjob/trunk/generic/bootstrap/bigjob-bootstrap.py"
 BOOTSTRAP_FILE=BIGJOB_AGENT_DIR+"/bigjob-bootstrap.py"
 
-try:
-    import saga
-except:
-    print "SAGA and SAGA Python Bindings not found: BigJob only work w/ non-SAGA backends (e.g. Redis, ZMQ)."
-    print "Python version: " + os.system("python --version")
-    print "Python path: " + str(sys.path)
-    
-    
-
+try: import saga
+except: print "SAGA and SAGA Python Bindings not found: BigJob only work w/ non-SAGA backends (e.g. Redis, ZMQ).";print "Python version: " + os.system("python --version");print "Python path: " + str(sys.path)
+   
 sys.path.insert(0, os.getcwd() + "/../")
 sys.path.insert(0, os.getcwd() + "/../../")
     
-try:
-    import bigjob.bigjob_agent
-except:
-    print "BigJob not installed. Attempting to install it."
-    opener = urllib.FancyURLopener({})
-    opener.retrieve(BOOTSTRAP_URL, BOOTSTRAP_FILE)
-    os.system("python " + BOOTSTRAP_FILE + " " + BIGJOB_PYTHON_DIR)
-    activate_this = BIGJOB_PYTHON_DIR+'bin/activate_this.py'
-    execfile(activate_this, dict(__file__=activate_this))
+try: import bigjob.bigjob_agent
+except: print "BigJob not installed. Attempting to install it."; opener = urllib.FancyURLopener({}); opener.retrieve(BOOTSTRAP_URL, BOOTSTRAP_FILE); os.system("python " + BOOTSTRAP_FILE + " " + BIGJOB_PYTHON_DIR); activate_this = BIGJOB_PYTHON_DIR+'bin/activate_this.py'; execfile(activate_this, dict(__file__=activate_this))
 
 #try to import BJ once again
 import bigjob.bigjob_agent
