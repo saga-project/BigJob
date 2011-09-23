@@ -208,7 +208,7 @@ class bigjob(api.base.bigjob):
         # Submit job
         js = None	
         if userproxy != None and userproxy != '':
-      	    s = saga.session()
+            s = saga.session()
             os.environ["X509_USER_PROXY"]=userproxy
             ctx = saga.context("x509")
             ctx.set_attribute ("UserProxy", userproxy)

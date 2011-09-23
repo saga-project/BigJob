@@ -50,7 +50,22 @@ class bigjob_coordination(object):
         set server_connect_url to connect to a service (client)
         '''  
         self.stopped = False
-        self.has_stopped=False            
+        self.has_stopped=False        
+        
+        
+        # state managed by server
+        self.pilot_states = {}
+        self.job_ids = []
+        self.jobs = {}
+        self.job_states = {}
+        self.new_job_queue = Queue.Queue()
+        
+        # Lock for server and client to manage concurrent access
+        self.resource_lock = threading.Lock()
+        
+        # Client side queue
+        self.subjob_queue = Queue.Queue()
+            
         # set up ZMQ client / server communication
         self.context = zmq.Context()
        
@@ -85,7 +100,10 @@ class bigjob_coordination(object):
             self.address = urls[0]
             self.push_address = urls[1]           
             self.server_role = False
-            #self.address = "tcp://"+server+":"+str(server_port)
+            self.pilot_url = server_connect_url
+            
+           
+            
         
         logging.debug("Connect sockets to server: " + self.address + " push: " + self.push_address)
         # connect to REP server
@@ -96,17 +114,13 @@ class bigjob_coordination(object):
         self.pull_socket = self.context.socket(zmq.PULL)
         self.pull_socket.connect(self.push_address)
         
-        logging.debug("Connected to REP socket at: " + self.address + " and PUSH socket at: " + self.push_address)
-                
-        # state managed by server
-        self.pilot_states = {}
-        self.job_ids = []
-        self.jobs = {}
-        self.job_states = {}
-        self.new_job_queue = Queue.Queue()
+        if self.server_role==False:
+            self.notification_thread=threading.Thread(target=self.__wait_for_notifications)
+            self.notification_thread.daemon=True
+            self.notification_thread.start()
         
-        self.resource_lock = threading.Lock()
-       
+        
+        logging.debug("Connected to REP socket at: " + self.address + " and PUSH socket at: " + self.push_address)
         logging.debug("C&C ZMQ system initialized")
         
 
@@ -273,40 +287,8 @@ class bigjob_coordination(object):
         
     def dequeue_job(self, pilot_url):
         """ dequeue to new job  of a certain pilot """
-        counter = 0
-        result = None
+        return self.subjob_queue.get()
         
-        while result==None and counter < NUMBER_RETRIES:
-            success = False
-            # read object from queue        
-            logging.debug("dequeue_job " + str(self.resource_lock))
-            with self.resource_lock: 
-                msg = message ("dequeue_job", pilot_url, "")
-                try:
-                    self.client_socket.send_pyobj(msg, zmq.NOBLOCK)
-                    result = self.client_socket.recv_pyobj().value
-                    success = True
-                except:                
-                    traceback.print_exc(file=sys.stderr)
-                    counter = counter + 1
-                    logging.error("Error dequeuing job - Retry # %d"% counter)
-                    
-            if counter == NUMBER_RETRIES-1 and success == False:
-                self.__reset_client_socket()              
-                time.sleep(2)
-                continue # retry
-            
-            #if counter == NUMBER_RETRIES and success == False:
-            #    return result
-            
-            # wait for next job notification
-            #if result == None:
-            #    logging.debug("wait for notification")
-            #    self.pull_socket.recv_pyobj()
-            #    logging.debug("received notification")
-            
-            
-        return result
     
     
     
@@ -404,7 +386,46 @@ class bigjob_coordination(object):
             self.client_socket = self.context.socket(zmq.REQ)
             self.client_socket.connect(self.address)
         
+    def __wait_for_notifications(self):
+        """ waits for notifications and puts new jobs into queue """    
+        #while result==None and counter < NUMBER_RETRIES:
+        while self.stopped == False:
+            # read object from queue
+            with self.resource_lock: 
+                msg = message ("dequeue_job", self.pilot_url, "")
+                try:
+                    self.client_socket.send_pyobj(msg, zmq.NOBLOCK)
+                    result = self.client_socket.recv_pyobj().value
+                    self.subjob_queue.put(result)
+                    if result != None:       
+                        time.sleep(0.5)
+                        continue             
+                except:                
+                    traceback.print_exc(file=sys.stderr)                    
+                    logging.error("Error dequeuing job")
+                    time.sleep(2)
+                    continue
+                    
+            #if counter == NUMBER_RETRIES-1 and success == False:
+            #    self.__reset_client_socket()              
+            #    time.sleep(2)
+            #    continue # retry
+            
+            #if counter == NUMBER_RETRIES and success == False:
+            #    return result
+            
+            # wait for next job notification
+            if result == None:
+                logging.debug("wait for notification")
+                self.pull_socket.recv_pyobj()
+                logging.debug("received notification")
         
+        # wait for next job notification
+        #while self.stopped == False:
+        #    logging.debug("wait for notification")
+        #    self.pull_socket.recv_pyobj()
+        #    logging.debug("received notification")
+            
     def __shutdown(self):
         logging.debug("shutdown ZMQ")
         try:     

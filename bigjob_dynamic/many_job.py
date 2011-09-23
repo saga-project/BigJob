@@ -320,7 +320,7 @@ class many_job_service(object):
         
                     
 
-class sub_job():
+class sub_job(object):
     """ Class for controlling individual sub-jobs """
     
     def __init__(self, manyjob, job_description, advert_host):
@@ -332,7 +332,7 @@ class sub_job():
         self.job = None
 
     def run(self):
-         # select appropriate bigjob
+        # select appropriate bigjob
         self.job = self.manyjob.queue_subjob(self)
 
     def get_state(self):     
