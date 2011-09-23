@@ -8,10 +8,10 @@ try:
     import saga
 except:
     print "SAGA and SAGA Python Bindings not found: Please install SAGA first (http://saga.cct.lsu.edu)."
-    sys.exit(1)
+    #sys.exit(1)
     
 setup(name='BigJob',
-      version='0.2.74',
+      version='0.2.76',
       description='SAGA-based Pilot-Job Implementation',
       author='Andre Luckow',
       author_email='aluckow@cct.lsu.edu',
@@ -24,7 +24,7 @@ setup(name='BigJob',
       platforms = ('Unix', 'Linux', 'Mac OS'),
       packages=['bigjob', 'bigjob_dynamic', 'coordination', 'examples', 'api', 'bootstrap'],
       data_files=['bigjob_agent.conf'],
-      install_requires=['redis', 'uuid', 'threadpool', 'virtualenv'],
+      install_requires=['uuid', 'threadpool', 'virtualenv'],
       entry_points = {
         'console_scripts': [
             'test-bigjob = examples.example_local_generic:main',
