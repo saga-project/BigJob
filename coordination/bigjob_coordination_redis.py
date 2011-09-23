@@ -52,14 +52,14 @@ class bigjob_coordination(object):
                 server_port = int(server_and_port.split(":")[1])
         logging.debug("Connect to Redis: " + server + " Port: " + str(server_port))
         self.redis = Redis(host=server, port=server_port, db=0)
-        self.redis_pubsub = self.redis.pubsub() # redis pubsub client       
+        #self.redis_pubsub = self.redis.pubsub() # redis pubsub client       
         self.resource_lock = threading.RLock()
         self.pipe = self.redis.pipeline()
         try:
             self.redis.ping()
-        except Exception as e:
+        except:
             logging.error("Please start Redis server!")
-            raise e
+            raise Exception("Please start Redis server!")
         
     def get_address(self):
         return self.address
