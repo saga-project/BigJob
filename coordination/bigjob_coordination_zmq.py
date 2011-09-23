@@ -251,34 +251,30 @@ class bigjob_coordination(object):
     
     #####################################################################################
     # Distributed queue for sub-jobs
-    def queue_job(self, pilot_url, job_url):
-        """ queue new job to pilot """
-        logging.debug("queue_job " + str(self.resource_lock))
-        #pdb.set_trace()
-        counter = 0
-        result = None
-        success = False
-        while result ==None and counter < NUMBER_RETRIES:
-            with self.resource_lock:   
-                msg = message("queue_job", "", job_url)
-                try:
-                    self.client_socket.send_pyobj(msg, zmq.NOBLOCK)
-                    result = self.client_socket.recv_pyobj()
-                    success=True
-                except:
-                    traceback.print_exc(file=sys.stderr)                
-                
-           
-            if result == None:
-                counter = counter + 1
-                logging.error("RETRY %d queue_job"%counter)
-                if counter == NUMBER_RETRIES and success==False:
-                    self.__reset_client_socket()
-                time.sleep(2)
-            
-              
-        # notify server
-        if self.server_role == True:
+    def queue_job(self, pilot_url, job_url):        
+        if self.server_role == False: # just re-queue locally at client
+            self.subjob_queue.put(job_url)        
+        elif self.server_role == True:
+            """ queue new job to pilot """
+            logging.debug("queue_job " + str(self.resource_lock))
+            counter = 0
+            result = None
+            success = False
+            while result ==None and counter < NUMBER_RETRIES:
+                with self.resource_lock:   
+                    msg = message("queue_job", "", job_url)
+                    try:
+                        self.client_socket.send_pyobj(msg, zmq.NOBLOCK)
+                        result = self.client_socket.recv_pyobj()
+                        success=True
+                    except:
+                        traceback.print_exc(file=sys.stderr)     
+                if result == None:
+                    counter = counter + 1
+                    logging.error("RETRY %d queue_job"%counter)
+                    if counter == NUMBER_RETRIES and success==False:
+                        self.__reset_client_socket()
+                    time.sleep(2)
             msg2 = message("notification", "", job_url)
             self.push_socket.send_pyobj(msg2)
         
@@ -391,21 +387,24 @@ class bigjob_coordination(object):
         #while result==None and counter < NUMBER_RETRIES:
         while self.stopped == False:
             # read object from queue
-            with self.resource_lock: 
-                msg = message ("dequeue_job", self.pilot_url, "")
-                try:
+            logging.debug(" __wait_for_notifications: polling for new jobs - stopped: " + str(self.stopped))
+            msg = message ("dequeue_job", self.pilot_url, "")
+            try:
+                with self.resource_lock: 
                     self.client_socket.send_pyobj(msg, zmq.NOBLOCK)
                     result = self.client_socket.recv_pyobj().value
+                logging.debug(" __wait_for_notifications: received new jobs " + str(result))
+                if result != None:
                     self.subjob_queue.put(result)
-                    if result != None:       
-                        time.sleep(0.5)
-                        continue             
-                except:                
-                    traceback.print_exc(file=sys.stderr)                    
-                    logging.error("Error dequeuing job")
-                    time.sleep(2)
-                    continue
-                    
+                    time.sleep(0.2)
+                    continue                                              
+            except:                
+                traceback.print_exc(file=sys.stderr)                    
+                logging.error("Error dequeuing job")                  
+                time.sleep(1)
+                continue   
+            logging.debug(" __wait_for_notifications: End Loop - stopped " + str(self.stopped))
+                
             #if counter == NUMBER_RETRIES-1 and success == False:
             #    self.__reset_client_socket()              
             #    time.sleep(2)
@@ -414,6 +413,7 @@ class bigjob_coordination(object):
             #if counter == NUMBER_RETRIES and success == False:
             #    return result
             
+            logging.debug(" __wait_for_notifications: wait for notification")
             # wait for next job notification
             if result == None:
                 logging.debug("wait for notification")

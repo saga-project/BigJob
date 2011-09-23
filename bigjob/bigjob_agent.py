@@ -35,7 +35,7 @@ import subprocess
 
 """ Config parameters (will move to config file in future) """
 CONFIG_FILE="bigjob_agent.conf"
-THREAD_POOL_SIZE=2
+THREAD_POOL_SIZE=4
 APPLICATION_NAME="bigjob"
 
 class bigjob_agent:
@@ -105,7 +105,7 @@ class bigjob_agent:
         self.coordination = bigjob_coordination(server_connect_url=self.coordination_url)
     
         # update state of pilot job to running
-        self.coordination.set_pilot_state(self.base_url, str(bigjob.state.Running), "false")
+        self.coordination.set_pilot_state(self.base_url, str(bigjob.state.Running), False)
 
         
         ##############################################################################
@@ -408,7 +408,8 @@ class bigjob_agent:
         return homedir  + "/advert-launcher-machines-"+ job_id
         
     def dequeue_new_jobs(self):	    
-        """Subscribe to new jobs from Redis. """                
+        """Subscribe to new jobs from Redis. """ 
+        job_counter = 0               
         while self.is_stopped(self.base_url)==False:     
             if len(self.freenodes)==0:
                 time.sleep(3)
@@ -420,6 +421,11 @@ class bigjob_agent:
                 continue
             if job_url=="STOP":
                 break
+            
+            job_counter = job_counter + 1            
+            if (job_counter % (THREAD_POOL_SIZE))==0: # ensure that threadpool is not too overloaded
+                self.threadpool.wait()
+            
             request = WorkRequest(self.start_new_job_in_thread, [job_url])
             self.threadpool.putRequest(request)      
        
@@ -436,9 +442,16 @@ class bigjob_agent:
         """evaluates job dir, sanity checks, executes job """
         #pdb.set_trace()
         if job_url != None:
-            job_dict = self.coordination.get_job(job_url)
-            logging.debug("start job: " + job_url + " data: " + str(job_dict))  
-            #pdb.set_trace()          
+            failed = False;
+            try:
+                job_dict = self.coordination.get_job(job_url)
+            except:
+                failed=True
+                
+            if job_dict==None or failed==True:
+                self.coordination.queue_job(self.pilot_url, job_url)
+                
+            logging.debug("start job: " + job_url + " data: " + str(job_dict))
             if(job_dict["state"]==str(bigjob.state.Unknown)):
                 job_dict["state"]=str(bigjob.state.New)
                 self.coordination.set_job_state(job_url, str(bigjob.state.New))
