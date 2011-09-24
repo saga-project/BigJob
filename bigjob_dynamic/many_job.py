@@ -195,9 +195,12 @@ class many_job_service(object):
             state = bigjob.get_state_detail()
             logging.debug("Big Job: " + bigjob_url + " Cores: " + "%s"%free_cores + "/" 
                           + str(int(i["processes_per_node"])*int(i["number_nodes"])) 
-                          + " State: " + str(state) + " Terminated: " + str(i["to_be_terminated"]))
+                          + " State: " + str(state) + " Terminated: " + str(i["to_be_terminated"])
+                          + " #Required Cores: " + subjob.job_description.number_of_processes
+                          )
             if (state.lower() == "running" and free_cores >= int(subjob.job_description.number_of_processes) 
                 and i["to_be_terminated"]==False):
+                logging.debug("FOUND match - dispatch to BigJob: " + bigjob_url)
                 free_cores = i["free_cores"]
                 free_cores = free_cores - int(subjob.job_description.number_of_processes)
                 i["free_cores"]=free_cores
