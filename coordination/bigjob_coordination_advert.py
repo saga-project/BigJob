@@ -90,7 +90,7 @@ class bigjob_coordination(object):
     def delete_pilot(self, pilot_url):
         pilot_url = self.get_url(pilot_url)
         pilot_dir = saga.advert.directory(saga.url(pilot_url), saga.advert.Create | saga.advert.CreateParents | saga.advert.ReadWrite)
-        pilot_url.remove(pilot_url, saga.name_space.Recursive)    
+        pilot_dir.remove(pilot_url, saga.name_space.Recursive)    
     
     #####################################################################################
     # Sub-Job State    
