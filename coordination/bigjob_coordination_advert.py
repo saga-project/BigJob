@@ -71,7 +71,7 @@ class bigjob_coordination(object):
         
     def get_pilot_state(self, pilot_url):
         pilot_url = self.get_url(pilot_url)
-        pilot_dir = saga.advert.directory(saga.url(pilot_url), saga.advert.Create | saga.advert.CreateParents | saga.advert.ReadWrite)
+        pilot_dir = saga.advert.directory(saga.url(pilot_url), saga.advert.Read)
         state = pilot_dir.get_attribute("state")
         stopped = pilot_dir.get_attribute("stopped") 
         if stopped == "false" or stopped == "False":
@@ -104,7 +104,7 @@ class bigjob_coordination(object):
         
     def get_job_state(self, job_url):        
         job_url = self.get_url(job_url)        
-        job_dir = saga.advert.directory(saga.url(job_url), saga.advert.Create | saga.advert.CreateParents | saga.advert.ReadWrite)
+        job_dir = saga.advert.directory(saga.url(job_url), saga.advert.Read)
         state = job_dir.get_attribute("state")  
         #logging.debug("Get state of job: " + str(job_url) + " state: " + str(state))
         return state      
@@ -129,7 +129,7 @@ class bigjob_coordination(object):
         #                                saga.advert.Create | saga.advert.CreateParents | saga.advert.ReadWrite)
         job_url = self.get_url(job_url)
         job_desc_entry = saga.advert.entry(saga.url(job_url+"/job-description"),
-                                           saga.advert.Create | saga.advert.CreateParents | saga.advert.ReadWrite)
+                                           saga.advert.Read)
         job_dict = json.loads(job_desc_entry.retrieve_string())
         return job_dict    
     
