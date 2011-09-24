@@ -427,7 +427,11 @@ class bigjob_agent:
                 self.threadpool.wait()
             
             request = WorkRequest(self.start_new_job_in_thread, [job_url])
-            self.threadpool.putRequest(request)      
+            self.threadpool.putRequest(request)
+            
+        # wait for termination of Worker Threads
+        self.threadpool.wait()   
+        logging.debug("Terminating Agent - Dequeue Sub-Jobs Thread")   
        
     #def poll_jobs(self):       
     #    self.threadpool.wait()
@@ -514,8 +518,8 @@ class bigjob_agent:
                 self.failed_polls=self.failed_polls+1
                 if self.failed_polls>3: # after 3 failed attempts exit
                     break
-        logging.debug("Terminating Agent. Calling sys.exit")
-        sys.exit(0)
+        logging.debug("Terminating Agent - Background Thread")
+        
     
     def is_stopped(self, base_url):
         state = None
