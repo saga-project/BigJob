@@ -74,7 +74,7 @@ class bigjob_coordination(object):
         pilot_dir = saga.advert.directory(saga.url(pilot_url), saga.advert.Create | saga.advert.CreateParents | saga.advert.ReadWrite)
         state = pilot_dir.get_attribute("state")
         stopped = pilot_dir.get_attribute("stopped") 
-        if stopped == "false":
+        if stopped == "false" or stopped == "False":
             return {"state":state, "stopped":False}
         else:
             return {"state":state, "stopped":True}        
