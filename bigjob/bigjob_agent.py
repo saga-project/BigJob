@@ -493,8 +493,7 @@ class bigjob_agent:
     
     def print_job(self, job_url):
         job_dict = self.coordination.get_job(job_url)
-        return  ("Job: " + job_url + " Working Dir: " 
-                 + job_dict["WorkingDirectory"] 
+        return  ("Job: " + job_url 
                  + " Excutable: " + job_dict["Executable"])
                                 
                             
