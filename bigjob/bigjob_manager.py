@@ -168,40 +168,49 @@ class bigjob(api.base.bigjob):
  
         # create job description
         jd = saga.job.description()
-        jd.number_of_processes = str(number_nodes)
-        jd.processes_per_host=str(processes_per_node)
-        jd.spmd_variation = "single"
-        #jd.arguments = [bigjob_agent_executable, self.coordination.get_address(), self.pilot_url]
         
-        bootstrap_script = self.generate_bootstrap_script(self.coordination.get_address(), self.pilot_url)
         
         print "Adaptor specific modifications: "  + str(lrms_saga_url.scheme)
-        if lrms_saga_url.scheme == "gram":
-            bootstrap_script = self.escape_rsl(bootstrap_script)
-        elif lrms_saga_url.scheme == "pbspro":
-            print "Using PBSPro"
-            bootstrap_script = self.escape_pbs(bootstrap_script)
-        logging.debug(bootstrap_script)
-        jd.arguments = ["-c", bootstrap_script]
-        jd.executable = "python"
-        #jd.executable = bigjob_agent_executable
-        if queue != None:
-            jd.queue = queue
-        if project !=None:
-            jd.job_project = [project]
-        if walltime!=None:
-            jd.wall_time_limit=str(walltime)
+        if lrms_saga_url.scheme == "condorg":
 
-        # XXX Isn't the working directory about the remote site?
-        if working_directory != None:
-            if not os.path.isdir(working_directory) and lrms_saga_url.scheme=="fork":
-                os.mkdir(working_directory)
-            jd.working_directory = working_directory
-        else:
-            jd.working_directory = "$(HOME)"
+            jd.arguments = [ "-a", self.coordination.get_address(), "-b",self.pilot_url]
+            print "\n\n-a", self.coordination.get_address(),"-b", self.pilot_url
+            agent_exe = os.path.abspath(os.path.join(os.getcwd(),"..","bootstrap","bj_agent.py"))
+            print agent_exe 
+            jd.executable = agent_exe
             
-        print "Working directory: " + jd.working_directory
+        else:
+            bootstrap_script = self.generate_bootstrap_script(self.coordination.get_address(), self.pilot_url)
+            if lrms_saga_url.scheme == "gram":
+                bootstrap_script = self.escape_rsl(bootstrap_script)
+            elif lrms_saga_url.scheme == "pbspro":
+                print "Using PBSPro"
+                bootstrap_script = self.escape_pbs(bootstrap_script)
         
+            #logging.debug(bootstrap_script)
+            jd.number_of_processes = str(number_nodes)
+            jd.processes_per_host=str(processes_per_node)
+            jd.spmd_variation = "single"
+            #jd.arguments = [bigjob_agent_executable, self.coordination.get_address(), self.pilot_url]
+            jd.arguments = ["-c", bootstrap_script]
+            jd.executable = "python"
+            if queue != None:
+                jd.queue = queue
+            if project !=None:
+                jd.job_project = [project]
+            if walltime!=None:
+                jd.wall_time_limit=str(walltime)
+        
+            # XXX Isn't the working directory about the remote site?
+            if working_directory != None:
+                if not os.path.isdir(working_directory) and lrms_saga_url.scheme=="fork":
+                    os.mkdir(working_directory)
+                jd.working_directory = working_directory
+            else:
+                jd.working_directory = "$(HOME)"
+    
+            print "Working directory: " + jd.working_directory
+         
         jd.output = "stdout-bigjob_agent-" + str(self.uuid) + ".txt"
         jd.error = "stderr-bigjob_agent-" + str(self.uuid) + ".txt"
            
@@ -236,27 +245,29 @@ start_time = time.time()
 home = os.environ["HOME"]
 
 BIGJOB_AGENT_DIR= home+ "/.bigjob"
+if not os.path.exists(BIGJOB_AGENT_DIR):
+    os.mkdir (BIGJOB_AGENT_DIR)
 BIGJOB_PYTHON_DIR=BIGJOB_AGENT_DIR+"/python/"
 BOOTSTRAP_URL="https://svn.cct.lsu.edu/repos/saga-projects/applications/bigjob/trunk/generic/bootstrap/bigjob-bootstrap.py"
 BOOTSTRAP_FILE=BIGJOB_AGENT_DIR+"/bigjob-bootstrap.py"
 
 try: import saga
-except: print "SAGA and SAGA Python Bindings not found: BigJob only work w/ non-SAGA backends (e.g. Redis, ZMQ).";print "Python version: " + os.system("python --version");print "Python path: " + str(sys.path)
-   
+except: print "SAGA and SAGA Python Bindings not found: BigJob only work w/ non-SAGA backends (e.g. Redis, ZMQ).";print "Python version: ",  os.system("python -V");print "Python path: " + str(sys.path)
+
 sys.path.insert(0, os.getcwd() + "/../")
 sys.path.insert(0, os.getcwd() + "/../../")
-    
+
 try: import bigjob.bigjob_agent
-except: print "BigJob not installed. Attempting to install it."; opener = urllib.FancyURLopener({}); opener.retrieve(BOOTSTRAP_URL, BOOTSTRAP_FILE); os.system("python " + BOOTSTRAP_FILE + " " + BIGJOB_PYTHON_DIR); activate_this = BIGJOB_PYTHON_DIR+'bin/activate_this.py'; execfile(activate_this, dict(__file__=activate_this))
+except: print "BigJob not installed. Attempting to install it."; opener = urllib.FancyURLopener({}); opener.retrieve(BOOTSTRAP_URL, BOOTSTRAP_FILE); os.system("/usr/bin/python " + BOOTSTRAP_FILE + " " + BIGJOB_PYTHON_DIR); activate_this = BIGJOB_PYTHON_DIR+'bin/activate_this.py'; execfile(activate_this, dict(__file__=activate_this))
 
 #try to import BJ once again
 import bigjob.bigjob_agent
-    
+
 # execute bj agent
 args = ["bigjob_agent.py", \"%s\", \"%s\"]
 print "Bootstrap time: " + str(time.time()-start_time)
 print "Starting BigJob Agents with following args: " + str(args)
-bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)           
+bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
 """ % (coordination_host, coordination_namespace))
         return script
     
