@@ -175,7 +175,7 @@ class bigjob(api.base.bigjob):
 
             jd.arguments = [ "-a", self.coordination.get_address(), "-b",self.pilot_url]
             print "\n\n-a", self.coordination.get_address(),"-b", self.pilot_url
-            agent_exe = os.path.abspath(os.path.join(os.getcwd(),"..","bootstrap","bj_agent.py"))
+            agent_exe = os.path.abspath(os.path.join(os.getcwd(),"..","bootstrap","bigjob-condor-bootstrap.py"))
             print agent_exe 
             jd.executable = agent_exe
             
