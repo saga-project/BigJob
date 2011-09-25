@@ -18,7 +18,7 @@ start_time = time.time()
 
 home = os.environ["HOME"]
 
-BIGJOB_AGENT_DIR= home+ "/.bigjob5"
+BIGJOB_AGENT_DIR= home+ "/.bigjob"
 if not os.path.exists(BIGJOB_AGENT_DIR):
     os.mkdir (BIGJOB_AGENT_DIR)
 BIGJOB_PYTHON_DIR=BIGJOB_AGENT_DIR+"/python/"
