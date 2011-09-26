@@ -43,4 +43,4 @@ args = ["bigjob_agent.py", options.arg1 , options.arg2]
 #args = ["bigjob_agent.py", "aa" , "ed"]
 print "Bootstrap time: " + str(time.time()-start_time)
 print "Starting BigJob Agents with following args: " + str(args)
-bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)           
+bigjob_agent = bigjob.bigjob_agent_condor.bigjob_agent(args)           

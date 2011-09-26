@@ -296,7 +296,7 @@ class bigjob_agent:
                 logging.debug("started " + command)
                 
                 #for condor debugging 
-                dirlist = os.listdir(workingdirecotry)
+                dirlist = os.listdir(workingdirectory)
                 print dirlist
                 os.system("ls;pwd")
                 
