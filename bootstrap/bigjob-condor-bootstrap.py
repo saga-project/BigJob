@@ -32,7 +32,7 @@ except: print "SAGA and SAGA Python Bindings not found: BigJob only work w/ non-
 sys.path.insert(0, os.getcwd() + "/../")
 sys.path.insert(0, os.getcwd() + "/../../")
     
-try: import bigjob.bigjob_agent
+try: import bigjob.bigjob_agent_condor
 except: print "BigJob not installed. Attempting to install it."; opener = urllib.FancyURLopener({}); opener.retrieve(BOOTSTRAP_URL, BOOTSTRAP_FILE); os.system("/usr/bin/python " + BOOTSTRAP_FILE + " " + BIGJOB_PYTHON_DIR); activate_this = BIGJOB_PYTHON_DIR+'bin/activate_this.py'; execfile(activate_this, dict(__file__=activate_this))
 
 #try to import BJ once again
