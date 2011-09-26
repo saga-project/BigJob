@@ -238,7 +238,8 @@ class bigjob_agent:
                         env = i.split("=")
                         environment[env[0]]=env[1] + ":" +  environment[env[0]]                        
                         
-                environment["PATH"]= workingdirectory + environment["PATH"]   
+                environment["PATH"]= workingdirectory + ":"+environment["PATH"]   
+                print "environment[PATH]", environment["PATH"]
                 executable = job_dict["Executable"]
                 
                 
@@ -286,7 +287,7 @@ class bigjob_agent:
                     #if (host != socket.gethostname()):
                     #    command ="ssh  " + host + " \"cd " + workingdirectory + "; " + command +"\""     
                 else:
-                    command ="ssh  " + host + " \"cd " + workingdirectory + "; " + command +"\""     
+                    command ="ssh  " + host + " \"cd " + workingdirectory + "; export PATH=$PATH:" + workingdirectory + ";" +command +"\""     
                 shell = self.SHELL 
                 logging.debug("execute: " + command + " in " + workingdirectory + " from: " + str(socket.gethostname()) + " (Shell: " + shell +")")
                 # bash works fine for launching on QB but fails for Abe :-(
