@@ -11,7 +11,7 @@ except:
     #sys.exit(1)
     
 setup(name='BigJob',
-      version='0.3.02',
+      version='0.3.03',
       description='SAGA-based Pilot-Job Implementation',
       author='Andre Luckow',
       author_email='aluckow@cct.lsu.edu',
