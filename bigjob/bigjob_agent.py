@@ -493,8 +493,7 @@ class bigjob_agent:
     
     def print_job(self, job_url):
         job_dict = self.coordination.get_job(job_url)
-        return  ("Job: " + job_url 
-                 + " Excutable: " + job_dict["Executable"])
+        return  ("Job: " + job_url  + " Excutable: " + job_dict["Executable"])
                                 
                             
     def start_background_thread(self):        

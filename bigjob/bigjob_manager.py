@@ -172,7 +172,6 @@ class bigjob(api.base.bigjob):
         
         print "Adaptor specific modifications: "  + str(lrms_saga_url.scheme)
         if lrms_saga_url.scheme == "condorg":
-
             jd.arguments = [ "-a", self.coordination.get_address(), "-b",self.pilot_url]
             print "\n\n-a", self.coordination.get_address(),"-b", self.pilot_url
             agent_exe = os.path.abspath(os.path.join(os.getcwd(),"..","bootstrap","bigjob-condor-bootstrap.py"))
@@ -245,8 +244,7 @@ start_time = time.time()
 home = os.environ["HOME"]
 
 BIGJOB_AGENT_DIR= home+ "/.bigjob"
-if not os.path.exists(BIGJOB_AGENT_DIR):
-    os.mkdir (BIGJOB_AGENT_DIR)
+if not os.path.exists(BIGJOB_AGENT_DIR): os.mkdir (BIGJOB_AGENT_DIR)
 BIGJOB_PYTHON_DIR=BIGJOB_AGENT_DIR+"/python/"
 BOOTSTRAP_URL="https://svn.cct.lsu.edu/repos/saga-projects/applications/bigjob/trunk/generic/bootstrap/bigjob-bootstrap.py"
 BOOTSTRAP_FILE=BIGJOB_AGENT_DIR+"/bigjob-bootstrap.py"
