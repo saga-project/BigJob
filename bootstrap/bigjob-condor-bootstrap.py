@@ -16,7 +16,7 @@ if not (options.arg1) or not options.arg2 :
    pass
 start_time = time.time()
 
-home = os.environ["HOME"]
+home = os.getcwd()
 
 BIGJOB_AGENT_DIR= home+ "/.bigjob"
 if not os.path.exists(BIGJOB_AGENT_DIR):
@@ -39,7 +39,7 @@ except: print "BigJob not installed. Attempting to install it."; opener = urllib
 import bigjob.bigjob_agent_condor
     
 # execute bj agent
-args = ["bigjob_agent.py", options.arg1 , options.arg2]
+args = ["bigjob_agent_condor.py", options.arg1 , options.arg2]
 #args = ["bigjob_agent.py", "aa" , "ed"]
 print "Bootstrap time: " + str(time.time()-start_time)
 print "Starting BigJob Agents with following args: " + str(args)
