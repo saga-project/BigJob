@@ -287,7 +287,7 @@ class bigjob_agent:
                     #if (host != socket.gethostname()):
                     #    command ="ssh  " + host + " \"cd " + workingdirectory + "; " + command +"\""     
                 else:
-                    command ="ssh  " + host + " \"cd " + workingdirectory + "; export PATH=$PATH:" + workingdirectory + ";" +command +"\""     
+                    command ="ssh  " + host + " 'cd " + workingdirectory + "; export PATH=$PATH:" + workingdirectory + ";" +workingdirectory+"/" +command +"'"     
                 shell = self.SHELL 
                 logging.debug("execute: " + command + " in " + workingdirectory + " from: " + str(socket.gethostname()) + " (Shell: " + shell +")")
                 # bash works fine for launching on QB but fails for Abe :-(
