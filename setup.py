@@ -11,7 +11,7 @@ except:
     #sys.exit(1)
     
 setup(name='BigJob',
-      version='0.3.08',
+      version='0.3.09',
       description='SAGA-based Pilot-Job Implementation',
       author='Andre Luckow',
       author_email='aluckow@cct.lsu.edu',
@@ -22,7 +22,7 @@ setup(name='BigJob',
                     'Topic :: Utilities',
                     ],
       platforms = ('Unix', 'Linux', 'Mac OS'),
-      packages=['bigjob', 'bigjob_dynamic', 'coordination', 'examples', 'api', 'bootstrap'],
+      packages=['bigjob', 'bigjob_dynamic', 'coordination', 'examples', 'api', 'bootstrap', 'troy'],
       data_files=['bigjob_agent.conf'],
       install_requires=['uuid', 'threadpool', 'virtualenv', 'redis==2.2.4'],
       entry_points = {
