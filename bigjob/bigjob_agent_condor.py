@@ -255,8 +255,8 @@ class bigjob_agent:
                 self.jobs.append(job_url)
                 
                 # create stdout/stderr file descriptors
-                output_file = os.path.abspath(output)
-                error_file = os.path.abspath(error)
+                output_file = os.path.join(workingdirectory, output)
+                error_file = os.path.join(workingdirectory, error)
                 logging.debug("stdout: " + output_file + " stderr: " + error_file + " env: " + str(environment))
                 stdout = open(output_file, "w")
                 stderr = open(error_file, "w")
@@ -287,7 +287,7 @@ class bigjob_agent:
                     #if (host != socket.gethostname()):
                     #    command ="ssh  " + host + " \"cd " + workingdirectory + "; " + command +"\""     
                 else:
-                    command ="ssh  " + host + " 'cd " + workingdirectory + "; export PATH=$PATH:" + workingdirectory + ";" +workingdirectory+"/" +command +"'"     
+                    command = "ssh "+ host +" \" cd " + workingdirectory + "; export PATH=$PATH:" + workingdirectory + ";" +command +"\""    
                 shell = self.SHELL 
                 logging.debug("execute: " + command + " in " + workingdirectory + " from: " + str(socket.gethostname()) + " (Shell: " + shell +")")
                 # bash works fine for launching on QB but fails for Abe :-(
@@ -443,7 +443,6 @@ class bigjob_agent:
         # wait for termination of Worker Threads
         self.threadpool.wait()   
         logging.debug("Terminating Agent - Dequeue Sub-Jobs Thread")   
-       
     #def poll_jobs(self):       
     #    self.threadpool.wait()
     #    new_jobs=self.redis.keys(self.base_url+":*")   
@@ -529,7 +528,6 @@ class bigjob_agent:
                 if self.failed_polls>3: # after 3 failed attempts exit
                     break
         logging.debug("Terminating Agent - Background Thread")
-        
     
     def is_stopped(self, base_url):
         state = None
