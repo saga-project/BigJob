@@ -4,19 +4,30 @@
 import saga
 import os
 import time
-
-
 # BigJob implementation can be swapped here by importing another implementation,
 # e.g. condor, cloud, azure
 import sys
-
 sys.path.insert(0, os.getcwd() + "/../")
 
-# configurationg
-COORDINATION_URL = "advert://localhost"
+# configuration
+""" This variable defines the coordination system that is used by BigJob
+    e.g. 
+        advert://localhost (SAGA/Advert SQLITE)
+        advert://advert.cct.lsu.edu:8080 (SAGA/Advert POSTGRESQL)
+        advert://advert.cct.lsu.edu:5432 (SAGA/Advert POSTGRESQL)
+        redis://localhost:6379 (Redis at localhost)
+        tcp://localhost (ZMQ)
+        tcp://* (ZMQ - listening to all interfaces)
+"""
+
+### EDIT COORDINATION_URL to point to advert server.  
+COORDINATION_URL = "advert://advert.cct.lsu.edu:5432/"
+#COORDINATION_URL = "advert://advert.cct.lsu.edu:8080/"
 
 from bigjob.bigjob_manager import bigjob, subjob
 
+
+### EDIT based on the number of jobs you want to submit
 NUMBER_JOBS=8
 
 def has_finished(state):
@@ -30,32 +41,37 @@ def has_finished(state):
 """ Test Job Submission via Advert """
 if __name__ == "__main__":
 
-    print "BigJob load test with " + str(NUMBER_JOBS) + " jobs."
     starttime=time.time()
+
     ##########################################################################################
-    # Start BigJob
-    # Parameter for BigJob
-    #bigjob_agent = BIGJOB_HOME + "/bigjob_agent_launcher.sh" # path to agent
-    bigjob_agent = os.getcwd() + "/../bigjob_agent_launcher.sh"
-    #bigjob_agent = "/bin/echo"
-    nodes = 1 # number nodes for agent
-    lrms_url = "fork://localhost" # resource url
+    # Edit parameters for BigJob
+    queue=None # if None default queue is used
+    project=None # if None default allocation is used 
+    walltime=10
+    processes_per_node=4
+    number_of_processes = 8
     workingdirectory=os.getcwd() +"/agent"  # working directory for agent
     userproxy = None # userproxy (not supported yet due to context issue w/ SAGA)
 
-    # start pilot job (bigjob_agent)
-    print "Start Pilot Job/BigJob: " + bigjob_agent + " at: " + lrms_url
+    #lrms_url = "fork://localhost" # resource url to run the jobs on localhost
+    lrms_url = "gram://eric1.loni.org/jobmanager-pbs" # globus resource url used when globus is used. (LONI)
+    #lrms_url = "PBSPro://localhost" # pbspro resource url used when pbspro scheduling system is used.(Futuregrid or LSU Machines)
+    #lrms_url = "xt5torque://localhost" # torque resource url 
+
+    ##########################################################################################
+
+    print "Start Pilot Job/BigJob at: " + lrms_url
     bj = bigjob(COORDINATION_URL)
-    bj.start_pilot_job(lrms_url,
-                            bigjob_agent,
-                            nodes,
-                            None,
-                            None,
-                            workingdirectory, 
-                            userproxy,
-                            None)
-        
-    
+    bj.start_pilot_job( lrms_url,
+                        None,
+                        number_of_processes,
+                        queue,
+                        project,
+                        workingdirectory,
+                        userproxy,
+                        walltime,
+                        processes_per_node)
+
     print "Pilot Job/BigJob URL: " + bj.pilot_url + " State: " + str(bj.get_state())
 
     ##########################################################################################
