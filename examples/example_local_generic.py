@@ -5,10 +5,10 @@ import saga
 import os
 import time
 import pdb
+import sys
 
 # BigJob implementation can be swapped here by importing another implementation,
 # e.g. condor, cloud, azure
-import sys
 
 
 # configuration
@@ -16,11 +16,15 @@ import sys
     e.g. 
         advert://localhost (SAGA/Advert SQLITE)
         advert://advert.cct.lsu.edu:8080 (SAGA/Advert POSTGRESQL)
+        advert://advert.cct.lsu.edu:5432 (SAGA/Advert POSTGRESQL)
         redis://localhost:6379 (Redis at localhost)
         tcp://localhost (ZMQ)
         tcp://* (ZMQ - listening to all interfaces)
 """
-COORDINATION_URL = "advert://localhost/"
+
+### EDIT COORDINATION_URL to point to advert server.
+
+COORDINATION_URL = "advert://advert.cct.lsu.edu:5432/"
 #COORDINATION_URL = "advert://advert.cct.lsu.edu:8080/"
 #COORDINATION_URL = "tcp://*"
 #COORDINATION_URL = "redis://localhost"
@@ -31,26 +35,36 @@ sys.path.insert(0, os.getcwd() + "/../")
 from bigjob.bigjob_manager import bigjob, subjob
 
 def main():
-    ##########################################################################################
     # Start BigJob
-    # Parameter for BigJob
-    nodes = 1 # number nodes for agent
-    lrms_url = "fork://localhost" # resource url
+
+    ##########################################################################################
+    # Edit parameters for BigJob
+    queue=None # if None default queue is used
+    project=None # if None default allocation is used 
+    walltime=10
+    processes_per_node=4
+    number_of_processes = 8
     workingdirectory=os.getcwd() +"/agent"  # working directory for agent
     userproxy = None # userproxy (not supported yet due to context issue w/ SAGA)
 
-    # start pilot job (bigjob_agent)
+    #lrms_url = "fork://localhost" # resource url to run the jobs on localhost
+    lrms_url = "gram://eric1.loni.org/jobmanager-pbs" # globus resource url used when globus is used. (LONI)
+    #lrms_url = "PBSPro://localhost" # pbspro resource url used when pbspro scheduling system is used.(Futuregrid or LSU Machines)
+    #lrms_url = "xt5torque://localhost" # torque resource url 
+    
+    ##########################################################################################
+
     print "Start Pilot Job/BigJob at: " + lrms_url
     bj = bigjob(COORDINATION_URL)
-    bj.start_pilot_job(lrms_url,
-                            None,
-                            nodes,
-                            None,
-                            None,
-                            workingdirectory, 
-                            userproxy,
-                            None)
-        
+    bj.start_pilot_job( lrms_url,
+                        None,
+                        number_of_processes,
+                        queue,
+                        project,
+                        workingdirectory,
+                        userproxy,
+                        walltime,
+                        processes_per_node)
     
     print "Pilot Job/BigJob URL: " + bj.pilot_url + " State: " + str(bj.get_state())
 
@@ -67,6 +81,7 @@ def main():
     sj = subjob()
     sj.submit_job(bj.pilot_url, jd)
     
+    #########################################
     # busy wait for completion
     while 1:
         state = str(sj.get_state())
@@ -75,7 +90,6 @@ def main():
             break
         time.sleep(2)
 
-    #time.sleep(30)
     ##########################################################################################
     # Cleanup - stop BigJob
     bj.cancel()
