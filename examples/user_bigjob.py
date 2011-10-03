@@ -74,15 +74,28 @@ if __name__ == "__main__":
         #resource_list.append( {"resource_url" : "gram://qb1.loni.org/jobmanager-pbs", "number_nodes" : "64", "allocation" : "<your allocation>", "queue" : "workq", "bigjob_agent": (os.getcwd() + "/bigjob_agent_launcher.sh") , "working_directory": (os.getcwd() + "/agent"), "walltime":10 })
         #resource_list.append({"resource_url" : "gram://oliver1.loni.org/jobmanager-pbs", "number_nodes" : "1", "processes_per_node":"4", "allocation" : None, "queue" : None, "bigjob_agent": (BIGJOB_HOME + "/bigjob_agent_launcher.sh"), "working_directory": (os.getcwd() + "/agent"), "walltime":30 }) 
         #resource_list.append({"resource_url" : "gram://eric1.loni.org/jobmanager-pbs", "number_nodes" : "2", "processes_per_node":"4", "allocation" : None, "queue" : "checkpt", "bigjob_agent": (BIGJOB_HOME + "/bigjob_agent_launcher.sh"), "working_directory": (os.getcwd() + "/agent"), "walltime":4320 }) 
-
-        resource_list.append({"resource_url" : "fork://localhost", 
-                              "number_nodes" : "1", "processes_per_node":"4", 
+       
+        # resource_url - Machine on which you want to run the job.
+        # number_of_processes - total number of processes requested on that machine.
+        # processes_per_node
+        # allocation - if None then default allocation is used.
+        # queue - if None then default queue is used.
+        
+        resource_list.append({"resource_url" : "gram://eric1.loni.org/jobmanager-pbs", 
+                              "number_of_processes" : "4", "processes_per_node":"4", 
                               "allocation" : None, "queue" : "checkpt", 
                               "working_directory": (os.getcwd() + "/agent"), 
-                              "walltime":4320 }) 
+                              "walltime":20 }) 
+
+        resource_list.append({"resource_url" : "gram://eric1.loni.org/jobmanager-pbs", 
+                              "number_of_processes" : "4", "processes_per_node":"4", 
+                              "allocation" : None, "queue" : "checkpt", 
+                              "working_directory": (os.getcwd() + "/agent"), 
+                              "walltime":20 }) 
+
 
         print "Create manyjob service "
-        mjs = many_job_service(resource_list, "advert://advert.cct.lsu.edu")
+        mjs = many_job_service(resource_list, COORDINATION_URL)
         jobs = []
         job_start_times = {}
         job_states = {}
