@@ -97,7 +97,7 @@ class many_job_service(object):
 
         bj.start_pilot_job(gram_url,
                            None,
-                           bj_dict["number_nodes"],
+                           bj_dict["number_of_processes"],
                            bj_dict["queue"],
                            bj_dict["allocation"],
                            working_directory, 
@@ -105,7 +105,7 @@ class many_job_service(object):
                            walltime,
                            ppn)
         bj_dict["bigjob"]=bj # store bigjob for later reference in dict
-        bj_dict["free_cores"]=int(bj_dict["number_nodes"])*int(ppn)
+        bj_dict["free_cores"]=int(bj_dict["number_of_processes"])
         bj_dict["to_be_terminated"]=False
         # lock for modifying the number of free nodes
         bj_dict["lock"] = threading.Lock()
@@ -133,7 +133,7 @@ class many_job_service(object):
         for i in self.bigjob_list[:]:
             if i["to_be_terminated"]==True:
                 bj = i["bigjob"]
-                total_cores = int(i["processes_per_node"])*int(i["number_nodes"])
+                total_cores = int(i["number_of_processes"])
                 if  i["free_cores"]==total_cores and not i.has_key("bj_stopped"):
                     logging.debug("***Stop BigJob: " + str(bj.pilot_url))
                     # release resources of pilot job
@@ -194,7 +194,7 @@ class many_job_service(object):
             bigjob_url = bigjob.pilot_url
             state = bigjob.get_state_detail()
             logging.debug("Big Job: " + bigjob_url + " Cores: " + "%s"%free_cores + "/" 
-                          + str(int(i["processes_per_node"])*int(i["number_nodes"])) 
+                          + str(int(i["number_of_processes"])) 
                           + " State: " + str(state) + " Terminated: " + str(i["to_be_terminated"])
                           + " #Required Cores: " + subjob.job_description.number_of_processes
                           )
@@ -241,7 +241,7 @@ class many_job_service(object):
             bigjob["free_cores"]=free_cores
             del(self.subjob_bigjob_dict[subjob])
             lock.release()
-            print "Freed resource - new state: Big Job: " +  bigjob["bigjob"].pilot_url + " Cores: " + "%s"%free_cores + "/" + str(int(bigjob["processes_per_node"])*int(bigjob["number_nodes"])) 
+            print "Freed resource - new state: Big Job: " +  bigjob["bigjob"].pilot_url + " Cores: " + "%s"%free_cores + "/" + str(int(bigjob["number_of_processes"])) 
     
     def __reschedule_subjobs_thread(self):
         """ periodically checks subjob_queue for unscheduled subjobs
