@@ -33,8 +33,8 @@ from bigjob_dynamic.many_job import *
         redis://localhost:6379 (Redis at localhost)
         tcp://localhost (ZMQ)
 """
-COORDINATION_URL = "advert://localhost"
-#COORDINATION_URL = "advert://advert.cct.lsu.edu:8080"
+#COORDINATION_URL = "advert://localhost"
+COORDINATION_URL = "advert://advert.cct.lsu.edu:8080"
     
 NUMBER_JOBS=8
 
@@ -53,8 +53,8 @@ def main():
         # submit via mj abstraction
         #resource_dictionary = {"resource_url" : "fork://localhost/", "number_nodes" : "32", "processes_per_node":"1", "allocation" : None, "queue" : None, "bigjob_agent": (BIGJOB_HOME + "/bigjob_agent_launcher.sh"), "working_directory": (os.getcwd() + "/agent"), "walltime":3600 }
         resource_list = []
-        resource_list.append( {"resource_url" : "fork://localhost", "processes_per_node":"4",
-                               "number_nodes" : "1", "allocation" : None, "queue" : "workq", 
+        resource_list.append( {"resource_url" : "gram://eric1.loni.org/jobmanager-pbs", "processes_per_node":"4",
+                               "number_of_processes" : "4", "allocation" : None, "queue" : "workq", 
                                "working_directory": (os.getcwd() + "/agent"), "walltime":10 })
 
         
