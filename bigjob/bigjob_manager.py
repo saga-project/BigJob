@@ -182,9 +182,10 @@ class bigjob(api.base.bigjob):
             bootstrap_script = self.generate_bootstrap_script(self.coordination.get_address(), self.pilot_url)
             if lrms_saga_url.scheme == "gram":
                 bootstrap_script = self.escape_rsl(bootstrap_script)
-            elif lrms_saga_url.scheme == "pbspro":
-                print "Using PBSPro"
+            elif lrms_saga_url.scheme == "pbspro":                
                 bootstrap_script = self.escape_pbs(bootstrap_script)
+            elif lrms_saga_url.scheme == "ssh":
+                bootstrap_script = self.escape_ssh(bootstrap_script)
         
             #logging.debug(bootstrap_script)
             jd.number_of_processes = str(number_nodes)
@@ -277,6 +278,12 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
     def escape_pbs(self, bootstrap_script):
         logging.debug("Escape PBS")
         bootstrap_script = "\'" + bootstrap_script+ "\'"
+        return bootstrap_script
+    
+    def escape_ssh(self, bootstrap_script):
+        logging.debug("Escape SSH")
+        bootstrap_script = bootstrap_script.replace("\"", "\\\"")
+        bootstrap_script = "\"" + bootstrap_script+ "\""
         return bootstrap_script
      
     def add_subjob(self, jd, job_url, job_id):

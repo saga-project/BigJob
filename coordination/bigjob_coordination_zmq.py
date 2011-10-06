@@ -183,6 +183,10 @@ class bigjob_coordination(object):
         """ local only - used only by manager """
         # stop everything
         self.stopped=True
+        msg = message("STOP", pilot_url, "")        
+        self.client_socket.send_pyobj(msg, zmq.NOBLOCK)
+        if self.server_role == True:
+            self.push_socket.send_pyobj(msg, zmq.NOBLOCK)
         #self.eventloop_thread.join()
         logging.debug("Has stopped: " + str(self.has_stopped))
         self.__shutdown()
@@ -355,9 +359,12 @@ class bigjob_coordination(object):
         logging.debug("Startup condition signaled")
         while self.stopped == False:
             #logging.debug("Waiting for messages...")
-            msg = service_socket.recv_pyobj()
-            #logging.debug("Message received: " + str(msg))
-            self.__handle_message(msg, service_socket)
+            try:
+                msg = service_socket.recv_pyobj()            
+                #logging.debug("Message received: " + str(msg))
+                self.__handle_message(msg, service_socket)
+            except:
+                pass
             #logging.debug("Message handled: " + str(msg) + " stopped = " + str(self.stopped))
             #pdb.set_trace()
         logging.debug("__server thread stopped: " + str(self.stopped))
@@ -416,9 +423,12 @@ class bigjob_coordination(object):
             logging.debug(" __wait_for_notifications: wait for notification")
             # wait for next job notification
             if result == None:
-                logging.debug("wait for notification")
-                self.pull_socket.recv_pyobj()
-                logging.debug("received notification")
+                try:
+                    logging.debug("wait for notification")
+                    self.pull_socket.recv_pyobj()
+                    logging.debug("received notification")
+                except:
+                    pass
         
         # wait for next job notification
         #while self.stopped == False:
