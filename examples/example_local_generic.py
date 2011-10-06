@@ -22,12 +22,10 @@ import sys
         tcp://* (ZMQ - listening to all interfaces)
 """
 
-### EDIT COORDINATION_URL to point to advert server.
-
-COORDINATION_URL = "advert://advert.cct.lsu.edu:5432/"
+COORDINATION_URL = "advert://localhost/"
 #COORDINATION_URL = "advert://advert.cct.lsu.edu:8080/"
 #COORDINATION_URL = "tcp://*"
-#COORDINATION_URL = "redis://localhost"
+#COORDINATION_URL = "redis://localhost:6379"
 
 # for running BJ from local dir
 sys.path.insert(0, os.getcwd() + "/../")
@@ -47,8 +45,8 @@ def main():
     workingdirectory=os.getcwd() +"/agent"  # working directory for agent
     userproxy = None # userproxy (not supported yet due to context issue w/ SAGA)
 
-    #lrms_url = "fork://localhost" # resource url to run the jobs on localhost
-    lrms_url = "gram://eric1.loni.org/jobmanager-pbs" # globus resource url used when globus is used. (LONI)
+    lrms_url = "fork://localhost" # resource url to run the jobs on localhost
+    #lrms_url = "ssh://localhost" # globus resource url used when globus is used. (LONI)
     #lrms_url = "PBSPro://localhost" # pbspro resource url used when pbspro scheduling system is used.(Futuregrid or LSU Machines)
     #lrms_url = "xt5torque://localhost" # torque resource url 
     
