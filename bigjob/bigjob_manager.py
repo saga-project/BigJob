@@ -283,6 +283,7 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
     def escape_ssh(self, bootstrap_script):
         logging.debug("Escape SSH")
         bootstrap_script = bootstrap_script.replace("\"", "\\\"")
+        bootstrap_script = bootstrap_script.replace("\'", "\\\"")
         bootstrap_script = "\"" + bootstrap_script+ "\""
         return bootstrap_script
      
