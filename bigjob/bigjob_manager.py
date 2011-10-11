@@ -30,7 +30,8 @@ logging.basicConfig(level=logging.DEBUG)
 # import other BigJob packages
 # import API
 import api.base
-
+sys.path.append(os.path.dirname(__file__))
+from pbsssh import *
 
 if sys.version_info < (2, 5):
     sys.path.append(os.path.dirname( __file__ ) + "/ext/uuid-1.30/")
@@ -196,14 +197,10 @@ class bigjob(api.base.bigjob):
                 hrs=walltime/60 
                 min=walltime%60 
                 walltimepbs=""+str(hrs)+":"+str(min)+":00"
-                bootstrap_script = self.submit_remote_pbs_script(bootstrap_script,walltimepbs,number_nodes,processes_per_node)
-
+                pbssshj = pbsssh()
+                bootstrap_script = pbssshj.submit_remote_pbs_script(bootstrap_script,walltimepbs,number_nodes,processes_per_node)
                 ### escaping characters
-                bootstrap_script = bootstrap_script.replace("\"","\\\"")
-                bootstrap_script = bootstrap_script.replace("\\\\","\\\\\\\\\\")
-                bootstrap_script = bootstrap_script.replace("XX","\\\\\\\"")
-                bootstrap_script = "\"" + bootstrap_script+ "\""
-                
+                bootstrap_script = pbssshj.escape_pbs_ssh(bootstrap_script) 
 
             #logging.debug(bootstrap_script)
             jd.number_of_processes = str(number_nodes)
