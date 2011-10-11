@@ -186,7 +186,25 @@ class bigjob(api.base.bigjob):
                 bootstrap_script = self.escape_pbs(bootstrap_script)
             elif lrms_saga_url.scheme == "ssh":
                 bootstrap_script = self.escape_ssh(bootstrap_script)
-        
+            ############ submit pbs script which launches bigjob agent using ssh adaptors########## 
+            elif lrms_saga_url.scheme == "pbs-ssh":
+                # change the url scheme ssh to use ssh adaptors to launch job
+                lrms_saga_url.scheme = "ssh"
+                bootstrap_script = self.escape_ssh(bootstrap_script)
+
+                ### convert walltime in minutes to PBS representation of time ###
+                hrs=walltime/60 
+                min=walltime%60 
+                walltimepbs=""+str(hrs)+":"+str(min)+":00"
+                bootstrap_script = self.submit_remote_pbs_script(bootstrap_script,walltimepbs,number_nodes,processes_per_node)
+
+                ### escaping characters
+                bootstrap_script = bootstrap_script.replace("\"","\\\"")
+                bootstrap_script = bootstrap_script.replace("\\\\","\\\\\\\\\\")
+                bootstrap_script = bootstrap_script.replace("XX","\\\\\\\"")
+                bootstrap_script = "\"" + bootstrap_script+ "\""
+                
+
             #logging.debug(bootstrap_script)
             jd.number_of_processes = str(number_nodes)
             jd.processes_per_host=str(processes_per_node)
@@ -251,7 +269,7 @@ BOOTSTRAP_URL="https://svn.cct.lsu.edu/repos/saga-projects/applications/bigjob/t
 BOOTSTRAP_FILE=BIGJOB_AGENT_DIR+"/bigjob-bootstrap.py"
 
 try: import saga
-except: print "SAGA and SAGA Python Bindings not found: BigJob only work w/ non-SAGA backends (e.g. Redis, ZMQ).";print "Python version: ",  os.system("python -V");print "Python path: " + str(sys.path)
+except: print "SAGA and SAGA Python Bindings not found: BigJob only work w/ non-SAGA backends e.g. Redis, ZMQ.";print "Python version: ",  os.system("python -V");print "Python path: " + str(sys.path)
 
 sys.path.insert(0, os.getcwd() + "/../")
 sys.path.insert(0, os.getcwd() + "/../../")
@@ -268,6 +286,27 @@ print "Bootstrap time: " + str(time.time()-start_time)
 print "Starting BigJob Agents with following args: " + str(args)
 bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
 """ % (coordination_host, coordination_namespace))
+        return script
+
+    def submit_remote_pbs_script(self,bootstrap_script,walltime,nodes,ppn):
+        script = textwrap.dedent("""import sys
+import os
+import urllib
+import sys
+import time
+import textwrap
+
+qsub_file_name="bigjob_pbs_ssh"
+
+qsub_file = open(qsub_file_name, "w")
+qsub_file.write("#PBS -l nodes=%s:ppn=%s")
+qsub_file.write("\\n")
+qsub_file.write("#PBS -l walltime=%s")
+qsub_file.write("\\n")
+qsub_file.write("python -c XX" + textwrap.dedent(\"\"%s\"\") + "XX")
+qsub_file.close()
+os.system( "/usr/local/bin/qsub  " + qsub_file_name)
+""" % (str(nodes),str(ppn),str(walltime),bootstrap_script))
         return script
     
     def escape_rsl(self, bootstrap_script):
@@ -460,4 +499,5 @@ class subjob(api.base.subjob):
             return "None"
         else:
             return self.job_url
+
 
