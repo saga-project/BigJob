@@ -22,8 +22,8 @@ import sys
         tcp://* (ZMQ - listening to all interfaces)
 """
 
-COORDINATION_URL = "advert://localhost/"
-#COORDINATION_URL = "advert://advert.cct.lsu.edu:8080/"
+#COORDINATION_URL = "advert://localhost/"
+COORDINATION_URL = "advert://advert.cct.lsu.edu:8080/"
 #COORDINATION_URL = "tcp://*"
 #COORDINATION_URL = "redis://localhost:6379"
 
@@ -45,11 +45,13 @@ def main():
     workingdirectory=os.getcwd() +"/agent"  # working directory for agent
     userproxy = None # userproxy (not supported yet due to context issue w/ SAGA)
 
-    lrms_url = "fork://localhost" # resource url to run the jobs on localhost
-    #lrms_url = "ssh://localhost" # globus resource url used when globus is used. (LONI)
-    #lrms_url = "PBSPro://localhost" # pbspro resource url used when pbspro scheduling system is used.(Futuregrid or LSU Machines)
-    #lrms_url = "xt5torque://localhost" # torque resource url 
-    
+    #lrms_url = "fork://localhost" # resource url to run the jobs on localhost
+    #lrms_url = "gram://oliver1.loni.org/jobmanager-pbs" # globus resource url used when globus is used. (LONI)
+    #lrms_url = "pbspro://louie1.loni.org" # pbspro resource url used when pbspro scheduling system is used.(Futuregrid or LSU Machines)
+    #lrms_url = "ssh://louie1.loni.org" # ssh resource url which launches jobs on target machine. Jobs not submitted to scheduling system.
+    lrms_url = "pbs-ssh://louie1.loni.org" # Submit jobs to scheduling system of remote machine.
+    #lrms_url = "xt5torque://localhost" # torque resource url.
+ 
     ##########################################################################################
 
     print "Start Pilot Job/BigJob at: " + lrms_url

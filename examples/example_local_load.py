@@ -4,6 +4,7 @@
 import saga
 import os
 import time
+import pdb
 # BigJob implementation can be swapped here by importing another implementation,
 # e.g. condor, cloud, azure
 import sys
@@ -21,8 +22,8 @@ sys.path.insert(0, os.getcwd() + "/../")
 """
 
 ### EDIT COORDINATION_URL to point to advert server.  
-COORDINATION_URL = "advert://advert.cct.lsu.edu:5432/"
-#COORDINATION_URL = "advert://advert.cct.lsu.edu:8080/"
+#COORDINATION_URL = "advert://advert.cct.lsu.edu:5432/"
+COORDINATION_URL = "advert://advert.cct.lsu.edu:8080/"
 
 from bigjob.bigjob_manager import bigjob, subjob
 
@@ -47,15 +48,18 @@ if __name__ == "__main__":
     # Edit parameters for BigJob
     queue=None # if None default queue is used
     project=None # if None default allocation is used 
-    walltime=10
+    walltime=100
     processes_per_node=4
-    number_of_processes = 8
-    workingdirectory=os.getcwd() +"/agent"  # working directory for agent
+    number_of_processes =2
+    workingdirectory="/home/pmantha/examples/agent"  # working directory for agent
     userproxy = None # userproxy (not supported yet due to context issue w/ SAGA)
 
     #lrms_url = "fork://localhost" # resource url to run the jobs on localhost
-    lrms_url = "gram://eric1.loni.org/jobmanager-pbs" # globus resource url used when globus is used. (LONI)
-    #lrms_url = "PBSPro://localhost" # pbspro resource url used when pbspro scheduling system is used.(Futuregrid or LSU Machines)
+    #lrms_url = "gram://oliver1.loni.org/jobmanager-pbs" # globus resource url used when globus is used. (LONI)
+    #lrms_url = "pbspro://louie1.loni.org" # pbspro resource url used when pbspro scheduling system is used.(Futuregrid or LSU Machines)
+    #lrms_url = "ssh://louie1.loni.org" # ssh resource url which launches jobs on target machine. Jobs not submitted to scheduling system.
+    lrms_url = "pbs-ssh://louie1.loni.org" # Submit jobs to scheduling system of remote machine.
+
     #lrms_url = "xt5torque://localhost" # torque resource url 
 
     ##########################################################################################
@@ -85,9 +89,9 @@ if __name__ == "__main__":
         jd.number_of_processes = "1"
         jd.spmd_variation = "single"
         jd.arguments = [""]
-        jd.working_directory = os.getcwd() 
-        jd.output = "sj-stdout-"+str(i)+".txt"
-        jd.error = "sj-stderr-"+str(i)+".txt"
+        jd.working_directory = "/home/pmantha/examples/agent" 
+        jd.output = "/home/pmantha/examples/agent/sj-stdout-"+str(i)+".txt"
+        jd.error = "/home/pmantha/examples/agent/sj-stderr-"+str(i)+".txt"
 
         sj = subjob()
         sj.submit_job(bj.pilot_url, jd)
