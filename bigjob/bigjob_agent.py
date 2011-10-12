@@ -229,11 +229,17 @@ class bigjob_agent:
                         arguments = arguments + " " + i
                         
                 environment = os.environ
+                envi = ""
                 if (job_dict.has_key("Environment") == True):
-                    for i in job_dict["Environment"]:
-                        env = i.split("=")
-                        environment[env[0]]=env[1]                        
-                 
+                    env_raw = job_dict['Environment']
+                    if type(env_raw) == types.ListType:
+                        env_list = arguments_raw
+                    else:
+                        env_list = eval(job_dict["Environment"])
+                    for i in env_list:
+                        envi_1 = "export " + i +"; "
+                        envi = envi + envi_1
+ 
                 executable = job_dict["Executable"]
                 
                 workingdirectory = os.getcwd() 
@@ -257,7 +263,7 @@ class bigjob_agent:
                 logging.debug("stdout: " + output_file + " stderr: " + error_file + " env: " + str(environment))
                 stdout = open(output_file, "w")
                 stderr = open(error_file, "w")
-                command = executable + " " + arguments
+                command =  envi + executable + " " + arguments
                 #pdb.set_trace()
                 # special setup for MPI NAMD jobs
                 machinefile = self.allocate_nodes(job_dict)
