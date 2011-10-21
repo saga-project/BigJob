@@ -233,7 +233,7 @@ class bigjob_agent:
                 if (job_dict.has_key("Environment") == True):
                     env_raw = job_dict['Environment']
                     if type(env_raw) == types.ListType:
-                        env_list = arguments_raw
+                        env_list = env_raw
                     else:
                         env_list = eval(job_dict["Environment"])
                     for i in env_list:
