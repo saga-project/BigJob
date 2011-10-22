@@ -27,7 +27,7 @@ setup(name='BigJob',
       install_requires=['uuid', 'threadpool', 'virtualenv', 'redis==2.2.4'],
       entry_points = {
         'console_scripts': [
-            'test-bigjob = examples.example_local_generic:main',
+            'test-bigjob = examples.example_local_single:main',
             'test-bigjob-dynamic = examples.example_manyjob:main'            
         ]
         }

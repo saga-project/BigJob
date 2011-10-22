@@ -5,10 +5,11 @@ import textwrap
 class pbsssh:
     """Constructor"""
     def __init__(self):
-        bootstrap_script=None
-        walltime=None
-        nodes=1
-        ppn=4
+        pass
+        #bootstrap_script=None
+        #walltime=None
+        #nodes=1
+        #ppn=4
   
     def submit_remote_pbs_script(self,bootstrap_script,walltime,nodes,ppn):
         script = textwrap.dedent("""import sys
