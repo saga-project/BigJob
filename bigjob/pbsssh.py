@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-
+"""SSH/PBS Job Wrapper for spawning pilots via SSH and PBS.
+"""
 import textwrap
 
 class pbsssh:

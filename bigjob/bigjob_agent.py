@@ -1,4 +1,9 @@
 #!/usr/bin/env python
+
+"""bigjob_agent: bigjob agent that is executed on the resource
+"""
+
+
 import sys
 import os
 import bigjob.state

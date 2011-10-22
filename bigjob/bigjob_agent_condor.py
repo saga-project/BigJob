@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+"""bigjob_agent: bigjob agent adapted for Condor resources
+"""
 import sys
 import os
 import bigjob.state
