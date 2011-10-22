@@ -11,7 +11,7 @@ except:
     #sys.exit(1)
     
 setup(name='BigJob',
-      version='0.3.14',
+      version='0.3.2',
       description='SAGA-based Pilot-Job Implementation',
       author='Andre Luckow',
       author_email='aluckow@cct.lsu.edu',
@@ -28,7 +28,7 @@ setup(name='BigJob',
       entry_points = {
         'console_scripts': [
             'test-bigjob = examples.example_local_single:main',
-            'test-bigjob-dynamic = examples.example_manyjob:main'            
+            'test-bigjob-dynamic = examples.example_manyjob_local:main'            
         ]
         }
 )

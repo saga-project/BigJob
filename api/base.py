@@ -1,4 +1,4 @@
-""" Module API
+""" BigJob API
 
 This Module contains the API of the BigJob framework
 

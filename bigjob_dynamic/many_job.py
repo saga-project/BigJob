@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 
-"""Module many_job.
-
-This Module is used to launch a set of bigjobs.
-
+"""Dynamic BigJob (ManyJob): Manages multiple BigJob (on different resources). 
+Sub-jobs are distributed across the set of BJs managed by the dynamic BJ.
 """
 import pdb
 import sys

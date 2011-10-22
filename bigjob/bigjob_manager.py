@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""Module big_job.
+"""bigjob_manager: exposes bigjob and subjob class
 
 This Module is used to launch jobs via the advert service. 
 
@@ -52,7 +52,7 @@ def get_uuid():
 
 
 """ Config parameters (will move to config file in future) """
-APPLICATION_NAME="bigjob"
+__APPLICATION_NAME="bigjob"
 CLEANUP=True
 
 #for legacy purposes and support for old BJ API
@@ -82,7 +82,7 @@ class bigjob(api.base.bigjob):
         self.coordination_url = coordination_url
         self.coordination = self.__init_coordination(coordination_url)
         
-        self.app_url = APPLICATION_NAME +":" + str(self.uuid) 
+        self.app_url = __APPLICATION_NAME +":" + str(self.uuid) 
         
         #self.app_url = saga.url(ADVERT_URL_SCHEME+ database_host + "/"+APPLICATION_NAME + "-" + str(self.uuid) + "/")
         #self.app_dir = saga.advert.directory(self.app_url, saga.advert.Create | saga.advert.CreateParents | saga.advert.ReadWrite)
