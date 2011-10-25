@@ -268,7 +268,10 @@ class bigjob_agent:
                 logging.debug("stdout: " + output_file + " stderr: " + error_file + " env: " + str(environment))
                 stdout = open(output_file, "w")
                 stderr = open(error_file, "w")
-                command =  envi + executable + " " + arguments
+                if ( spmdvariation.lower( )!="mpi"):
+                    command =  envi + executable + " " + arguments
+                else:
+                    command =  executable + " " + arguments
                 #pdb.set_trace()
                 # special setup for MPI NAMD jobs
                 machinefile = self.allocate_nodes(job_dict)
@@ -289,7 +292,7 @@ class bigjob_agent:
 
                 # start application process
                 if (spmdvariation.lower( )=="mpi"):
-                    command = "cd " + workingdirectory + "; " + self.MPIRUN + " -np " + numberofprocesses + " -machinefile " + machinefile + " " + command
+                    command = "cd " + workingdirectory + "; " + envi +  self.MPIRUN + " -np " + numberofprocesses + " -machinefile " + machinefile + " " + command
                     #if (host != socket.gethostname()):
                     #    command ="ssh  " + host + " \"cd " + workingdirectory + "; " + command +"\""     
                 else:
