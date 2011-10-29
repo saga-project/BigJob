@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""bigjob_manager: exposes bigjob and subjob class
+"""Module big_job.
 
 This Module is used to launch jobs via the advert service. 
 
@@ -52,7 +52,6 @@ def get_uuid():
 
 
 """ Config parameters (will move to config file in future) """
-__APPLICATION_NAME="bigjob"
 CLEANUP=True
 
 #for legacy purposes and support for old BJ API
@@ -81,7 +80,7 @@ class bigjob(api.base.bigjob):
         logging.debug("init BigJob w/: " + coordination_url)
         self.coordination_url = coordination_url
         self.coordination = self.__init_coordination(coordination_url)
-        
+        __APPLICATION_NAME="bigjob"        
         self.app_url = __APPLICATION_NAME +":" + str(self.uuid) 
         
         #self.app_url = saga.url(ADVERT_URL_SCHEME+ database_host + "/"+APPLICATION_NAME + "-" + str(self.uuid) + "/")
@@ -139,7 +138,7 @@ class bigjob(api.base.bigjob):
             pbspro://localhost (PBS Prop Adaptor)
         
         """
-        
+        scheme="" 
         if self.job != None:
             raise BigJobError("One BigJob already active. Please stop BigJob first.") 
             return
@@ -191,16 +190,16 @@ class bigjob(api.base.bigjob):
             elif lrms_saga_url.scheme == "pbs-ssh":
                 # change the url scheme ssh to use ssh adaptors to launch job
                 lrms_saga_url.scheme = "ssh"
+                scheme="pbs-ssh"
                 bootstrap_script = self.escape_ssh(bootstrap_script)
 
                 ### convert walltime in minutes to PBS representation of time ###
                 hrs=walltime/60 
                 min=walltime%60 
                 walltimepbs=""+str(hrs)+":"+str(min)+":00"
-                pbssshj = pbsssh()
-                bootstrap_script = pbssshj.submit_remote_pbs_script(bootstrap_script,walltimepbs,number_nodes,processes_per_node)
-                ### escaping characters
-                bootstrap_script = pbssshj.escape_pbs_ssh(bootstrap_script) 
+                pbssshj = pbsssh(bootstrap_script,walltimepbs,number_nodes,processes_per_node,working_directory)
+                bootstrap_script = pbssshj.bootstrap_script
+                jd.set_attribute("Interactive", "True")
 
             #logging.debug(bootstrap_script)
             jd.number_of_processes = str(number_nodes)
@@ -225,9 +224,10 @@ class bigjob(api.base.bigjob):
                 jd.working_directory = "$(HOME)"
     
             print "Working directory: " + jd.working_directory
+        if scheme != "pbs-ssh": 
+            jd.output = "stdout-bigjob_agent-" + str(self.uuid) + ".txt"
+            jd.error = "stderr-bigjob_agent-" + str(self.uuid) + ".txt"
          
-        jd.output = "stdout-bigjob_agent-" + str(self.uuid) + ".txt"
-        jd.error = "stderr-bigjob_agent-" + str(self.uuid) + ".txt"
            
         # Submit job
         js = None	
@@ -246,6 +246,11 @@ class bigjob(api.base.bigjob):
         self.job = js.create_job(jd)
         print "Submit pilot job to: " + str(lrms_saga_url)
         self.job.run()
+        if scheme == "pbs-ssh":
+           joboutput= self.job.get_stdout()
+           pbssshj.job_id=(joboutput.read()).split(".")[0]
+           pbssshj.lrms_saga_url = lrms_saga_url
+           self.job = pbssshj  
         #return self.job
         
     def generate_bootstrap_script(self, coordination_host, coordination_namespace):
