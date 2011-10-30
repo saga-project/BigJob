@@ -138,7 +138,7 @@ class bigjob(api.base.bigjob):
             pbspro://localhost (PBS Prop Adaptor)
         
         """
-        scheme="" 
+         
         if self.job != None:
             raise BigJobError("One BigJob already active. Please stop BigJob first.") 
             return
@@ -189,17 +189,15 @@ class bigjob(api.base.bigjob):
             ############ submit pbs script which launches bigjob agent using ssh adaptors########## 
             elif lrms_saga_url.scheme == "pbs-ssh":
                 # change the url scheme ssh to use ssh adaptors to launch job
-                lrms_saga_url.scheme = "ssh"
-                scheme="pbs-ssh"
                 bootstrap_script = self.escape_ssh(bootstrap_script)
-
                 ### convert walltime in minutes to PBS representation of time ###
                 hrs=walltime/60 
-                min=walltime%60 
-                walltimepbs=""+str(hrs)+":"+str(min)+":00"
-                pbssshj = pbsssh(bootstrap_script,walltimepbs,number_nodes,processes_per_node,working_directory)
-                bootstrap_script = pbssshj.bootstrap_script
-                jd.set_attribute("Interactive", "True")
+                minu=walltime%60 
+                walltimepbs=""+str(hrs)+":"+str(minu)+":00"
+                pbssshj = pbsssh(bootstrap_script,lrms_saga_url, walltimepbs,number_nodes,processes_per_node,userproxy,working_directory)
+                self.job = pbssshj
+                self.job.run()
+                return
 
             #logging.debug(bootstrap_script)
             jd.number_of_processes = str(number_nodes)
@@ -224,13 +222,12 @@ class bigjob(api.base.bigjob):
                 jd.working_directory = "$(HOME)"
     
             print "Working directory: " + jd.working_directory
-        if scheme != "pbs-ssh": 
             jd.output = "stdout-bigjob_agent-" + str(self.uuid) + ".txt"
             jd.error = "stderr-bigjob_agent-" + str(self.uuid) + ".txt"
          
            
         # Submit job
-        js = None	
+        js = None    
         if userproxy != None and userproxy != '':
             s = saga.session()
             os.environ["X509_USER_PROXY"]=userproxy
@@ -246,11 +243,6 @@ class bigjob(api.base.bigjob):
         self.job = js.create_job(jd)
         print "Submit pilot job to: " + str(lrms_saga_url)
         self.job.run()
-        if scheme == "pbs-ssh":
-           joboutput= self.job.get_stdout()
-           pbssshj.job_id=(joboutput.read()).split(".")[0]
-           pbssshj.lrms_saga_url = lrms_saga_url
-           self.job = pbssshj  
         #return self.job
         
     def generate_bootstrap_script(self, coordination_host, coordination_namespace):
@@ -288,27 +280,6 @@ print "Bootstrap time: " + str(time.time()-start_time)
 print "Starting BigJob Agents with following args: " + str(args)
 bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
 """ % (coordination_host, coordination_namespace))
-        return script
-
-    def submit_remote_pbs_script(self,bootstrap_script,walltime,nodes,ppn):
-        script = textwrap.dedent("""import sys
-import os
-import urllib
-import sys
-import time
-import textwrap
-
-qsub_file_name="bigjob_pbs_ssh"
-
-qsub_file = open(qsub_file_name, "w")
-qsub_file.write("#PBS -l nodes=%s:ppn=%s")
-qsub_file.write("\\n")
-qsub_file.write("#PBS -l walltime=%s")
-qsub_file.write("\\n")
-qsub_file.write("python -c XX" + textwrap.dedent(\"\"%s\"\") + "XX")
-qsub_file.close()
-os.system( "/usr/local/bin/qsub  " + qsub_file_name)
-""" % (str(nodes),str(ppn),str(walltime),bootstrap_script))
         return script
     
     def escape_rsl(self, bootstrap_script):
@@ -501,5 +472,4 @@ class subjob(api.base.subjob):
             return "None"
         else:
             return self.job_url
-
-
+        
