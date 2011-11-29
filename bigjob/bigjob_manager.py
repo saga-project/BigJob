@@ -194,6 +194,10 @@ class bigjob(api.base.bigjob):
                 hrs=walltime/60 
                 minu=walltime%60 
                 walltimepbs=""+str(hrs)+":"+str(minu)+":00"
+                if number_nodes%processes_per_node == 0:
+                    number_nodes = number_nodes/processes_per_node
+                else:
+                    number_nodes = ( number_nodes/processes_per_node) + 1
                 pbssshj = pbsssh(bootstrap_script,lrms_saga_url, walltimepbs,number_nodes,processes_per_node,userproxy,working_directory)
                 self.job = pbssshj
                 self.job.run()
