@@ -83,8 +83,6 @@ class bigjob(api.base.bigjob):
         __APPLICATION_NAME="bigjob"        
         self.app_url = __APPLICATION_NAME +":" + str(self.uuid) 
         
-        #self.app_url = saga.url(ADVERT_URL_SCHEME+ database_host + "/"+APPLICATION_NAME + "-" + str(self.uuid) + "/")
-        #self.app_dir = saga.advert.directory(self.app_url, saga.advert.Create | saga.advert.CreateParents | saga.advert.ReadWrite)
         self.state=saga.job.Unknown
         self.pilot_url=""
         self.job = None
@@ -117,9 +115,12 @@ class bigjob(api.base.bigjob):
         surl = saga.url(coordination_url)
         host = surl.host
         port = surl.port
+        username = surl.username
+        password = surl.password
+        dbtype = surl.query
         if port == -1:
             port = None
-        coordination = bigjob_coordination(server=host, server_port=port)
+        coordination = bigjob_coordination(server=host, server_port=port, username=username, password=password, dbtype=dbtype)
         return coordination
     
     def start_pilot_job(self, 

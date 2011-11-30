@@ -43,7 +43,8 @@ class bigjob_coordination(object):
     Encapsulates communication and coordination
     Implementation based on ZMQ 
     '''
-    def __init__(self, server=SERVER_IP, server_port=SERVER_PORT, server_connect_url=None):
+    def __init__(self, server=SERVER_IP, server_port=SERVER_PORT, server_connect_url=None,
+                 username=None, password=None, dbtype=None):
         '''
         Constructor
         set server and server_port to create a service (server)

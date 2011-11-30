@@ -9,7 +9,7 @@ All BigJob implementation must be derived from this API.
 class bigjob(object):
        
     def __init__(self, database_host):  
-         pass
+        pass
     
     def start_pilot_job(self, 
                  lrms_url, 
