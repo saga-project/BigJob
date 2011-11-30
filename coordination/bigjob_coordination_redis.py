@@ -32,7 +32,8 @@ class bigjob_coordination(object):
     Implementation based on Redis (http://redis.io)
     '''
 
-    def __init__(self, server=REDIS_SERVER, server_port=REDIS_SERVER_PORT, server_connect_url=None):
+    def __init__(self, server=REDIS_SERVER, server_port=REDIS_SERVER_PORT, server_connect_url=None,
+                 username=None, password=None, dbtype=None):
         '''
         Constructor
         '''

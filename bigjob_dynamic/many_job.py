@@ -110,9 +110,11 @@ class many_job_service(object):
 
     def add_resource(self, resource_dictionary):
         """ adds bigjob described in resource_dictionary to resources """
-        dict = copy.deepcopy(resource_dictionary);
-        self.__start_bigjob(dict)
-        self.bigjob_list.append(dict)
+        bj_dict = copy.deepcopy(resource_dictionary)
+        
+        self.__start_bigjob(bj_dict)
+        self.bigjob_list.append(bj_dict)
+        return bj_dict["bigjob"] 
         
     
     def remove_resource(self, bigjob):
@@ -146,6 +148,10 @@ class many_job_service(object):
         """
         return self.bigjob_list
 
+
+    def list_bigjobs(self):
+        """ returns a list of bigjob objects """
+        return [i["bigjob"]  for i in self.bigjob_list]
 
     def __schedule_bigjobs(self):
         """ prioritizes bigjob_list (bigjob with shortest expected delay will have index 0) """
@@ -294,16 +300,19 @@ class many_job_service(object):
         self.print_stats(self.submisssion_times, "Submission Times")
 
     def print_stats(self, times, description):
-        n = len(times)
-        sum = reduce(operator.add, times)
-        mean = sum/n
-        variance=0
-        if n > 1:
-            for i in times:
-                variance += (i - mean)**2
-            variance /= (n-1)
-            variance = math.sqrt(variance)
-        print description + " Average: " + str(mean) + " Stdev: " + str(variance)
+        try:
+            n = len(times)
+            sum = reduce(operator.add, times)
+            mean = sum/n
+            variance=0
+            if n > 1:
+                for i in times:
+                    variance += (i - mean)**2
+                variance /= (n-1)
+                variance = math.sqrt(variance)
+            print description + " Average: " + str(mean) + " Stdev: " + str(variance)
+        except:
+            pass
         
     def __has_finished(self, state):
         state = state.lower()

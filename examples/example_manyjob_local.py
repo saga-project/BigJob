@@ -70,7 +70,7 @@ def main():
         
         
         #Flags for controlling dynamic BigJob
-        add_additional_resources=False
+        add_additional_resources=True
         remove_additional_resources=False
         
 
@@ -111,9 +111,9 @@ def main():
                 if old_state != state:
                     print "Job " + str(jobs[i]) + " changed from: " + old_state + " to " + state
                 if old_state != state and has_finished(state)==True:
-                     print "Job: " + str(jobs[i]) + " Runtime: " + str(time.time()-job_start_times[jobs[i]]) + " s."
+                    print "Job: " + str(jobs[i]) + " Runtime: " + str(time.time()-job_start_times[jobs[i]]) + " s."
                 if has_finished(state)==True:
-                     finish_counter = finish_counter + 1
+                    finish_counter = finish_counter + 1
                 job_states[jobs[i]]=state
                 
             # Dynamic BigJob add resources at runtime

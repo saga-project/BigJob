@@ -93,6 +93,9 @@ class bigjob_agent:
                 logging.debug("Utilizing ADVERT Backend: " + self.coordination_url)
             except:
                 logging.error("Advert Backend could not be loaded")
+                exc_type, exc_value, exc_traceback = sys.exc_info()
+                traceback.print_exc(file=sys.stderr)
+                traceback.print_tb(exc_traceback, file=sys.stderr)
         elif (self.coordination_url.startswith("redis://")):
             try:
                 from coordination.bigjob_coordination_redis import bigjob_coordination      

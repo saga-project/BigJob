@@ -4,6 +4,8 @@ Encapsulates coordination and communication specifics of bigjob
 
 
 import logging
+logging.debug("Load Advert Coordination")
+
 import threading
 import datetime
 import time
@@ -14,6 +16,7 @@ import pdb
 import saga
 import json
 import urlparse
+
 
 if sys.version_info < (2, 5):
     sys.path.append(os.path.dirname( os.path.abspath( __file__) ) + "/../ext/uuid-1.30/")
@@ -33,7 +36,8 @@ class bigjob_coordination(object):
     Implementation based on Redis (http://redis.io)
     '''
 
-    def __init__(self, server=ADVERT_SERVER, server_port=ADVERT_SERVER_PORT, server_connect_url=None):
+    def __init__(self, server=ADVERT_SERVER, server_port=ADVERT_SERVER_PORT, 
+                       server_connect_url=None, username=None, password=None, dbtype=None):
         '''
         Constructor
         '''
@@ -45,17 +49,47 @@ class bigjob_coordination(object):
             self.address = ADVERT_URL_SCHEME+"%s:%i"%(server, server_port)
         elif server != None:
             self.address = ADVERT_URL_SCHEME+"%s"%(server)            
+        
+        #pdb.set_trace()
+        self.username=""
+        self.password=""
+        self.dbtype=""
+        surl = saga.url(self.address)
+        if server_connect_url==None: # Manager
+            if username!=None:
+                surl.username=username    
+                self.username=username        
+            if password != None:
+                surl.password = password
+                self.password=password
+            if dbtype != None:            
+                #surl.query = dbtype
+                self.dbtype = dbtype
+        else: # Agent
+            if surl.query!=None:
+                self.dbtype=surl.query
+                surl.query=""
+                
+        self.address = str(surl)
         self.pilot_url = self.address
+        logging.debug("Initialized Coordination to: %s (DB: %s)"%(self.address, self.dbtype))
         self.resource_lock = threading.RLock()
         
     def get_address(self):
-        return self.address
+        return self.address + "?" + self.dbtype
     
     def get_url(self, id_string):        
         if not id_string.startswith("advert"): 
-            path = id_string.replace(":", "/")
-            url_string = self.address + "/" + path
+            path = id_string.replace(":", "/")            
+            if self.dbtype!=None:
+                url_string = self.address + "/" + path + "?" + self.dbtype
+            else:
+                url_string = self.address + "/" + path 
             return url_string
+        
+        if self.dbtype!=None:
+            id_string = id_string + "?" + self.dbtype
+             
         return id_string
         
         
@@ -113,12 +147,14 @@ class bigjob_coordination(object):
     #####################################################################################
     # Sub-Job Description
     def set_job(self, job_url, job_dict):
-        job_url = self.get_url(job_url)
-        job_dir = saga.advert.directory(saga.url(job_url), 
+        job_dir_url = self.get_url(job_url)
+        job_description_url = self.get_url(job_url+"/job-description")
+        logging.debug("Job URL: %s, Job Description URL: %s"%(job_dir_url, job_description_url))
+        job_dir = saga.advert.directory(saga.url(job_dir_url), 
                                         saga.advert.Create | saga.advert.CreateParents | saga.advert.ReadWrite)
-        job_desc_entry = saga.advert.entry(saga.url(job_url+"/job-description"),
+        job_desc_entry = saga.advert.entry(saga.url(job_description_url),
                                            saga.advert.Create | saga.advert.CreateParents | saga.advert.ReadWrite)
-        logging.debug("initialized advert entry for job: " + job_url)
+        logging.debug("initialized advert entry for job: " + job_dir_url)
         job_desc_entry.store_string(json.dumps(job_dict))
         self.set_job_state(job_url, str(saga.job.Unknown))
         
@@ -127,8 +163,9 @@ class bigjob_coordination(object):
     def get_job(self, job_url):
         #job_dir = saga.advert.directory(saga.url(job_url), 
         #                                saga.advert.Create | saga.advert.CreateParents | saga.advert.ReadWrite)
-        job_url = self.get_url(job_url)
-        job_desc_entry = saga.advert.entry(saga.url(job_url+"/job-description"),
+        job_url = self.get_url(job_url+"/job-description")
+        logging.debug("Get job description from: %s"%(job_url))
+        job_desc_entry = saga.advert.entry(saga.url(job_url),
                                            saga.advert.Read)
         job_dict = json.loads(job_desc_entry.retrieve_string())
         return job_dict    
@@ -144,10 +181,10 @@ class bigjob_coordination(object):
     # Distributed queue for sub-jobs
     def queue_job(self, pilot_url, job_url):
         self.resource_lock.acquire()
-        pilot_url = self.get_url(pilot_url)
+        #pilot_url = self.get_url(pilot_url)
         job_url = self.get_url(job_url)
         """ queue new job to pilot """
-        new_job_url = pilot_url + "/new/" + str(uuid.uuid1())
+        new_job_url = self.get_url(pilot_url + "/new/" + str(uuid.uuid1()))
         new_job_dir = saga.advert.directory(saga.url(new_job_url), 
                                             saga.advert.Create | saga.advert.CreateParents | saga.advert.ReadWrite)
         new_job_dir.set_attribute("joburl", job_url)
@@ -156,9 +193,9 @@ class bigjob_coordination(object):
     def dequeue_job(self, pilot_url):
         """ deque to new job  of a certain pilot """
         self.resource_lock.acquire()
-        pilot_url = self.get_url(pilot_url)
+        #pilot_url = self.get_url(pilot_url)
         jobs = []        
-        new_job_dir_url = pilot_url + "/new/" 
+        new_job_dir_url = self.get_url(pilot_url + "/new/") 
         new_job_dir = saga.advert.directory(saga.url(new_job_dir_url), 
                                             saga.advert.Create | saga.advert.CreateParents | saga.advert.ReadWrite)
         new_jobs = new_job_dir.list()
@@ -166,7 +203,7 @@ class bigjob_coordination(object):
                       + " jobs: " + str(new_jobs));
         if len(new_jobs)>=1:
             job_entry=new_jobs[0]     
-            job_dir_url = new_job_dir_url + "/" + job_entry.get_string()       
+            job_dir_url = self.get_url(pilot_url + "/new/" + "/" + job_entry.get_string())       
             logging.debug("Open job at " + str(job_dir_url))
             job_dir = saga.advert.directory(saga.url(job_dir_url), 
                                        saga.advert.Create | saga.advert.CreateParents | saga.advert.ReadWrite)
@@ -174,15 +211,19 @@ class bigjob_coordination(object):
             #new_job_dir.open_dir(job_entry)                        
             job_url = job_dir.get_attribute("joburl")
             #remove old job entry
-            job_dir.remove(job_dir_url, saga.name_space.Recursive)    
+            job_dir.remove(self.__remove_dbtype(job_dir_url), saga.name_space.Recursive)
+                
             logging.debug("Dequeued new job: " + str(job_url))
             self.resource_lock.release()
-            return job_url
+            return self.__remove_dbtype(job_url)
         else:
             self.resource_lock.release()
             time.sleep(1)
             return 
             
-            
+    def __remove_dbtype(self, url):
+        surl = saga.url(url)
+        surl.query=""
+        return str(surl)  
             
             
