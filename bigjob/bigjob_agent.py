@@ -303,8 +303,8 @@ class bigjob_agent:
                 shell = self.SHELL 
                 logging.debug("execute: " + command + " in " + workingdirectory + " from: " + str(socket.gethostname()) + " (Shell: " + shell +")")
                 # bash works fine for launching on QB but fails for Abe :-(
-                p = subprocess.Popen(args=command, executable=shell, stderr=sys.stderr,
-                                     stdout=sys.stdout, cwd=workingdirectory, 
+                p = subprocess.Popen(args=command, executable=shell, stderr=stderr,
+                                     stdout=stdout, cwd=workingdirectory, 
                                      env=environment, shell=True)
                 logging.debug("started " + command)
                 self.processes[job_url] = p
