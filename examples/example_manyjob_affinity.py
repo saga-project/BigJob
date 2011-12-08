@@ -28,7 +28,7 @@ from bigjob_dynamic.many_job_affinity import *
         redis://localhost:6379 (Redis at localhost)
         tcp://localhost (ZMQ)
 """
-COORDINATION_URL = "advert://advert.cct.lsu.edu:8080"
+COORDINATION_URL = "advert://localhost/?dbtype=sqlite3"
 
 NUMBER_JOBS=8
 
@@ -48,7 +48,7 @@ if __name__ == "__main__":
 
         # submit via mj abstraction
         resource_list = []
-        resource_list.append( {"resource_url" : "fork://localhost/", "number_nodes" : "2", "allocation" : "myAllocation", 
+        resource_list.append( {"resource_url" : "fork://localhost/", "number_of_processes" : "2", "allocation" : "myAllocation", 
                                "queue" : "workq",  
                                "working_directory": (os.getcwd() + "/agent"), 
                                "walltime": 10, "affinity" : "affinity1"})
