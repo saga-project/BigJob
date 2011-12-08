@@ -43,12 +43,20 @@ class bigjob_coordination(object):
         '''
         logging.debug("Server: " + str(server) + " Port " + str(server_port) 
                       + " server_connect_url: " + str(server_connect_url))
+        
+        
+        url_prefix = ADVERT_URL_SCHEME
+        if username!=None:
+            url_prefix   = url_prefix+username
+            if password!=None:
+                url_prefix = url_prefix + ":" + password
+            url_prefix = url_prefix + "@"
         if server_connect_url!=None:
             self.address=server_connect_url
         elif server_port != None:
-            self.address = ADVERT_URL_SCHEME+"%s:%i"%(server, server_port)
+            self.address = url_prefix+"%s:%i"%(server, server_port)
         elif server != None:
-            self.address = ADVERT_URL_SCHEME+"%s"%(server)            
+            self.address = url_prefix+"%s"%(server)            
         
         #pdb.set_trace()
         self.username=""
