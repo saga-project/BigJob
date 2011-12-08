@@ -27,7 +27,7 @@ import sys
 """
 
 COORDINATION_URL = "advert://localhost/?dbtype=sqlite3"
-#COORDINATION_URL = "advert://advert.cct.lsu.edu:8080/"
+#COORDINATION_URL = "advert://SAGA:SAGA_client@advert.cct.lsu.edu:8080/?dbtype=postgresql"
 #COORDINATION_URL = "tcp://*"
 #COORDINATION_URL = "redis://localhost:6379"
 
