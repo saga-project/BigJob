@@ -69,7 +69,6 @@ if __name__ == "__main__":
     lrms_url = "ssh://louie1.loni.org" # ssh resource url which launches jobs on target machine. Jobs not submitted to scheduling system.
     lrms_url = "pbs-ssh://louie1.loni.org" # Submit jobs to scheduling system of remote machine.
     lrms_url = "xt5torque://localhost" # torque resource url.
-    lrms_url = "xt5torque://localhost" # torque resource url    
     
     Please ensure that the respective SAGA adaptor is installed and working
     """

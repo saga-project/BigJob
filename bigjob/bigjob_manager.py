@@ -25,7 +25,13 @@ import traceback
 import logging
 import textwrap
 import urlparse
-logging.basicConfig(level=logging.DEBUG)
+
+logging.basicConfig(level=logging.DEBUG, datefmt='%m/%d/%Y %I:%M:%S %p',
+                   format='%(asctime)s - %(levelname)s - %(message)s')
+
+#logging.basicConfig(level=logging.DEBUG, datefmt='%m/%d/%Y %I:%M:%S %p',
+#                   format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+#logger = logging.getLogger(name='bigjob')
 
 # import other BigJob packages
 # import API
@@ -171,12 +177,12 @@ class bigjob(api.base.bigjob):
         jd = saga.job.description()
         
         
-        print "Adaptor specific modifications: "  + str(lrms_saga_url.scheme)
+        logging.debug("Adaptor specific modifications: "  + str(lrms_saga_url.scheme))
         if lrms_saga_url.scheme == "condorg":
             jd.arguments = [ "-a", self.coordination.get_address(), "-b",self.pilot_url]
-            print "\n\n-a", self.coordination.get_address(),"-b", self.pilot_url
+            logging.debug("\n\n-a", self.coordination.get_address(),"-b", self.pilot_url)
             agent_exe = os.path.abspath(os.path.join(os.getcwd(),"..","bootstrap","bigjob-condor-bootstrap.py"))
-            print agent_exe 
+            logging.debug(agent_exe) 
             jd.executable = agent_exe
             
         else:
@@ -226,7 +232,7 @@ class bigjob(api.base.bigjob):
             else:
                 jd.working_directory = "$(HOME)"
     
-            print "Working directory: " + jd.working_directory
+            logging.debug("Working directory: " + jd.working_directory)
             jd.output = "stdout-bigjob_agent-" + str(self.uuid) + ".txt"
             jd.error = "stderr-bigjob_agent-" + str(self.uuid) + ".txt"
          
@@ -239,14 +245,14 @@ class bigjob(api.base.bigjob):
             ctx = saga.context("x509")
             ctx.set_attribute ("UserProxy", userproxy)
             s.add_context(ctx)
-            print "use proxy: " + userproxy
+            logging.debug("use proxy: " + userproxy)
             js = saga.job.service(s, lrms_saga_url)
         else:
-            print "use standard proxy"
+            logging.debug("use standard proxy")
             js = saga.job.service(lrms_saga_url)
 
         self.job = js.create_job(jd)
-        print "Submit pilot job to: " + str(lrms_saga_url)
+        logging.debug("Submit pilot job to: " + str(lrms_saga_url))
         self.job.run()
         #return self.job
         
@@ -377,7 +383,7 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
     def stop_pilot_job(self):
         """ mark in advert directory of pilot-job as stopped """
         try:
-            print "stop pilot job: " + self.pilot_url
+            logging.debug("stop pilot job: " + self.pilot_url)
             self.coordination.set_pilot_state(self.pilot_url, str(saga.job.Done), True)            
             self.job=None
         except:
@@ -385,7 +391,7 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
     
     def cancel(self):        
         """ duck typing for cancel of saga.cpr.job and saga.job.job  """
-        print "Cancel Pilot Job"
+        logging.debug("Cancel Pilot Job")
         try:
             self.job.cancel()
         except:
@@ -444,7 +450,7 @@ class subjob(api.base.subjob):
     
     
     def cancel(self, pilot_url=None):
-        print "delete job: " + self.job_url
+        logging.debug("delete job: " + self.job_url)
         if self.pilot_url==None:
             self.pilot_url = pilot_url
             self.bj=pilot_url_dict[pilot_url]  
