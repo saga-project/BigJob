@@ -95,7 +95,7 @@ class bigjob(api.base.bigjob):
         logging.debug("initialized BigJob: " + self.app_url)
         
     def __init_coordination(self, coordination_url):        
-        if(coordination_url.startswith("advert://")):
+        if(coordination_url.startswith("advert://") or coordination_url.startswith("sqlasyncadvert://")):
             try:
                 from coordination.bigjob_coordination_advert import bigjob_coordination
                 logging.debug("Utilizing ADVERT Backend")
@@ -124,9 +124,11 @@ class bigjob(api.base.bigjob):
         username = surl.username
         password = surl.password
         dbtype = surl.query
+        scheme = "%s://"%surl.scheme
         if port == -1:
             port = None
-        coordination = bigjob_coordination(server=host, server_port=port, username=username, password=password, dbtype=dbtype)
+        coordination = bigjob_coordination(server=host, server_port=port, username=username, 
+                                           password=password, dbtype=dbtype, url_prefix=scheme)
         return coordination
     
     def start_pilot_job(self, 

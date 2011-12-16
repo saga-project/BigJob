@@ -27,8 +27,8 @@ sys.path.insert(0, os.getcwd() + "/../")
 
 ### EDIT COORDINATION_URL to point to advert server.  
 #COORDINATION_URL = "advert://advert.cct.lsu.edu:5432/"
-COORDINATION_URL = "advert://advert.cct.lsu.edu:8080/"
-COORDINATION_URL = "advert://localhost/"
+#COORDINATION_URL = "advert://advert.cct.lsu.edu:8080/"
+COORDINATION_URL = "advert://localhost/?dbtype=sqlite3"
 
 from bigjob.bigjob_manager import bigjob, subjob
 

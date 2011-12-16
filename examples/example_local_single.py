@@ -30,6 +30,7 @@ COORDINATION_URL = "advert://localhost/?dbtype=sqlite3"
 #COORDINATION_URL = "advert://SAGA:SAGA_client@advert.cct.lsu.edu:8080/?dbtype=postgresql"
 #COORDINATION_URL = "tcp://*"
 #COORDINATION_URL = "redis://localhost:6379"
+#COORDINATION_URL="sqlasyncadvert://gw68.quarry.iu.teragrid.org/"
 
 # for running BJ from local dir
 sys.path.insert(0, os.getcwd() + "/../")
