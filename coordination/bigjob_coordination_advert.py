@@ -1,8 +1,6 @@
 '''
 Encapsulates coordination and communication specifics of bigjob
 '''
-
-
 import logging
 logging.debug("Load Advert Coordination")
 
@@ -37,16 +35,17 @@ class bigjob_coordination(object):
     '''
 
     def __init__(self, server=ADVERT_SERVER, server_port=ADVERT_SERVER_PORT, 
-                       server_connect_url=None, username=None, password=None, dbtype=None):
+                       server_connect_url=None, username=None, password=None, 
+                       dbtype=None, url_prefix=None):
         '''
         Constructor
         '''
-        logging.debug("Server: " + str(server) + " Port " + str(server_port) 
-                      + " server_connect_url: " + str(server_connect_url))
         
-        
-        url_prefix = ADVERT_URL_SCHEME
-        if username!=None:
+        #pdb.set_trace()
+        if url_prefix==None:
+            url_prefix = ADVERT_URL_SCHEME
+             
+        if username!=None and username!="":
             url_prefix   = url_prefix+username
             if password!=None:
                 url_prefix = url_prefix + ":" + password
@@ -56,9 +55,8 @@ class bigjob_coordination(object):
         elif server_port != None:
             self.address = url_prefix+"%s:%i"%(server, server_port)
         elif server != None:
-            self.address = url_prefix+"%s"%(server)            
+            self.address = url_prefix+"%s"%(server)           
         
-        #pdb.set_trace()
         self.username=""
         self.password=""
         self.dbtype=""
@@ -80,14 +78,20 @@ class bigjob_coordination(object):
                 
         self.address = str(surl)
         self.pilot_url = self.address
+        logging.debug("Server: " + str(server) + " Port " + str(server_port) +
+                      " Url prefix: " + str(url_prefix) + 
+                      " Address: " + str(self.get_address()) +
+                      " server_connect_url: " + str(server_connect_url) )
         logging.debug("Initialized Coordination to: %s (DB: %s)"%(self.address, self.dbtype))
         self.resource_lock = threading.RLock()
         
+    
     def get_address(self):
         return self.address + "?" + self.dbtype
     
+    
     def get_url(self, id_string):        
-        if not id_string.startswith("advert"): 
+        if not id_string.startswith("advert") and not id_string.startswith("sqlasyncadvert"): 
             path = id_string.replace(":", "/")            
             if self.dbtype!=None:
                 url_string = self.address + "/" + path + "?" + self.dbtype
@@ -193,6 +197,7 @@ class bigjob_coordination(object):
         job_url = self.get_url(job_url)
         """ queue new job to pilot """
         new_job_url = self.get_url(pilot_url + "/new/" + str(uuid.uuid1()))
+        logging.debug("Job URL: %s Create new job entry at: %s"%(job_url,new_job_url))
         new_job_dir = saga.advert.directory(saga.url(new_job_url), 
                                             saga.advert.Create | saga.advert.CreateParents | saga.advert.ReadWrite)
         new_job_dir.set_attribute("joburl", job_url)

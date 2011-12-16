@@ -87,7 +87,7 @@ class bigjob_agent:
         logging.debug("Initialize C&C subsystem to pilot-url: " + self.base_url)
         
         
-        if(self.coordination_url.startswith("advert://")):
+        if(self.coordination_url.startswith("advert://") or coordination_url.startswith("sqlasyncadvert://")):
             try:
                 from coordination.bigjob_coordination_advert import bigjob_coordination
                 logging.debug("Utilizing ADVERT Backend: " + self.coordination_url)
@@ -433,6 +433,7 @@ class bigjob_agent:
                 continue
             logging.debug("Dequeue sub-job from: " + self.base_url)       
             job_url=self.coordination.dequeue_job(self.base_url)
+            logging.debug("Dequed:%s"%str(job_url))
             if job_url==None:
                 time.sleep(3)
                 continue
@@ -465,8 +466,10 @@ class bigjob_agent:
         if job_url != None:
             failed = False;
             try:
+                logging.debug("Get job description")
                 job_dict = self.coordination.get_job(job_url)
             except:
+                logging.error("Failed to get job description")
                 failed=True
                 
             if job_dict==None or failed==True:
