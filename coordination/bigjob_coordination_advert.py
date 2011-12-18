@@ -162,8 +162,9 @@ class bigjob_coordination(object):
         job_dir_url = self.get_url(job_url)
         job_description_url = self.get_url(job_url+"/job-description")
         logging.debug("Job URL: %s, Job Description URL: %s"%(job_dir_url, job_description_url))
-        job_dir = saga.advert.directory(saga.url(job_dir_url), 
-                                        saga.advert.Create | saga.advert.CreateParents | saga.advert.ReadWrite)
+        #job_dir = saga.advert.directory(saga.url(job_dir_url), 
+        #                                saga.advert.Create | saga.advert.CreateParents | saga.advert.ReadWrite)
+        # directory is recursively created
         job_desc_entry = saga.advert.entry(saga.url(job_description_url),
                                            saga.advert.Create | saga.advert.CreateParents | saga.advert.ReadWrite)
         logging.debug("initialized advert entry for job: " + job_dir_url)
