@@ -2,6 +2,7 @@
 
 #from distutils.core import setup
 import sys
+import bigjob
 from setuptools import setup, find_packages
 
 try:
@@ -11,7 +12,7 @@ except:
     #sys.exit(1)
     
 setup(name='BigJob',
-      version='0.3.32',
+      version=bigjob.version,
       description='SAGA-based Pilot-Job Implementation',
       author='Andre Luckow',
       author_email='aluckow@cct.lsu.edu',
