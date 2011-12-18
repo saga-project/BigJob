@@ -24,7 +24,7 @@ setup(name='BigJob',
                     ],
       platforms = ('Unix', 'Linux', 'Mac OS'),
       packages=['bigjob', 'bigjob_dynamic', 'coordination', 'examples', 'api', 'bootstrap'],
-      data_files=['bigjob_agent.conf'],
+      data_files=['bigjob_agent.conf', "VERSION", "README"],
       install_requires=['uuid', 'threadpool', 'virtualenv', 'redis==2.2.4'],
       entry_points = {
         'console_scripts': [
