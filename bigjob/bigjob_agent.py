@@ -87,7 +87,7 @@ class bigjob_agent:
         logging.debug("Initialize C&C subsystem to pilot-url: " + self.base_url)
         
         
-        if(self.coordination_url.startswith("advert://") or coordination_url.startswith("sqlasyncadvert://")):
+        if(self.coordination_url.startswith("advert://") or self.coordination_url.startswith("sqlasyncadvert://")):
             try:
                 from coordination.bigjob_coordination_advert import bigjob_coordination
                 logging.debug("Utilizing ADVERT Backend: " + self.coordination_url)
