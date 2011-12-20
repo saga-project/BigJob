@@ -1,8 +1,6 @@
 '''
 Encapsulates coordination and communication specifics of bigjob
 '''
-
-
 import logging
 import threading
 import datetime
@@ -11,7 +9,7 @@ import os
 import pickle
 import pdb
 
-
+from bigjob import logger
 sys.path.insert(0, (os.path.dirname(os.path.abspath( __file__) ) + "/../ext/redis-2.4.9/"))
 from redis import *
 

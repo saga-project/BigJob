@@ -26,18 +26,13 @@ import logging
 import textwrap
 import urlparse
 
-logging.basicConfig(level=logging.DEBUG, datefmt='%m/%d/%Y %I:%M:%S %p',
-                   format='%(asctime)s - %(levelname)s - %(message)s')
-
-#logging.basicConfig(level=logging.DEBUG, datefmt='%m/%d/%Y %I:%M:%S %p',
-#                   format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-#logger = logging.getLogger(name='bigjob')
 
 # import other BigJob packages
 # import API
 import api.base
 sys.path.append(os.path.dirname(__file__))
-from pbsssh import *
+from bigjob import logger
+from pbsssh import pbsssh
 
 if sys.version_info < (2, 5):
     sys.path.append(os.path.dirname( __file__ ) + "/ext/uuid-1.30/")
@@ -83,7 +78,7 @@ class bigjob(api.base.bigjob):
         """    
         self.uuid = get_uuid()
         
-        logging.debug("init BigJob w/: " + coordination_url)
+        logger.debug("init BigJob w/: " + coordination_url)
         self.coordination_url = coordination_url
         self.coordination = self.__init_coordination(coordination_url)
         __APPLICATION_NAME="bigjob"        
@@ -92,32 +87,32 @@ class bigjob(api.base.bigjob):
         self.state=saga.job.Unknown
         self.pilot_url=""
         self.job = None
-        logging.debug("initialized BigJob: " + self.app_url)
+        logger.debug("initialized BigJob: " + self.app_url)
         
     def __init_coordination(self, coordination_url):        
         if(coordination_url.startswith("advert://") or coordination_url.startswith("sqlasyncadvert://")):
             try:
                 from coordination.bigjob_coordination_advert import bigjob_coordination
-                logging.debug("Utilizing ADVERT Backend")
+                logger.debug("Utilizing ADVERT Backend")
             except:
-                logging.error("Advert Backend could not be loaded")
+                logger.error("Advert Backend could not be loaded")
         elif (coordination_url.startswith("redis://")):
             try:
                 from coordination.bigjob_coordination_redis import bigjob_coordination      
-                logging.debug("Utilizing Redis Backend")
+                logger.debug("Utilizing Redis Backend")
             except:
-                logging.error("Error loading pyredis.")
+                logger.error("Error loading pyredis.")
         elif (coordination_url.startswith("tcp://")):
             try:
                 from coordination.bigjob_coordination_zmq import bigjob_coordination
-                logging.debug("Utilizing ZMQ Backend")
+                logger.debug("Utilizing ZMQ Backend")
             except:
-                logging.error("ZMQ Backend not found. Please install ZeroMQ (http://www.zeromq.org/intro:get-the-software) and " 
+                logger.error("ZMQ Backend not found. Please install ZeroMQ (http://www.zeromq.org/intro:get-the-software) and " 
                       +"PYZMQ (http://zeromq.github.com/pyzmq/)")
         else:
-            logging.error("No suitable coordination backend found.")
+            logger.error("No suitable coordination backend found.")
         
-        logging.debug("Parsing URL: " + coordination_url)
+        logger.debug("Parsing URL: " + coordination_url)
         surl = saga.url(coordination_url)
         host = surl.host
         port = surl.port
@@ -159,10 +154,10 @@ class bigjob(api.base.bigjob):
         self.pilot_url = self.app_url + ":" + lrms_saga_url.host
         pilot_url_dict[self.pilot_url]=self
         
-        logging.debug("create pilot job entry on backend server: " + self.pilot_url)
+        logger.debug("create pilot job entry on backend server: " + self.pilot_url)
         self.coordination.set_pilot_state(self.pilot_url, str(saga.job.Unknown), False)
                 
-        logging.debug("set pilot state to: " + str(saga.job.Unknown))
+        logger.debug("set pilot state to: " + str(saga.job.Unknown))
         ##############################################################################
                 
         
@@ -179,12 +174,12 @@ class bigjob(api.base.bigjob):
         jd = saga.job.description()
         
         
-        logging.debug("Adaptor specific modifications: "  + str(lrms_saga_url.scheme))
+        logger.debug("Adaptor specific modifications: "  + str(lrms_saga_url.scheme))
         if lrms_saga_url.scheme == "condorg":
             jd.arguments = [ "-a", self.coordination.get_address(), "-b",self.pilot_url]
-            logging.debug("\n\n-a", self.coordination.get_address(),"-b", self.pilot_url)
+            logger.debug("\n\n-a", self.coordination.get_address(),"-b", self.pilot_url)
             agent_exe = os.path.abspath(os.path.join(os.getcwd(),"..","bootstrap","bigjob-condor-bootstrap.py"))
-            logging.debug(agent_exe) 
+            logger.debug(agent_exe) 
             jd.executable = agent_exe
             
         else:
@@ -212,7 +207,7 @@ class bigjob(api.base.bigjob):
                 self.job.run()
                 return
 
-            #logging.debug(bootstrap_script)
+            #logger.debug(bootstrap_script)
             jd.number_of_processes = str(number_nodes)
             jd.processes_per_host=str(processes_per_node)
             jd.spmd_variation = "single"
@@ -234,7 +229,7 @@ class bigjob(api.base.bigjob):
             else:
                 jd.working_directory = "$(HOME)"
     
-            logging.debug("Working directory: " + jd.working_directory)
+            logger.debug("Working directory: " + jd.working_directory)
             jd.output = "stdout-bigjob_agent-" + str(self.uuid) + ".txt"
             jd.error = "stderr-bigjob_agent-" + str(self.uuid) + ".txt"
          
@@ -247,14 +242,14 @@ class bigjob(api.base.bigjob):
             ctx = saga.context("x509")
             ctx.set_attribute ("UserProxy", userproxy)
             s.add_context(ctx)
-            logging.debug("use proxy: " + userproxy)
+            logger.debug("use proxy: " + userproxy)
             js = saga.job.service(s, lrms_saga_url)
         else:
-            logging.debug("use standard proxy")
+            logger.debug("use standard proxy")
             js = saga.job.service(lrms_saga_url)
 
         self.job = js.create_job(jd)
-        logging.debug("Submit pilot job to: " + str(lrms_saga_url))
+        logger.debug("Submit pilot job to: " + str(lrms_saga_url))
         self.job.run()
         #return self.job
         
@@ -296,45 +291,45 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
         return script
     
     def escape_rsl(self, bootstrap_script):
-        logging.debug("Escape RSL")
+        logger.debug("Escape RSL")
         bootstrap_script = bootstrap_script.replace("\"", "\"\"")
         return bootstrap_script
     
     def escape_pbs(self, bootstrap_script):
-        logging.debug("Escape PBS")
+        logger.debug("Escape PBS")
         bootstrap_script = "\'" + bootstrap_script+ "\'"
         return bootstrap_script
     
     def escape_ssh(self, bootstrap_script):
-        logging.debug("Escape SSH")
+        logger.debug("Escape SSH")
         bootstrap_script = bootstrap_script.replace("\"", "\\\"")
         bootstrap_script = bootstrap_script.replace("\'", "\\\"")
         bootstrap_script = "\"" + bootstrap_script+ "\""
         return bootstrap_script
      
     def add_subjob(self, jd, job_url, job_id):
-        logging.debug("add subjob to queue of PJ: " + str(self.pilot_url))        
+        logger.debug("add subjob to queue of PJ: " + str(self.pilot_url))        
         for i in range(0,3):
             try:
-                logging.debug("create dictionary for job description. Job-URL: " + job_url)
+                logger.debug("create dictionary for job description. Job-URL: " + job_url)
                 # put job description attributes to Redis
                 job_dict = {}
                 attributes = jd.list_attributes()                
                 for i in attributes:          
                         if jd.attribute_is_vector(i):
-                            #logging.debug("Add attribute: " + str(i) + " Value: " + str(jd.get_vector_attribute(i)))
+                            #logger.debug("Add attribute: " + str(i) + " Value: " + str(jd.get_vector_attribute(i)))
                             vector_attr = []
                             for j in jd.get_vector_attribute(i):
                                 vector_attr.append(j)
                             job_dict[i]=vector_attr
                         else:
-                            #logging.debug("Add attribute: " + str(i) + " Value: " + jd.get_attribute(i))
+                            #logger.debug("Add attribute: " + str(i) + " Value: " + jd.get_attribute(i))
                             job_dict[i] = jd.get_attribute(i)
                 
                 job_dict["state"] = str(saga.job.Unknown)
                 job_dict["job-id"] = str(job_id)
                 
-                #logging.debug("update job description at communication & coordination sub-system")
+                #logger.debug("update job description at communication & coordination sub-system")
                 self.coordination.set_job(job_url, job_dict)                                                
                 self.coordination.queue_job(self.pilot_url, job_url)
                 break
@@ -385,7 +380,7 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
     def stop_pilot_job(self):
         """ mark in advert directory of pilot-job as stopped """
         try:
-            logging.debug("stop pilot job: " + self.pilot_url)
+            logger.debug("stop pilot job: " + self.pilot_url)
             self.coordination.set_pilot_state(self.pilot_url, str(saga.job.Done), True)            
             self.job=None
         except:
@@ -393,7 +388,7 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
     
     def cancel(self):        
         """ duck typing for cancel of saga.cpr.job and saga.job.job  """
-        logging.debug("Cancel Pilot Job")
+        logger.debug("Cancel Pilot Job")
         try:
             self.job.cancel()
         except:
@@ -401,7 +396,7 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
             #traceback.print_stack()
         try:            
             self.stop_pilot_job()
-            logging.debug("delete pilot job: " + str(self.pilot_url))                      
+            logger.debug("delete pilot job: " + str(self.pilot_url))                      
             if CLEANUP:
                 self.coordination.delete_pilot(self.pilot_url)                
         except:
@@ -452,7 +447,7 @@ class subjob(api.base.subjob):
     
     
     def cancel(self, pilot_url=None):
-        logging.debug("delete job: " + self.job_url)
+        logger.debug("delete job: " + self.job_url)
         if self.pilot_url==None:
             self.pilot_url = pilot_url
             self.bj=pilot_url_dict[pilot_url]  
@@ -471,7 +466,7 @@ class subjob(api.base.subjob):
             self.pilot_url = pilot_url
             self.bj=pilot_url_dict[pilot_url]  
         sj = self.bj.get_subjob_details(self.job_url)  
-        #logging.debug("Subjob details: " + str(sj))              
+        #logger.debug("Subjob details: " + str(sj))              
         arguments=""
         for  i in  sj["Arguments"]:
             arguments = arguments + " " + i

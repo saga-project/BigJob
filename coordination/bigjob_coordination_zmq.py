@@ -16,6 +16,7 @@ import socket
 import time
 from zmq.eventloop import ioloop, zmqstream
 import zlib, cPickle as pickle
+from bigjob import logger
 
 if sys.version_info < (2, 5):
     sys.path.append(os.path.dirname( os.path.abspath( __file__) ) + "/../ext/uuid-1.30/")

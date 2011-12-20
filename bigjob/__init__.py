@@ -1,8 +1,11 @@
 import os
 import pdb
 import logging
+
+
 logging.basicConfig(level=logging.DEBUG, datefmt='%m/%d/%Y %I:%M:%S %p',
-                   format='%(asctime)s - %(levelname)s - %(message)s')
+                   format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(name='bigjob')
 
 version = "latest"
 
