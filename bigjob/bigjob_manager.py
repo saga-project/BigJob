@@ -113,13 +113,17 @@ class bigjob(api.base.bigjob):
             logger.error("No suitable coordination backend found.")
         
         logger.debug("Parsing URL: " + coordination_url)
-        surl = saga.url(coordination_url)
-        host = surl.host
-        port = surl.port
-        username = surl.username
-        password = surl.password
-        dbtype = surl.query
-        scheme = "%s://"%surl.scheme
+        try:
+            surl = saga.url(coordination_url)
+            host = surl.host
+            port = surl.port
+            username = surl.username
+            password = surl.password
+            dbtype = surl.query
+            scheme = "%s://"%surl.scheme
+        except:
+            logger.error("URL %s could not be parsed")
+            traceback.print_exc(file=sys.stderr)
         if port == -1:
             port = None
         coordination = bigjob_coordination(server=host, server_port=port, username=username, 
@@ -163,13 +167,6 @@ class bigjob(api.base.bigjob):
         
         self.number_nodes=int(number_nodes)        
         
-        # discover location of agent executable
-        #if bigjob_agent_executable==None:            
-        #    if os.getenv("BIGJOB_HOME", None)!=None:
-        #        bigjob_agent_executable=os.getenv("BIGJOB_HOME")+"/bigjob_agent_launcher.sh"
-        #    else:
-        #        bigjob_agent_executable=os.getcwd()+"/bigjob_agent_launcher.sh"
- 
         # create job description
         jd = saga.job.description()
         

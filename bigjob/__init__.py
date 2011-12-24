@@ -12,6 +12,6 @@ version = "latest"
 try:
     fn = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", 'VERSION')
     version = open(fn).read().strip()
-    logging.debug("Loading BigJob version: " + version)
+    logger.debug("Loading BigJob version: " + version)
 except IOError:
     pass
