@@ -25,6 +25,7 @@ except:
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/../../ext/threadpool-1.2.7/src/")
 logging.debug(str(sys.path))
 from threadpool import *
+from bigjob import logger
 
 if sys.version_info < (2, 5):
     sys.path.append(os.path.dirname( __file__ ) + "/../../ext/uuid-1.30/")
@@ -83,31 +84,41 @@ class bigjob_agent:
         # initialization of coordination and communication subsystem
         # Redis initialization
         self.base_url = args[2]
-        logging.debug("BigJob Agent arguments: " + str(args))
-        logging.debug("Initialize C&C subsystem to pilot-url: " + self.base_url)
+        self.id = self.__get_bj_id(self.base_url)
+        logger.debug("BigJob Agent arguments: " + str(args))
+        logger.debug("Initialize C&C subsystem to pilot-url: " + self.base_url)
+        logger.debug("BigJob ID: %s"%self.id)
         
+        # create bj directory
+        self.bj_dir = os.path.join(os.getcwd(), self.id)
+        try:
+            os.makedirs(self.bj_dir)
+        except:
+            logger.debug("Directory already exists.")
+        
+        os.chdir(self.bj_dir)
         
         if(self.coordination_url.startswith("advert://") or self.coordination_url.startswith("sqlasyncadvert://")):
             try:
                 from coordination.bigjob_coordination_advert import bigjob_coordination
                 logging.debug("Utilizing ADVERT Backend: " + self.coordination_url)
             except:
-                logging.error("Advert Backend could not be loaded")
+                logger.error("Advert Backend could not be loaded")
                 exc_type, exc_value, exc_traceback = sys.exc_info()
                 traceback.print_exc(file=sys.stderr)
                 traceback.print_tb(exc_traceback, file=sys.stderr)
         elif (self.coordination_url.startswith("redis://")):
             try:
                 from coordination.bigjob_coordination_redis import bigjob_coordination      
-                logging.debug("Utilizing Redis Backend: " + self.coordination_url + ". Please make sure Redis server is configured in bigjob_coordination_redis.py")
+                logger.debug("Utilizing Redis Backend: " + self.coordination_url + ". Please make sure Redis server is configured in bigjob_coordination_redis.py")
             except:
-                logging.error("Error loading pyredis.")
+                logger.error("Error loading pyredis.")
         elif (self.coordination_url.startswith("tcp://")):
             try:
                 from coordination.bigjob_coordination_zmq import bigjob_coordination
-                logging.debug("Utilizing ZMQ Backend")
+                logger.debug("Utilizing ZMQ Backend")
             except:
-                logging.error("ZMQ Backend not found. Please install ZeroMQ (http://www.zeromq.org/intro:get-the-software) and " 
+                logger.error("ZMQ Backend not found. Please install ZeroMQ (http://www.zeromq.org/intro:get-the-software) and " 
                       +"PYZMQ (http://zeromq.github.com/pyzmq/)")
 
         self.coordination = bigjob_coordination(server_connect_url=self.coordination_url)
@@ -127,7 +138,14 @@ class bigjob_agent:
         self.monitoring_thread=threading.Thread(target=self.start_background_thread)
         self.monitoring_thread.start()
         
-
+    
+    def __get_bj_id(self, url):
+        logger.debug("parsing ID out of URL: %s"%url)
+        start = url.index("bj-")
+        end = url.index(":", start)
+        bj_id = url[start:end]
+        return bj_id
+    
     
     def init_rms(self):
         if(os.environ.get("PBS_NODEFILE")!=None):
@@ -160,7 +178,7 @@ class bigjob_agent:
             columns = i.split()                
             try:
                 for j in range(0, int(columns[1])):
-                    logging.debug("add host: " + columns[0].strip())
+                    logger.debug("add host: " + columns[0].strip())
                     self.freenodes.append(columns[0]+"\n")
             except:
                     pass
@@ -185,9 +203,9 @@ class bigjob_agent:
     
         self.freenodes=[]
         for i in node_dict.keys():
-            logging.debug("host: " + i + " nodes: " + str(node_dict[i]))
+            logger.debug("host: " + i + " nodes: " + str(node_dict[i]))
             for j in range(0, node_dict[i]):
-                logging.debug("add host: " + i.strip())
+                logger.debug("add host: " + i.strip())
                 self.freenodes.append(i)
 
     def get_num_cpus(self):
@@ -208,7 +226,7 @@ class bigjob_agent:
         #try:
         #   state = self.coordination.get_job_state(job_url)
         #except:
-        #    logging.error("Could not access job state... skip execution attempt and requeuing job")
+        #    logger.error("Could not access job state... skip execution attempt and requeuing job")
         #    result = self.coordination.queue_job(self.base_url, job_url)
         #    if result == False:
         #        self.coordination.set_job_state(job_url, str(saga.job.Failed))
@@ -216,8 +234,9 @@ class bigjob_agent:
         if(state==str(bigjob.state.Unknown) or
             state==str(bigjob.state.New)):
             try:
-                #job_dict["state"]=str(saga.job.New)                
-                logging.debug("Start job: " + str(job_dict))        
+                #job_dict["state"]=str(saga.job.New)  
+                job_id = job_dict["job-id"]              
+                logger.debug("Start job id %s specification %s: "%(job_id, str(job_dict)))        
                 numberofprocesses = "1"
                 if (job_dict.has_key("NumberOfProcesses") == True):
                     numberofprocesses = job_dict["NumberOfProcesses"]
@@ -250,25 +269,36 @@ class bigjob_agent:
  
                 executable = job_dict["Executable"]
                 
-                workingdirectory = os.getcwd() 
+                workingdirectory = os.path.join(os.getcwd(), job_id)  
                 if (job_dict.has_key("WorkingDirectory") == True):
                         workingdirectory =  job_dict["WorkingDirectory"]
+                try:
+                    os.makedirs(workingdirectory)
+                except:
+                    logger.debug("Directory %s already exists."%workingdirectory)
+                logging.debug("Sub-Job: %s, Working_directory: %s"%(job_id, workingdirectory))
+                
                 
                 output="stdout"
                 if (job_dict.has_key("Output") == True):
                     output = job_dict["Output"]
-                        
-                error="stderr"
+                if not os.path.isabs(output):
+                    output=os.path.join(workingdirectory, output)
+                    
+                error=os.path.join(workingdirectory,"stderr")
                 if (job_dict.has_key("Error") == True):
                     error = job_dict["Error"]
-               
+                if not os.path.isabs(error):
+                    error=os.path.join(workingdirectory, error)
+                
                 # append job to job list
                 self.jobs.append(job_url)
                 
                 # create stdout/stderr file descriptors
                 output_file = os.path.abspath(output)
                 error_file = os.path.abspath(error)
-                logging.debug("stdout: " + output_file + " stderr: " + error_file + " env: " + str(environment))
+                logger.debug("stdout: " + output_file + " stderr: " + error_file 
+                             + " env: " + str(environment))
                 stdout = open(output_file, "w")
                 stderr = open(error_file, "w")
                 if ( spmdvariation.lower( )!="mpi"):
@@ -289,7 +319,7 @@ class bigjob_agent:
 
 
                 if(machinefile==None):
-                    logging.debug("Not enough resources to run: " + job_url)
+                    logger.debug("Not enough resources to run: " + job_url)
                     self.coordination.queue_job(self.base_url, job_url)
                     return # job cannot be run at the moment
 
@@ -301,12 +331,12 @@ class bigjob_agent:
                 else:
                     command ="ssh  " + host + " \"cd " + workingdirectory + "; " + command +"\""     
                 shell = self.SHELL 
-                logging.debug("execute: " + command + " in " + workingdirectory + " from: " + str(socket.gethostname()) + " (Shell: " + shell +")")
+                logger.debug("execute: " + command + " in " + workingdirectory + " from: " + str(socket.gethostname()) + " (Shell: " + shell +")")
                 # bash works fine for launching on QB but fails for Abe :-(
                 p = subprocess.Popen(args=command, executable=shell, stderr=stderr,
                                      stdout=stdout, cwd=workingdirectory, 
                                      env=environment, shell=True)
-                logging.debug("started " + command)
+                logger.debug("started " + command)
                 self.processes[job_url] = p
                 self.coordination.set_job_state(job_url, str(bigjob.state.Running))
             except:
@@ -325,7 +355,7 @@ class bigjob_agent:
             unique_nodes=set(self.freenodes)
             for i in unique_nodes:
                 number = self.freenodes.count(i)
-                logging.debug("allocate: " + i + " number nodes: " + str(number) 
+                logger.debug("allocate: " + i + " number nodes: " + str(number) 
                               + " current busy nodes: " + str(self.busynodes) 
                               + " free nodes: " + str(self.freenodes))
                 for j in range(0, number):
@@ -342,7 +372,7 @@ class bigjob_agent:
             #machine_file.writelines(self.freenodes[:number_nodes])
             machine_file.writelines(nodes)
             machine_file.close() 
-            logging.debug("wrote machinefile: " + machine_file_name + " Nodes: " + str(nodes))
+            logger.debug("wrote machinefile: " + machine_file_name + " Nodes: " + str(nodes))
             # update node structures
             #self.busynodes.extend(self.freenodes[:number_nodes])
             #del(self.freenodes[:number_nodes])            
@@ -389,14 +419,14 @@ class bigjob_agent:
         fh = open(filename, "r")
         lines = fh.readlines()
         fh.close
-        logging.debug("Machinefile: " + filename + " Hosts: " + str(lines))
+        logger.debug("Machinefile: " + filename + " Hosts: " + str(lines))
          
     def free_nodes(self, job_url):
         job_dict = self.coordination.get_job(job_url)
         self.resource_lock.acquire()
         number_nodes = int(job_dict["NumberOfProcesses"])
         machine_file_name = self.get_machine_file_name(job_dict)
-        logging.debug("Machine file: " + machine_file_name)
+        logger.debug("Machine file: " + machine_file_name)
         allocated_nodes = ["localhost\n"]
         try:
             machine_file = open(machine_file_name, "r")
@@ -405,14 +435,14 @@ class bigjob_agent:
         except:	
             traceback.print_exc(file=sys.stderr)
 
-        logging.debug("Free nodes: " + str(allocated_nodes))         
+        logger.debug("Free nodes: " + str(allocated_nodes))         
 
         for i in allocated_nodes:
-            logging.debug("free node: " + str(i) + " current busy nodes: " + str(self.busynodes) 
+            logger.debug("free node: " + str(i) + " current busy nodes: " + str(self.busynodes) 
                           + " free nodes: " + str(self.freenodes))       
             self.busynodes.remove(i)
             self.freenodes.append(i)
-        logging.debug("Delete " + machine_file_name)
+        logger.debug("Delete " + machine_file_name)
         if os.path.exists(machine_file_name):
             os.remove(machine_file_name)
         self.resource_lock.release()
@@ -431,9 +461,9 @@ class bigjob_agent:
             if len(self.freenodes)==0:
                 time.sleep(3)
                 continue
-            logging.debug("Dequeue sub-job from: " + self.base_url)       
+            logger.debug("Dequeue sub-job from: " + self.base_url)       
             job_url=self.coordination.dequeue_job(self.base_url)
-            logging.debug("Dequed:%s"%str(job_url))
+            logger.debug("Dequed:%s"%str(job_url))
             if job_url==None:
                 time.sleep(3)
                 continue
@@ -449,15 +479,15 @@ class bigjob_agent:
             
         # wait for termination of Worker Threads
         self.threadpool.wait()   
-        logging.debug("Terminating Agent - Dequeue Sub-Jobs Thread")   
+        logger.debug("Terminating Agent - Dequeue Sub-Jobs Thread")   
        
     #def poll_jobs(self):       
     #    self.threadpool.wait()
     #    new_jobs=self.redis.keys(self.base_url+":*")   
-    #    logging.debug("All jobs:" + str(new_jobs))
+    #    logger.debug("All jobs:" + str(new_jobs))
     #    for i in new_jobs:            
     #        request = WorkRequest(self.start_new_job_in_thread, [str(i)])
-    #        logging.debug("WorkRequest: " + str(request))
+    #        logger.debug("WorkRequest: " + str(request))
     #        self.threadpool.putRequest(request)
         
     def start_new_job_in_thread(self, job_url):
@@ -466,16 +496,16 @@ class bigjob_agent:
         if job_url != None:
             failed = False;
             try:
-                logging.debug("Get job description")
+                logger.debug("Get job description")
                 job_dict = self.coordination.get_job(job_url)
             except:
-                logging.error("Failed to get job description")
+                logger.error("Failed to get job description")
                 failed=True
                 
             if job_dict==None or failed==True:
                 self.coordination.queue_job(self.pilot_url, job_url)
                 
-            logging.debug("start job: " + job_url + " data: " + str(job_dict))
+            logger.debug("start job: " + job_url + " data: " + str(job_dict))
             if(job_dict["state"]==str(bigjob.state.Unknown)):
                 job_dict["state"]=str(bigjob.state.New)
                 self.coordination.set_job_state(job_url, str(bigjob.state.New))
@@ -485,28 +515,28 @@ class bigjob_agent:
     def monitor_jobs(self):
         """Monitor running processes. """   
         #pdb.set_trace()
-        logging.debug("Monitor jobs - # current jobs: %d"%len(self.jobs))
+        logger.debug("Monitor jobs - # current jobs: %d"%len(self.jobs))
         for i in self.jobs:
             if self.processes.has_key(i): # only if job has already been starteds
                 p = self.processes[i]
                 p_state = p.poll()
-                logging.debug(self.print_job(i) + " state: " + str(p_state) + " return code: " + str(p.returncode))
+                logger.debug(self.print_job(i) + " state: " + str(p_state) + " return code: " + str(p.returncode))
                 if (p_state != None and (p_state==0 or p_state==255)):
-                    logging.debug("Job successful: " + self.print_job(i))
+                    logger.debug("Job successful: " + self.print_job(i))
                     self.coordination.set_job_state(i, str(bigjob.state.Done))
                     #i.set_attribute("state", str(saga.job.Done))
                     self.free_nodes(i)
                     del self.processes[i]
                 elif p_state!=0 and p_state!=255 and p_state != None:
-                    logging.debug(self.print_job(i) + " failed.  ")
+                    logger.debug(self.print_job(i) + " failed.  ")
                     # do not free nodes => very likely the job will fail on these nodes
                     # self.free_nodes(i)                    
                     #if self.restarted.has_key(i)==False:
-                    #    logging.debug("Try to restart job " + self.print_job(i))
+                    #    logger.debug("Try to restart job " + self.print_job(i))
                     #    self.restarted[i]=True
                     #    self.execute_job(i)                        
                     #else:
-                    logging.debug("Job failed " + self.print_job(i))                    
+                    logger.debug("Job failed " + self.print_job(i))                    
                     self.coordination.set_job_state(i, str(bigjob.state.Failed))
                     self.free_nodes(i)
                     del self.processes[i]
@@ -518,14 +548,14 @@ class bigjob_agent:
                             
     def start_background_thread(self):        
         self.stop=False                
-        logging.debug("##################################### New POLL/MONITOR cycle ##################################")
-        logging.debug("Free nodes: " + str(len(self.freenodes)) + " Busy Nodes: " + str(len(self.busynodes)))
+        logger.debug("##################################### New POLL/MONITOR cycle ##################################")
+        logger.debug("Free nodes: " + str(len(self.freenodes)) + " Busy Nodes: " + str(len(self.busynodes)))
         while True and self.stop==False:
             if self.is_stopped(self.base_url)==True:
-                logging.debug("Pilot job entry deleted - terminate agent")
+                logger.debug("Pilot job entry deleted - terminate agent")
                 break
             else:
-                logging.debug("Pilot job entry: " + str(self.base_url) + " exists. Pilot job not in state stopped.")
+                logger.debug("Pilot job entry: " + str(self.base_url) + " exists. Pilot job not in state stopped.")
             try:
                 #self.poll_jobs()                
                 self.monitor_jobs()            
@@ -536,7 +566,7 @@ class bigjob_agent:
                 self.failed_polls=self.failed_polls+1
                 if self.failed_polls>3: # after 3 failed attempts exit
                     break
-        logging.debug("Terminating Agent - Background Thread")
+        logger.debug("Terminating Agent - Background Thread")
         
     
     def is_stopped(self, base_url):
@@ -545,7 +575,7 @@ class bigjob_agent:
             state = self.coordination.get_pilot_state(base_url)
         except:
             pass
-        logging.debug("Pilot State: " + str(state))
+        logger.debug("Pilot State: " + str(state))
         if state==None or state.has_key("stopped")==False or state["stopped"]==True:
             return True
         else:

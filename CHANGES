@@ -1,0 +1,6 @@
+
+0.3.38
+- SSH-based file-staging support for big-jobs and sub-jobs
+
+0.3.37
+- password-based authentication for Redis
