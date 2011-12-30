@@ -5,7 +5,6 @@
     THIS FILE SHOULD NOT BE COMMITTED TO SVN WITH USER-SPECIFIC PATHS!
 """
 
-import saga
 import os
 import time
 import pdb
@@ -30,7 +29,7 @@ sys.path.insert(0, os.getcwd() + "/../")
 #COORDINATION_URL = "advert://advert.cct.lsu.edu:8080/"
 COORDINATION_URL = "advert://localhost/?dbtype=sqlite3"
 
-from bigjob.bigjob_manager import bigjob, subjob
+from bigjob import bigjob, subjob, description
 
 
 ### EDIT based on the number of jobs you want to submit
@@ -96,7 +95,7 @@ if __name__ == "__main__":
     job_start_times = {}
     job_states = {}
     for i in range(0, NUMBER_JOBS):
-        jd = saga.job.description()
+        jd = description()
         jd.executable = "/bin/date"
         jd.number_of_processes = "1"
         jd.spmd_variation = "single"

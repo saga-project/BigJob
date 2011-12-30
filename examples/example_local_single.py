@@ -5,14 +5,10 @@
     THIS FILE SHOULD NOT BE COMMITTED TO SVN WITH USER-SPECIFIC PATHS!
 """
 
-import saga
 import os
 import time
 import pdb
 import sys
-
-# BigJob implementation can be swapped here by importing another implementation,
-# e.g. condor, cloud, azure
 
 
 # configuration
@@ -26,17 +22,18 @@ import sys
         tcp://* (ZMQ - listening to all interfaces)
 """
 
-COORDINATION_URL = "advert://localhost/?dbtype=sqlite3"
+#COORDINATION_URL = "advert://localhost/?dbtype=sqlite3"
 #COORDINATION_URL = "advert://SAGA:SAGA_client@advert.cct.lsu.edu:8080/?dbtype=postgresql"
 #COORDINATION_URL = "tcp://*"
-#COORDINATION_URL = "redis://localhost:6379"
+COORDINATION_URL = "redis://localhost:6379"
 #COORDINATION_URL = "redis://<password>@gw68.quarry.iu.teragrid.org:6379"
 #COORDINATION_URL="sqlasyncadvert://gw68.quarry.iu.teragrid.org/"
 
 # for running BJ from local dir
 sys.path.insert(0, os.getcwd() + "/../")
 
-from bigjob.bigjob_manager import bigjob, subjob
+from bigjob import bigjob, subjob, description
+
 
 def main():
     # Start BigJob
@@ -84,7 +81,7 @@ def main():
 
     ##########################################################################################
     # Submit SubJob through BigJob
-    jd = saga.job.description()
+    jd = description()
     jd.executable = "/bin/date"
     jd.number_of_processes = "1"
     jd.spmd_variation = "single"
