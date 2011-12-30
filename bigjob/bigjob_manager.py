@@ -25,7 +25,7 @@ import traceback
 import logging
 import textwrap
 import urlparse
-
+import paramiko
 
 # import other BigJob packages
 # import API
@@ -76,7 +76,7 @@ class bigjob(api.base.bigjob):
             redis://localhost:6379 (Redis at localhost)
             tcp://localhost (ZMQ)
         """    
-        self.uuid = get_uuid()
+        self.uuid = "bj-" + str(get_uuid())
         
         logger.debug("init BigJob w/: " + coordination_url)
         self.coordination_url = coordination_url
@@ -87,7 +87,9 @@ class bigjob(api.base.bigjob):
         self.state=saga.job.Unknown
         self.pilot_url=""
         self.job = None
+        self.working_directory = None
         logger.debug("initialized BigJob: " + self.app_url)
+        
         
     def __init_coordination(self, coordination_url):        
         if(coordination_url.startswith("advert://") or coordination_url.startswith("sqlasyncadvert://")):
@@ -139,7 +141,8 @@ class bigjob(api.base.bigjob):
                  working_directory=None,
                  userproxy=None,
                  walltime=None,
-                 processes_per_node=1):
+                 processes_per_node=1,
+                 filetransfers=None):
         """ Start a batch job (using SAGA Job API) at resource manager. Currently, the following resource manager are supported:
             fork://localhost/ (Default Job Adaptor
             gram://qb1.loni.org/jobmanager-pbs (Globus Adaptor)
@@ -163,7 +166,6 @@ class bigjob(api.base.bigjob):
                 
         logger.debug("set pilot state to: " + str(saga.job.Unknown))
         ##############################################################################
-                
         
         self.number_nodes=int(number_nodes)        
         
@@ -222,14 +224,20 @@ class bigjob(api.base.bigjob):
             if working_directory != None:
                 if not os.path.isdir(working_directory) and lrms_saga_url.scheme=="fork":
                     os.mkdir(working_directory)
-                jd.working_directory = working_directory
+                self.working_directory = working_directory
             else:
-                jd.working_directory = "$(HOME)"
+                self.working_directory = os.path.expanduser("~")
+    
+            jd.working_directory = self.working_directory
     
             logger.debug("Working directory: " + jd.working_directory)
-            jd.output = "stdout-bigjob_agent-" + str(self.uuid) + ".txt"
-            jd.error = "stderr-bigjob_agent-" + str(self.uuid) + ".txt"
+            jd.output = os.path.join(self.__get_bigjob_working_dir(), "stdout-bigjob_agent.txt")
+            jd.error = os.path.join(self.__get_bigjob_working_dir(),"stderr-bigjob_agent.txt")
          
+        # Stage BJ Input files
+        # build target url
+        bigjob_working_directory_url = "ssh://" + lrms_saga_url.host + self.__get_bigjob_working_dir()
+        self.__stage_files(filetransfers, bigjob_working_directory_url)
            
         # Submit job
         js = None    
@@ -292,10 +300,12 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
         bootstrap_script = bootstrap_script.replace("\"", "\"\"")
         return bootstrap_script
     
+    
     def escape_pbs(self, bootstrap_script):
         logger.debug("Escape PBS")
         bootstrap_script = "\'" + bootstrap_script+ "\'"
         return bootstrap_script
+    
     
     def escape_ssh(self, bootstrap_script):
         logger.debug("Escape SSH")
@@ -304,7 +314,11 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
         bootstrap_script = "\"" + bootstrap_script+ "\""
         return bootstrap_script
      
+     
     def add_subjob(self, jd, job_url, job_id):
+        logger.debug("Stage input files for sub-job")
+        if jd.attribute_exists ("filetransfer"):
+            self.__stage_files(jd.filetransfer, self.__get_subjob_working_dir(job_id))
         logger.debug("add subjob to queue of PJ: " + str(self.pilot_url))        
         for i in range(0,3):
             try:
@@ -400,11 +414,103 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
             pass
             #traceback.print_stack()
 
+
+    ###########################################################################
+    # internal methods
+    
+    def __get_bigjob_working_dir(self):
+        return os.path.join(self.working_directory, self.uuid)
+    
+    
+    def __get_subjob_working_dir(self, sj_id):
+        return os.path.join(self.__get_bigjob_working_dir(), sj_id)
+    
+
+    def __stage_files(self, filetransfers, target_url):
+        
+        logger.debug("Stage: %s to %s"%(filetransfers, target_url))
+        self.__create_remote_directory(target_url)
+        if filetransfers==None:
+            return
+        for i in filetransfers:
+            source_file=i
+            if i.find(">")>0:
+                source_file = i[:i.find(">")].strip()
+            target_url_full = os.path.join(target_url, os.path.basename(source_file))
+            logger.debug("Stage: %s to %s"%(source_file, target_url_full))
+            self.__third_party_transfer(source_file, target_url_full)
+           
+        
+    def __third_party_transfer(self, source_url, target_url):
+        """
+            Transfers from source URL to machine of PS (target path)
+        """
+        result = urlparse.urlparse(source_url)
+        source_host = result.netloc
+        source_path = result.path
+        
+        result = urlparse.urlparse(target_url)
+        target_host = result.netloc
+        target_path = result.path
+          
+        python_script= """import sys
+import os
+import urllib
+import sys
+import time
+import paramiko
+
+client = paramiko.SSHClient()
+client.load_system_host_keys()
+client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+client.connect("%s")
+sftp = client.open_sftp()
+sftp.put("%s", "%s")
+"""%(target_host, source_path, target_path)
+
+        logging.debug("Execute: \n%s"%python_script)
+        source_client = paramiko.SSHClient()
+        source_client.load_system_host_keys()
+        source_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        source_client.connect(source_host)
+        stdin, stdout, stderr = source_client.exec_command("python -c \'%s\'"%python_script)
+        stdin.close()
+        logging.debug("************************************************")
+        logging.debug("Stdout: %s\nStderr:%s", stdout.read(), stderr.read())
+        logging.debug("************************************************")
+      
+    
+    def __create_remote_directory(self, target_url):
+        result = urlparse.urlparse(target_url)
+        target_host = result.netloc
+        target_path = result.path
+        try:
+            client = paramiko.SSHClient()
+            client.load_system_host_keys()
+            client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            client.connect(target_host)
+            sftp = client.open_sftp()            
+            sftp.mkdir(target_path)
+            sftp.close()
+            client.close()
+        except:
+            logger.warn("Error creating directory: " + str(target_path) 
+                         + " at: " + str(target_host) + " Already exists?" )
+            #self.__print_traceback()  
+    
+    
+    def __print_traceback(self):
+        exc_type, exc_value, exc_traceback = sys.exc_info()
+        print "*** print_exception:"
+        traceback.print_exception(exc_type, exc_value, exc_traceback,
+                              limit=2, file=sys.stdout)
+        
     def __repr__(self):
         return self.pilot_url 
 
     def __del__(self):
         self.cancel()
+
 
                     
                     
@@ -414,7 +520,7 @@ class subjob(api.base.subjob):
         """Constructor"""
         self.coordination_url = coordination_url
         self.job_url=None
-        self.uuid = get_uuid()
+        self.uuid = "sj-" + str(get_uuid())
         self.job_url = None
         self.pilot_url = None
         self.bj = None

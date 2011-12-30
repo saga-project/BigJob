@@ -89,7 +89,7 @@ def main():
     jd.number_of_processes = "1"
     jd.spmd_variation = "single"
     jd.arguments = [""]
-    jd.working_directory = os.getcwd() 
+    #jd.working_directory = "/tmp" 
     jd.output = "stdout.txt"
     jd.error = "stderr.txt"
     sj = subjob()
