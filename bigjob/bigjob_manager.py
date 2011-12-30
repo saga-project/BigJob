@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""Module big_job.
+"""Module bigjob_manager.
 
 This Module is used to launch jobs via the advert service. 
 
@@ -13,25 +13,42 @@ once. All shortrunning task will be started using the protocol implemented by su
 
 Installation:
 Set environment variable BIGJOB_HOME to installation directory
-
 """
 
 import sys
-import saga
+from bigjob import logger
 import time
-import pdb
 import os
 import traceback
 import logging
 import textwrap
 import urlparse
 import paramiko
+import pdb
+
+from bigjob import SAGA_BLISS 
+from bigjob.state import *
+
+if SAGA_BLISS == False:
+    try:
+        import saga
+        logger.debug("Using SAGA C++/Python.")
+        is_bliss=False
+    except:
+        logger.error("SAGA C++ and Python bindings not found. Using Bliss.")
+        import bliss.sagacompat as saga
+        is_bliss=True
+else:
+    logger.debug("Using SAGA Bliss.")
+    import bliss.sagacompat as saga
+    is_bliss=True 
+
 
 # import other BigJob packages
 # import API
 import api.base
 sys.path.append(os.path.dirname(__file__))
-from bigjob import logger
+
 from pbsssh import pbsssh
 
 if sys.version_info < (2, 5):
@@ -58,6 +75,8 @@ CLEANUP=True
 #for legacy purposes and support for old BJ API
 pilot_url_dict={} # stores a mapping of pilot_url to bigjob
 
+
+
 class BigJobError(Exception):
     def __init__(self, value):
         self.value = value
@@ -75,7 +94,8 @@ class bigjob(api.base.bigjob):
             advert://advert.cct.lsu.edu:8080 (SAGA/Advert POSTGRESQL)
             redis://localhost:6379 (Redis at localhost)
             tcp://localhost (ZMQ)
-        """    
+        """  
+        
         self.uuid = "bj-" + str(get_uuid())
         
         logger.debug("init BigJob w/: " + coordination_url)
@@ -84,7 +104,7 @@ class bigjob(api.base.bigjob):
         __APPLICATION_NAME="bigjob"        
         self.app_url = __APPLICATION_NAME +":" + str(self.uuid) 
         
-        self.state=saga.job.Unknown
+        self.state=Unknown
         self.pilot_url=""
         self.job = None
         self.working_directory = None
@@ -115,23 +135,16 @@ class bigjob(api.base.bigjob):
             logger.error("No suitable coordination backend found.")
         
         logger.debug("Parsing URL: " + coordination_url)
-        try:
-            surl = saga.url(coordination_url)
-            host = surl.host
-            port = surl.port
-            username = surl.username
-            password = surl.password
-            dbtype = surl.query
-            scheme = "%s://"%surl.scheme
-        except:
-            logger.error("URL %s could not be parsed")
-            traceback.print_exc(file=sys.stderr)
+        scheme, username, password, host, port, dbtype  = self.__parse_url(coordination_url) 
+        
         if port == -1:
             port = None
         coordination = bigjob_coordination(server=host, server_port=port, username=username, 
                                            password=password, dbtype=dbtype, url_prefix=scheme)
         return coordination
     
+   
+            
     def start_pilot_job(self, 
                  lrms_url, 
                  bigjob_agent_executable=None,
@@ -162,9 +175,9 @@ class bigjob(api.base.bigjob):
         pilot_url_dict[self.pilot_url]=self
         
         logger.debug("create pilot job entry on backend server: " + self.pilot_url)
-        self.coordination.set_pilot_state(self.pilot_url, str(saga.job.Unknown), False)
+        self.coordination.set_pilot_state(self.pilot_url, str(Unknown), False)
                 
-        logger.debug("set pilot state to: " + str(saga.job.Unknown))
+        logger.debug("set pilot state to: " + str(Unknown))
         ##############################################################################
         
         self.number_nodes=int(number_nodes)        
@@ -205,10 +218,16 @@ class bigjob(api.base.bigjob):
                 self.job = pbssshj
                 self.job.run()
                 return
+            elif is_bliss:
+                bootstrap_script = self.escape_bliss(bootstrap_script)
 
             #logger.debug(bootstrap_script)
-            jd.number_of_processes = str(number_nodes)
-            jd.processes_per_host=str(processes_per_node)
+            if is_bliss==False:
+                jd.number_of_processes = str(number_nodes)
+                jd.processes_per_host=str(processes_per_node)
+            else:
+                jd.TotalCPUCount=str(int(number_nodes)*int(processes_per_node))
+                
             jd.spmd_variation = "single"
             #jd.arguments = [bigjob_agent_executable, self.coordination.get_address(), self.pilot_url]
             jd.arguments = ["-c", bootstrap_script]
@@ -269,7 +288,7 @@ start_time = time.time()
 
 home = os.environ["HOME"]
 
-BIGJOB_AGENT_DIR= home+ "/.bigjob"
+BIGJOB_AGENT_DIR= os.path.join(home, ".bigjob")
 if not os.path.exists(BIGJOB_AGENT_DIR): os.mkdir (BIGJOB_AGENT_DIR)
 BIGJOB_PYTHON_DIR=BIGJOB_AGENT_DIR+"/python/"
 BOOTSTRAP_URL="https://svn.cct.lsu.edu/repos/saga-projects/applications/bigjob/trunk/generic/bootstrap/bigjob-bootstrap.py"
@@ -313,6 +332,13 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
         bootstrap_script = bootstrap_script.replace("\'", "\\\"")
         bootstrap_script = "\"" + bootstrap_script+ "\""
         return bootstrap_script
+    
+    def escape_bliss(self, bootstrap_script):
+        logger.debug("Escape fork")
+        #bootstrap_script = bootstrap_script.replace("\"", "\\\"")
+        bootstrap_script = bootstrap_script.replace("\'", "\"")
+        bootstrap_script = "\'" + bootstrap_script+ "\'"
+        return bootstrap_script
      
      
     def add_subjob(self, jd, job_url, job_id):
@@ -325,7 +351,10 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
                 logger.debug("create dictionary for job description. Job-URL: " + job_url)
                 # put job description attributes to Redis
                 job_dict = {}
-                attributes = jd.list_attributes()                
+                #to accomendate current bug in bliss (Number of processes is not returned from list attributes)
+                job_dict["NumberOfProcesses"] = "1" 
+                attributes = jd.list_attributes()   
+                logger.debug("SJ Attributes: " + str(attributes))             
                 for i in attributes:          
                         if jd.attribute_is_vector(i):
                             #logger.debug("Add attribute: " + str(i) + " Value: " + str(jd.get_vector_attribute(i)))
@@ -337,7 +366,7 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
                             #logger.debug("Add attribute: " + str(i) + " Value: " + jd.get_attribute(i))
                             job_dict[i] = jd.get_attribute(i)
                 
-                job_dict["state"] = str(saga.job.Unknown)
+                job_dict["state"] = str(Unknown)
                 job_dict["job-id"] = str(job_id)
                 
                 #logger.debug("update job description at communication & coordination sub-system")
@@ -380,7 +409,7 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
         for i in jobs:
             job_detail = self.coordination.get_job(i)            
             if job_detail != None and job_detail.has_key("state") == True\
-                and job_detail["state"]==str(saga.job.Running):
+                and job_detail["state"]==str(Running):
                 job_np = "1"
                 if (job_detail["NumberOfProcesses"] == True):
                     job_np = job_detail["NumberOfProcesses"]
@@ -392,7 +421,7 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
         """ mark in advert directory of pilot-job as stopped """
         try:
             logger.debug("stop pilot job: " + self.pilot_url)
-            self.coordination.set_pilot_state(self.pilot_url, str(saga.job.Done), True)            
+            self.coordination.set_pilot_state(self.pilot_url, str(Done), True)            
             self.job=None
         except:
             pass
@@ -418,6 +447,33 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
     ###########################################################################
     # internal methods
     
+    def __parse_url(self, url):
+        try:
+            surl = saga.url(url)
+            host = surl.host
+            port = surl.port
+            username = surl.username
+            password = surl.password
+            query = surl.query
+            scheme = "%s://"%surl.scheme
+        except:
+            """ Fallback URL parser based on Python urlparse library """
+            logger.error("URL %s could not be parsed")
+            traceback.print_exc(file=sys.stderr)
+            result = urlparse.urlparse(url)
+            host = result.hostname
+            port = result.port
+            username = result.username
+            password = result.password
+            if url.find("?")>0:
+                query = url[url.find("?")+1:]
+            else:
+                query = None
+            scheme = "%s://"%result.scheme
+            
+        return scheme, username, password, host, port, query     
+            
+    
     def __get_bigjob_working_dir(self):
         return os.path.join(self.working_directory, self.uuid)
     
@@ -427,7 +483,6 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
     
 
     def __stage_files(self, filetransfers, target_url):
-        
         logger.debug("Stage: %s to %s"%(filetransfers, target_url))
         self.__create_remote_directory(target_url)
         if filetransfers==None:
@@ -584,3 +639,6 @@ class subjob(api.base.subjob):
         else:
             return self.job_url
         
+        
+class description(saga.job.description):
+    pass

@@ -6,7 +6,6 @@ This Module is used to launch a set of bigjobs.
 
 """
 import getopt
-import saga
 import time
 import pdb
 import os
@@ -18,8 +17,9 @@ import sys
 sys.path.insert(0, os.getcwd() + "/../")
 
 # Big Job Imports
-from bigjob.bigjob_manager import *
+from bigjob import bigjob, subjob, description
 from bigjob_dynamic.many_job_affinity import *
+
 
 """ This variable defines the coordination system that is used by BigJob
     e.g. 
@@ -66,7 +66,7 @@ if __name__ == "__main__":
         cwd = os.getcwd()
         for i in range(0, NUMBER_JOBS):
             # create job description
-            jd = saga.job.description()
+            jd = description()
             jd.executable = "/bin/date"
             jd.number_of_processes = "1"
             jd.spmd_variation = "single"

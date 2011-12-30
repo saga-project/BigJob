@@ -40,6 +40,9 @@ class bigjob_coordination(object):
         if server_port==None:
             server_port=6379
             
+        self.username = None
+        self.password = None   
+        
         self.address = "%s%s:%i"%(REDIS_URL_SCHEME, server, server_port)
         if server_connect_url!=None:
             self.address=server_connect_url    
@@ -64,10 +67,12 @@ class bigjob_coordination(object):
             if self.password != None:
                 self.address = "%s%s@%s:%i"%(REDIS_URL_SCHEME, self.password, server, server_port)
         
-        logger.debug("Connect to Redis: " + server + " Port: " + str(server_port) 
-                      + " Password: " + self.password )
+        logger.debug("Connect to Redis: " + server + " Port: " + str(server_port))
         
-        self.redis = Redis(host=server, port=server_port, password=self.password, db=0)
+        if self.password==None:
+            self.redis = Redis(host=server, port=server_port, db=0)
+        else:
+            self.redis = Redis(host=server, port=server_port, password=self.password, db=0)
         #self.redis_pubsub = self.redis.pubsub() # redis pubsub client       
         self.resource_lock = threading.RLock()
         self.pipe = self.redis.pipeline()

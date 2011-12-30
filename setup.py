@@ -24,8 +24,8 @@ setup(name='BigJob',
                     ],
       platforms = ('Unix', 'Linux', 'Mac OS'),
       packages=['bigjob', 'bigjob_dynamic', 'coordination', 'examples', 'api', 'bootstrap'],
-      data_files=['bigjob_agent.conf', "VERSION", "README"],
-      install_requires=['uuid', 'threadpool', 'virtualenv', 'redis==2.2.4', 'paramiko'],
+      data_files=['bigjob_agent.conf', 'bigjob.conf', "VERSION", "README"],
+      install_requires=['uuid', 'threadpool', 'virtualenv', 'redis==2.2.4', 'paramiko', 'bliss'],
       entry_points = {
         'console_scripts': [
             'test-bigjob = examples.example_local_single:main',

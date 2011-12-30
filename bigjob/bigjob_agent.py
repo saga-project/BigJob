@@ -238,12 +238,18 @@ class bigjob_agent:
                 job_id = job_dict["job-id"]              
                 logger.debug("Start job id %s specification %s: "%(job_id, str(job_dict)))        
                 numberofprocesses = "1"
-                if (job_dict.has_key("NumberOfProcesses") == True):
-                    numberofprocesses = job_dict["NumberOfProcesses"]
+                try:
+                    if (job_dict.has_key("NumberOfProcesses") == True):
+                        numberofprocesses = job_dict["NumberOfProcesses"]
+                except:
+                    pass # ignore in particular if Bliss is used
                 
                 spmdvariation="single"
-                if (job_dict.has_key("SPMDVariation") == True):
-                    spmdvariation = job_dict["SPMDVariation"]
+                try:
+                    if (job_dict.has_key("SPMDVariation") == True):
+                        spmdvariation = job_dict["SPMDVariation"]
+                except:
+                    pass  # ignore in particular if Bliss is used
                 
                 arguments = ""
                 if (job_dict.has_key("Arguments") == True):

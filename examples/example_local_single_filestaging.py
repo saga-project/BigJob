@@ -5,15 +5,13 @@
     THIS FILE SHOULD NOT BE COMMITTED TO SVN WITH USER-SPECIFIC PATHS!
 """
 
-import saga
 import os
 import time
 import pdb
 import sys
 
-# BigJob implementation can be swapped here by importing another implementation,
-# e.g. condor, cloud, azure
-
+import bigjob
+bigjob.SAGA_BLISS=False
 
 # configuration
 """ This variable defines the coordination system that is used by BigJob
@@ -36,7 +34,7 @@ COORDINATION_URL = "advert://localhost/?dbtype=sqlite3"
 # for running BJ from local dir
 sys.path.insert(0, os.getcwd() + "/../")
 
-from bigjob.bigjob_manager import bigjob, subjob
+from bigjob import bigjob, subjob, description
 
 def main():
     # Start BigJob
@@ -90,7 +88,7 @@ def main():
 
     ##########################################################################################
     # Submit SubJob through BigJob
-    jd = saga.job.description()
+    jd = description()
     jd.executable = "/bin/cat"
     jd.number_of_processes = "1"
     jd.spmd_variation = "single"

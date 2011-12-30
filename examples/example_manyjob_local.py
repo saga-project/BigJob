@@ -13,7 +13,6 @@ THIS FILE SHOULD NOT BE COMMITTED TO SVN WITH USE-SPECIFIC PATHS!
 
 import sys
 import getopt
-import saga
 import time
 import pdb
 import os
@@ -27,7 +26,7 @@ import sys
 
 sys.path.insert(0, os.getcwd() + "/../")
 
-from bigjob.bigjob_manager import *
+from bigjob import bigjob, subjob, description
 from bigjob_dynamic.many_job import *
 
 
@@ -83,7 +82,7 @@ def main():
         cwd = os.getcwd()
         for i in range(0, NUMBER_JOBS):
             # create job description
-            jd = saga.job.description()
+            jd = description()
             jd.executable = "/bin/date"
             jd.number_of_processes = "1"
             jd.spmd_variation = "single"

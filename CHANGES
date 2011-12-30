@@ -1,5 +1,4 @@
-
-0.3.38
+0.4.0
 - SSH-based file-staging support for big-jobs and sub-jobs
 
 0.3.37
