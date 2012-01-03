@@ -1,0 +1,823 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>bigjob.bigjob_manager.bigjob</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="http://faust.cct.lsu.edu/trac/bigjob/">BigJob</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="bigjob-module.html">Package&nbsp;bigjob</a> ::
+        <a href="bigjob.bigjob_manager-module.html">Module&nbsp;bigjob_manager</a> ::
+        Class&nbsp;bigjob
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="bigjob.bigjob_manager.bigjob-class.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS DESCRIPTION ==================== -->
+<h1 class="epydoc">Class bigjob</h1><p class="nomargin-top"><span class="codelink"><a href="bigjob.bigjob_manager-pysrc.html#bigjob">source&nbsp;code</a></span></p>
+<center>
+<center>  <map id="uml_class_diagram_for_bigjob_b_3" name="uml_class_diagram_for_bigjob_b_3">
+<area shape="rect" id="node1_14" href="bigjob.bigjob_manager.bigjob-class.html#__init__" title="Initializes BigJob&#39;s coordination system e.g.: advert://localhost &#160;(SAGA/Advert SQLITE) advert://advert.cct.lsu.edu:8080 (SAGA/Advert &#160;POSTGRESQL) redis://localhost:6379 (Redis at localhost) tcp://localhost &#160;(ZMQ)" alt="" coords="17,103,1367,121"/>
+<area shape="rect" id="node1_15" href="bigjob.bigjob_manager.bigjob-class.html#start_pilot_job" title="Start a batch job (using SAGA Job API) at resource manager." alt="" coords="17,121,1367,140"/>
+<area shape="rect" id="node1_16" href="bigjob.bigjob_manager.bigjob-class.html#generate_bootstrap_script" title="bigjob.bigjob_manager.bigjob.generate_bootstrap_script" alt="" coords="17,140,1367,159"/>
+<area shape="rect" id="node1_17" href="bigjob.bigjob_manager.bigjob-class.html#escape_rsl" title="bigjob.bigjob_manager.bigjob.escape_rsl" alt="" coords="17,159,1367,177"/>
+<area shape="rect" id="node1_18" href="bigjob.bigjob_manager.bigjob-class.html#escape_pbs" title="bigjob.bigjob_manager.bigjob.escape_pbs" alt="" coords="17,177,1367,196"/>
+<area shape="rect" id="node1_19" href="bigjob.bigjob_manager.bigjob-class.html#escape_ssh" title="bigjob.bigjob_manager.bigjob.escape_ssh" alt="" coords="17,196,1367,215"/>
+<area shape="rect" id="node1_20" href="bigjob.bigjob_manager.bigjob-class.html#escape_bliss" title="bigjob.bigjob_manager.bigjob.escape_bliss" alt="" coords="17,215,1367,233"/>
+<area shape="rect" id="node1_21" href="bigjob.bigjob_manager.bigjob-class.html#add_subjob" title="bigjob.bigjob_manager.bigjob.add_subjob" alt="" coords="17,233,1367,252"/>
+<area shape="rect" id="node1_22" href="bigjob.bigjob_manager.bigjob-class.html#delete_subjob" title="bigjob.bigjob_manager.bigjob.delete_subjob" alt="" coords="17,252,1367,271"/>
+<area shape="rect" id="node1_23" href="bigjob.bigjob_manager.bigjob-class.html#get_subjob_state" title="bigjob.bigjob_manager.bigjob.get_subjob_state" alt="" coords="17,271,1367,289"/>
+<area shape="rect" id="node1_24" href="bigjob.bigjob_manager.bigjob-class.html#get_subjob_details" title="bigjob.bigjob_manager.bigjob.get_subjob_details" alt="" coords="17,289,1367,308"/>
+<area shape="rect" id="node1_25" href="bigjob.bigjob_manager.bigjob-class.html#get_state" title="duck typing for get_state of saga.job.job state of saga job that is used to spawn the pilot agent" alt="" coords="17,308,1367,327"/>
+<area shape="rect" id="node1_26" href="bigjob.bigjob_manager.bigjob-class.html#get_state_detail" title="internal state of BigJob agent" alt="" coords="17,327,1367,345"/>
+<area shape="rect" id="node1_27" href="bigjob.bigjob_manager.bigjob-class.html#__del__" title="bigjob.bigjob_manager.bigjob.__del__" alt="" coords="17,364,1367,383"/>
+<area shape="rect" id="node1" href="bigjob.bigjob_manager.bigjob-class.html" title="bigjob.bigjob_manager.bigjob" alt="" coords="5,70,1379,389"/>
+<area shape="rect" id="node2" href="api.base.bigjob-class.html" title="api.base.bigjob" alt="" coords="631,6,753,50"/>
+</map>
+  <img src="uml_class_diagram_for_bigjob_b_3.gif" alt='' usemap="#uml_class_diagram_for_bigjob_b_3" ismap="ismap" class="graph-without-title" />
+</center>
+</center>
+<hr />
+<!-- ==================== INSTANCE METHODS ==================== -->
+<a name="section-InstanceMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="bigjob.bigjob_manager.bigjob-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">coordination_url</span>=<span class="summary-sig-default">&quot;advert://localhost/&quot;</span>)</span><br />
+      Initializes BigJob's coordination system e.g.: advert://localhost 
+      (SAGA/Advert SQLITE) advert://advert.cct.lsu.edu:8080 (SAGA/Advert 
+      POSTGRESQL) redis://localhost:6379 (Redis at localhost) 
+      tcp://localhost (ZMQ)</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="bigjob.bigjob_manager-pysrc.html#bigjob.__init__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="__init_coordination"></a><span class="summary-sig-name">__init_coordination</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">coordination_url</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="bigjob.bigjob_manager-pysrc.html#bigjob.__init_coordination">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="bigjob.bigjob_manager.bigjob-class.html#start_pilot_job" class="summary-sig-name">start_pilot_job</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">lrms_url</span>,
+        <span class="summary-sig-arg">bigjob_agent_executable</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">number_nodes</span>=<span class="summary-sig-default">1</span>,
+        <span class="summary-sig-arg">queue</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">project</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">working_directory</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">userproxy</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">walltime</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">processes_per_node</span>=<span class="summary-sig-default">1</span>,
+        <span class="summary-sig-arg">filetransfers</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Start a batch job (using SAGA Job API) at resource manager.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="bigjob.bigjob_manager-pysrc.html#bigjob.start_pilot_job">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="generate_bootstrap_script"></a><span class="summary-sig-name">generate_bootstrap_script</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">coordination_host</span>,
+        <span class="summary-sig-arg">coordination_namespace</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="bigjob.bigjob_manager-pysrc.html#bigjob.generate_bootstrap_script">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="escape_rsl"></a><span class="summary-sig-name">escape_rsl</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">bootstrap_script</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="bigjob.bigjob_manager-pysrc.html#bigjob.escape_rsl">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="escape_pbs"></a><span class="summary-sig-name">escape_pbs</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">bootstrap_script</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="bigjob.bigjob_manager-pysrc.html#bigjob.escape_pbs">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="escape_ssh"></a><span class="summary-sig-name">escape_ssh</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">bootstrap_script</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="bigjob.bigjob_manager-pysrc.html#bigjob.escape_ssh">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="escape_bliss"></a><span class="summary-sig-name">escape_bliss</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">bootstrap_script</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="bigjob.bigjob_manager-pysrc.html#bigjob.escape_bliss">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="add_subjob"></a><span class="summary-sig-name">add_subjob</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">jd</span>,
+        <span class="summary-sig-arg">job_url</span>,
+        <span class="summary-sig-arg">job_id</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="bigjob.bigjob_manager-pysrc.html#bigjob.add_subjob">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="delete_subjob"></a><span class="summary-sig-name">delete_subjob</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">job_url</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="bigjob.bigjob_manager-pysrc.html#bigjob.delete_subjob">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="get_subjob_state"></a><span class="summary-sig-name">get_subjob_state</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">job_url</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="bigjob.bigjob_manager-pysrc.html#bigjob.get_subjob_state">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="get_subjob_details"></a><span class="summary-sig-name">get_subjob_details</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">job_url</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="bigjob.bigjob_manager-pysrc.html#bigjob.get_subjob_details">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="bigjob.bigjob_manager.bigjob-class.html#get_state" class="summary-sig-name">get_state</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      duck typing for get_state of saga.job.job state of saga job that is 
+      used to spawn the pilot agent</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="bigjob.bigjob_manager-pysrc.html#bigjob.get_state">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="bigjob.bigjob_manager.bigjob-class.html#get_state_detail" class="summary-sig-name">get_state_detail</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      internal state of BigJob agent</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="bigjob.bigjob_manager-pysrc.html#bigjob.get_state_detail">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="get_free_nodes"></a><span class="summary-sig-name">get_free_nodes</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="bigjob.bigjob_manager-pysrc.html#bigjob.get_free_nodes">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="stop_pilot_job"></a><span class="summary-sig-name">stop_pilot_job</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      mark in advert directory of pilot-job as stopped</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="bigjob.bigjob_manager-pysrc.html#bigjob.stop_pilot_job">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="bigjob.bigjob_manager.bigjob-class.html#cancel" class="summary-sig-name">cancel</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      duck typing for cancel of saga.cpr.job and saga.job.job</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="bigjob.bigjob_manager-pysrc.html#bigjob.cancel">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="__parse_url"></a><span class="summary-sig-name">__parse_url</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">url</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="bigjob.bigjob_manager-pysrc.html#bigjob.__parse_url">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="__get_bigjob_working_dir"></a><span class="summary-sig-name">__get_bigjob_working_dir</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="bigjob.bigjob_manager-pysrc.html#bigjob.__get_bigjob_working_dir">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="__get_subjob_working_dir"></a><span class="summary-sig-name">__get_subjob_working_dir</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">sj_id</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="bigjob.bigjob_manager-pysrc.html#bigjob.__get_subjob_working_dir">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="__stage_files"></a><span class="summary-sig-name">__stage_files</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">filetransfers</span>,
+        <span class="summary-sig-arg">target_url</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="bigjob.bigjob_manager-pysrc.html#bigjob.__stage_files">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="__third_party_transfer"></a><span class="summary-sig-name">__third_party_transfer</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">source_url</span>,
+        <span class="summary-sig-arg">target_url</span>)</span><br />
+      Transfers from source URL to machine of PS (target path)</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="bigjob.bigjob_manager-pysrc.html#bigjob.__third_party_transfer">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="__create_remote_directory"></a><span class="summary-sig-name">__create_remote_directory</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">target_url</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="bigjob.bigjob_manager-pysrc.html#bigjob.__create_remote_directory">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="__print_traceback"></a><span class="summary-sig-name">__print_traceback</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="bigjob.bigjob_manager-pysrc.html#bigjob.__print_traceback">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="bigjob.bigjob_manager.bigjob-class.html#__repr__" class="summary-sig-name">__repr__</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      repr(x)</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="bigjob.bigjob_manager-pysrc.html#bigjob.__repr__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="__del__"></a><span class="summary-sig-name">__del__</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="bigjob.bigjob_manager-pysrc.html#bigjob.__del__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__delattr__</code>,
+      <code>__format__</code>,
+      <code>__getattribute__</code>,
+      <code>__hash__</code>,
+      <code>__new__</code>,
+      <code>__reduce__</code>,
+      <code>__reduce_ex__</code>,
+      <code>__setattr__</code>,
+      <code>__sizeof__</code>,
+      <code>__str__</code>,
+      <code>__subclasshook__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== PROPERTIES ==================== -->
+<a name="section-Properties"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Properties</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Properties"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__class__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="__init__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">coordination_url</span>=<span class="sig-default">&quot;advert://localhost/&quot;</span>)</span>
+    <br /><em class="fname">(Constructor)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="bigjob.bigjob_manager-pysrc.html#bigjob.__init__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Initializes BigJob's coordination system e.g.: advert://localhost 
+  (SAGA/Advert SQLITE) advert://advert.cct.lsu.edu:8080 (SAGA/Advert 
+  POSTGRESQL) redis://localhost:6379 (Redis at localhost) tcp://localhost 
+  (ZMQ)</p>
+  <dl class="fields">
+    <dt>Overrides:
+        object.__init__
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="start_pilot_job"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">start_pilot_job</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">lrms_url</span>,
+        <span class="sig-arg">bigjob_agent_executable</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">number_nodes</span>=<span class="sig-default">1</span>,
+        <span class="sig-arg">queue</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">project</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">working_directory</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">userproxy</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">walltime</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">processes_per_node</span>=<span class="sig-default">1</span>,
+        <span class="sig-arg">filetransfers</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="bigjob.bigjob_manager-pysrc.html#bigjob.start_pilot_job">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Start a batch job (using SAGA Job API) at resource manager. Currently,
+  the following resource manager are supported: fork://localhost/ (Default 
+  Job Adaptor gram://qb1.loni.org/jobmanager-pbs (Globus Adaptor) 
+  pbspro://localhost (PBS Prop Adaptor)</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="api.base.bigjob-class.html#start_pilot_job">api.base.bigjob.start_pilot_job</a>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="get_state"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">get_state</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="bigjob.bigjob_manager-pysrc.html#bigjob.get_state">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>duck typing for get_state of saga.job.job state of saga job that is 
+  used to spawn the pilot agent</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="api.base.bigjob-class.html#get_state">api.base.bigjob.get_state</a>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="get_state_detail"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">get_state_detail</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="bigjob.bigjob_manager-pysrc.html#bigjob.get_state_detail">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>internal state of BigJob agent</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="api.base.bigjob-class.html#get_state_detail">api.base.bigjob.get_state_detail</a>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="cancel"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">cancel</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="bigjob.bigjob_manager-pysrc.html#bigjob.cancel">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>duck typing for cancel of saga.cpr.job and saga.job.job</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="api.base.bigjob-class.html#cancel">api.base.bigjob.cancel</a>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="__repr__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__repr__</span>(<span class="sig-arg">self</span>)</span>
+    <br /><em class="fname">(Representation operator)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="bigjob.bigjob_manager-pysrc.html#bigjob.__repr__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>repr(x)</p>
+  <dl class="fields">
+    <dt>Overrides:
+        object.__repr__
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="http://faust.cct.lsu.edu/trac/bigjob/">BigJob</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Tue Jan  3 11:44:11 2012
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

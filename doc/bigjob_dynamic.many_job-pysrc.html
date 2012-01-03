@@ -1,0 +1,729 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>bigjob_dynamic.many_job</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="http://faust.cct.lsu.edu/trac/bigjob/">BigJob</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="bigjob_dynamic-module.html">Package&nbsp;bigjob_dynamic</a> ::
+        Module&nbsp;many_job
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="bigjob_dynamic.many_job-pysrc.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="bigjob_dynamic.many_job-module.html">Module bigjob_dynamic.many_job</a></h1>
+<pre class="py-src">
+<a name="L1"></a><tt class="py-lineno">  1</tt>  <tt class="py-line"><tt class="py-comment">#!/usr/bin/env python</tt> </tt>
+<a name="L2"></a><tt class="py-lineno">  2</tt>  <tt class="py-line"> </tt>
+<a name="L3"></a><tt class="py-lineno">  3</tt>  <tt class="py-line"><tt class="py-docstring">"""Dynamic BigJob (ManyJob): Manages multiple BigJob (on different resources). </tt> </tt>
+<a name="L4"></a><tt class="py-lineno">  4</tt>  <tt class="py-line"><tt class="py-docstring">Sub-jobs are distributed across the set of BJs managed by the dynamic BJ.</tt> </tt>
+<a name="L5"></a><tt class="py-lineno">  5</tt>  <tt class="py-line"><tt class="py-docstring">"""</tt> </tt>
+<a name="L6"></a><tt class="py-lineno">  6</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">pdb</tt> </tt>
+<a name="L7"></a><tt class="py-lineno">  7</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">sys</tt> </tt>
+<a name="L8"></a><tt class="py-lineno">  8</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">os</tt> </tt>
+<a name="L9"></a><tt class="py-lineno">  9</tt>  <tt class="py-line"><tt class="py-name">sys</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">append</tt><tt class="py-op">(</tt><tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">dirname</tt><tt class="py-op">(</tt> <tt class="py-name">__file__</tt> <tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L10"></a><tt class="py-lineno"> 10</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">getopt</tt> </tt>
+<a name="L11"></a><tt class="py-lineno"> 11</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt id="link-0" class="py-name" targets="Variable bigjob.saga=bigjob-module.html#saga"><a title="bigjob.saga" class="py-name" href="#" onclick="return doclink('link-0', 'saga', 'link-0');">saga</a></tt> </tt>
+<a name="L12"></a><tt class="py-lineno"> 12</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">time</tt> </tt>
+<a name="L13"></a><tt class="py-lineno"> 13</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">uuid</tt> </tt>
+<a name="L14"></a><tt class="py-lineno"> 14</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">socket</tt> </tt>
+<a name="L15"></a><tt class="py-lineno"> 15</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">traceback</tt> </tt>
+<a name="L16"></a><tt class="py-lineno"> 16</tt>  <tt class="py-line"> </tt>
+<a name="L17"></a><tt class="py-lineno"> 17</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">Queue</tt> </tt>
+<a name="L18"></a><tt class="py-lineno"> 18</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">threading</tt> </tt>
+<a name="L19"></a><tt class="py-lineno"> 19</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">logging</tt> </tt>
+<a name="L20"></a><tt class="py-lineno"> 20</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">time</tt> </tt>
+<a name="L21"></a><tt class="py-lineno"> 21</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">math</tt> </tt>
+<a name="L22"></a><tt class="py-lineno"> 22</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">operator</tt> </tt>
+<a name="L23"></a><tt class="py-lineno"> 23</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">copy</tt> </tt>
+<a name="L24"></a><tt class="py-lineno"> 24</tt>  <tt class="py-line"> </tt>
+<a name="L25"></a><tt class="py-lineno"> 25</tt>  <tt class="py-line"> </tt>
+<a name="L26"></a><tt class="py-lineno"> 26</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt id="link-1" class="py-name" targets="Class api.base.bigjob=api.base.bigjob-class.html,Package bigjob=bigjob-module.html,Class bigjob.bigjob=bigjob.bigjob-class.html,Class bigjob.bigjob_manager.bigjob=bigjob.bigjob_manager.bigjob-class.html"><a title="api.base.bigjob
+bigjob
+bigjob.bigjob
+bigjob.bigjob_manager.bigjob" class="py-name" href="#" onclick="return doclink('link-1', 'bigjob', 'link-1');">bigjob</a></tt><tt class="py-op">.</tt><tt id="link-2" class="py-name" targets="Module bigjob.bigjob_manager=bigjob.bigjob_manager-module.html"><a title="bigjob.bigjob_manager" class="py-name" href="#" onclick="return doclink('link-2', 'bigjob_manager', 'link-2');">bigjob_manager</a></tt>  </tt>
+<a name="L27"></a><tt class="py-lineno"> 27</tt>  <tt class="py-line"> </tt>
+<a name="L28"></a><tt class="py-lineno"> 28</tt>  <tt class="py-line"><tt class="py-comment"># Log everything, and send it to stderr.</tt> </tt>
+<a name="L29"></a><tt class="py-lineno"> 29</tt>  <tt class="py-line"><tt class="py-name">logging</tt><tt class="py-op">.</tt><tt class="py-name">basicConfig</tt><tt class="py-op">(</tt><tt class="py-name">level</tt><tt class="py-op">=</tt><tt class="py-name">logging</tt><tt class="py-op">.</tt><tt class="py-name">DEBUG</tt><tt class="py-op">)</tt> </tt>
+<a name="L30"></a><tt class="py-lineno"> 30</tt>  <tt class="py-line"> </tt>
+<a name="L31"></a><tt class="py-lineno"> 31</tt>  <tt class="py-line"><tt id="link-3" class="py-name" targets="Variable bigjob_dynamic.many_job.COORDINATION_URL=bigjob_dynamic.many_job-module.html#COORDINATION_URL,Variable examples.example_local_multiple.COORDINATION_URL=examples.example_local_multiple-module.html#COORDINATION_URL,Variable examples.example_local_single.COORDINATION_URL=examples.example_local_single-module.html#COORDINATION_URL,Variable examples.example_local_single_filestaging.COORDINATION_URL=examples.example_local_single_filestaging-module.html#COORDINATION_URL,Variable examples.example_manyjob_affinity.COORDINATION_URL=examples.example_manyjob_affinity-module.html#COORDINATION_URL,Variable examples.example_manyjob_local.COORDINATION_URL=examples.example_manyjob_local-module.html#COORDINATION_URL,Variable examples.loadtest.COORDINATION_URL=examples.loadtest-module.html#COORDINATION_URL"><a title="bigjob_dynamic.many_job.COORDINATION_URL
+examples.example_local_multiple.COORDINATION_URL
+examples.example_local_single.COORDINATION_URL
+examples.example_local_single_filestaging.COORDINATION_URL
+examples.example_manyjob_affinity.COORDINATION_URL
+examples.example_manyjob_local.COORDINATION_URL
+examples.loadtest.COORDINATION_URL" class="py-name" href="#" onclick="return doclink('link-3', 'COORDINATION_URL', 'link-3');">COORDINATION_URL</a></tt><tt class="py-op">=</tt><tt class="py-string">"advert://advert.cct.lsu.edu:8080"</tt> </tt>
+<a name="L32"></a><tt class="py-lineno"> 32</tt>  <tt class="py-line"> </tt>
+<a name="many_job_service"></a><div id="many_job_service-def"><a name="L33"></a><tt class="py-lineno"> 33</tt> <a class="py-toggle" href="#" id="many_job_service-toggle" onclick="return toggle('many_job_service');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="bigjob_dynamic.many_job.many_job_service-class.html">many_job_service</a><tt class="py-op">(</tt><tt class="py-base-class">object</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="many_job_service-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="many_job_service-expanded"><a name="L34"></a><tt class="py-lineno"> 34</tt>  <tt class="py-line"> </tt>
+<a name="many_job_service.__init__"></a><div id="many_job_service.__init__-def"><a name="L35"></a><tt class="py-lineno"> 35</tt> <a class="py-toggle" href="#" id="many_job_service.__init__-toggle" onclick="return toggle('many_job_service.__init__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="bigjob_dynamic.many_job.many_job_service-class.html#__init__">__init__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">bigjob_list</tt><tt class="py-op">,</tt> <tt class="py-param">coordination_url</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="many_job_service.__init__-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="many_job_service.__init__-expanded"><a name="L36"></a><tt class="py-lineno"> 36</tt>  <tt class="py-line">        <tt class="py-docstring">""" accepts resource list as key/value pair:</tt> </tt>
+<a name="L37"></a><tt class="py-lineno"> 37</tt>  <tt class="py-line"><tt class="py-docstring">            ( {"resource_url" : "gram://qb1.loni.org/jobmanager-pbs", "number_nodes" : "32", "allocation" : "loni_stopgap2", "queue" : "workq", "bigjob_agent": "$(HOME)/src/REMDgManager/bigjob/advert_launcher.sh",  "walltime":1000},</tt> </tt>
+<a name="L38"></a><tt class="py-lineno"> 38</tt>  <tt class="py-line"><tt class="py-docstring">              {"resource_url" : "gram://qb1.loni.org/jobmanager-pbs", "number_nodes" : "32", "allocation" : "loni_stopgap2", "queue" : "workq", "bigjob_agent": "$(HOME)/src/REMDgManager/bigjob/advert_launcher.sh", "walltime":1000})</tt> </tt>
+<a name="L39"></a><tt class="py-lineno"> 39</tt>  <tt class="py-line"><tt class="py-docstring">        """</tt>         </tt>
+<a name="L40"></a><tt class="py-lineno"> 40</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">uuid</tt> <tt class="py-op">=</tt> <tt class="py-name">uuid</tt><tt class="py-op">.</tt><tt class="py-name">uuid1</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L41"></a><tt class="py-lineno"> 41</tt>  <tt class="py-line">         </tt>
+<a name="L42"></a><tt class="py-lineno"> 42</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">coordination_url</tt><tt class="py-op">==</tt><tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L43"></a><tt class="py-lineno"> 43</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">advert_host</tt><tt class="py-op">=</tt><tt id="link-4" class="py-name"><a title="bigjob_dynamic.many_job.COORDINATION_URL
+examples.example_local_multiple.COORDINATION_URL
+examples.example_local_single.COORDINATION_URL
+examples.example_local_single_filestaging.COORDINATION_URL
+examples.example_manyjob_affinity.COORDINATION_URL
+examples.example_manyjob_local.COORDINATION_URL
+examples.loadtest.COORDINATION_URL" class="py-name" href="#" onclick="return doclink('link-4', 'COORDINATION_URL', 'link-3');">COORDINATION_URL</a></tt>    </tt>
+<a name="L44"></a><tt class="py-lineno"> 44</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L45"></a><tt class="py-lineno"> 45</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">advert_host</tt><tt class="py-op">=</tt><tt class="py-name">coordination_url</tt> </tt>
+<a name="L46"></a><tt class="py-lineno"> 46</tt>  <tt class="py-line"> </tt>
+<a name="L47"></a><tt class="py-lineno"> 47</tt>  <tt class="py-line">        <tt class="py-comment"># list of resource dicts (1 dict per resource) </tt> </tt>
+<a name="L48"></a><tt class="py-lineno"> 48</tt>  <tt class="py-line">        <tt class="py-comment"># will also store state of bigjob</tt> </tt>
+<a name="L49"></a><tt class="py-lineno"> 49</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">bigjob_list</tt><tt class="py-op">=</tt><tt class="py-name">copy</tt><tt class="py-op">.</tt><tt class="py-name">deepcopy</tt><tt class="py-op">(</tt><tt class="py-name">bigjob_list</tt><tt class="py-op">)</tt>  </tt>
+<a name="L50"></a><tt class="py-lineno"> 50</tt>  <tt class="py-line">        </tt>
+<a name="L51"></a><tt class="py-lineno"> 51</tt>  <tt class="py-line">        <tt class="py-comment"># state variable storing state of sub-jobs </tt> </tt>
+<a name="L52"></a><tt class="py-lineno"> 52</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">active_subjob_list</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-op">]</tt> </tt>
+<a name="L53"></a><tt class="py-lineno"> 53</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">subjob_bigjob_dict</tt> <tt class="py-op">=</tt> <tt class="py-op">{</tt><tt class="py-op">}</tt> </tt>
+<a name="L54"></a><tt class="py-lineno"> 54</tt>  <tt class="py-line"> </tt>
+<a name="L55"></a><tt class="py-lineno"> 55</tt>  <tt class="py-line">        <tt class="py-comment"># queue contains unscheduled subjobs        </tt> </tt>
+<a name="L56"></a><tt class="py-lineno"> 56</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">subjob_queue</tt> <tt class="py-op">=</tt> <tt class="py-name">Queue</tt><tt class="py-op">.</tt><tt class="py-name">Queue</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L57"></a><tt class="py-lineno"> 57</tt>  <tt class="py-line">         </tt>
+<a name="L58"></a><tt class="py-lineno"> 58</tt>  <tt class="py-line">        <tt class="py-comment"># submit bigjobs to resources</tt> </tt>
+<a name="L59"></a><tt class="py-lineno"> 59</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-5" class="py-name" targets="Method bigjob_dynamic.many_job.many_job_service.__init_bigjobs()=bigjob_dynamic.many_job.many_job_service-class.html#__init_bigjobs"><a title="bigjob_dynamic.many_job.many_job_service.__init_bigjobs" class="py-name" href="#" onclick="return doclink('link-5', '__init_bigjobs', 'link-5');">__init_bigjobs</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L60"></a><tt class="py-lineno"> 60</tt>  <tt class="py-line">         </tt>
+<a name="L61"></a><tt class="py-lineno"> 61</tt>  <tt class="py-line">        <tt class="py-comment"># thread which tries to resubmit jobs</tt> </tt>
+<a name="L62"></a><tt class="py-lineno"> 62</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">stop</tt><tt class="py-op">=</tt><tt class="py-name">threading</tt><tt class="py-op">.</tt><tt class="py-name">Event</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L63"></a><tt class="py-lineno"> 63</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">rescheduler_thread</tt><tt class="py-op">=</tt><tt class="py-name">threading</tt><tt class="py-op">.</tt><tt class="py-name">Thread</tt><tt class="py-op">(</tt><tt class="py-name">target</tt><tt class="py-op">=</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-6" class="py-name" targets="Method bigjob_dynamic.many_job.many_job_service.__reschedule_subjobs_thread()=bigjob_dynamic.many_job.many_job_service-class.html#__reschedule_subjobs_thread"><a title="bigjob_dynamic.many_job.many_job_service.__reschedule_subjobs_thread" class="py-name" href="#" onclick="return doclink('link-6', '__reschedule_subjobs_thread', 'link-6');">__reschedule_subjobs_thread</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L64"></a><tt class="py-lineno"> 64</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">rescheduler_thread</tt><tt class="py-op">.</tt><tt class="py-name">start</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L65"></a><tt class="py-lineno"> 65</tt>  <tt class="py-line">         </tt>
+<a name="L66"></a><tt class="py-lineno"> 66</tt>  <tt class="py-line">        <tt class="py-comment"># last queue Size</tt> </tt>
+<a name="L67"></a><tt class="py-lineno"> 67</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">last_queue_size</tt> <tt class="py-op">=</tt> <tt class="py-number">0</tt> </tt>
+<a name="L68"></a><tt class="py-lineno"> 68</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">submisssion_times</tt><tt class="py-op">=</tt><tt class="py-op">[</tt><tt class="py-op">]</tt> </tt>
+</div><a name="L69"></a><tt class="py-lineno"> 69</tt>  <tt class="py-line"> </tt>
+<a name="many_job_service.__init_bigjobs"></a><div id="many_job_service.__init_bigjobs-def"><a name="L70"></a><tt class="py-lineno"> 70</tt> <a class="py-toggle" href="#" id="many_job_service.__init_bigjobs-toggle" onclick="return toggle('many_job_service.__init_bigjobs');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="bigjob_dynamic.many_job.many_job_service-class.html#__init_bigjobs">__init_bigjobs</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="many_job_service.__init_bigjobs-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="many_job_service.__init_bigjobs-expanded"><a name="L71"></a><tt class="py-lineno"> 71</tt>  <tt class="py-line">        <tt class="py-docstring">""" start on specified resources a bigjob """</tt> </tt>
+<a name="L72"></a><tt class="py-lineno"> 72</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">bigjob_list</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-7" class="py-name" targets="Method bigjob_dynamic.many_job.many_job_service.__schedule_bigjobs()=bigjob_dynamic.many_job.many_job_service-class.html#__schedule_bigjobs"><a title="bigjob_dynamic.many_job.many_job_service.__schedule_bigjobs" class="py-name" href="#" onclick="return doclink('link-7', '__schedule_bigjobs', 'link-7');">__schedule_bigjobs</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L73"></a><tt class="py-lineno"> 73</tt>  <tt class="py-line">        <tt class="py-keyword">for</tt> <tt class="py-name">i</tt> <tt class="py-keyword">in</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">bigjob_list</tt><tt class="py-op">:</tt> </tt>
+<a name="L74"></a><tt class="py-lineno"> 74</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-8" class="py-name" targets="Method bigjob_dynamic.many_job.many_job_service.__start_bigjob()=bigjob_dynamic.many_job.many_job_service-class.html#__start_bigjob"><a title="bigjob_dynamic.many_job.many_job_service.__start_bigjob" class="py-name" href="#" onclick="return doclink('link-8', '__start_bigjob', 'link-8');">__start_bigjob</a></tt><tt class="py-op">(</tt><tt class="py-name">i</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L75"></a><tt class="py-lineno"> 75</tt>  <tt class="py-line"> </tt>
+<a name="L76"></a><tt class="py-lineno"> 76</tt>  <tt class="py-line"> </tt>
+<a name="many_job_service.__start_bigjob"></a><div id="many_job_service.__start_bigjob-def"><a name="L77"></a><tt class="py-lineno"> 77</tt> <a class="py-toggle" href="#" id="many_job_service.__start_bigjob-toggle" onclick="return toggle('many_job_service.__start_bigjob');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="bigjob_dynamic.many_job.many_job_service-class.html#__start_bigjob">__start_bigjob</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">bj_dict</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="many_job_service.__start_bigjob-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="many_job_service.__start_bigjob-expanded"><a name="L78"></a><tt class="py-lineno"> 78</tt>  <tt class="py-line">        <tt class="py-docstring">""" private method - starts a bigjob on the defined resource """</tt> </tt>
+<a name="L79"></a><tt class="py-lineno"> 79</tt>  <tt class="py-line">        <tt class="py-name">gram_url</tt> <tt class="py-op">=</tt> <tt class="py-name">bj_dict</tt><tt class="py-op">[</tt><tt class="py-string">"resource_url"</tt><tt class="py-op">]</tt> </tt>
+<a name="L80"></a><tt class="py-lineno"> 80</tt>  <tt class="py-line">        <tt class="py-name">logging</tt><tt class="py-op">.</tt><tt class="py-name">debug</tt><tt class="py-op">(</tt><tt class="py-string">"start bigjob at: "</tt> <tt class="py-op">+</tt> <tt class="py-name">gram_url</tt><tt class="py-op">)</tt> </tt>
+<a name="L81"></a><tt class="py-lineno"> 81</tt>  <tt class="py-line">        <tt class="py-name">bj</tt> <tt class="py-op">=</tt> <tt id="link-9" class="py-name"><a title="api.base.bigjob
+bigjob
+bigjob.bigjob
+bigjob.bigjob_manager.bigjob" class="py-name" href="#" onclick="return doclink('link-9', 'bigjob', 'link-1');">bigjob</a></tt><tt class="py-op">.</tt><tt id="link-10" class="py-name"><a title="bigjob.bigjob_manager" class="py-name" href="#" onclick="return doclink('link-10', 'bigjob_manager', 'link-2');">bigjob_manager</a></tt><tt class="py-op">.</tt><tt id="link-11" class="py-name"><a title="api.base.bigjob
+bigjob
+bigjob.bigjob
+bigjob.bigjob_manager.bigjob" class="py-name" href="#" onclick="return doclink('link-11', 'bigjob', 'link-1');">bigjob</a></tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">advert_host</tt><tt class="py-op">)</tt> </tt>
+<a name="L82"></a><tt class="py-lineno"> 82</tt>  <tt class="py-line">        <tt class="py-name">ppn</tt><tt class="py-op">=</tt><tt class="py-string">"1"</tt> </tt>
+<a name="L83"></a><tt class="py-lineno"> 83</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-op">(</tt><tt class="py-string">"processes_per_node"</tt> <tt class="py-keyword">in</tt> <tt class="py-name">bj_dict</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L84"></a><tt class="py-lineno"> 84</tt>  <tt class="py-line">            <tt class="py-name">ppn</tt><tt class="py-op">=</tt><tt class="py-name">bj_dict</tt><tt class="py-op">[</tt><tt class="py-string">"processes_per_node"</tt><tt class="py-op">]</tt> </tt>
+<a name="L85"></a><tt class="py-lineno"> 85</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L86"></a><tt class="py-lineno"> 86</tt>  <tt class="py-line">            <tt class="py-name">bj_dict</tt><tt class="py-op">[</tt><tt class="py-string">"processes_per_node"</tt><tt class="py-op">]</tt><tt class="py-op">=</tt><tt class="py-string">"1"</tt> </tt>
+<a name="L87"></a><tt class="py-lineno"> 87</tt>  <tt class="py-line"> </tt>
+<a name="L88"></a><tt class="py-lineno"> 88</tt>  <tt class="py-line">        <tt class="py-name">walltime</tt> <tt class="py-op">=</tt> <tt class="py-number">3600</tt> </tt>
+<a name="L89"></a><tt class="py-lineno"> 89</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-op">(</tt><tt class="py-string">"walltime"</tt> <tt class="py-keyword">in</tt> <tt class="py-name">bj_dict</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L90"></a><tt class="py-lineno"> 90</tt>  <tt class="py-line">            <tt class="py-name">walltime</tt><tt class="py-op">=</tt><tt class="py-name">bj_dict</tt><tt class="py-op">[</tt><tt class="py-string">"walltime"</tt><tt class="py-op">]</tt> </tt>
+<a name="L91"></a><tt class="py-lineno"> 91</tt>  <tt class="py-line"> </tt>
+<a name="L92"></a><tt class="py-lineno"> 92</tt>  <tt class="py-line">        <tt class="py-name">working_directory</tt> <tt class="py-op">=</tt> <tt class="py-op">(</tt><tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">getcwd</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">+</tt><tt class="py-string">"/agent"</tt><tt class="py-op">)</tt> </tt>
+<a name="L93"></a><tt class="py-lineno"> 93</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-op">(</tt><tt class="py-string">"working_directory"</tt> <tt class="py-keyword">in</tt> <tt class="py-name">bj_dict</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L94"></a><tt class="py-lineno"> 94</tt>  <tt class="py-line">            <tt class="py-name">working_directory</tt><tt class="py-op">=</tt><tt class="py-name">bj_dict</tt><tt class="py-op">[</tt><tt class="py-string">"working_directory"</tt><tt class="py-op">]</tt> </tt>
+<a name="L95"></a><tt class="py-lineno"> 95</tt>  <tt class="py-line"> </tt>
+<a name="L96"></a><tt class="py-lineno"> 96</tt>  <tt class="py-line">        <tt class="py-name">bj</tt><tt class="py-op">.</tt><tt id="link-12" class="py-name" targets="Method api.base.bigjob.start_pilot_job()=api.base.bigjob-class.html#start_pilot_job,Method bigjob.bigjob_manager.bigjob.start_pilot_job()=bigjob.bigjob_manager.bigjob-class.html#start_pilot_job"><a title="api.base.bigjob.start_pilot_job
+bigjob.bigjob_manager.bigjob.start_pilot_job" class="py-name" href="#" onclick="return doclink('link-12', 'start_pilot_job', 'link-12');">start_pilot_job</a></tt><tt class="py-op">(</tt><tt class="py-name">gram_url</tt><tt class="py-op">,</tt> </tt>
+<a name="L97"></a><tt class="py-lineno"> 97</tt>  <tt class="py-line">                           <tt class="py-name">None</tt><tt class="py-op">,</tt> </tt>
+<a name="L98"></a><tt class="py-lineno"> 98</tt>  <tt class="py-line">                           <tt class="py-name">bj_dict</tt><tt class="py-op">[</tt><tt class="py-string">"number_of_processes"</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> </tt>
+<a name="L99"></a><tt class="py-lineno"> 99</tt>  <tt class="py-line">                           <tt class="py-name">bj_dict</tt><tt class="py-op">[</tt><tt class="py-string">"queue"</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> </tt>
+<a name="L100"></a><tt class="py-lineno">100</tt>  <tt class="py-line">                           <tt class="py-name">bj_dict</tt><tt class="py-op">[</tt><tt class="py-string">"allocation"</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> </tt>
+<a name="L101"></a><tt class="py-lineno">101</tt>  <tt class="py-line">                           <tt class="py-name">working_directory</tt><tt class="py-op">,</tt>  </tt>
+<a name="L102"></a><tt class="py-lineno">102</tt>  <tt class="py-line">                           <tt class="py-name">None</tt><tt class="py-op">,</tt> </tt>
+<a name="L103"></a><tt class="py-lineno">103</tt>  <tt class="py-line">                           <tt class="py-name">walltime</tt><tt class="py-op">,</tt> </tt>
+<a name="L104"></a><tt class="py-lineno">104</tt>  <tt class="py-line">                           <tt class="py-name">ppn</tt><tt class="py-op">)</tt> </tt>
+<a name="L105"></a><tt class="py-lineno">105</tt>  <tt class="py-line">        <tt class="py-name">bj_dict</tt><tt class="py-op">[</tt><tt class="py-string">"bigjob"</tt><tt class="py-op">]</tt><tt class="py-op">=</tt><tt class="py-name">bj</tt> <tt class="py-comment"># store bigjob for later reference in dict</tt> </tt>
+<a name="L106"></a><tt class="py-lineno">106</tt>  <tt class="py-line">        <tt class="py-name">bj_dict</tt><tt class="py-op">[</tt><tt class="py-string">"free_cores"</tt><tt class="py-op">]</tt><tt class="py-op">=</tt><tt class="py-name">int</tt><tt class="py-op">(</tt><tt class="py-name">bj_dict</tt><tt class="py-op">[</tt><tt class="py-string">"number_of_processes"</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L107"></a><tt class="py-lineno">107</tt>  <tt class="py-line">        <tt class="py-name">bj_dict</tt><tt class="py-op">[</tt><tt class="py-string">"to_be_terminated"</tt><tt class="py-op">]</tt><tt class="py-op">=</tt><tt class="py-name">False</tt> </tt>
+<a name="L108"></a><tt class="py-lineno">108</tt>  <tt class="py-line">        <tt class="py-comment"># lock for modifying the number of free nodes</tt> </tt>
+<a name="L109"></a><tt class="py-lineno">109</tt>  <tt class="py-line">        <tt class="py-name">bj_dict</tt><tt class="py-op">[</tt><tt class="py-string">"lock"</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">threading</tt><tt class="py-op">.</tt><tt class="py-name">Lock</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L110"></a><tt class="py-lineno">110</tt>  <tt class="py-line"> </tt>
+<a name="many_job_service.add_resource"></a><div id="many_job_service.add_resource-def"><a name="L111"></a><tt class="py-lineno">111</tt> <a class="py-toggle" href="#" id="many_job_service.add_resource-toggle" onclick="return toggle('many_job_service.add_resource');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="bigjob_dynamic.many_job.many_job_service-class.html#add_resource">add_resource</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">resource_dictionary</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="many_job_service.add_resource-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="many_job_service.add_resource-expanded"><a name="L112"></a><tt class="py-lineno">112</tt>  <tt class="py-line">        <tt class="py-docstring">""" adds bigjob described in resource_dictionary to resources """</tt> </tt>
+<a name="L113"></a><tt class="py-lineno">113</tt>  <tt class="py-line">        <tt class="py-name">bj_dict</tt> <tt class="py-op">=</tt> <tt class="py-name">copy</tt><tt class="py-op">.</tt><tt class="py-name">deepcopy</tt><tt class="py-op">(</tt><tt class="py-name">resource_dictionary</tt><tt class="py-op">)</tt> </tt>
+<a name="L114"></a><tt class="py-lineno">114</tt>  <tt class="py-line">         </tt>
+<a name="L115"></a><tt class="py-lineno">115</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-13" class="py-name"><a title="bigjob_dynamic.many_job.many_job_service.__start_bigjob" class="py-name" href="#" onclick="return doclink('link-13', '__start_bigjob', 'link-8');">__start_bigjob</a></tt><tt class="py-op">(</tt><tt class="py-name">bj_dict</tt><tt class="py-op">)</tt> </tt>
+<a name="L116"></a><tt class="py-lineno">116</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">bigjob_list</tt><tt class="py-op">.</tt><tt class="py-name">append</tt><tt class="py-op">(</tt><tt class="py-name">bj_dict</tt><tt class="py-op">)</tt> </tt>
+<a name="L117"></a><tt class="py-lineno">117</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">bj_dict</tt><tt class="py-op">[</tt><tt class="py-string">"bigjob"</tt><tt class="py-op">]</tt>  </tt>
+</div><a name="L118"></a><tt class="py-lineno">118</tt>  <tt class="py-line">         </tt>
+<a name="L119"></a><tt class="py-lineno">119</tt>  <tt class="py-line">     </tt>
+<a name="many_job_service.remove_resource"></a><div id="many_job_service.remove_resource-def"><a name="L120"></a><tt class="py-lineno">120</tt> <a class="py-toggle" href="#" id="many_job_service.remove_resource-toggle" onclick="return toggle('many_job_service.remove_resource');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="bigjob_dynamic.many_job.many_job_service-class.html#remove_resource">remove_resource</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">bigjob</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="many_job_service.remove_resource-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="many_job_service.remove_resource-expanded"><a name="L121"></a><tt class="py-lineno">121</tt>  <tt class="py-line">        <tt class="py-docstring">""" remove bigjob from resource list of manyjob """</tt> </tt>
+<a name="L122"></a><tt class="py-lineno">122</tt>  <tt class="py-line">        <tt class="py-comment"># mark bigjob for termination (after all sub-jobs in bj are </tt> </tt>
+<a name="L123"></a><tt class="py-lineno">123</tt>  <tt class="py-line">        <tt class="py-comment"># finished        </tt> </tt>
+<a name="L124"></a><tt class="py-lineno">124</tt>  <tt class="py-line">        <tt id="link-14" class="py-name"><a title="api.base.bigjob
+bigjob
+bigjob.bigjob
+bigjob.bigjob_manager.bigjob" class="py-name" href="#" onclick="return doclink('link-14', 'bigjob', 'link-1');">bigjob</a></tt><tt class="py-op">[</tt><tt class="py-string">"to_be_terminated"</tt><tt class="py-op">]</tt><tt class="py-op">=</tt><tt class="py-name">True</tt> </tt>
+</div><a name="L125"></a><tt class="py-lineno">125</tt>  <tt class="py-line">         </tt>
+<a name="L126"></a><tt class="py-lineno">126</tt>  <tt class="py-line">  </tt>
+<a name="many_job_service.__cleanup_resources"></a><div id="many_job_service.__cleanup_resources-def"><a name="L127"></a><tt class="py-lineno">127</tt> <a class="py-toggle" href="#" id="many_job_service.__cleanup_resources-toggle" onclick="return toggle('many_job_service.__cleanup_resources');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="bigjob_dynamic.many_job.many_job_service-class.html#__cleanup_resources">__cleanup_resources</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="many_job_service.__cleanup_resources-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="many_job_service.__cleanup_resources-expanded"><a name="L128"></a><tt class="py-lineno">128</tt>  <tt class="py-line">        <tt class="py-docstring">""" called periodically from scheduling thread</tt> </tt>
+<a name="L129"></a><tt class="py-lineno">129</tt>  <tt class="py-line"><tt class="py-docstring">            terminates big-jobs which are marked and don't have </tt> </tt>
+<a name="L130"></a><tt class="py-lineno">130</tt>  <tt class="py-line"><tt class="py-docstring">            any running sub-jobs</tt> </tt>
+<a name="L131"></a><tt class="py-lineno">131</tt>  <tt class="py-line"><tt class="py-docstring">        """</tt> </tt>
+<a name="L132"></a><tt class="py-lineno">132</tt>  <tt class="py-line">        <tt class="py-comment"># iterate over copy of list, but remove from orig list</tt> </tt>
+<a name="L133"></a><tt class="py-lineno">133</tt>  <tt class="py-line">        <tt class="py-keyword">for</tt> <tt class="py-name">i</tt> <tt class="py-keyword">in</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">bigjob_list</tt><tt class="py-op">[</tt><tt class="py-op">:</tt><tt class="py-op">]</tt><tt class="py-op">:</tt> </tt>
+<a name="L134"></a><tt class="py-lineno">134</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">i</tt><tt class="py-op">[</tt><tt class="py-string">"to_be_terminated"</tt><tt class="py-op">]</tt><tt class="py-op">==</tt><tt class="py-name">True</tt><tt class="py-op">:</tt> </tt>
+<a name="L135"></a><tt class="py-lineno">135</tt>  <tt class="py-line">                <tt class="py-name">bj</tt> <tt class="py-op">=</tt> <tt class="py-name">i</tt><tt class="py-op">[</tt><tt class="py-string">"bigjob"</tt><tt class="py-op">]</tt> </tt>
+<a name="L136"></a><tt class="py-lineno">136</tt>  <tt class="py-line">                <tt class="py-name">total_cores</tt> <tt class="py-op">=</tt> <tt class="py-name">int</tt><tt class="py-op">(</tt><tt class="py-name">i</tt><tt class="py-op">[</tt><tt class="py-string">"number_of_processes"</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L137"></a><tt class="py-lineno">137</tt>  <tt class="py-line">                <tt class="py-keyword">if</tt>  <tt class="py-name">i</tt><tt class="py-op">[</tt><tt class="py-string">"free_cores"</tt><tt class="py-op">]</tt><tt class="py-op">==</tt><tt class="py-name">total_cores</tt> <tt class="py-keyword">and</tt> <tt class="py-keyword">not</tt> <tt class="py-name">i</tt><tt class="py-op">.</tt><tt class="py-name">has_key</tt><tt class="py-op">(</tt><tt class="py-string">"bj_stopped"</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L138"></a><tt class="py-lineno">138</tt>  <tt class="py-line">                    <tt class="py-name">logging</tt><tt class="py-op">.</tt><tt class="py-name">debug</tt><tt class="py-op">(</tt><tt class="py-string">"***Stop BigJob: "</tt> <tt class="py-op">+</tt> <tt class="py-name">str</tt><tt class="py-op">(</tt><tt class="py-name">bj</tt><tt class="py-op">.</tt><tt class="py-name">pilot_url</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L139"></a><tt class="py-lineno">139</tt>  <tt class="py-line">                    <tt class="py-comment"># release resources of pilot job</tt> </tt>
+<a name="L140"></a><tt class="py-lineno">140</tt>  <tt class="py-line">                    <tt class="py-name">bj</tt><tt class="py-op">.</tt><tt id="link-15" class="py-name" targets="Method bigjob.bigjob_manager.bigjob.stop_pilot_job()=bigjob.bigjob_manager.bigjob-class.html#stop_pilot_job"><a title="bigjob.bigjob_manager.bigjob.stop_pilot_job" class="py-name" href="#" onclick="return doclink('link-15', 'stop_pilot_job', 'link-15');">stop_pilot_job</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L141"></a><tt class="py-lineno">141</tt>  <tt class="py-line">                    <tt class="py-name">i</tt><tt class="py-op">[</tt><tt class="py-string">"bj_stopped"</tt><tt class="py-op">]</tt><tt class="py-op">=</tt><tt class="py-name">True</tt> </tt>
+</div><a name="L142"></a><tt class="py-lineno">142</tt>  <tt class="py-line">                    <tt class="py-comment">#self.bigjob_list.remove(i)</tt> </tt>
+<a name="L143"></a><tt class="py-lineno">143</tt>  <tt class="py-line"> </tt>
+<a name="L144"></a><tt class="py-lineno">144</tt>  <tt class="py-line">     </tt>
+<a name="many_job_service.get_resources"></a><div id="many_job_service.get_resources-def"><a name="L145"></a><tt class="py-lineno">145</tt> <a class="py-toggle" href="#" id="many_job_service.get_resources-toggle" onclick="return toggle('many_job_service.get_resources');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="bigjob_dynamic.many_job.many_job_service-class.html#get_resources">get_resources</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="many_job_service.get_resources-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="many_job_service.get_resources-expanded"><a name="L146"></a><tt class="py-lineno">146</tt>  <tt class="py-line">        <tt class="py-docstring">""" returns list with bigjob dictionaries</tt> </tt>
+<a name="L147"></a><tt class="py-lineno">147</tt>  <tt class="py-line"><tt class="py-docstring">            for each managed bigjob 1 dictionary exists </tt> </tt>
+<a name="L148"></a><tt class="py-lineno">148</tt>  <tt class="py-line"><tt class="py-docstring">        """</tt> </tt>
+<a name="L149"></a><tt class="py-lineno">149</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">bigjob_list</tt> </tt>
+</div><a name="L150"></a><tt class="py-lineno">150</tt>  <tt class="py-line"> </tt>
+<a name="L151"></a><tt class="py-lineno">151</tt>  <tt class="py-line"> </tt>
+<a name="many_job_service.list_bigjobs"></a><div id="many_job_service.list_bigjobs-def"><a name="L152"></a><tt class="py-lineno">152</tt> <a class="py-toggle" href="#" id="many_job_service.list_bigjobs-toggle" onclick="return toggle('many_job_service.list_bigjobs');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="bigjob_dynamic.many_job.many_job_service-class.html#list_bigjobs">list_bigjobs</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="many_job_service.list_bigjobs-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="many_job_service.list_bigjobs-expanded"><a name="L153"></a><tt class="py-lineno">153</tt>  <tt class="py-line">        <tt class="py-docstring">""" returns a list of bigjob objects """</tt> </tt>
+<a name="L154"></a><tt class="py-lineno">154</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-op">[</tt><tt class="py-name">i</tt><tt class="py-op">[</tt><tt class="py-string">"bigjob"</tt><tt class="py-op">]</tt>  <tt class="py-keyword">for</tt> <tt class="py-name">i</tt> <tt class="py-keyword">in</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">bigjob_list</tt><tt class="py-op">]</tt> </tt>
+</div><a name="L155"></a><tt class="py-lineno">155</tt>  <tt class="py-line"> </tt>
+<a name="many_job_service.__schedule_bigjobs"></a><div id="many_job_service.__schedule_bigjobs-def"><a name="L156"></a><tt class="py-lineno">156</tt> <a class="py-toggle" href="#" id="many_job_service.__schedule_bigjobs-toggle" onclick="return toggle('many_job_service.__schedule_bigjobs');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="bigjob_dynamic.many_job.many_job_service-class.html#__schedule_bigjobs">__schedule_bigjobs</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="many_job_service.__schedule_bigjobs-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="many_job_service.__schedule_bigjobs-expanded"><a name="L157"></a><tt class="py-lineno">157</tt>  <tt class="py-line">        <tt class="py-docstring">""" prioritizes bigjob_list (bigjob with shortest expected delay will have index 0) """</tt> </tt>
+<a name="L158"></a><tt class="py-lineno">158</tt>  <tt class="py-line">        <tt class="py-comment"># no scheduling for now (start bigjob in the user specified order)</tt> </tt>
+<a name="L159"></a><tt class="py-lineno">159</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">bigjob_list</tt> </tt>
+</div><a name="L160"></a><tt class="py-lineno">160</tt>  <tt class="py-line"> </tt>
+<a name="many_job_service.create_job"></a><div id="many_job_service.create_job-def"><a name="L161"></a><tt class="py-lineno">161</tt> <a class="py-toggle" href="#" id="many_job_service.create_job-toggle" onclick="return toggle('many_job_service.create_job');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="bigjob_dynamic.many_job.many_job_service-class.html#create_job">create_job</a> <tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">job_description</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="many_job_service.create_job-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="many_job_service.create_job-expanded"><a name="L162"></a><tt class="py-lineno">162</tt>  <tt class="py-line">        <tt id="link-16" class="py-name" targets="Class api.base.subjob=api.base.subjob-class.html,Class bigjob.bigjob_manager.subjob=bigjob.bigjob_manager.subjob-class.html,Class bigjob.subjob=bigjob.subjob-class.html"><a title="api.base.subjob
+bigjob.bigjob_manager.subjob
+bigjob.subjob" class="py-name" href="#" onclick="return doclink('link-16', 'subjob', 'link-16');">subjob</a></tt> <tt class="py-op">=</tt> <tt id="link-17" class="py-name" targets="Class bigjob_dynamic.many_job.sub_job=bigjob_dynamic.many_job.sub_job-class.html"><a title="bigjob_dynamic.many_job.sub_job" class="py-name" href="#" onclick="return doclink('link-17', 'sub_job', 'link-17');">sub_job</a></tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">,</tt> <tt class="py-name">job_description</tt><tt class="py-op">,</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">advert_host</tt><tt class="py-op">)</tt>         </tt>
+<a name="L163"></a><tt class="py-lineno">163</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt id="link-18" class="py-name"><a title="api.base.subjob
+bigjob.bigjob_manager.subjob
+bigjob.subjob" class="py-name" href="#" onclick="return doclink('link-18', 'subjob', 'link-16');">subjob</a></tt> </tt>
+</div><a name="L164"></a><tt class="py-lineno">164</tt>  <tt class="py-line"> </tt>
+<a name="many_job_service.__run_subjob"></a><div id="many_job_service.__run_subjob-def"><a name="L165"></a><tt class="py-lineno">165</tt> <a class="py-toggle" href="#" id="many_job_service.__run_subjob-toggle" onclick="return toggle('many_job_service.__run_subjob');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="bigjob_dynamic.many_job.many_job_service-class.html#__run_subjob">__run_subjob</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">subjob</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="many_job_service.__run_subjob-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="many_job_service.__run_subjob-expanded"><a name="L166"></a><tt class="py-lineno">166</tt>  <tt class="py-line">        <tt class="py-comment"># select appropriate bigjob</tt> </tt>
+<a name="L167"></a><tt class="py-lineno">167</tt>  <tt class="py-line">        <tt class="py-name">st</tt> <tt class="py-op">=</tt> <tt class="py-name">time</tt><tt class="py-op">.</tt><tt class="py-name">time</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L168"></a><tt class="py-lineno">168</tt>  <tt class="py-line">        <tt class="py-name">bigjob_info</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-19" class="py-name" targets="Method bigjob_dynamic.many_job.many_job_service.__schedule_subjob()=bigjob_dynamic.many_job.many_job_service-class.html#__schedule_subjob,Method bigjob_dynamic.many_job_affinity.many_job_affinity_service.__schedule_subjob()=bigjob_dynamic.many_job_affinity.many_job_affinity_service-class.html#__schedule_subjob"><a title="bigjob_dynamic.many_job.many_job_service.__schedule_subjob
+bigjob_dynamic.many_job_affinity.many_job_affinity_service.__schedule_subjob" class="py-name" href="#" onclick="return doclink('link-19', '__schedule_subjob', 'link-19');">__schedule_subjob</a></tt><tt class="py-op">(</tt><tt id="link-20" class="py-name"><a title="api.base.subjob
+bigjob.bigjob_manager.subjob
+bigjob.subjob" class="py-name" href="#" onclick="return doclink('link-20', 'subjob', 'link-16');">subjob</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L169"></a><tt class="py-lineno">169</tt>  <tt class="py-line">        <tt class="py-name">job</tt> <tt class="py-op">=</tt> <tt id="link-21" class="py-name"><a title="api.base.subjob
+bigjob.bigjob_manager.subjob
+bigjob.subjob" class="py-name" href="#" onclick="return doclink('link-21', 'subjob', 'link-16');">subjob</a></tt><tt class="py-op">.</tt><tt class="py-name">job</tt> </tt>
+<a name="L170"></a><tt class="py-lineno">170</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">bigjob_info</tt> <tt class="py-op">==</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L171"></a><tt class="py-lineno">171</tt>  <tt class="py-line">            <tt class="py-keyword">return</tt> <tt class="py-name">job</tt> </tt>
+<a name="L172"></a><tt class="py-lineno">172</tt>  <tt class="py-line"> </tt>
+<a name="L173"></a><tt class="py-lineno">173</tt>  <tt class="py-line">        <tt class="py-comment"># create subjob on bigjob</tt> </tt>
+<a name="L174"></a><tt class="py-lineno">174</tt>  <tt class="py-line">        <tt class="py-name">bj</tt> <tt class="py-op">=</tt> <tt class="py-name">bigjob_info</tt><tt class="py-op">[</tt><tt class="py-string">"bigjob"</tt><tt class="py-op">]</tt> </tt>
+<a name="L175"></a><tt class="py-lineno">175</tt>  <tt class="py-line">         </tt>
+<a name="L176"></a><tt class="py-lineno">176</tt>  <tt class="py-line">        <tt class="py-name">job</tt><tt class="py-op">.</tt><tt id="link-22" class="py-name" targets="Method api.base.subjob.submit_job()=api.base.subjob-class.html#submit_job,Method bigjob.bigjob_manager.subjob.submit_job()=bigjob.bigjob_manager.subjob-class.html#submit_job"><a title="api.base.subjob.submit_job
+bigjob.bigjob_manager.subjob.submit_job" class="py-name" href="#" onclick="return doclink('link-22', 'submit_job', 'link-22');">submit_job</a></tt><tt class="py-op">(</tt><tt class="py-name">bj</tt><tt class="py-op">.</tt><tt class="py-name">pilot_url</tt><tt class="py-op">,</tt> <tt id="link-23" class="py-name"><a title="api.base.subjob
+bigjob.bigjob_manager.subjob
+bigjob.subjob" class="py-name" href="#" onclick="return doclink('link-23', 'subjob', 'link-16');">subjob</a></tt><tt class="py-op">.</tt><tt class="py-name">job_description</tt><tt class="py-op">)</tt> </tt>
+<a name="L177"></a><tt class="py-lineno">177</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">submisssion_times</tt><tt class="py-op">.</tt><tt class="py-name">append</tt><tt class="py-op">(</tt><tt class="py-name">time</tt><tt class="py-op">.</tt><tt class="py-name">time</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">-</tt><tt class="py-name">st</tt><tt class="py-op">)</tt> </tt>
+<a name="L178"></a><tt class="py-lineno">178</tt>  <tt class="py-line"> </tt>
+<a name="L179"></a><tt class="py-lineno">179</tt>  <tt class="py-line">        <tt class="py-comment"># store reference of subjob for further bookkeeping    </tt> </tt>
+<a name="L180"></a><tt class="py-lineno">180</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">active_subjob_list</tt><tt class="py-op">.</tt><tt class="py-name">append</tt><tt class="py-op">(</tt><tt id="link-24" class="py-name"><a title="api.base.subjob
+bigjob.bigjob_manager.subjob
+bigjob.subjob" class="py-name" href="#" onclick="return doclink('link-24', 'subjob', 'link-16');">subjob</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L181"></a><tt class="py-lineno">181</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">subjob_bigjob_dict</tt><tt class="py-op">[</tt><tt id="link-25" class="py-name"><a title="api.base.subjob
+bigjob.bigjob_manager.subjob
+bigjob.subjob" class="py-name" href="#" onclick="return doclink('link-25', 'subjob', 'link-16');">subjob</a></tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">bigjob_info</tt> </tt>
+<a name="L182"></a><tt class="py-lineno">182</tt>  <tt class="py-line">        <tt class="py-name">logging</tt><tt class="py-op">.</tt><tt class="py-name">debug</tt><tt class="py-op">(</tt><tt class="py-string">"Subjob submission time: "</tt> <tt class="py-op">+</tt> <tt class="py-name">str</tt><tt class="py-op">(</tt><tt class="py-name">time</tt><tt class="py-op">.</tt><tt class="py-name">time</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">-</tt><tt class="py-name">st</tt><tt class="py-op">)</tt> <tt class="py-op">+</tt> <tt class="py-string">" sec."</tt><tt class="py-op">)</tt> </tt>
+<a name="L183"></a><tt class="py-lineno">183</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">job</tt> </tt>
+</div><a name="L184"></a><tt class="py-lineno">184</tt>  <tt class="py-line"> </tt>
+<a name="many_job_service.queue_subjob"></a><div id="many_job_service.queue_subjob-def"><a name="L185"></a><tt class="py-lineno">185</tt> <a class="py-toggle" href="#" id="many_job_service.queue_subjob-toggle" onclick="return toggle('many_job_service.queue_subjob');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="bigjob_dynamic.many_job.many_job_service-class.html#queue_subjob">queue_subjob</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">subjob</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="many_job_service.queue_subjob-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="many_job_service.queue_subjob-expanded"><a name="L186"></a><tt class="py-lineno">186</tt>  <tt class="py-line">        <tt id="link-26" class="py-name"><a title="api.base.subjob
+bigjob.bigjob_manager.subjob
+bigjob.subjob" class="py-name" href="#" onclick="return doclink('link-26', 'subjob', 'link-16');">subjob</a></tt><tt class="py-op">.</tt><tt class="py-name">job</tt> <tt class="py-op">=</tt> <tt id="link-27" class="py-name"><a title="api.base.bigjob
+bigjob
+bigjob.bigjob
+bigjob.bigjob_manager.bigjob" class="py-name" href="#" onclick="return doclink('link-27', 'bigjob', 'link-1');">bigjob</a></tt><tt class="py-op">.</tt><tt id="link-28" class="py-name"><a title="bigjob.bigjob_manager" class="py-name" href="#" onclick="return doclink('link-28', 'bigjob_manager', 'link-2');">bigjob_manager</a></tt><tt class="py-op">.</tt><tt id="link-29" class="py-name"><a title="api.base.subjob
+bigjob.bigjob_manager.subjob
+bigjob.subjob" class="py-name" href="#" onclick="return doclink('link-29', 'subjob', 'link-16');">subjob</a></tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">advert_host</tt><tt class="py-op">)</tt>  </tt>
+<a name="L187"></a><tt class="py-lineno">187</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">subjob_queue</tt><tt class="py-op">.</tt><tt class="py-name">put</tt><tt class="py-op">(</tt><tt id="link-30" class="py-name"><a title="api.base.subjob
+bigjob.bigjob_manager.subjob
+bigjob.subjob" class="py-name" href="#" onclick="return doclink('link-30', 'subjob', 'link-16');">subjob</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L188"></a><tt class="py-lineno">188</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt id="link-31" class="py-name"><a title="api.base.subjob
+bigjob.bigjob_manager.subjob
+bigjob.subjob" class="py-name" href="#" onclick="return doclink('link-31', 'subjob', 'link-16');">subjob</a></tt><tt class="py-op">.</tt><tt class="py-name">job</tt> </tt>
+</div><a name="L189"></a><tt class="py-lineno">189</tt>  <tt class="py-line"> </tt>
+<a name="many_job_service.__schedule_subjob"></a><div id="many_job_service.__schedule_subjob-def"><a name="L190"></a><tt class="py-lineno">190</tt> <a class="py-toggle" href="#" id="many_job_service.__schedule_subjob-toggle" onclick="return toggle('many_job_service.__schedule_subjob');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="bigjob_dynamic.many_job.many_job_service-class.html#__schedule_subjob">__schedule_subjob</a> <tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">subjob</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="many_job_service.__schedule_subjob-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="many_job_service.__schedule_subjob-expanded"><a name="L191"></a><tt class="py-lineno">191</tt>  <tt class="py-line">        <tt class="py-docstring">""" find resource (bigjob) for subjob</tt> </tt>
+<a name="L192"></a><tt class="py-lineno">192</tt>  <tt class="py-line"><tt class="py-docstring">            returns bigjob object """</tt> </tt>
+<a name="L193"></a><tt class="py-lineno">193</tt>  <tt class="py-line">        <tt class="py-keyword">for</tt> <tt class="py-name">i</tt> <tt class="py-keyword">in</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">bigjob_list</tt><tt class="py-op">:</tt> </tt>
+<a name="L194"></a><tt class="py-lineno">194</tt>  <tt class="py-line">            <tt id="link-32" class="py-name"><a title="api.base.bigjob
+bigjob
+bigjob.bigjob
+bigjob.bigjob_manager.bigjob" class="py-name" href="#" onclick="return doclink('link-32', 'bigjob', 'link-1');">bigjob</a></tt> <tt class="py-op">=</tt> <tt class="py-name">i</tt><tt class="py-op">[</tt><tt class="py-string">"bigjob"</tt><tt class="py-op">]</tt> </tt>
+<a name="L195"></a><tt class="py-lineno">195</tt>  <tt class="py-line">            <tt class="py-name">lock</tt> <tt class="py-op">=</tt> <tt class="py-name">i</tt><tt class="py-op">[</tt><tt class="py-string">"lock"</tt><tt class="py-op">]</tt> </tt>
+<a name="L196"></a><tt class="py-lineno">196</tt>  <tt class="py-line">            <tt class="py-name">lock</tt><tt class="py-op">.</tt><tt class="py-name">acquire</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L197"></a><tt class="py-lineno">197</tt>  <tt class="py-line">            <tt class="py-name">free_cores</tt> <tt class="py-op">=</tt> <tt class="py-name">i</tt><tt class="py-op">[</tt><tt class="py-string">"free_cores"</tt><tt class="py-op">]</tt> </tt>
+<a name="L198"></a><tt class="py-lineno">198</tt>  <tt class="py-line">            <tt class="py-name">bigjob_url</tt> <tt class="py-op">=</tt> <tt id="link-33" class="py-name"><a title="api.base.bigjob
+bigjob
+bigjob.bigjob
+bigjob.bigjob_manager.bigjob" class="py-name" href="#" onclick="return doclink('link-33', 'bigjob', 'link-1');">bigjob</a></tt><tt class="py-op">.</tt><tt class="py-name">pilot_url</tt> </tt>
+<a name="L199"></a><tt class="py-lineno">199</tt>  <tt class="py-line">            <tt id="link-34" class="py-name" targets="Module bigjob.state=bigjob.state-module.html"><a title="bigjob.state" class="py-name" href="#" onclick="return doclink('link-34', 'state', 'link-34');">state</a></tt> <tt class="py-op">=</tt> <tt id="link-35" class="py-name"><a title="api.base.bigjob
+bigjob
+bigjob.bigjob
+bigjob.bigjob_manager.bigjob" class="py-name" href="#" onclick="return doclink('link-35', 'bigjob', 'link-1');">bigjob</a></tt><tt class="py-op">.</tt><tt id="link-36" class="py-name" targets="Method api.base.bigjob.get_state_detail()=api.base.bigjob-class.html#get_state_detail,Method bigjob.bigjob_manager.bigjob.get_state_detail()=bigjob.bigjob_manager.bigjob-class.html#get_state_detail"><a title="api.base.bigjob.get_state_detail
+bigjob.bigjob_manager.bigjob.get_state_detail" class="py-name" href="#" onclick="return doclink('link-36', 'get_state_detail', 'link-36');">get_state_detail</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L200"></a><tt class="py-lineno">200</tt>  <tt class="py-line">            <tt class="py-name">logging</tt><tt class="py-op">.</tt><tt class="py-name">debug</tt><tt class="py-op">(</tt><tt class="py-string">"Big Job: "</tt> <tt class="py-op">+</tt> <tt class="py-name">bigjob_url</tt> <tt class="py-op">+</tt> <tt class="py-string">" Cores: "</tt> <tt class="py-op">+</tt> <tt class="py-string">"%s"</tt><tt class="py-op">%</tt><tt class="py-name">free_cores</tt> <tt class="py-op">+</tt> <tt class="py-string">"/"</tt>  </tt>
+<a name="L201"></a><tt class="py-lineno">201</tt>  <tt class="py-line">                          <tt class="py-op">+</tt> <tt class="py-name">str</tt><tt class="py-op">(</tt><tt class="py-name">int</tt><tt class="py-op">(</tt><tt class="py-name">i</tt><tt class="py-op">[</tt><tt class="py-string">"number_of_processes"</tt><tt class="py-op">]</tt><tt class="py-op">)</tt><tt class="py-op">)</tt>  </tt>
+<a name="L202"></a><tt class="py-lineno">202</tt>  <tt class="py-line">                          <tt class="py-op">+</tt> <tt class="py-string">" State: "</tt> <tt class="py-op">+</tt> <tt class="py-name">str</tt><tt class="py-op">(</tt><tt id="link-37" class="py-name"><a title="bigjob.state" class="py-name" href="#" onclick="return doclink('link-37', 'state', 'link-34');">state</a></tt><tt class="py-op">)</tt> <tt class="py-op">+</tt> <tt class="py-string">" Terminated: "</tt> <tt class="py-op">+</tt> <tt class="py-name">str</tt><tt class="py-op">(</tt><tt class="py-name">i</tt><tt class="py-op">[</tt><tt class="py-string">"to_be_terminated"</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L203"></a><tt class="py-lineno">203</tt>  <tt class="py-line">                          <tt class="py-op">+</tt> <tt class="py-string">" #Required Cores: "</tt> <tt class="py-op">+</tt> <tt id="link-38" class="py-name"><a title="api.base.subjob
+bigjob.bigjob_manager.subjob
+bigjob.subjob" class="py-name" href="#" onclick="return doclink('link-38', 'subjob', 'link-16');">subjob</a></tt><tt class="py-op">.</tt><tt class="py-name">job_description</tt><tt class="py-op">.</tt><tt class="py-name">number_of_processes</tt> </tt>
+<a name="L204"></a><tt class="py-lineno">204</tt>  <tt class="py-line">                          <tt class="py-op">)</tt> </tt>
+<a name="L205"></a><tt class="py-lineno">205</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-op">(</tt><tt id="link-39" class="py-name"><a title="bigjob.state" class="py-name" href="#" onclick="return doclink('link-39', 'state', 'link-34');">state</a></tt><tt class="py-op">.</tt><tt class="py-name">lower</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> <tt class="py-op">==</tt> <tt class="py-string">"running"</tt> <tt class="py-keyword">and</tt> <tt class="py-name">free_cores</tt> <tt class="py-op">&gt;=</tt> <tt class="py-name">int</tt><tt class="py-op">(</tt><tt id="link-40" class="py-name"><a title="api.base.subjob
+bigjob.bigjob_manager.subjob
+bigjob.subjob" class="py-name" href="#" onclick="return doclink('link-40', 'subjob', 'link-16');">subjob</a></tt><tt class="py-op">.</tt><tt class="py-name">job_description</tt><tt class="py-op">.</tt><tt class="py-name">number_of_processes</tt><tt class="py-op">)</tt>  </tt>
+<a name="L206"></a><tt class="py-lineno">206</tt>  <tt class="py-line">                <tt class="py-keyword">and</tt> <tt class="py-name">i</tt><tt class="py-op">[</tt><tt class="py-string">"to_be_terminated"</tt><tt class="py-op">]</tt><tt class="py-op">==</tt><tt class="py-name">False</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L207"></a><tt class="py-lineno">207</tt>  <tt class="py-line">                <tt class="py-name">logging</tt><tt class="py-op">.</tt><tt class="py-name">debug</tt><tt class="py-op">(</tt><tt class="py-string">"FOUND match - dispatch to BigJob: "</tt> <tt class="py-op">+</tt> <tt class="py-name">bigjob_url</tt><tt class="py-op">)</tt> </tt>
+<a name="L208"></a><tt class="py-lineno">208</tt>  <tt class="py-line">                <tt class="py-name">free_cores</tt> <tt class="py-op">=</tt> <tt class="py-name">i</tt><tt class="py-op">[</tt><tt class="py-string">"free_cores"</tt><tt class="py-op">]</tt> </tt>
+<a name="L209"></a><tt class="py-lineno">209</tt>  <tt class="py-line">                <tt class="py-name">free_cores</tt> <tt class="py-op">=</tt> <tt class="py-name">free_cores</tt> <tt class="py-op">-</tt> <tt class="py-name">int</tt><tt class="py-op">(</tt><tt id="link-41" class="py-name"><a title="api.base.subjob
+bigjob.bigjob_manager.subjob
+bigjob.subjob" class="py-name" href="#" onclick="return doclink('link-41', 'subjob', 'link-16');">subjob</a></tt><tt class="py-op">.</tt><tt class="py-name">job_description</tt><tt class="py-op">.</tt><tt class="py-name">number_of_processes</tt><tt class="py-op">)</tt> </tt>
+<a name="L210"></a><tt class="py-lineno">210</tt>  <tt class="py-line">                <tt class="py-name">i</tt><tt class="py-op">[</tt><tt class="py-string">"free_cores"</tt><tt class="py-op">]</tt><tt class="py-op">=</tt><tt class="py-name">free_cores</tt> </tt>
+<a name="L211"></a><tt class="py-lineno">211</tt>  <tt class="py-line">                <tt class="py-name">lock</tt><tt class="py-op">.</tt><tt class="py-name">release</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L212"></a><tt class="py-lineno">212</tt>  <tt class="py-line">                <tt class="py-keyword">return</tt> <tt class="py-name">i</tt>  </tt>
+<a name="L213"></a><tt class="py-lineno">213</tt>  <tt class="py-line"> </tt>
+<a name="L214"></a><tt class="py-lineno">214</tt>  <tt class="py-line">            <tt class="py-name">lock</tt><tt class="py-op">.</tt><tt class="py-name">release</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L215"></a><tt class="py-lineno">215</tt>  <tt class="py-line"> </tt>
+<a name="L216"></a><tt class="py-lineno">216</tt>  <tt class="py-line">        <tt class="py-comment"># no resource found</tt> </tt>
+<a name="L217"></a><tt class="py-lineno">217</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">subjob_queue</tt><tt class="py-op">.</tt><tt class="py-name">put</tt><tt class="py-op">(</tt><tt id="link-42" class="py-name"><a title="api.base.subjob
+bigjob.bigjob_manager.subjob
+bigjob.subjob" class="py-name" href="#" onclick="return doclink('link-42', 'subjob', 'link-16');">subjob</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L218"></a><tt class="py-lineno">218</tt>  <tt class="py-line">        <tt class="py-name">logging</tt><tt class="py-op">.</tt><tt class="py-name">debug</tt><tt class="py-op">(</tt><tt class="py-string">"found no active resource for sub-job =&gt; (re-) queue it"</tt><tt class="py-op">)</tt> </tt>
+<a name="L219"></a><tt class="py-lineno">219</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">None</tt>         </tt>
+</div><a name="L220"></a><tt class="py-lineno">220</tt>  <tt class="py-line"> </tt>
+<a name="many_job_service.__check_subjobs_states"></a><div id="many_job_service.__check_subjobs_states-def"><a name="L221"></a><tt class="py-lineno">221</tt> <a class="py-toggle" href="#" id="many_job_service.__check_subjobs_states-toggle" onclick="return toggle('many_job_service.__check_subjobs_states');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="bigjob_dynamic.many_job.many_job_service-class.html#__check_subjobs_states">__check_subjobs_states</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt>     </tt>
+</div><a name="L222"></a><tt class="py-lineno">222</tt>  <tt class="py-line">        <tt class="py-docstring">"""iterate through all sub-jobs and check state"""</tt> </tt>
+<a name="L223"></a><tt class="py-lineno">223</tt>  <tt class="py-line">        <tt class="py-keyword">for</tt> <tt class="py-name">i</tt> <tt class="py-keyword">in</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">active_subjob_list</tt><tt class="py-op">:</tt>             </tt>
+<a name="L224"></a><tt class="py-lineno">224</tt>  <tt class="py-line">            <tt class="py-keyword">try</tt><tt class="py-op">:</tt> </tt>
+<a name="L225"></a><tt class="py-lineno">225</tt>  <tt class="py-line">                <tt class="py-comment">#logging.debug("get job state")</tt> </tt>
+<a name="L226"></a><tt class="py-lineno">226</tt>  <tt class="py-line">                <tt id="link-43" class="py-name"><a title="bigjob.state" class="py-name" href="#" onclick="return doclink('link-43', 'state', 'link-34');">state</a></tt> <tt class="py-op">=</tt> <tt class="py-name">i</tt><tt class="py-op">.</tt><tt class="py-name">job</tt><tt class="py-op">.</tt><tt id="link-44" class="py-name" targets="Method api.base.bigjob.get_state()=api.base.bigjob-class.html#get_state,Method api.base.subjob.get_state()=api.base.subjob-class.html#get_state,Method bigjob.bigjob_manager.bigjob.get_state()=bigjob.bigjob_manager.bigjob-class.html#get_state,Method bigjob.bigjob_manager.subjob.get_state()=bigjob.bigjob_manager.subjob-class.html#get_state,Method bigjob.pbsssh.pbsssh.get_state()=bigjob.pbsssh.pbsssh-class.html#get_state,Method bigjob_dynamic.many_job.sub_job.get_state()=bigjob_dynamic.many_job.sub_job-class.html#get_state"><a title="api.base.bigjob.get_state
+api.base.subjob.get_state
+bigjob.bigjob_manager.bigjob.get_state
+bigjob.bigjob_manager.subjob.get_state
+bigjob.pbsssh.pbsssh.get_state
+bigjob_dynamic.many_job.sub_job.get_state" class="py-name" href="#" onclick="return doclink('link-44', 'get_state', 'link-44');">get_state</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L227"></a><tt class="py-lineno">227</tt>  <tt class="py-line">                <tt class="py-comment">#logging.debug("check job state")</tt> </tt>
+<a name="L228"></a><tt class="py-lineno">228</tt>  <tt class="py-line">                <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-45" class="py-name" targets="Method bigjob_dynamic.many_job.many_job_service.__has_finished()=bigjob_dynamic.many_job.many_job_service-class.html#__has_finished"><a title="bigjob_dynamic.many_job.many_job_service.__has_finished" class="py-name" href="#" onclick="return doclink('link-45', '__has_finished', 'link-45');">__has_finished</a></tt><tt class="py-op">(</tt><tt id="link-46" class="py-name"><a title="bigjob.state" class="py-name" href="#" onclick="return doclink('link-46', 'state', 'link-34');">state</a></tt><tt class="py-op">)</tt> <tt class="py-op">==</tt> <tt class="py-name">True</tt><tt class="py-op">:</tt> </tt>
+<a name="L229"></a><tt class="py-lineno">229</tt>  <tt class="py-line">                    <tt class="py-comment">#logging.debug("free resources")</tt> </tt>
+<a name="L230"></a><tt class="py-lineno">230</tt>  <tt class="py-line">                    <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-47" class="py-name" targets="Method bigjob_dynamic.many_job.many_job_service.__free_resources()=bigjob_dynamic.many_job.many_job_service-class.html#__free_resources"><a title="bigjob_dynamic.many_job.many_job_service.__free_resources" class="py-name" href="#" onclick="return doclink('link-47', '__free_resources', 'link-47');">__free_resources</a></tt><tt class="py-op">(</tt><tt class="py-name">i</tt><tt class="py-op">)</tt> </tt>
+<a name="L231"></a><tt class="py-lineno">231</tt>  <tt class="py-line">            <tt class="py-keyword">except</tt><tt class="py-op">:</tt> </tt>
+<a name="L232"></a><tt class="py-lineno">232</tt>  <tt class="py-line">                <tt class="py-name">exc_type</tt><tt class="py-op">,</tt> <tt class="py-name">exc_value</tt><tt class="py-op">,</tt> <tt class="py-name">exc_traceback</tt> <tt class="py-op">=</tt> <tt class="py-name">sys</tt><tt class="py-op">.</tt><tt class="py-name">exc_info</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L233"></a><tt class="py-lineno">233</tt>  <tt class="py-line">                <tt class="py-name">traceback</tt><tt class="py-op">.</tt><tt class="py-name">print_exception</tt><tt class="py-op">(</tt><tt class="py-name">exc_type</tt><tt class="py-op">,</tt> <tt class="py-name">exc_value</tt><tt class="py-op">,</tt> <tt class="py-name">exc_traceback</tt><tt class="py-op">,</tt> </tt>
+<a name="L234"></a><tt class="py-lineno">234</tt>  <tt class="py-line">                                          <tt class="py-name">limit</tt><tt class="py-op">=</tt><tt class="py-number">2</tt><tt class="py-op">,</tt> <tt class="py-name">file</tt><tt class="py-op">=</tt><tt class="py-name">sys</tt><tt class="py-op">.</tt><tt class="py-name">stderr</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L235"></a><tt class="py-lineno">235</tt>  <tt class="py-line">         </tt>
+<a name="many_job_service.__free_resources"></a><div id="many_job_service.__free_resources-def"><a name="L236"></a><tt class="py-lineno">236</tt> <a class="py-toggle" href="#" id="many_job_service.__free_resources-toggle" onclick="return toggle('many_job_service.__free_resources');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="bigjob_dynamic.many_job.many_job_service-class.html#__free_resources">__free_resources</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">subjob</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="many_job_service.__free_resources-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="many_job_service.__free_resources-expanded"><a name="L237"></a><tt class="py-lineno">237</tt>  <tt class="py-line">        <tt class="py-docstring">"""free resources taken by subjob"""</tt> </tt>
+<a name="L238"></a><tt class="py-lineno">238</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">subjob_bigjob_dict</tt><tt class="py-op">.</tt><tt class="py-name">has_key</tt><tt class="py-op">(</tt><tt id="link-48" class="py-name"><a title="api.base.subjob
+bigjob.bigjob_manager.subjob
+bigjob.subjob" class="py-name" href="#" onclick="return doclink('link-48', 'subjob', 'link-16');">subjob</a></tt><tt class="py-op">)</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L239"></a><tt class="py-lineno">239</tt>  <tt class="py-line">            <tt class="py-name">logging</tt><tt class="py-op">.</tt><tt class="py-name">debug</tt><tt class="py-op">(</tt><tt class="py-string">"job: "</tt> <tt class="py-op">+</tt> <tt class="py-name">str</tt><tt class="py-op">(</tt><tt id="link-49" class="py-name"><a title="api.base.subjob
+bigjob.bigjob_manager.subjob
+bigjob.subjob" class="py-name" href="#" onclick="return doclink('link-49', 'subjob', 'link-16');">subjob</a></tt><tt class="py-op">)</tt> <tt class="py-op">+</tt> <tt class="py-string">" done - free resources"</tt><tt class="py-op">)</tt> </tt>
+<a name="L240"></a><tt class="py-lineno">240</tt>  <tt class="py-line">            <tt id="link-50" class="py-name"><a title="api.base.bigjob
+bigjob
+bigjob.bigjob
+bigjob.bigjob_manager.bigjob" class="py-name" href="#" onclick="return doclink('link-50', 'bigjob', 'link-1');">bigjob</a></tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">subjob_bigjob_dict</tt><tt class="py-op">[</tt><tt id="link-51" class="py-name"><a title="api.base.subjob
+bigjob.bigjob_manager.subjob
+bigjob.subjob" class="py-name" href="#" onclick="return doclink('link-51', 'subjob', 'link-16');">subjob</a></tt><tt class="py-op">]</tt> </tt>
+<a name="L241"></a><tt class="py-lineno">241</tt>  <tt class="py-line">            <tt class="py-name">lock</tt> <tt class="py-op">=</tt> <tt id="link-52" class="py-name"><a title="api.base.bigjob
+bigjob
+bigjob.bigjob
+bigjob.bigjob_manager.bigjob" class="py-name" href="#" onclick="return doclink('link-52', 'bigjob', 'link-1');">bigjob</a></tt><tt class="py-op">[</tt><tt class="py-string">"lock"</tt><tt class="py-op">]</tt> </tt>
+<a name="L242"></a><tt class="py-lineno">242</tt>  <tt class="py-line">            <tt class="py-name">lock</tt><tt class="py-op">.</tt><tt class="py-name">acquire</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L243"></a><tt class="py-lineno">243</tt>  <tt class="py-line">            <tt class="py-name">free_cores</tt> <tt class="py-op">=</tt> <tt id="link-53" class="py-name"><a title="api.base.bigjob
+bigjob
+bigjob.bigjob
+bigjob.bigjob_manager.bigjob" class="py-name" href="#" onclick="return doclink('link-53', 'bigjob', 'link-1');">bigjob</a></tt><tt class="py-op">[</tt><tt class="py-string">"free_cores"</tt><tt class="py-op">]</tt> </tt>
+<a name="L244"></a><tt class="py-lineno">244</tt>  <tt class="py-line">            <tt class="py-name">free_cores</tt> <tt class="py-op">=</tt> <tt class="py-name">free_cores</tt> <tt class="py-op">+</tt> <tt class="py-name">int</tt><tt class="py-op">(</tt><tt id="link-54" class="py-name"><a title="api.base.subjob
+bigjob.bigjob_manager.subjob
+bigjob.subjob" class="py-name" href="#" onclick="return doclink('link-54', 'subjob', 'link-16');">subjob</a></tt><tt class="py-op">.</tt><tt class="py-name">job_description</tt><tt class="py-op">.</tt><tt class="py-name">number_of_processes</tt><tt class="py-op">)</tt> </tt>
+<a name="L245"></a><tt class="py-lineno">245</tt>  <tt class="py-line">            <tt id="link-55" class="py-name"><a title="api.base.bigjob
+bigjob
+bigjob.bigjob
+bigjob.bigjob_manager.bigjob" class="py-name" href="#" onclick="return doclink('link-55', 'bigjob', 'link-1');">bigjob</a></tt><tt class="py-op">[</tt><tt class="py-string">"free_cores"</tt><tt class="py-op">]</tt><tt class="py-op">=</tt><tt class="py-name">free_cores</tt> </tt>
+<a name="L246"></a><tt class="py-lineno">246</tt>  <tt class="py-line">            <tt class="py-keyword">del</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">subjob_bigjob_dict</tt><tt class="py-op">[</tt><tt id="link-56" class="py-name"><a title="api.base.subjob
+bigjob.bigjob_manager.subjob
+bigjob.subjob" class="py-name" href="#" onclick="return doclink('link-56', 'subjob', 'link-16');">subjob</a></tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L247"></a><tt class="py-lineno">247</tt>  <tt class="py-line">            <tt class="py-name">lock</tt><tt class="py-op">.</tt><tt class="py-name">release</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L248"></a><tt class="py-lineno">248</tt>  <tt class="py-line">            <tt class="py-keyword">print</tt> <tt class="py-string">"Freed resource - new state: Big Job: "</tt> <tt class="py-op">+</tt>  <tt id="link-57" class="py-name"><a title="api.base.bigjob
+bigjob
+bigjob.bigjob
+bigjob.bigjob_manager.bigjob" class="py-name" href="#" onclick="return doclink('link-57', 'bigjob', 'link-1');">bigjob</a></tt><tt class="py-op">[</tt><tt class="py-string">"bigjob"</tt><tt class="py-op">]</tt><tt class="py-op">.</tt><tt class="py-name">pilot_url</tt> <tt class="py-op">+</tt> <tt class="py-string">" Cores: "</tt> <tt class="py-op">+</tt> <tt class="py-string">"%s"</tt><tt class="py-op">%</tt><tt class="py-name">free_cores</tt> <tt class="py-op">+</tt> <tt class="py-string">"/"</tt> <tt class="py-op">+</tt> <tt class="py-name">str</tt><tt class="py-op">(</tt><tt class="py-name">int</tt><tt class="py-op">(</tt><tt id="link-58" class="py-name"><a title="api.base.bigjob
+bigjob
+bigjob.bigjob
+bigjob.bigjob_manager.bigjob" class="py-name" href="#" onclick="return doclink('link-58', 'bigjob', 'link-1');">bigjob</a></tt><tt class="py-op">[</tt><tt class="py-string">"number_of_processes"</tt><tt class="py-op">]</tt><tt class="py-op">)</tt><tt class="py-op">)</tt>  </tt>
+</div><a name="L249"></a><tt class="py-lineno">249</tt>  <tt class="py-line">     </tt>
+<a name="many_job_service.__reschedule_subjobs_thread"></a><div id="many_job_service.__reschedule_subjobs_thread-def"><a name="L250"></a><tt class="py-lineno">250</tt> <a class="py-toggle" href="#" id="many_job_service.__reschedule_subjobs_thread-toggle" onclick="return toggle('many_job_service.__reschedule_subjobs_thread');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="bigjob_dynamic.many_job.many_job_service-class.html#__reschedule_subjobs_thread">__reschedule_subjobs_thread</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="many_job_service.__reschedule_subjobs_thread-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="many_job_service.__reschedule_subjobs_thread-expanded"><a name="L251"></a><tt class="py-lineno">251</tt>  <tt class="py-line">        <tt class="py-docstring">""" periodically checks subjob_queue for unscheduled subjobs</tt> </tt>
+<a name="L252"></a><tt class="py-lineno">252</tt>  <tt class="py-line"><tt class="py-docstring">            if a unscheduled job exists it is scheduled</tt> </tt>
+<a name="L253"></a><tt class="py-lineno">253</tt>  <tt class="py-line"><tt class="py-docstring">        """</tt> </tt>
+<a name="L254"></a><tt class="py-lineno">254</tt>  <tt class="py-line"> </tt>
+<a name="L255"></a><tt class="py-lineno">255</tt>  <tt class="py-line">        <tt class="py-keyword">while</tt> <tt class="py-name">True</tt> <tt class="py-keyword">and</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">stop</tt><tt class="py-op">.</tt><tt class="py-name">isSet</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">==</tt><tt class="py-name">False</tt><tt class="py-op">:</tt> </tt>
+<a name="L256"></a><tt class="py-lineno">256</tt>  <tt class="py-line">            <tt class="py-name">logging</tt><tt class="py-op">.</tt><tt class="py-name">debug</tt><tt class="py-op">(</tt><tt class="py-string">"Reschedule Thread"</tt><tt class="py-op">)</tt> </tt>
+<a name="L257"></a><tt class="py-lineno">257</tt>  <tt class="py-line">            <tt class="py-comment"># check sub-job state</tt> </tt>
+<a name="L258"></a><tt class="py-lineno">258</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-59" class="py-name" targets="Method bigjob_dynamic.many_job.many_job_service.__check_subjobs_states()=bigjob_dynamic.many_job.many_job_service-class.html#__check_subjobs_states"><a title="bigjob_dynamic.many_job.many_job_service.__check_subjobs_states" class="py-name" href="#" onclick="return doclink('link-59', '__check_subjobs_states', 'link-59');">__check_subjobs_states</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L259"></a><tt class="py-lineno">259</tt>  <tt class="py-line">            <tt class="py-comment"># remove unneeded big-jobs</tt> </tt>
+<a name="L260"></a><tt class="py-lineno">260</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-60" class="py-name" targets="Method bigjob_dynamic.many_job.many_job_service.__cleanup_resources()=bigjob_dynamic.many_job.many_job_service-class.html#__cleanup_resources"><a title="bigjob_dynamic.many_job.many_job_service.__cleanup_resources" class="py-name" href="#" onclick="return doclink('link-60', '__cleanup_resources', 'link-60');">__cleanup_resources</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L261"></a><tt class="py-lineno">261</tt>  <tt class="py-line">            <tt id="link-61" class="py-name"><a title="api.base.subjob
+bigjob.bigjob_manager.subjob
+bigjob.subjob" class="py-name" href="#" onclick="return doclink('link-61', 'subjob', 'link-16');">subjob</a></tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">subjob_queue</tt><tt class="py-op">.</tt><tt class="py-name">get</tt><tt class="py-op">(</tt><tt class="py-op">)</tt>   </tt>
+<a name="L262"></a><tt class="py-lineno">262</tt>  <tt class="py-line">            <tt class="py-comment"># check whether this is a real subjob object  </tt> </tt>
+<a name="L263"></a><tt class="py-lineno">263</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">isinstance</tt><tt class="py-op">(</tt><tt id="link-62" class="py-name"><a title="api.base.subjob
+bigjob.bigjob_manager.subjob
+bigjob.subjob" class="py-name" href="#" onclick="return doclink('link-62', 'subjob', 'link-16');">subjob</a></tt><tt class="py-op">,</tt> <tt id="link-63" class="py-name"><a title="bigjob_dynamic.many_job.sub_job" class="py-name" href="#" onclick="return doclink('link-63', 'sub_job', 'link-17');">sub_job</a></tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L264"></a><tt class="py-lineno">264</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-64" class="py-name" targets="Method bigjob_dynamic.many_job.many_job_service.__run_subjob()=bigjob_dynamic.many_job.many_job_service-class.html#__run_subjob"><a title="bigjob_dynamic.many_job.many_job_service.__run_subjob" class="py-name" href="#" onclick="return doclink('link-64', '__run_subjob', 'link-64');">__run_subjob</a></tt><tt class="py-op">(</tt><tt id="link-65" class="py-name"><a title="api.base.subjob
+bigjob.bigjob_manager.subjob
+bigjob.subjob" class="py-name" href="#" onclick="return doclink('link-65', 'subjob', 'link-16');">subjob</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L265"></a><tt class="py-lineno">265</tt>  <tt class="py-line">                <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">last_queue_size</tt> <tt class="py-op">==</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">subjob_queue</tt><tt class="py-op">.</tt><tt class="py-name">qsize</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> <tt class="py-keyword">or</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-66" class="py-name" targets="Method bigjob_dynamic.many_job.many_job_service.__get_total_free_cores()=bigjob_dynamic.many_job.many_job_service-class.html#__get_total_free_cores"><a title="bigjob_dynamic.many_job.many_job_service.__get_total_free_cores" class="py-name" href="#" onclick="return doclink('link-66', '__get_total_free_cores', 'link-66');">__get_total_free_cores</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">==</tt><tt class="py-number">0</tt><tt class="py-op">:</tt> </tt>
+<a name="L266"></a><tt class="py-lineno">266</tt>  <tt class="py-line">                    <tt class="py-name">time</tt><tt class="py-op">.</tt><tt class="py-name">sleep</tt><tt class="py-op">(</tt><tt class="py-number">2</tt><tt class="py-op">)</tt> <tt class="py-comment"># sleep 30 s        </tt> </tt>
+<a name="L267"></a><tt class="py-lineno">267</tt>  <tt class="py-line"> </tt>
+<a name="L268"></a><tt class="py-lineno">268</tt>  <tt class="py-line">        <tt class="py-name">logging</tt><tt class="py-op">.</tt><tt class="py-name">debug</tt><tt class="py-op">(</tt><tt class="py-string">"Re-Scheduler terminated"</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L269"></a><tt class="py-lineno">269</tt>  <tt class="py-line"> </tt>
+<a name="L270"></a><tt class="py-lineno">270</tt>  <tt class="py-line"> </tt>
+<a name="many_job_service.__get_free_cores"></a><div id="many_job_service.__get_free_cores-def"><a name="L271"></a><tt class="py-lineno">271</tt> <a class="py-toggle" href="#" id="many_job_service.__get_free_cores-toggle" onclick="return toggle('many_job_service.__get_free_cores');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="bigjob_dynamic.many_job.many_job_service-class.html#__get_free_cores">__get_free_cores</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">bigjob</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="many_job_service.__get_free_cores-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="many_job_service.__get_free_cores-expanded"><a name="L272"></a><tt class="py-lineno">272</tt>  <tt class="py-line">        <tt class="py-docstring">""" return number of free cores if bigjob is active """</tt> </tt>
+<a name="L273"></a><tt class="py-lineno">273</tt>  <tt class="py-line">        <tt class="py-comment">#pdb.set_trace()</tt> </tt>
+<a name="L274"></a><tt class="py-lineno">274</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-op">(</tt><tt id="link-67" class="py-name"><a title="api.base.bigjob
+bigjob
+bigjob.bigjob
+bigjob.bigjob_manager.bigjob" class="py-name" href="#" onclick="return doclink('link-67', 'bigjob', 'link-1');">bigjob</a></tt><tt class="py-op">[</tt><tt class="py-string">"bigjob"</tt><tt class="py-op">]</tt><tt class="py-op">.</tt><tt id="link-68" class="py-name"><a title="api.base.bigjob.get_state_detail
+bigjob.bigjob_manager.bigjob.get_state_detail" class="py-name" href="#" onclick="return doclink('link-68', 'get_state_detail', 'link-36');">get_state_detail</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt class="py-name">lower</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">==</tt><tt class="py-string">"running"</tt>  </tt>
+<a name="L275"></a><tt class="py-lineno">275</tt>  <tt class="py-line">            <tt class="py-keyword">and</tt> <tt id="link-69" class="py-name"><a title="api.base.bigjob
+bigjob
+bigjob.bigjob
+bigjob.bigjob_manager.bigjob" class="py-name" href="#" onclick="return doclink('link-69', 'bigjob', 'link-1');">bigjob</a></tt><tt class="py-op">[</tt><tt class="py-string">"to_be_terminated"</tt><tt class="py-op">]</tt><tt class="py-op">==</tt><tt class="py-name">False</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L276"></a><tt class="py-lineno">276</tt>  <tt class="py-line">            <tt class="py-keyword">return</tt> <tt id="link-70" class="py-name"><a title="api.base.bigjob
+bigjob
+bigjob.bigjob
+bigjob.bigjob_manager.bigjob" class="py-name" href="#" onclick="return doclink('link-70', 'bigjob', 'link-1');">bigjob</a></tt><tt class="py-op">[</tt><tt class="py-string">"free_cores"</tt><tt class="py-op">]</tt> </tt>
+<a name="L277"></a><tt class="py-lineno">277</tt>  <tt class="py-line"> </tt>
+<a name="L278"></a><tt class="py-lineno">278</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-number">0</tt>             </tt>
+</div><a name="L279"></a><tt class="py-lineno">279</tt>  <tt class="py-line"> </tt>
+<a name="many_job_service.__get_total_free_cores"></a><div id="many_job_service.__get_total_free_cores-def"><a name="L280"></a><tt class="py-lineno">280</tt> <a class="py-toggle" href="#" id="many_job_service.__get_total_free_cores-toggle" onclick="return toggle('many_job_service.__get_total_free_cores');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="bigjob_dynamic.many_job.many_job_service-class.html#__get_total_free_cores">__get_total_free_cores</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="many_job_service.__get_total_free_cores-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="many_job_service.__get_total_free_cores-expanded"><a name="L281"></a><tt class="py-lineno">281</tt>  <tt class="py-line">        <tt class="py-docstring">""" get's the total number of free cores from all active  bigjobs """</tt> </tt>
+<a name="L282"></a><tt class="py-lineno">282</tt>  <tt class="py-line">        <tt class="py-name">free_cores</tt> <tt class="py-op">=</tt> <tt class="py-name">map</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-71" class="py-name" targets="Method bigjob_dynamic.many_job.many_job_service.__get_free_cores()=bigjob_dynamic.many_job.many_job_service-class.html#__get_free_cores"><a title="bigjob_dynamic.many_job.many_job_service.__get_free_cores" class="py-name" href="#" onclick="return doclink('link-71', '__get_free_cores', 'link-71');">__get_free_cores</a></tt><tt class="py-op">,</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">bigjob_list</tt><tt class="py-op">)</tt> </tt>
+<a name="L283"></a><tt class="py-lineno">283</tt>  <tt class="py-line">        <tt class="py-comment">#print "Free cores: " + str(free_cores)</tt> </tt>
+<a name="L284"></a><tt class="py-lineno">284</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">len</tt><tt class="py-op">(</tt><tt class="py-name">free_cores</tt><tt class="py-op">)</tt><tt class="py-op">&gt;</tt><tt class="py-number">0</tt><tt class="py-op">:</tt> </tt>
+<a name="L285"></a><tt class="py-lineno">285</tt>  <tt class="py-line">            <tt class="py-name">total_free_cores</tt> <tt class="py-op">=</tt> <tt class="py-name">reduce</tt><tt class="py-op">(</tt><tt class="py-keyword">lambda</tt> <tt class="py-name">x</tt><tt class="py-op">,</tt> <tt class="py-name">y</tt><tt class="py-op">:</tt> <tt class="py-name">x</tt> <tt class="py-op">+</tt> <tt class="py-name">y</tt><tt class="py-op">,</tt> <tt class="py-name">free_cores</tt><tt class="py-op">)</tt> </tt>
+<a name="L286"></a><tt class="py-lineno">286</tt>  <tt class="py-line">            <tt class="py-name">logging</tt><tt class="py-op">.</tt><tt class="py-name">debug</tt><tt class="py-op">(</tt><tt class="py-string">"free_cores: "</tt> <tt class="py-op">+</tt> <tt class="py-name">str</tt><tt class="py-op">(</tt><tt class="py-name">free_cores</tt><tt class="py-op">)</tt> <tt class="py-op">+</tt> <tt class="py-string">" total_free_cores: "</tt> <tt class="py-op">+</tt> <tt class="py-name">str</tt><tt class="py-op">(</tt><tt class="py-name">total_free_cores</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L287"></a><tt class="py-lineno">287</tt>  <tt class="py-line">            <tt class="py-keyword">return</tt> <tt class="py-name">total_free_cores</tt> </tt>
+<a name="L288"></a><tt class="py-lineno">288</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-number">0</tt> </tt>
+</div><a name="L289"></a><tt class="py-lineno">289</tt>  <tt class="py-line"> </tt>
+<a name="many_job_service.cancel"></a><div id="many_job_service.cancel-def"><a name="L290"></a><tt class="py-lineno">290</tt> <a class="py-toggle" href="#" id="many_job_service.cancel-toggle" onclick="return toggle('many_job_service.cancel');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="bigjob_dynamic.many_job.many_job_service-class.html#cancel">cancel</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="many_job_service.cancel-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="many_job_service.cancel-expanded"><a name="L291"></a><tt class="py-lineno">291</tt>  <tt class="py-line">        <tt class="py-name">logging</tt><tt class="py-op">.</tt><tt class="py-name">debug</tt><tt class="py-op">(</tt><tt class="py-string">"Cancel re-scheduler thread"</tt><tt class="py-op">)</tt> </tt>
+<a name="L292"></a><tt class="py-lineno">292</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">stop</tt><tt class="py-op">.</tt><tt class="py-name">set</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L293"></a><tt class="py-lineno">293</tt>  <tt class="py-line">        <tt class="py-comment"># put object in queue to unlock the get() operation</tt> </tt>
+<a name="L294"></a><tt class="py-lineno">294</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">subjob_queue</tt><tt class="py-op">.</tt><tt class="py-name">put</tt><tt class="py-op">(</tt><tt class="py-string">"dummy"</tt><tt class="py-op">)</tt> </tt>
+<a name="L295"></a><tt class="py-lineno">295</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">rescheduler_thread</tt><tt class="py-op">.</tt><tt class="py-name">join</tt><tt class="py-op">(</tt><tt class="py-op">)</tt>         </tt>
+<a name="L296"></a><tt class="py-lineno">296</tt>  <tt class="py-line">        <tt class="py-name">logging</tt><tt class="py-op">.</tt><tt class="py-name">debug</tt><tt class="py-op">(</tt><tt class="py-string">"Cancel many-job: kill all bigjobs"</tt><tt class="py-op">)</tt> </tt>
+<a name="L297"></a><tt class="py-lineno">297</tt>  <tt class="py-line">        <tt class="py-keyword">for</tt> <tt class="py-name">i</tt> <tt class="py-keyword">in</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">bigjob_list</tt><tt class="py-op">:</tt> </tt>
+<a name="L298"></a><tt class="py-lineno">298</tt>  <tt class="py-line">            <tt id="link-72" class="py-name"><a title="api.base.bigjob
+bigjob
+bigjob.bigjob
+bigjob.bigjob_manager.bigjob" class="py-name" href="#" onclick="return doclink('link-72', 'bigjob', 'link-1');">bigjob</a></tt> <tt class="py-op">=</tt> <tt class="py-name">i</tt><tt class="py-op">[</tt><tt class="py-string">"bigjob"</tt><tt class="py-op">]</tt> </tt>
+<a name="L299"></a><tt class="py-lineno">299</tt>  <tt class="py-line">            <tt id="link-73" class="py-name"><a title="api.base.bigjob
+bigjob
+bigjob.bigjob
+bigjob.bigjob_manager.bigjob" class="py-name" href="#" onclick="return doclink('link-73', 'bigjob', 'link-1');">bigjob</a></tt><tt class="py-op">.</tt><tt id="link-74" class="py-name" targets="Method api.base.bigjob.cancel()=api.base.bigjob-class.html#cancel,Method api.base.subjob.cancel()=api.base.subjob-class.html#cancel,Method bigjob.bigjob_manager.bigjob.cancel()=bigjob.bigjob_manager.bigjob-class.html#cancel,Method bigjob.bigjob_manager.subjob.cancel()=bigjob.bigjob_manager.subjob-class.html#cancel,Method bigjob.pbsssh.pbsssh.cancel()=bigjob.pbsssh.pbsssh-class.html#cancel,Method bigjob_dynamic.many_job.many_job_service.cancel()=bigjob_dynamic.many_job.many_job_service-class.html#cancel,Method bigjob_dynamic.many_job.sub_job.cancel()=bigjob_dynamic.many_job.sub_job-class.html#cancel"><a title="api.base.bigjob.cancel
+api.base.subjob.cancel
+bigjob.bigjob_manager.bigjob.cancel
+bigjob.bigjob_manager.subjob.cancel
+bigjob.pbsssh.pbsssh.cancel
+bigjob_dynamic.many_job.many_job_service.cancel
+bigjob_dynamic.many_job.sub_job.cancel" class="py-name" href="#" onclick="return doclink('link-74', 'cancel', 'link-74');">cancel</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L300"></a><tt class="py-lineno">300</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-75" class="py-name" targets="Method bigjob_dynamic.many_job.many_job_service.print_stats()=bigjob_dynamic.many_job.many_job_service-class.html#print_stats"><a title="bigjob_dynamic.many_job.many_job_service.print_stats" class="py-name" href="#" onclick="return doclink('link-75', 'print_stats', 'link-75');">print_stats</a></tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">submisssion_times</tt><tt class="py-op">,</tt> <tt class="py-string">"Submission Times"</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L301"></a><tt class="py-lineno">301</tt>  <tt class="py-line"> </tt>
+<a name="many_job_service.print_stats"></a><div id="many_job_service.print_stats-def"><a name="L302"></a><tt class="py-lineno">302</tt> <a class="py-toggle" href="#" id="many_job_service.print_stats-toggle" onclick="return toggle('many_job_service.print_stats');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="bigjob_dynamic.many_job.many_job_service-class.html#print_stats">print_stats</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">times</tt><tt class="py-op">,</tt> <tt class="py-param">description</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="many_job_service.print_stats-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="many_job_service.print_stats-expanded"><a name="L303"></a><tt class="py-lineno">303</tt>  <tt class="py-line">        <tt class="py-keyword">try</tt><tt class="py-op">:</tt> </tt>
+<a name="L304"></a><tt class="py-lineno">304</tt>  <tt class="py-line">            <tt class="py-name">n</tt> <tt class="py-op">=</tt> <tt class="py-name">len</tt><tt class="py-op">(</tt><tt class="py-name">times</tt><tt class="py-op">)</tt> </tt>
+<a name="L305"></a><tt class="py-lineno">305</tt>  <tt class="py-line">            <tt class="py-name">sum</tt> <tt class="py-op">=</tt> <tt class="py-name">reduce</tt><tt class="py-op">(</tt><tt class="py-name">operator</tt><tt class="py-op">.</tt><tt class="py-name">add</tt><tt class="py-op">,</tt> <tt class="py-name">times</tt><tt class="py-op">)</tt> </tt>
+<a name="L306"></a><tt class="py-lineno">306</tt>  <tt class="py-line">            <tt class="py-name">mean</tt> <tt class="py-op">=</tt> <tt class="py-name">sum</tt><tt class="py-op">/</tt><tt class="py-name">n</tt> </tt>
+<a name="L307"></a><tt class="py-lineno">307</tt>  <tt class="py-line">            <tt class="py-name">variance</tt><tt class="py-op">=</tt><tt class="py-number">0</tt> </tt>
+<a name="L308"></a><tt class="py-lineno">308</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">n</tt> <tt class="py-op">&gt;</tt> <tt class="py-number">1</tt><tt class="py-op">:</tt> </tt>
+<a name="L309"></a><tt class="py-lineno">309</tt>  <tt class="py-line">                <tt class="py-keyword">for</tt> <tt class="py-name">i</tt> <tt class="py-keyword">in</tt> <tt class="py-name">times</tt><tt class="py-op">:</tt> </tt>
+<a name="L310"></a><tt class="py-lineno">310</tt>  <tt class="py-line">                    <tt class="py-name">variance</tt> <tt class="py-op">+=</tt> <tt class="py-op">(</tt><tt class="py-name">i</tt> <tt class="py-op">-</tt> <tt class="py-name">mean</tt><tt class="py-op">)</tt><tt class="py-op">**</tt><tt class="py-number">2</tt> </tt>
+<a name="L311"></a><tt class="py-lineno">311</tt>  <tt class="py-line">                <tt class="py-name">variance</tt> <tt class="py-op">/=</tt> <tt class="py-op">(</tt><tt class="py-name">n</tt><tt class="py-op">-</tt><tt class="py-number">1</tt><tt class="py-op">)</tt> </tt>
+<a name="L312"></a><tt class="py-lineno">312</tt>  <tt class="py-line">                <tt class="py-name">variance</tt> <tt class="py-op">=</tt> <tt class="py-name">math</tt><tt class="py-op">.</tt><tt class="py-name">sqrt</tt><tt class="py-op">(</tt><tt class="py-name">variance</tt><tt class="py-op">)</tt> </tt>
+<a name="L313"></a><tt class="py-lineno">313</tt>  <tt class="py-line">            <tt class="py-keyword">print</tt> <tt id="link-76" class="py-name" targets="Class bigjob.bigjob_manager.description=bigjob.bigjob_manager.description-class.html,Class bigjob.description=bigjob.description-class.html"><a title="bigjob.bigjob_manager.description
+bigjob.description" class="py-name" href="#" onclick="return doclink('link-76', 'description', 'link-76');">description</a></tt> <tt class="py-op">+</tt> <tt class="py-string">" Average: "</tt> <tt class="py-op">+</tt> <tt class="py-name">str</tt><tt class="py-op">(</tt><tt class="py-name">mean</tt><tt class="py-op">)</tt> <tt class="py-op">+</tt> <tt class="py-string">" Stdev: "</tt> <tt class="py-op">+</tt> <tt class="py-name">str</tt><tt class="py-op">(</tt><tt class="py-name">variance</tt><tt class="py-op">)</tt> </tt>
+<a name="L314"></a><tt class="py-lineno">314</tt>  <tt class="py-line">        <tt class="py-keyword">except</tt><tt class="py-op">:</tt> </tt>
+<a name="L315"></a><tt class="py-lineno">315</tt>  <tt class="py-line">            <tt class="py-keyword">pass</tt> </tt>
+</div><a name="L316"></a><tt class="py-lineno">316</tt>  <tt class="py-line">         </tt>
+<a name="many_job_service.__has_finished"></a><div id="many_job_service.__has_finished-def"><a name="L317"></a><tt class="py-lineno">317</tt> <a class="py-toggle" href="#" id="many_job_service.__has_finished-toggle" onclick="return toggle('many_job_service.__has_finished');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="bigjob_dynamic.many_job.many_job_service-class.html#__has_finished">__has_finished</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">state</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="many_job_service.__has_finished-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="many_job_service.__has_finished-expanded"><a name="L318"></a><tt class="py-lineno">318</tt>  <tt class="py-line">        <tt id="link-77" class="py-name"><a title="bigjob.state" class="py-name" href="#" onclick="return doclink('link-77', 'state', 'link-34');">state</a></tt> <tt class="py-op">=</tt> <tt id="link-78" class="py-name"><a title="bigjob.state" class="py-name" href="#" onclick="return doclink('link-78', 'state', 'link-34');">state</a></tt><tt class="py-op">.</tt><tt class="py-name">lower</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L319"></a><tt class="py-lineno">319</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt id="link-79" class="py-name"><a title="bigjob.state" class="py-name" href="#" onclick="return doclink('link-79', 'state', 'link-34');">state</a></tt><tt class="py-op">==</tt><tt class="py-string">"done"</tt> <tt class="py-keyword">or</tt> <tt id="link-80" class="py-name"><a title="bigjob.state" class="py-name" href="#" onclick="return doclink('link-80', 'state', 'link-34');">state</a></tt><tt class="py-op">==</tt><tt class="py-string">"failed"</tt> <tt class="py-keyword">or</tt> <tt id="link-81" class="py-name"><a title="bigjob.state" class="py-name" href="#" onclick="return doclink('link-81', 'state', 'link-34');">state</a></tt><tt class="py-op">==</tt><tt class="py-string">"canceled"</tt><tt class="py-op">:</tt> </tt>
+<a name="L320"></a><tt class="py-lineno">320</tt>  <tt class="py-line">            <tt class="py-keyword">return</tt> <tt class="py-name">True</tt> </tt>
+<a name="L321"></a><tt class="py-lineno">321</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L322"></a><tt class="py-lineno">322</tt>  <tt class="py-line">            <tt class="py-keyword">return</tt> <tt class="py-name">False</tt> </tt>
+</div><a name="L323"></a><tt class="py-lineno">323</tt>  <tt class="py-line"> </tt>
+<a name="many_job_service.__repr__"></a><div id="many_job_service.__repr__-def"><a name="L324"></a><tt class="py-lineno">324</tt> <a class="py-toggle" href="#" id="many_job_service.__repr__-toggle" onclick="return toggle('many_job_service.__repr__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="bigjob_dynamic.many_job.many_job_service-class.html#__repr__">__repr__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="many_job_service.__repr__-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="many_job_service.__repr__-expanded"><a name="L325"></a><tt class="py-lineno">325</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">str</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">uuid</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L326"></a><tt class="py-lineno">326</tt>  <tt class="py-line"> </tt>
+<a name="many_job_service.__del__"></a><div id="many_job_service.__del__-def"><a name="L327"></a><tt class="py-lineno">327</tt> <a class="py-toggle" href="#" id="many_job_service.__del__-toggle" onclick="return toggle('many_job_service.__del__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="bigjob_dynamic.many_job.many_job_service-class.html#__del__">__del__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="many_job_service.__del__-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="many_job_service.__del__-expanded"><a name="L328"></a><tt class="py-lineno">328</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-82" class="py-name"><a title="api.base.bigjob.cancel
+api.base.subjob.cancel
+bigjob.bigjob_manager.bigjob.cancel
+bigjob.bigjob_manager.subjob.cancel
+bigjob.pbsssh.pbsssh.cancel
+bigjob_dynamic.many_job.many_job_service.cancel
+bigjob_dynamic.many_job.sub_job.cancel" class="py-name" href="#" onclick="return doclink('link-82', 'cancel', 'link-74');">cancel</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+</div></div><a name="L329"></a><tt class="py-lineno">329</tt>  <tt class="py-line">         </tt>
+<a name="L330"></a><tt class="py-lineno">330</tt>  <tt class="py-line">         </tt>
+<a name="L331"></a><tt class="py-lineno">331</tt>  <tt class="py-line">                     </tt>
+<a name="L332"></a><tt class="py-lineno">332</tt>  <tt class="py-line"> </tt>
+<a name="sub_job"></a><div id="sub_job-def"><a name="L333"></a><tt class="py-lineno">333</tt> <a class="py-toggle" href="#" id="sub_job-toggle" onclick="return toggle('sub_job');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="bigjob_dynamic.many_job.sub_job-class.html">sub_job</a><tt class="py-op">(</tt><tt class="py-base-class">object</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="sub_job-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="sub_job-expanded"><a name="L334"></a><tt class="py-lineno">334</tt>  <tt class="py-line">    <tt class="py-docstring">""" Class for controlling individual sub-jobs """</tt> </tt>
+<a name="L335"></a><tt class="py-lineno">335</tt>  <tt class="py-line">     </tt>
+<a name="sub_job.__init__"></a><div id="sub_job.__init__-def"><a name="L336"></a><tt class="py-lineno">336</tt> <a class="py-toggle" href="#" id="sub_job.__init__-toggle" onclick="return toggle('sub_job.__init__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="bigjob_dynamic.many_job.sub_job-class.html#__init__">__init__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">manyjob</tt><tt class="py-op">,</tt> <tt class="py-param">job_description</tt><tt class="py-op">,</tt> <tt class="py-param">advert_host</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="sub_job.__init__-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="sub_job.__init__-expanded"><a name="L337"></a><tt class="py-lineno">337</tt>  <tt class="py-line">        <tt class="py-comment"># store bigjob for reference</tt> </tt>
+<a name="L338"></a><tt class="py-lineno">338</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">manyjob</tt><tt class="py-op">=</tt><tt class="py-name">manyjob</tt> </tt>
+<a name="L339"></a><tt class="py-lineno">339</tt>  <tt class="py-line">         </tt>
+<a name="L340"></a><tt class="py-lineno">340</tt>  <tt class="py-line">        <tt class="py-comment"># init sub-job via advert</tt> </tt>
+<a name="L341"></a><tt class="py-lineno">341</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">job_description</tt> <tt class="py-op">=</tt> <tt class="py-name">job_description</tt> </tt>
+<a name="L342"></a><tt class="py-lineno">342</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">job</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt> </tt>
+</div><a name="L343"></a><tt class="py-lineno">343</tt>  <tt class="py-line"> </tt>
+<a name="sub_job.run"></a><div id="sub_job.run-def"><a name="L344"></a><tt class="py-lineno">344</tt> <a class="py-toggle" href="#" id="sub_job.run-toggle" onclick="return toggle('sub_job.run');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="bigjob_dynamic.many_job.sub_job-class.html#run">run</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="sub_job.run-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="sub_job.run-expanded"><a name="L345"></a><tt class="py-lineno">345</tt>  <tt class="py-line">        <tt class="py-comment"># select appropriate bigjob</tt> </tt>
+<a name="L346"></a><tt class="py-lineno">346</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">job</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">manyjob</tt><tt class="py-op">.</tt><tt id="link-83" class="py-name" targets="Method bigjob_dynamic.many_job.many_job_service.queue_subjob()=bigjob_dynamic.many_job.many_job_service-class.html#queue_subjob"><a title="bigjob_dynamic.many_job.many_job_service.queue_subjob" class="py-name" href="#" onclick="return doclink('link-83', 'queue_subjob', 'link-83');">queue_subjob</a></tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L347"></a><tt class="py-lineno">347</tt>  <tt class="py-line"> </tt>
+<a name="sub_job.get_state"></a><div id="sub_job.get_state-def"><a name="L348"></a><tt class="py-lineno">348</tt> <a class="py-toggle" href="#" id="sub_job.get_state-toggle" onclick="return toggle('sub_job.get_state');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="bigjob_dynamic.many_job.sub_job-class.html#get_state">get_state</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt>      </tt>
+</div><a name="L349"></a><tt class="py-lineno">349</tt>  <tt class="py-line">        <tt class="py-keyword">try</tt><tt class="py-op">:</tt> </tt>
+<a name="L350"></a><tt class="py-lineno">350</tt>  <tt class="py-line">            <tt id="link-84" class="py-name"><a title="bigjob.state" class="py-name" href="#" onclick="return doclink('link-84', 'state', 'link-34');">state</a></tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">job</tt><tt class="py-op">.</tt><tt id="link-85" class="py-name"><a title="api.base.bigjob.get_state
+api.base.subjob.get_state
+bigjob.bigjob_manager.bigjob.get_state
+bigjob.bigjob_manager.subjob.get_state
+bigjob.pbsssh.pbsssh.get_state
+bigjob_dynamic.many_job.sub_job.get_state" class="py-name" href="#" onclick="return doclink('link-85', 'get_state', 'link-44');">get_state</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L351"></a><tt class="py-lineno">351</tt>  <tt class="py-line">            <tt class="py-keyword">return</tt> <tt id="link-86" class="py-name"><a title="bigjob.state" class="py-name" href="#" onclick="return doclink('link-86', 'state', 'link-34');">state</a></tt> </tt>
+<a name="L352"></a><tt class="py-lineno">352</tt>  <tt class="py-line">        <tt class="py-keyword">except</tt><tt class="py-op">:</tt> </tt>
+<a name="L353"></a><tt class="py-lineno">353</tt>  <tt class="py-line">            <tt class="py-comment">#traceback.print_stack()</tt> </tt>
+<a name="L354"></a><tt class="py-lineno">354</tt>  <tt class="py-line">            <tt class="py-keyword">pass</tt> </tt>
+<a name="L355"></a><tt class="py-lineno">355</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-string">"Unknown"</tt> </tt>
+</div><a name="L356"></a><tt class="py-lineno">356</tt>  <tt class="py-line"> </tt>
+<a name="sub_job.get_arguments"></a><div id="sub_job.get_arguments-def"><a name="L357"></a><tt class="py-lineno">357</tt> <a class="py-toggle" href="#" id="sub_job.get_arguments-toggle" onclick="return toggle('sub_job.get_arguments');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="bigjob_dynamic.many_job.sub_job-class.html#get_arguments">get_arguments</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="sub_job.get_arguments-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="sub_job.get_arguments-expanded"><a name="L358"></a><tt class="py-lineno">358</tt>  <tt class="py-line">        <tt class="py-keyword">try</tt><tt class="py-op">:</tt> </tt>
+<a name="L359"></a><tt class="py-lineno">359</tt>  <tt class="py-line">            <tt class="py-name">arguments</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">job</tt><tt class="py-op">.</tt><tt id="link-87" class="py-name" targets="Method bigjob.bigjob_manager.subjob.get_arguments()=bigjob.bigjob_manager.subjob-class.html#get_arguments,Method bigjob_dynamic.many_job.sub_job.get_arguments()=bigjob_dynamic.many_job.sub_job-class.html#get_arguments"><a title="bigjob.bigjob_manager.subjob.get_arguments
+bigjob_dynamic.many_job.sub_job.get_arguments" class="py-name" href="#" onclick="return doclink('link-87', 'get_arguments', 'link-87');">get_arguments</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L360"></a><tt class="py-lineno">360</tt>  <tt class="py-line">            <tt class="py-keyword">return</tt> <tt class="py-name">arguments</tt> </tt>
+<a name="L361"></a><tt class="py-lineno">361</tt>  <tt class="py-line">        <tt class="py-keyword">except</tt><tt class="py-op">:</tt> </tt>
+<a name="L362"></a><tt class="py-lineno">362</tt>  <tt class="py-line">            <tt class="py-name">traceback</tt><tt class="py-op">.</tt><tt class="py-name">print_exc</tt><tt class="py-op">(</tt><tt class="py-name">file</tt><tt class="py-op">=</tt><tt class="py-name">sys</tt><tt class="py-op">.</tt><tt class="py-name">stdout</tt><tt class="py-op">)</tt> </tt>
+<a name="L363"></a><tt class="py-lineno">363</tt>  <tt class="py-line">            <tt class="py-keyword">pass</tt> </tt>
+<a name="L364"></a><tt class="py-lineno">364</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-string">""</tt> </tt>
+</div><a name="L365"></a><tt class="py-lineno">365</tt>  <tt class="py-line"> </tt>
+<a name="sub_job.get_exe"></a><div id="sub_job.get_exe-def"><a name="L366"></a><tt class="py-lineno">366</tt> <a class="py-toggle" href="#" id="sub_job.get_exe-toggle" onclick="return toggle('sub_job.get_exe');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="bigjob_dynamic.many_job.sub_job-class.html#get_exe">get_exe</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="sub_job.get_exe-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="sub_job.get_exe-expanded"><a name="L367"></a><tt class="py-lineno">367</tt>  <tt class="py-line">        <tt class="py-keyword">try</tt><tt class="py-op">:</tt> </tt>
+<a name="L368"></a><tt class="py-lineno">368</tt>  <tt class="py-line">            <tt class="py-name">exe</tt>  <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">job</tt><tt class="py-op">.</tt><tt id="link-88" class="py-name" targets="Method bigjob.bigjob_manager.subjob.get_exe()=bigjob.bigjob_manager.subjob-class.html#get_exe,Method bigjob_dynamic.many_job.sub_job.get_exe()=bigjob_dynamic.many_job.sub_job-class.html#get_exe"><a title="bigjob.bigjob_manager.subjob.get_exe
+bigjob_dynamic.many_job.sub_job.get_exe" class="py-name" href="#" onclick="return doclink('link-88', 'get_exe', 'link-88');">get_exe</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L369"></a><tt class="py-lineno">369</tt>  <tt class="py-line">            <tt class="py-keyword">return</tt> <tt class="py-name">exe</tt> </tt>
+<a name="L370"></a><tt class="py-lineno">370</tt>  <tt class="py-line">        <tt class="py-keyword">except</tt><tt class="py-op">:</tt> </tt>
+<a name="L371"></a><tt class="py-lineno">371</tt>  <tt class="py-line">            <tt class="py-name">traceback</tt><tt class="py-op">.</tt><tt class="py-name">print_exc</tt><tt class="py-op">(</tt><tt class="py-name">file</tt><tt class="py-op">=</tt><tt class="py-name">sys</tt><tt class="py-op">.</tt><tt class="py-name">stdout</tt><tt class="py-op">)</tt> </tt>
+<a name="L372"></a><tt class="py-lineno">372</tt>  <tt class="py-line">            <tt class="py-keyword">pass</tt> </tt>
+<a name="L373"></a><tt class="py-lineno">373</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-string">"Unknown"</tt> </tt>
+</div><a name="L374"></a><tt class="py-lineno">374</tt>  <tt class="py-line"> </tt>
+<a name="L375"></a><tt class="py-lineno">375</tt>  <tt class="py-line"> </tt>
+<a name="sub_job.cancel"></a><div id="sub_job.cancel-def"><a name="L376"></a><tt class="py-lineno">376</tt> <a class="py-toggle" href="#" id="sub_job.cancel-toggle" onclick="return toggle('sub_job.cancel');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="bigjob_dynamic.many_job.sub_job-class.html#cancel">cancel</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="sub_job.cancel-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="sub_job.cancel-expanded"><a name="L377"></a><tt class="py-lineno">377</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">job</tt><tt class="py-op">.</tt><tt id="link-89" class="py-name"><a title="api.base.bigjob.cancel
+api.base.subjob.cancel
+bigjob.bigjob_manager.bigjob.cancel
+bigjob.bigjob_manager.subjob.cancel
+bigjob.pbsssh.pbsssh.cancel
+bigjob_dynamic.many_job.many_job_service.cancel
+bigjob_dynamic.many_job.sub_job.cancel" class="py-name" href="#" onclick="return doclink('link-89', 'cancel', 'link-74');">cancel</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L378"></a><tt class="py-lineno">378</tt>  <tt class="py-line"> </tt>
+<a name="sub_job.wait"></a><div id="sub_job.wait-def"><a name="L379"></a><tt class="py-lineno">379</tt> <a class="py-toggle" href="#" id="sub_job.wait-toggle" onclick="return toggle('sub_job.wait');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="bigjob_dynamic.many_job.sub_job-class.html#wait">wait</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="sub_job.wait-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="sub_job.wait-expanded"><a name="L380"></a><tt class="py-lineno">380</tt>  <tt class="py-line">        <tt class="py-keyword">while</tt> <tt class="py-number">1</tt><tt class="py-op">:</tt> </tt>
+<a name="L381"></a><tt class="py-lineno">381</tt>  <tt class="py-line">            <tt class="py-keyword">try</tt><tt class="py-op">:</tt> </tt>
+<a name="L382"></a><tt class="py-lineno">382</tt>  <tt class="py-line">                <tt id="link-90" class="py-name"><a title="bigjob.state" class="py-name" href="#" onclick="return doclink('link-90', 'state', 'link-34');">state</a></tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-91" class="py-name"><a title="api.base.bigjob.get_state
+api.base.subjob.get_state
+bigjob.bigjob_manager.bigjob.get_state
+bigjob.bigjob_manager.subjob.get_state
+bigjob.pbsssh.pbsssh.get_state
+bigjob_dynamic.many_job.sub_job.get_state" class="py-name" href="#" onclick="return doclink('link-91', 'get_state', 'link-44');">get_state</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L383"></a><tt class="py-lineno">383</tt>  <tt class="py-line">                <tt class="py-name">logging</tt><tt class="py-op">.</tt><tt class="py-name">debug</tt><tt class="py-op">(</tt><tt class="py-string">"wait: state: "</tt> <tt class="py-op">+</tt> <tt id="link-92" class="py-name"><a title="bigjob.state" class="py-name" href="#" onclick="return doclink('link-92', 'state', 'link-34');">state</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L384"></a><tt class="py-lineno">384</tt>  <tt class="py-line">                <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-93" class="py-name"><a title="bigjob_dynamic.many_job.many_job_service.__has_finished" class="py-name" href="#" onclick="return doclink('link-93', '__has_finished', 'link-45');">__has_finished</a></tt><tt class="py-op">(</tt><tt id="link-94" class="py-name"><a title="bigjob.state" class="py-name" href="#" onclick="return doclink('link-94', 'state', 'link-34');">state</a></tt><tt class="py-op">)</tt> <tt class="py-op">==</tt> <tt class="py-name">True</tt><tt class="py-op">:</tt> </tt>
+<a name="L385"></a><tt class="py-lineno">385</tt>  <tt class="py-line">                    <tt class="py-keyword">break</tt> </tt>
+<a name="L386"></a><tt class="py-lineno">386</tt>  <tt class="py-line">                <tt class="py-name">time</tt><tt class="py-op">.</tt><tt class="py-name">sleep</tt><tt class="py-op">(</tt><tt class="py-number">2</tt><tt class="py-op">)</tt> </tt>
+<a name="L387"></a><tt class="py-lineno">387</tt>  <tt class="py-line">            <tt class="py-keyword">except</tt> <tt class="py-op">(</tt><tt class="py-name">KeyboardInterrupt</tt><tt class="py-op">,</tt> <tt class="py-name">SystemExit</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L388"></a><tt class="py-lineno">388</tt>  <tt class="py-line">                <tt class="py-keyword">raise</tt> </tt>
+<a name="L389"></a><tt class="py-lineno">389</tt>  <tt class="py-line">            <tt class="py-keyword">except</tt><tt class="py-op">:</tt> </tt>
+<a name="L390"></a><tt class="py-lineno">390</tt>  <tt class="py-line">                <tt class="py-keyword">pass</tt> </tt>
+</div><a name="L391"></a><tt class="py-lineno">391</tt>  <tt class="py-line">    </tt>
+<a name="sub_job.__del__"></a><div id="sub_job.__del__-def"><a name="L392"></a><tt class="py-lineno">392</tt> <a class="py-toggle" href="#" id="sub_job.__del__-toggle" onclick="return toggle('sub_job.__del__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="bigjob_dynamic.many_job.sub_job-class.html#__del__">__del__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="sub_job.__del__-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="sub_job.__del__-expanded"><a name="L393"></a><tt class="py-lineno">393</tt>  <tt class="py-line">        <tt class="py-keyword">pass</tt> </tt>
+</div><a name="L394"></a><tt class="py-lineno">394</tt>  <tt class="py-line"> </tt>
+<a name="sub_job.__repr__"></a><div id="sub_job.__repr__-def"><a name="L395"></a><tt class="py-lineno">395</tt> <a class="py-toggle" href="#" id="sub_job.__repr__-toggle" onclick="return toggle('sub_job.__repr__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="bigjob_dynamic.many_job.sub_job-class.html#__repr__">__repr__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt>         </tt>
+</div><a name="L396"></a><tt class="py-lineno">396</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">str</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">job</tt><tt class="py-op">)</tt> </tt>
+</div></div><a name="L397"></a><tt class="py-lineno">397</tt>  <tt class="py-line"> </tt>
+<a name="L398"></a><tt class="py-lineno">398</tt>  <tt class="py-line"><tt class="py-string">""" Test Job Submission via ManyJob abstraction """</tt> </tt>
+<a name="L399"></a><tt class="py-lineno">399</tt>  <tt class="py-line"><tt class="py-keyword">if</tt> <tt class="py-name">__name__</tt> <tt class="py-op">==</tt> <tt class="py-string">"__main__"</tt><tt class="py-op">:</tt> </tt>
+<a name="L400"></a><tt class="py-lineno">400</tt>  <tt class="py-line">    <tt class="py-keyword">try</tt><tt class="py-op">:</tt> </tt>
+<a name="L401"></a><tt class="py-lineno">401</tt>  <tt class="py-line">        <tt class="py-keyword">print</tt> <tt class="py-string">"Test ManyJob"</tt> </tt>
+<a name="L402"></a><tt class="py-lineno">402</tt>  <tt class="py-line">        <tt class="py-comment"># create job description</tt> </tt>
+<a name="L403"></a><tt class="py-lineno">403</tt>  <tt class="py-line">        <tt class="py-name">jd</tt> <tt class="py-op">=</tt> <tt id="link-95" class="py-name"><a title="bigjob.saga" class="py-name" href="#" onclick="return doclink('link-95', 'saga', 'link-0');">saga</a></tt><tt class="py-op">.</tt><tt class="py-name">job</tt><tt class="py-op">.</tt><tt id="link-96" class="py-name"><a title="bigjob.bigjob_manager.description
+bigjob.description" class="py-name" href="#" onclick="return doclink('link-96', 'description', 'link-76');">description</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L404"></a><tt class="py-lineno">404</tt>  <tt class="py-line">        <tt class="py-name">jd</tt><tt class="py-op">.</tt><tt class="py-name">executable</tt> <tt class="py-op">=</tt> <tt class="py-string">"/bin/date"</tt> </tt>
+<a name="L405"></a><tt class="py-lineno">405</tt>  <tt class="py-line">        <tt class="py-name">jd</tt><tt class="py-op">.</tt><tt class="py-name">number_of_processes</tt> <tt class="py-op">=</tt> <tt class="py-string">"1"</tt> </tt>
+<a name="L406"></a><tt class="py-lineno">406</tt>  <tt class="py-line">        <tt class="py-name">jd</tt><tt class="py-op">.</tt><tt class="py-name">spmd_variation</tt> <tt class="py-op">=</tt> <tt class="py-string">"single"</tt> </tt>
+<a name="L407"></a><tt class="py-lineno">407</tt>  <tt class="py-line">        <tt class="py-name">jd</tt><tt class="py-op">.</tt><tt class="py-name">arguments</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-string">""</tt><tt class="py-op">]</tt> </tt>
+<a name="L408"></a><tt class="py-lineno">408</tt>  <tt class="py-line">        <tt class="py-name">jd</tt><tt class="py-op">.</tt><tt class="py-name">working_directory</tt> <tt class="py-op">=</tt> <tt class="py-string">"/home/luckow"</tt> </tt>
+<a name="L409"></a><tt class="py-lineno">409</tt>  <tt class="py-line">        <tt class="py-name">jd</tt><tt class="py-op">.</tt><tt class="py-name">output</tt> <tt class="py-op">=</tt> <tt class="py-string">"output.txt"</tt> </tt>
+<a name="L410"></a><tt class="py-lineno">410</tt>  <tt class="py-line">        <tt class="py-name">jd</tt><tt class="py-op">.</tt><tt class="py-name">error</tt> <tt class="py-op">=</tt> <tt class="py-string">"error.txt"</tt> </tt>
+<a name="L411"></a><tt class="py-lineno">411</tt>  <tt class="py-line">        <tt class="py-comment"># submit via mj abstraction</tt> </tt>
+<a name="L412"></a><tt class="py-lineno">412</tt>  <tt class="py-line">        <tt class="py-comment">#resource_list =  ( {"resource_url" : "gram://qb1.loni.org/jobmanager-pbs", "number_nodes" : "128", "allocation" : "&lt;your allocation&gt;", "queue" : "workq", "bigjob_agent": "$(HOME)/src/REMDgManager/bigjob/advert_launcher.sh"},</tt> </tt>
+<a name="L413"></a><tt class="py-lineno">413</tt>  <tt class="py-line">        <tt class="py-comment">#                   {"resource_url" : "gram://qb1.loni.org/jobmanager-pbs", "number_nodes" : "64", "allocation" : "&lt;your allocation&gt;", "queue" : "workq", "bigjob_agent": "$(HOME)/src/REMDgManager/bigjob/advert_launcher.sh"})</tt> </tt>
+<a name="L414"></a><tt class="py-lineno">414</tt>  <tt class="py-line">        <tt class="py-name">resource_list</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-op">]</tt> </tt>
+<a name="L415"></a><tt class="py-lineno">415</tt>  <tt class="py-line">        <tt class="py-name">resource_list</tt><tt class="py-op">.</tt><tt class="py-name">append</tt><tt class="py-op">(</tt><tt class="py-op">{</tt><tt class="py-string">"resource_url"</tt> <tt class="py-op">:</tt> <tt class="py-string">"gram://qb1.loni.org/jobmanager-pbs"</tt><tt class="py-op">,</tt> <tt class="py-string">"number_nodes"</tt> <tt class="py-op">:</tt> <tt class="py-string">"16"</tt><tt class="py-op">,</tt> <tt class="py-string">"allocation"</tt> <tt class="py-op">:</tt> <tt class="py-string">"&lt;your allocation&gt;"</tt><tt class="py-op">,</tt> <tt class="py-string">"queue"</tt> <tt class="py-op">:</tt> <tt class="py-string">"workq"</tt><tt class="py-op">,</tt> <tt class="py-string">"bigjob_agent"</tt><tt class="py-op">:</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">getcwd</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> <tt class="py-op">+</tt> <tt class="py-string">"/bigjob_agent_launcher.sh"</tt><tt class="py-op">}</tt><tt class="py-op">)</tt> </tt>
+<a name="L416"></a><tt class="py-lineno">416</tt>  <tt class="py-line">        <tt class="py-keyword">print</tt> <tt class="py-string">"Create manyjob service "</tt>  </tt>
+<a name="L417"></a><tt class="py-lineno">417</tt>  <tt class="py-line">        <tt class="py-name">mjs</tt> <tt class="py-op">=</tt> <tt id="link-97" class="py-name" targets="Class bigjob_dynamic.many_job.many_job_service=bigjob_dynamic.many_job.many_job_service-class.html"><a title="bigjob_dynamic.many_job.many_job_service" class="py-name" href="#" onclick="return doclink('link-97', 'many_job_service', 'link-97');">many_job_service</a></tt><tt class="py-op">(</tt><tt class="py-name">resource_list</tt><tt class="py-op">,</tt> <tt class="py-name">None</tt><tt class="py-op">)</tt> </tt>
+<a name="L418"></a><tt class="py-lineno">418</tt>  <tt class="py-line">        <tt class="py-keyword">print</tt> <tt class="py-string">"Create sub-job using manyjob "</tt> <tt class="py-op">+</tt> <tt class="py-name">str</tt><tt class="py-op">(</tt><tt class="py-name">mjs</tt><tt class="py-op">)</tt>  </tt>
+<a name="L419"></a><tt class="py-lineno">419</tt>  <tt class="py-line">        <tt id="link-98" class="py-name"><a title="api.base.subjob
+bigjob.bigjob_manager.subjob
+bigjob.subjob" class="py-name" href="#" onclick="return doclink('link-98', 'subjob', 'link-16');">subjob</a></tt> <tt class="py-op">=</tt> <tt class="py-name">mjs</tt><tt class="py-op">.</tt><tt id="link-99" class="py-name" targets="Method bigjob_dynamic.many_job.many_job_service.create_job()=bigjob_dynamic.many_job.many_job_service-class.html#create_job"><a title="bigjob_dynamic.many_job.many_job_service.create_job" class="py-name" href="#" onclick="return doclink('link-99', 'create_job', 'link-99');">create_job</a></tt><tt class="py-op">(</tt><tt class="py-name">jd</tt><tt class="py-op">)</tt> </tt>
+<a name="L420"></a><tt class="py-lineno">420</tt>  <tt class="py-line">        <tt class="py-keyword">print</tt> <tt class="py-string">"Run sub-job"</tt> </tt>
+<a name="L421"></a><tt class="py-lineno">421</tt>  <tt class="py-line">        <tt id="link-100" class="py-name"><a title="api.base.subjob
+bigjob.bigjob_manager.subjob
+bigjob.subjob" class="py-name" href="#" onclick="return doclink('link-100', 'subjob', 'link-16');">subjob</a></tt><tt class="py-op">.</tt><tt id="link-101" class="py-name" targets="Method bigjob.pbsssh.pbsssh.run()=bigjob.pbsssh.pbsssh-class.html#run,Method bigjob_dynamic.many_job.sub_job.run()=bigjob_dynamic.many_job.sub_job-class.html#run"><a title="bigjob.pbsssh.pbsssh.run
+bigjob_dynamic.many_job.sub_job.run" class="py-name" href="#" onclick="return doclink('link-101', 'run', 'link-101');">run</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L422"></a><tt class="py-lineno">422</tt>  <tt class="py-line">        <tt class="py-keyword">print</tt> <tt class="py-string">"Wait for termination"</tt> </tt>
+<a name="L423"></a><tt class="py-lineno">423</tt>  <tt class="py-line">        <tt id="link-102" class="py-name"><a title="api.base.subjob
+bigjob.bigjob_manager.subjob
+bigjob.subjob" class="py-name" href="#" onclick="return doclink('link-102', 'subjob', 'link-16');">subjob</a></tt><tt class="py-op">.</tt><tt id="link-103" class="py-name" targets="Method bigjob_dynamic.many_job.sub_job.wait()=bigjob_dynamic.many_job.sub_job-class.html#wait"><a title="bigjob_dynamic.many_job.sub_job.wait" class="py-name" href="#" onclick="return doclink('link-103', 'wait', 'link-103');">wait</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L424"></a><tt class="py-lineno">424</tt>  <tt class="py-line">        <tt class="py-keyword">print</tt> <tt class="py-string">"Sub-job state: "</tt> <tt class="py-op">+</tt> <tt class="py-name">str</tt><tt class="py-op">(</tt><tt id="link-104" class="py-name"><a title="api.base.subjob
+bigjob.bigjob_manager.subjob
+bigjob.subjob" class="py-name" href="#" onclick="return doclink('link-104', 'subjob', 'link-16');">subjob</a></tt><tt class="py-op">.</tt><tt id="link-105" class="py-name"><a title="api.base.bigjob.get_state
+api.base.subjob.get_state
+bigjob.bigjob_manager.bigjob.get_state
+bigjob.bigjob_manager.subjob.get_state
+bigjob.pbsssh.pbsssh.get_state
+bigjob_dynamic.many_job.sub_job.get_state" class="py-name" href="#" onclick="return doclink('link-105', 'get_state', 'link-44');">get_state</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L425"></a><tt class="py-lineno">425</tt>  <tt class="py-line">        <tt class="py-name">mjs</tt><tt class="py-op">.</tt><tt id="link-106" class="py-name"><a title="api.base.bigjob.cancel
+api.base.subjob.cancel
+bigjob.bigjob_manager.bigjob.cancel
+bigjob.bigjob_manager.subjob.cancel
+bigjob.pbsssh.pbsssh.cancel
+bigjob_dynamic.many_job.many_job_service.cancel
+bigjob_dynamic.many_job.sub_job.cancel" class="py-name" href="#" onclick="return doclink('link-106', 'cancel', 'link-74');">cancel</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L426"></a><tt class="py-lineno">426</tt>  <tt class="py-line">    <tt class="py-keyword">except</tt><tt class="py-op">:</tt> </tt>
+<a name="L427"></a><tt class="py-lineno">427</tt>  <tt class="py-line">        <tt class="py-keyword">try</tt><tt class="py-op">:</tt> </tt>
+<a name="L428"></a><tt class="py-lineno">428</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">mjs</tt> <tt class="py-op">!=</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L429"></a><tt class="py-lineno">429</tt>  <tt class="py-line">                <tt class="py-name">mjs</tt><tt class="py-op">.</tt><tt id="link-107" class="py-name"><a title="api.base.bigjob.cancel
+api.base.subjob.cancel
+bigjob.bigjob_manager.bigjob.cancel
+bigjob.bigjob_manager.subjob.cancel
+bigjob.pbsssh.pbsssh.cancel
+bigjob_dynamic.many_job.many_job_service.cancel
+bigjob_dynamic.many_job.sub_job.cancel" class="py-name" href="#" onclick="return doclink('link-107', 'cancel', 'link-74');">cancel</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L430"></a><tt class="py-lineno">430</tt>  <tt class="py-line">        <tt class="py-keyword">except</tt><tt class="py-op">:</tt> </tt>
+<a name="L431"></a><tt class="py-lineno">431</tt>  <tt class="py-line">            <tt class="py-keyword">pass</tt> </tt>
+<a name="L432"></a><tt class="py-lineno">432</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="http://faust.cct.lsu.edu/trac/bigjob/">BigJob</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Tue Jan  3 11:44:12 2012
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>
