@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 
 #from distutils.core import setup
-import sys
-import bigjob
-from setuptools import setup, find_packages
+import os
+from setuptools import setup
 
 try:
     import saga
@@ -11,8 +10,11 @@ except:
     print "SAGA and SAGA Python Bindings not found: Please install SAGA first (http://saga.cct.lsu.edu)."
     #sys.exit(1)
     
+fn = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'VERSION')
+version = open(fn).read().strip()
+    
 setup(name='BigJob',
-      version=bigjob.version,
+      version=version,
       description='SAGA-based Pilot-Job Implementation',
       author='Andre Luckow',
       author_email='aluckow@cct.lsu.edu',

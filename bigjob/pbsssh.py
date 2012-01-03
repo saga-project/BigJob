@@ -2,7 +2,14 @@
 
 import textwrap
 import re
-import saga
+
+from bigjob import logger
+
+try:
+    import saga
+except:
+    logger.warn("pbs-ssh://<hostname> plugin not compatible with SAGA Bliss. Use pbs+ssh://<hostname>")
+
 import os
 
 class pbsssh:
