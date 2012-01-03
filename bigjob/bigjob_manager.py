@@ -23,11 +23,14 @@ import traceback
 import logging
 import textwrap
 import urlparse
-import paramiko
-import pdb
+
+try:
+    import paramiko
+except:
+    logger.warn("Paramiko not found. Without Paramiko file staging is not supported!")
 
 from bigjob import SAGA_BLISS 
-from bigjob.state import *
+from bigjob.state import Running, New, Failed, Done, Unknown
 
 if SAGA_BLISS == False:
     try:
@@ -344,7 +347,10 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
     def add_subjob(self, jd, job_url, job_id):
         logger.debug("Stage input files for sub-job")
         if jd.attribute_exists ("filetransfer"):
-            self.__stage_files(jd.filetransfer, self.__get_subjob_working_dir(job_id))
+            try:
+                self.__stage_files(jd.filetransfer, self.__get_subjob_working_dir(job_id))
+            except:
+                logger.error("File Stagein failed. Is Paramiko installed?")
         logger.debug("add subjob to queue of PJ: " + str(self.pilot_url))        
         for i in range(0,3):
             try:
@@ -536,22 +542,30 @@ sftp.put("%s", "%s")
       
     
     def __create_remote_directory(self, target_url):
-        result = urlparse.urlparse(target_url)
-        target_host = result.netloc
-        target_path = result.path
-        try:
-            client = paramiko.SSHClient()
-            client.load_system_host_keys()
-            client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            client.connect(target_host)
-            sftp = client.open_sftp()            
-            sftp.mkdir(target_path)
-            sftp.close()
-            client.close()
-        except:
-            logger.warn("Error creating directory: " + str(target_path) 
-                         + " at: " + str(target_host) + " Already exists?" )
-            #self.__print_traceback()  
+        #result = urlparse.urlparse(target_url)
+        #target_host = result.netloc
+        #target_path = result.path
+        
+        # Python 2.6 compatible URL parsing
+        scheme = target_url[:target_url.find("://")+3]
+        target_host = target_url[len(scheme):target_url.find("/", len(scheme))]
+        target_path = target_url[len(scheme)+len(target_host):]    
+        if target_host == "localhost":
+            os.makedirs(target_path)
+        else:
+            try:
+                client = paramiko.SSHClient()
+                client.load_system_host_keys()
+                client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                client.connect(target_host)
+                sftp = client.open_sftp()            
+                sftp.mkdir(target_path)
+                sftp.close()
+                client.close()
+            except:
+                logger.warn("Error creating directory: " + str(target_path) 
+                             + " at: " + str(target_host) + " Already exists?" )
+             
     
     
     def __print_traceback(self):
