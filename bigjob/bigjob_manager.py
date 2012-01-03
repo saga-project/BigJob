@@ -38,14 +38,19 @@ if SAGA_BLISS == False:
         logger.debug("Using SAGA C++/Python.")
         is_bliss=False
     except:
-        logger.error("SAGA C++ and Python bindings not found. Using Bliss.")
-        import bliss.sagacompat as saga
-        is_bliss=True
+        logger.warn("SAGA C++ and Python bindings not found. Using Bliss.")
+        try:
+            import bliss.sagacompat as saga
+            is_bliss=True
+        except:
+            logger.warn("SAGA Bliss not found")
 else:
     logger.debug("Using SAGA Bliss.")
-    import bliss.sagacompat as saga
-    is_bliss=True 
-
+    try:
+        import bliss.sagacompat as saga
+        is_bliss=True 
+    except:
+        logger.warn("SAGA Bliss not found")
 
 # import other BigJob packages
 # import API
