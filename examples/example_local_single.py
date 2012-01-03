@@ -4,12 +4,10 @@
     
     THIS FILE SHOULD NOT BE COMMITTED TO SVN WITH USER-SPECIFIC PATHS!
 """
-
 import os
 import time
 import pdb
 import sys
-
 
 # configuration
 """ This variable defines the coordination system that is used by BigJob
@@ -22,10 +20,10 @@ import sys
         tcp://* (ZMQ - listening to all interfaces)
 """
 
-#COORDINATION_URL = "advert://localhost/?dbtype=sqlite3"
+COORDINATION_URL = "advert://localhost/?dbtype=sqlite3"
 #COORDINATION_URL = "advert://SAGA:SAGA_client@advert.cct.lsu.edu:8080/?dbtype=postgresql"
 #COORDINATION_URL = "tcp://*"
-COORDINATION_URL = "redis://localhost:6379"
+#COORDINATION_URL = "redis://localhost:6379"
 #COORDINATION_URL = "redis://<password>@gw68.quarry.iu.teragrid.org:6379"
 #COORDINATION_URL="sqlasyncadvert://gw68.quarry.iu.teragrid.org/"
 

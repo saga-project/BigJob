@@ -1,5 +1,6 @@
-0.4.0
+0.4.x
 - SSH-based file-staging support for big-jobs and sub-jobs
+- Bliss support
 
 0.3.37
 - password-based authentication for Redis
