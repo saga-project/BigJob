@@ -280,6 +280,9 @@ class bigjob(api.base.bigjob):
             logger.debug("use standard proxy")
             js = saga.job.service(lrms_saga_url)
 
+        logger.debug("Creating pilot job with description: %s" % str(jd))
+              
+
         self.job = js.create_job(jd)
         logger.debug("Submit pilot job to: " + str(lrms_saga_url))
         self.job.run()
@@ -365,7 +368,7 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
                 #to accomendate current bug in bliss (Number of processes is not returned from list attributes)
                 job_dict["NumberOfProcesses"] = "1" 
                 attributes = jd.list_attributes()   
-                logger.debug("SJ Attributes: " + str(attributes))             
+                logger.debug("SJ Attributes: " + str(jd))             
                 for i in attributes:          
                         if jd.attribute_is_vector(i):
                             #logger.debug("Add attribute: " + str(i) + " Value: " + str(jd.get_vector_attribute(i)))
