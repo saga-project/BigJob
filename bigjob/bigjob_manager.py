@@ -555,7 +555,8 @@ sftp.put("%s", "%s")
         scheme = target_url[:target_url.find("://")+3]
         target_host = target_url[len(scheme):target_url.find("/", len(scheme))]
         target_path = target_url[len(scheme)+len(target_host):]    
-        if target_host == "localhost":
+        logger.debug("Create remote directory; scheme: %s, host: %s, path: %s"%(scheme, target_host, target_path))
+        if scheme.startswith("fork") or target_host.startswith("localhost"):
             os.makedirs(target_path)
         else:
             try:
