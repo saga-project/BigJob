@@ -30,7 +30,7 @@ setup(name='BigJob',
       #            'bigjob.conf', "VERSION", "README"],
       data_files = [( '', ['bigjob_agent.conf', 'bigjob_agent.conf']),  
                     ('', ['bigjob.conf', 'bigjob.conf']), 
-                    ('', ['README', 'README']), 
+                    ('', ['README.md', 'README.md']), 
                     ('', ['VERSION', 'VERSION'])],
 #      package_data = {
 #        '': ['bigjob_agent.conf', 'bigjob_agent.conf'],
