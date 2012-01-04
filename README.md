@@ -1,7 +1,17 @@
 BigJob  
 =============
 
-Installation:
+he SAGA BigJob framework is a SAGA-based pilot job implementation. The  Simple API for Grid Applications (SAGA) is a high-level, easy-to-use API for accessing distributed resources. SAGA BigJob supports a wide range of application types, and is usable over a broad range of infrastructures, i.e., it is general-purpose, extensible and interoperable. Unlike other common pilot job systems SAGA BigJob 
+(i) natively supports MPI job and 
+(ii) works on a variety of back-end systems, generally reflecting the advantage of using a SAGA-based approach. 
+
+Web Page
+-------------
+
+http://faust.cct.lsu.edu/trac/bigjob
+
+
+Installation
 -------------
 
 $ curl https://svn.cct.lsu.edu/repos/saga-projects/applications/bigjob/trunk/generic/bootstrap/bigjob-bootstrap.py -o bigjob-bootstrap.py
@@ -10,7 +20,8 @@ $ . $HOME/.bigjob/python/bin/activate
 
 see http://faust.cct.lsu.edu/trac/bigjob for further information
 
-Configuration of Coordination Backend:
+
+Configuration of Coordination Backend
 -------------------------------------
 
 BigJob supports different communication & coordination backends via a plugin mechanism.
