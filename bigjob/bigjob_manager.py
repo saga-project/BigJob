@@ -346,7 +346,6 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
     
     def escape_bliss(self, bootstrap_script):
         logger.debug("Escape fork")
-        #bootstrap_script = bootstrap_script.replace("\"", "\\\"")
         bootstrap_script = bootstrap_script.replace("\'", "\"")
         bootstrap_script = "\'" + bootstrap_script+ "\'"
         return bootstrap_script
