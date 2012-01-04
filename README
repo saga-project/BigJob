@@ -1,4 +1,4 @@
-BigJob Generic (with plugable communication & coordination backends)
+BigJob  
 
 Installation:
 
@@ -8,6 +8,8 @@ $ . $HOME/.bigjob/python/bin/activate
 
 see http://faust.cct.lsu.edu/trac/bigjob for further information
 
+
+BigJob supports different communication & coordination backends via a plugin mechanism.
 Currently supported backends:
 
 A) SAGA Advert Service
