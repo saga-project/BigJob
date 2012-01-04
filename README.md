@@ -28,7 +28,9 @@ BigJob supports different communication & coordination backends via a plugin mec
 Currently supported backends:
 
 A) SAGA Advert Service
+
 B) REDIS, http://redis.io/
+
 C) ZMQ (ZeroMQ), http://www.zeromq.org/
 
 ***************************************************************************
@@ -37,6 +39,7 @@ A) SAGA Advert Service
 1) Utilise coordination url parameter of BigJob to utilize the Advert Service:
 
 advert://advert.cct.lsu.edu:8080/ (Postgresql)
+
 advert://localhost/ (SQLite)
 
 
@@ -51,15 +54,20 @@ brew install redis redis-tools hiredis
 Linux:
 Download Redis http://redis.io/download
 Currently only tested with Redis 2.2.12
+
 $ tar -xzvf redis-2.2.12.tar.gz
-$ cd redis-2.2.12 
+
+$ cd redis-2.2.12
+ 
 $ make
+
 $ make install (if root)
 
 
 Start Redis (redis-server executable is located in src/ dir):
 
 cd src
+
 ./redis-server
 
 
@@ -68,7 +76,9 @@ cd src
 redis://cyder.cct.lsu.edu:6379
 
 Standard settings are:
+
 REDIS_SERVER="localhost"
+
 REDIS_SERVER_PORT=6379
 
 
@@ -84,9 +94,13 @@ http://zeromq.github.com/pyzmq/index.html
 1.1 Install ZMQ:
 
 $ wget http://download.zeromq.org/zeromq-2.1.7.tar.gz
+
 $ tar -xzvf zeromq-2.1.7.tar.gz
+
 $ cd zeromq-2.1.7
+
 $ ./configure --prefix=$HOME/sw/zeromq-2.1.7
+
 $ make install
 
 
@@ -97,7 +111,9 @@ $ make install
 1.3 Install Python bindings:
 
 $ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/sw/zeromq-2.1.7/lib/
+
 $ export ZMQ_DIR=$HOME/sw/zeromq-2.1.9/
+
 $ pip install pyzmq
 
 
