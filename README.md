@@ -1,6 +1,8 @@
 BigJob  
+=============
 
 Installation:
+-------------
 
 $ curl https://svn.cct.lsu.edu/repos/saga-projects/applications/bigjob/trunk/generic/bootstrap/bigjob-bootstrap.py -o bigjob-bootstrap.py
 $ python bigjob-bootstrap.py $HOME/.bigjob/python/
@@ -8,6 +10,8 @@ $ . $HOME/.bigjob/python/bin/activate
 
 see http://faust.cct.lsu.edu/trac/bigjob for further information
 
+Configuration of Coordination Backend:
+-------------------------------------
 
 BigJob supports different communication & coordination backends via a plugin mechanism.
 Currently supported backends:
