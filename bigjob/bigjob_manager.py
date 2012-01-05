@@ -193,7 +193,24 @@ class bigjob(api.base.bigjob):
         # create job description
         jd = saga.job.description()
         
+        # XXX Isn't the working directory about the remote site?
+        # Yes, it is: This is to make sure that if fork
+        if working_directory != None:
+            if not os.path.isdir(working_directory) and lrms_saga_url.scheme=="fork":
+                os.mkdir(working_directory)
+            self.working_directory = working_directory
+        else:
+            # if no working dir is set assume use home directory
+            # will fail if home directory is not the same on remote machine
+            # but this is just a guess to avoid failing
+            self.working_directory = os.path.expanduser("~") 
         
+        # Stage BJ Input files
+        # build target url
+        # this will also create the remote directory for the BJ
+        bigjob_working_directory_url = "ssh://" + lrms_saga_url.host + self.__get_bigjob_working_dir()
+        self.__stage_files(filetransfers, bigjob_working_directory_url)
+    
         logger.debug("Adaptor specific modifications: "  + str(lrms_saga_url.scheme))
         if lrms_saga_url.scheme == "condorg":
             jd.arguments = [ "-a", self.coordination.get_address(), "-b",self.pilot_url]
@@ -221,8 +238,9 @@ class bigjob(api.base.bigjob):
                 if number_nodes%processes_per_node == 0:
                     number_nodes = number_nodes/processes_per_node
                 else:
-                    number_nodes = ( number_nodes/processes_per_node) + 1
-                pbssshj = pbsssh(bootstrap_script,lrms_saga_url, walltimepbs,number_nodes,processes_per_node,userproxy,working_directory)
+                    number_nodes = (number_nodes/processes_per_node) + 1
+                pbssshj = pbsssh(bootstrap_script, lrms_saga_url, walltimepbs, number_nodes, 
+                                 processes_per_node, userproxy, self.working_directory)
                 self.job = pbssshj
                 self.job.run()
                 return
@@ -247,24 +265,13 @@ class bigjob(api.base.bigjob):
             if walltime!=None:
                 jd.wall_time_limit=str(walltime)
         
-            # XXX Isn't the working directory about the remote site?
-            if working_directory != None:
-                if not os.path.isdir(working_directory) and lrms_saga_url.scheme=="fork":
-                    os.mkdir(working_directory)
-                self.working_directory = working_directory
-            else:
-                self.working_directory = os.path.expanduser("~")
-    
             jd.working_directory = self.working_directory
     
             logger.debug("Working directory: " + jd.working_directory)
             jd.output = os.path.join(self.__get_bigjob_working_dir(), "stdout-bigjob_agent.txt")
             jd.error = os.path.join(self.__get_bigjob_working_dir(),"stderr-bigjob_agent.txt")
          
-        # Stage BJ Input files
-        # build target url
-        bigjob_working_directory_url = "ssh://" + lrms_saga_url.host + self.__get_bigjob_working_dir()
-        self.__stage_files(filetransfers, bigjob_working_directory_url)
+ 
            
         # Submit job
         js = None    
