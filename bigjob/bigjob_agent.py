@@ -345,7 +345,7 @@ class bigjob_agent:
                 
                 # build execution command
                 if self.LAUNCH_METHOD == "aprun":
-                    command ="cd " + workingdirectory + "; aprun -n " + numberofprocesses + " "  + command
+                    command ="cd " + workingdirectory + "; " + envi + " & aprun -n " + numberofprocesses + " "  + command
                 else:
                     if (spmdvariation.lower( )=="mpi"):
                         command = "cd " + workingdirectory + "; " + envi +  self.MPIRUN + " -np " + numberofprocesses + " -machinefile " + machinefile + " " + command
