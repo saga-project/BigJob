@@ -286,7 +286,7 @@ class bigjob_agent:
                     for i in env_list:
                         envi_1 = "export " + i +"; "
                         envi = envi + envi_1
- 
+		logger.debug(envi) 
                 executable = job_dict["Executable"]
                 
                 workingdirectory = os.path.join(os.getcwd(), job_id)  
@@ -321,7 +321,7 @@ class bigjob_agent:
                              + " env: " + str(environment))
                 stdout = open(output_file, "w")
                 stderr = open(error_file, "w")
-                if ( spmdvariation.lower( )!="mpi"):
+                if (spmdvariation.lower()!="mpi" and self.LAUNCH_METHOD!="aprun"):
                     command =  envi + executable + " " + arguments
                 else:
                     command =  executable + " " + arguments
@@ -345,7 +345,10 @@ class bigjob_agent:
                 
                 # build execution command
                 if self.LAUNCH_METHOD == "aprun":
-                    command ="cd " + workingdirectory + "; " + envi + " & aprun -n " + numberofprocesses + " "  + command
+		    env_strip = envi.strip()
+		    env_command = env_strip[:(len(env_strip)-1)]
+		    logger.debug("Env command: " + env_command +".")
+                    command ="cd " + workingdirectory + "; aprun -n " + numberofprocesses + " " + env_command + " & " + command
                 else:
                     if (spmdvariation.lower( )=="mpi"):
                         command = "cd " + workingdirectory + "; " + envi +  self.MPIRUN + " -np " + numberofprocesses + " -machinefile " + machinefile + " " + command
