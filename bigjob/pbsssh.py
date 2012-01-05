@@ -50,6 +50,7 @@ os.system( "qsub  " + qsub_file_name)
         self.bootstrap_script = self.bootstrap_script.replace("\\\\","\\\\\\\\\\")
         self.bootstrap_script = self.bootstrap_script.replace("XX","\\\\\\\"")
         self.bootstrap_script = "\"" + self.bootstrap_script+ "\""
+        logger.debug(self.bootstrap_script)
 
 
     def run(self):
@@ -76,6 +77,7 @@ os.system( "qsub  " + qsub_file_name)
         pbssshjob.run()
         joboutput= pbssshjob.get_stdout()
         self.job_id=(joboutput.read()).split(".")[0]
+        logger.debug("PBS JobID: " + str(self.job_id))
 
     def get_state(self):
         jd = saga.job.description()
