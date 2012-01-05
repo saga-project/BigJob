@@ -196,8 +196,9 @@ class bigjob_agent:
             number_nodes =  os.environ.get("PBS_NNODES")
             self.freenodes=[]
             for i in range(0, int(number_nodes)):
-                logger.debug("add slot: " + i.strip())
-                self.freenodes.append("slot-%d"%i)            
+		slot = "slot-%d"%i
+                logger.debug("add slot: " + slot)
+                self.freenodes.append(slot)            
         else:
             pbs_node_file = os.environ.get("PBS_NODEFILE")    
             if pbs_node_file == None:
@@ -344,12 +345,12 @@ class bigjob_agent:
                 
                 # build execution command
                 if self.LAUNCH_METHOD == "aprun":
-                    command ="cd " + workingdirectory + "; aprun " + command +"\""
+                    command ="cd " + workingdirectory + "; aprun -n " + numberofprocesses + " "  + command
                 else:
                     if (spmdvariation.lower( )=="mpi"):
                         command = "cd " + workingdirectory + "; " + envi +  self.MPIRUN + " -np " + numberofprocesses + " -machinefile " + machinefile + " " + command
                     elif host == "localhost":
-                        command ="cd " + workingdirectory + "; " + command +""
+                        command ="cd " + workingdirectory + "; " + command
                     else:    
                         command ="ssh  " + host + " \"cd " + workingdirectory + "; " + command +"\""
                         
@@ -619,7 +620,7 @@ class bigjob_agent:
         
         aprun_available = False
         try:
-            aprun_available = (subprocess.call(["aprun", "-help"], shell=True)==0)
+            aprun_available = (subprocess.call("aprun -n 1 /bin/date", shell=True)==0)
         except:
             pass
         
