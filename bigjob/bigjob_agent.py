@@ -317,12 +317,15 @@ class bigjob_agent:
                 # create stdout/stderr file descriptors
                 output_file = os.path.abspath(output)
                 error_file = os.path.abspath(error)
-                logger.debug("stdout: " + output_file + " stderr: " + error_file 
-                             + " env: " + str(environment))
+                logger.debug("stdout: " + output_file + " stderr: " + error_file)
                 stdout = open(output_file, "w")
                 stderr = open(error_file, "w")
-                if (spmdvariation.lower()!="mpi" and self.LAUNCH_METHOD!="aprun"):
+                if (spmdvariation.lower()!="mpi"):
                     command =  envi + executable + " " + arguments
+		if self.LAUNCH_METHOD=="aprun" and envi!="":
+		    env_strip = envi.strip()
+                    env_command = env_strip[:(len(env_strip)-1)]
+		    command = "aprun -n " + numberofprocesses + " " + env_command + " & " + executable + " " + arguments
                 else:
                     command =  executable + " " + arguments
                 #pdb.set_trace()
@@ -345,10 +348,7 @@ class bigjob_agent:
                 
                 # build execution command
                 if self.LAUNCH_METHOD == "aprun":
-		    env_strip = envi.strip()
-		    env_command = env_strip[:(len(env_strip)-1)]
-		    logger.debug("Env command: " + env_command +".")
-                    command ="cd " + workingdirectory + "; aprun -n " + numberofprocesses + " " + env_command + " & " + command
+                    command ="cd " + workingdirectory + "; " + command
                 else:
                     if (spmdvariation.lower( )=="mpi"):
                         command = "cd " + workingdirectory + "; " + envi +  self.MPIRUN + " -np " + numberofprocesses + " -machinefile " + machinefile + " " + command
