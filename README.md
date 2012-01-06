@@ -21,7 +21,7 @@ $ curl https://svn.cct.lsu.edu/repos/saga-projects/applications/bigjob/trunk/gen
 $ python bigjob-bootstrap.py $HOME/.bigjob/python/
 $ . $HOME/.bigjob/python/bin/activate
 
-see http://faust.cct.lsu.edu/trac/bigjob for further information
+See http://faust.cct.lsu.edu/trac/bigjob for further information. The Wiki includes among many things information on how to setup BigJob on various machines, e.g. on XSEDE (Ranger, Kraken) or FutureGrid.
 
 
 Configuration of Coordination Backend
@@ -41,9 +41,8 @@ A) SAGA Advert Service
 
 1) Utilise coordination url parameter of BigJob to utilize the Advert Service:
 
-advert://advert.cct.lsu.edu:8080/ (Postgresql)
-
-advert://localhost/ (SQLite)
+	advert://advert.cct.lsu.edu:8080/ (Postgresql)
+	advert://localhost/ (SQLite)
 
 
 ***************************************************************************
@@ -52,39 +51,32 @@ B) REDIS
 1.) Install and run Redis (http://redis.io/)
 
 Mac Homebrew:
-brew install redis redis-tools hiredis
+	brew install redis redis-tools hiredis
 
 Linux:
 Download Redis http://redis.io/download
 Currently only tested with Redis 2.2.12
 
-$ tar -xzvf redis-2.2.12.tar.gz
-
-$ cd redis-2.2.12
- 
-$ make
-
-$ make install (if root)
+	$ tar -xzvf redis-2.2.12.tar.gz
+	$ cd redis-2.2.12
+	$ make
+	$ make install (if root)
 
 
 Start Redis (redis-server executable is located in src/ dir):
 
-cd src
-
-./redis-server
+	cd src
+	./redis-server
 
 
 2) Utilise coordination URL parameter of BigJob to connect to Redis instance:
 
-redis://cyder.cct.lsu.edu:6379
+	redis://cyder.cct.lsu.edu:6379
 
 Standard settings are:
 
-REDIS_SERVER="localhost"
-
-REDIS_SERVER_PORT=6379
-
-
+	REDIS_SERVER="localhost"
+	REDIS_SERVER_PORT=6379
 
 ***************************************************************************
 C) ZMQ
@@ -96,32 +88,27 @@ http://zeromq.github.com/pyzmq/index.html
 
 1.1 Install ZMQ:
 
-$ wget http://download.zeromq.org/zeromq-2.1.7.tar.gz
-
-$ tar -xzvf zeromq-2.1.7.tar.gz
-
-$ cd zeromq-2.1.7
-
-$ ./configure --prefix=$HOME/sw/zeromq-2.1.7
-
-$ make install
+	$ wget http://download.zeromq.org/zeromq-2.1.7.tar.gz
+	$ tar -xzvf zeromq-2.1.7.tar.gz
+	$ cd zeromq-2.1.7
+	$ ./configure --prefix=$HOME/sw/zeromq-2.1.7
+	$ make install
 
 
 1.2 Activate BigJob virtualenv:
 
-. $HOME/.bigjob/python/bin/activate
+	. $HOME/.bigjob/python/bin/activate
 
 1.3 Install Python bindings:
 
-$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/sw/zeromq-2.1.7/lib/
+	$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/sw/zeromq-2.1.7/lib/
+	$ export ZMQ_DIR=$HOME/sw/zeromq-2.1.9/
+	
+	$ pip install pyzmq
 
-$ export ZMQ_DIR=$HOME/sw/zeromq-2.1.9/
 
-$ pip install pyzmq
+2) Utilize coordination url parameter of BigJob to utilize ZMQ:
 
-
-2) Utilise coordination url parameter of BigJob to utilize ZMQ:
-
-tcp://*
+	tcp://*
 
 will start a local tcp server.
