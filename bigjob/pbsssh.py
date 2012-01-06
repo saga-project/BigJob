@@ -4,7 +4,7 @@ import textwrap
 import re
 
 from bigjob import logger
-from bigjob.bigjob_manager import BigJobError
+
 
 try:
     import saga
