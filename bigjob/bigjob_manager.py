@@ -229,17 +229,9 @@ class bigjob(api.base.bigjob):
                 bootstrap_script = self.escape_ssh(bootstrap_script)
             ############ submit pbs script which launches bigjob agent using ssh adaptors########## 
             elif lrms_saga_url.scheme == "pbs-ssh":
-                # change the url scheme ssh to use ssh adaptors to launch job
                 bootstrap_script = self.escape_ssh(bootstrap_script)
-                ### convert walltime in minutes to PBS representation of time ###
-                hrs=walltime/60 
-                minu=walltime%60 
-                walltimepbs=""+str(hrs)+":"+str(minu)+":00"
-                if number_nodes%processes_per_node == 0:
-                    number_nodes = number_nodes/processes_per_node
-                else:
-                    number_nodes = (number_nodes/processes_per_node) + 1
-                pbssshj = pbsssh(bootstrap_script, lrms_saga_url, walltimepbs, number_nodes, 
+                # PBS specific BJ plugin
+                pbssshj = pbsssh(bootstrap_script, lrms_saga_url, walltime, number_nodes, 
                                  processes_per_node, userproxy, self.working_directory)
                 self.job = pbssshj
                 self.job.run()
