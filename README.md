@@ -10,9 +10,9 @@ The SAGA BigJob framework is a SAGA-based pilot job implementation. The  Simple 
 Web Page & Mailing List
 -------------
 
-http://faust.cct.lsu.edu/trac/bigjob
+Web page: http://faust.cct.lsu.edu/trac/bigjob
 
-Please use  https://mail.cct.lsu.edu/mailman/listinfo/bigjob-users to subscribe to bigjob-users mailing list. The mailing list archives are located at:  https://mail.cct.lsu.edu/pipermail/bigjob-users/
+Mailing list:  Use https://mail.cct.lsu.edu/mailman/listinfo/bigjob-users to subscribe to bigjob-users mailing list. The mailing list archives are located at:  https://mail.cct.lsu.edu/pipermail/bigjob-users/.
 
 Installation
 -------------
