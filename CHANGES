@@ -1,3 +1,6 @@
+0.4.2
+- Added support for Cray's aprun (for Kraken)
+
 0.4.1
 - Removed Paramiko "strong" dependency for installation. Still required for file staging
 

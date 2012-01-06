@@ -14,7 +14,7 @@ import os
 
 class pbsssh:
     """Constructor"""
-    def __init__(self,bootstrap_script,lrms_saga_url,walltime,nodes,ppn,userproxy,working_directory=None):
+    def __init__(self, bootstrap_script, lrms_saga_url, walltime, number_nodes, processes_per_node, userproxy, working_directory=None):
         self.job_id = ""
         self.lrms_saga_url = lrms_saga_url
         self.lrms_saga_url.scheme="ssh"
@@ -24,6 +24,19 @@ class pbsssh:
             self.working_directory = ""
         else:
             self.working_directory = working_directory
+        ### convert walltime in minutes to PBS representation of time ###
+        walltime_pbs="1:00:00"
+        if walltime!=None or walltime!="":    
+            hrs=walltime/60 
+            minu=walltime%60 
+            walltime_pbs=""+str(hrs)+":"+str(minu)+":00"
+
+        if number_nodes%processes_per_node == 0:
+            nodes = number_nodes/processes_per_node
+        else:
+            nodes = (number_nodes/processes_per_node) + 1    
+        
+        ppn = processes_per_node
 
         self.bootstrap_script = textwrap.dedent("""import sys
 import os
@@ -44,7 +57,7 @@ qsub_file.write("\\n")
 qsub_file.write("python -c XX" + textwrap.dedent(\"\"%s\"\") + "XX")
 qsub_file.close()
 os.system( "qsub  " + qsub_file_name)
-""") % (str(nodes),str(ppn),str(walltime),str(self.working_directory),bootstrap_script)
+""") % (str(nodes),str(ppn),str(walltime_pbs),str(self.working_directory), bootstrap_script)
         ### escaping characters
         self.bootstrap_script = self.bootstrap_script.replace("\"","\\\"")
         self.bootstrap_script = self.bootstrap_script.replace("\\\\","\\\\\\\\\\")
