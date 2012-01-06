@@ -59,7 +59,7 @@ def main():
     
     Please ensure that the respective SAGA adaptor is installed and working
     """
-    lrms_url = "pbs-ssh://hotel.futuregrid.org" # resource url to run the jobs on localhost
+    lrms_url = "pbs-ssh://luckow@hotel.futuregrid.org" # resource url to run the jobs on localhost
    
     ##########################################################################################
 

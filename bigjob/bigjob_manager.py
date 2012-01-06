@@ -567,6 +567,7 @@ sftp.put("%s", "%s")
                 sftp.close()
                 client.close()
             except:
+		self.__print_traceback()	
                 logger.warn("Error creating directory: " + str(target_path) 
                              + " at: " + str(target_host) + " Already exists?" )
              
@@ -576,7 +577,9 @@ sftp.put("%s", "%s")
         client.load_system_host_keys()
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         user = self.__discover_ssh_user(hostname)
+	logger.debug("discovered user: " + user)
         client.connect(hostname, username=user)
+	return client
     
     
     def __discover_ssh_user(self, hostname):
@@ -590,7 +593,6 @@ sftp.put("%s", "%s")
             if line.find(hostname)>0:
                 for k in range(i + 1, len(lines)):
                     sub_line = lines[k]
-                    logger.debug(".")
                     if sub_line.startswith(" ")==False and sub_line.startswith("\t")==False:
                         break # configuration for next host
                     elif sub_line.find("User")>0:
