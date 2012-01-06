@@ -196,7 +196,7 @@ class bigjob_agent:
             number_nodes =  os.environ.get("PBS_NNODES")
             self.freenodes=[]
             for i in range(0, int(number_nodes)):
-		slot = "slot-%d"%i
+                slot = "slot-%d"%i
                 logger.debug("add slot: " + slot)
                 self.freenodes.append(slot)            
         else:
@@ -286,7 +286,7 @@ class bigjob_agent:
                     for i in env_list:
                         envi_1 = "export " + i +"; "
                         envi = envi + envi_1
-		logger.debug(envi) 
+                        logger.debug(envi) 
                 executable = job_dict["Executable"]
                 
                 workingdirectory = os.path.join(os.getcwd(), job_id)  
@@ -322,10 +322,10 @@ class bigjob_agent:
                 stderr = open(error_file, "w")
                 if (spmdvariation.lower()!="mpi"):
                     command =  envi + executable + " " + arguments
-		if self.LAUNCH_METHOD=="aprun" and envi!="":
-		    env_strip = envi.strip()
+                elif self.LAUNCH_METHOD=="aprun" and envi!="":
+                    env_strip = envi.strip()
                     env_command = env_strip[:(len(env_strip)-1)]
-		    command = "aprun -n " + numberofprocesses + " " + env_command + " & " + executable + " " + arguments
+                    command = "aprun -n " + numberofprocesses + " " + env_command + " & " + executable + " " + arguments
                 else:
                     command =  executable + " " + arguments
                 #pdb.set_trace()
