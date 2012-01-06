@@ -232,7 +232,7 @@ class bigjob(api.base.bigjob):
                 bootstrap_script = self.escape_ssh(bootstrap_script)
                 # PBS specific BJ plugin
                 pbssshj = pbsssh(bootstrap_script, lrms_saga_url, walltime, number_nodes, 
-                                 processes_per_node, userproxy, self.__get_bigjob_working_dir())
+                                 processes_per_node, userproxy, self.working_directory, self.__get_bigjob_working_dir())
                 self.job = pbssshj
                 self.job.run()
                 return

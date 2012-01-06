@@ -15,7 +15,7 @@ import os
 
 class pbsssh:
     """Constructor"""
-    def __init__(self, bootstrap_script, lrms_saga_url, walltime, number_nodes, processes_per_node, userproxy, working_directory=None):
+    def __init__(self, bootstrap_script, lrms_saga_url, walltime, number_nodes, processes_per_node, userproxy, working_directory=None, bj_working_directory=None):
         self.job_id = ""
         self.lrms_saga_url = lrms_saga_url
         self.lrms_saga_url.scheme="ssh"
@@ -25,6 +25,8 @@ class pbsssh:
             self.working_directory = ""
         else:
             self.working_directory = working_directory
+        if bj_working_directory==None:
+            bj_working_directory=self.working_directory
         ### convert walltime in minutes to PBS representation of time ###
         walltime_pbs="1:00:00"
         if walltime!=None and walltime!="":    
@@ -53,16 +55,16 @@ qsub_file.write("#PBS -l nodes=%s:ppn=%s")
 qsub_file.write("\\n")
 qsub_file.write("#PBS -l walltime=%s")
 qsub_file.write("\\n")
-qsub_file.write("#PBS -o stdout-bigjob_agent.txt")
+qsub_file.write("#PBS -o %s/stdout-bigjob_agent.txt")
 qsub_file.write("\\n")
-qsub_file.write("#PBS -e stderr-bigjob_agent.txt")
+qsub_file.write("#PBS -e %s/stderr-bigjob_agent.txt")
 qsub_file.write("\\n")
 qsub_file.write("cd %s")
 qsub_file.write("\\n")
 qsub_file.write("python -c XX" + textwrap.dedent(\"\"%s\"\") + "XX")
 qsub_file.close()
 os.system( "qsub  " + qsub_file_name)
-""") % (str(nodes),str(ppn),str(walltime_pbs),str(self.working_directory), bootstrap_script)
+""") % (str(nodes),str(ppn),str(walltime_pbs), bj_working_directory, bj_working_directory, str(self.working_directory), bootstrap_script)
         ### escaping characters
         self.bootstrap_script = self.bootstrap_script.replace("\"","\\\"")
         self.bootstrap_script = self.bootstrap_script.replace("\\\\","\\\\\\\\\\")
