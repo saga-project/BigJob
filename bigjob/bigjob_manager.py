@@ -232,7 +232,7 @@ class bigjob(api.base.bigjob):
                 bootstrap_script = self.escape_ssh(bootstrap_script)
                 # PBS specific BJ plugin
                 pbssshj = pbsssh(bootstrap_script, lrms_saga_url, walltime, number_nodes, 
-                                 processes_per_node, userproxy, self.working_directory)
+                                 processes_per_node, userproxy, self.__get_bigjob_working_dir())
                 self.job = pbssshj
                 self.job.run()
                 return
@@ -561,10 +561,7 @@ sftp.put("%s", "%s")
             os.makedirs(target_path)
         else:
             try:
-                client = paramiko.SSHClient()
-                client.load_system_host_keys()
-                client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-                client.connect(target_host)
+                client = self.__get_ssh_client(target_host)
                 sftp = client.open_sftp()            
                 sftp.mkdir(target_path)
                 sftp.close()
@@ -573,6 +570,35 @@ sftp.put("%s", "%s")
                 logger.warn("Error creating directory: " + str(target_path) 
                              + " at: " + str(target_host) + " Already exists?" )
              
+        
+    def __get_ssh_client(self, hostname):
+        client = paramiko.SSHClient()
+        client.load_system_host_keys()
+        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        user = self.__discover_ssh_user(hostname)
+        client.connect(hostname, username=user)
+    
+    
+    def __discover_ssh_user(self, hostname):
+        # discover username
+        user = None
+        ssh_config = os.path.join(os.path.expanduser("~"), ".ssh/config")
+        ssh_config_file = open(ssh_config, "r")
+        lines = ssh_config_file.readlines()
+        for i in range(0, len(lines)):
+            line = lines[i]
+            if line.find(hostname)>0:
+                for k in range(i + 1, len(lines)):
+                    sub_line = lines[k]
+                    logger.debug(".")
+                    if sub_line.startswith(" ")==False and sub_line.startswith("\t")==False:
+                        break # configuration for next host
+                    elif sub_line.find("User")>0:
+                        stripped_sub_line = sub_line.strip()
+                        user = stripped_sub_line.split()[1]
+                        break
+        ssh_config_file.close() 
+        return user
     
     
     def __print_traceback(self):
