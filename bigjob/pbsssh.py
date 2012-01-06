@@ -96,7 +96,7 @@ os.system( "qsub  " + qsub_file_name)
         joboutput= pbssshjob.get_stdout()
         self.job_id=(joboutput.read()).split(".")[0]
         logger.debug("PBS JobID: " + str(self.job_id))
-        if self.jobid==None or self.job_id=="":
+        if self.job_id==None or self.job_id=="":
             raise BigJobError("BigJob submission via pbs-ssh:// failed")
 
 
