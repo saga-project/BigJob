@@ -37,7 +37,7 @@ B) REDIS, http://redis.io/
 C) ZMQ (ZeroMQ), http://www.zeromq.org/
 
 ***************************************************************************
-A) SAGA Advert Service
+### A) SAGA Advert Service
 
 1) Utilise coordination url parameter of BigJob to utilize the Advert Service:
 
@@ -46,7 +46,7 @@ A) SAGA Advert Service
 
 
 ***************************************************************************
-B) REDIS
+### Redis
 
 1.) Install and run Redis (http://redis.io/)
 
@@ -79,7 +79,7 @@ Standard settings are:
 	REDIS_SERVER_PORT=6379
 
 ***************************************************************************
-C) ZMQ
+### C) ZMQ
 
 1.) Install ZeroMQ and pyzmq
 
@@ -115,6 +115,7 @@ will start a local tcp server.
 
 ***************************************************************************
 Packaging
+-------------------------------------
 
 Requirements:
 
