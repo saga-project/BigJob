@@ -112,3 +112,18 @@ http://zeromq.github.com/pyzmq/index.html
 	tcp://*
 
 will start a local tcp server.
+
+***************************************************************************
+Packaging
+
+Requirements:
+- setuptools >0.6c11, http://pypi.python.org/pypi/setuptools
+- setuptools-git >0.3.3, http://pypi.python.org/pypi/setuptools-git/
+
+Building PyPi package
+
+	python setup.py build
+
+Upload to PyPi
+
+	python setup.py sdist upload
