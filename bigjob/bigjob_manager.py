@@ -23,6 +23,7 @@ import traceback
 import logging
 import textwrap
 import urlparse
+import pdb
 
 try:
     import paramiko
@@ -217,8 +218,7 @@ class bigjob(api.base.bigjob):
             logger.debug("\n\n-a", self.coordination.get_address(),"-b", self.pilot_url)
             agent_exe = os.path.abspath(os.path.join(os.getcwd(),"..","bootstrap","bigjob-condor-bootstrap.py"))
             logger.debug(agent_exe) 
-            jd.executable = agent_exe
-            
+            jd.executable = agent_exe            
         else:
             bootstrap_script = self.generate_bootstrap_script(self.coordination.get_address(), self.pilot_url)
             if lrms_saga_url.scheme == "gram":
@@ -468,6 +468,8 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
     
     def __parse_url(self, url):
         try:
+            if is_bliss==True:
+                raise BigJobError("BLISS URL broken.")
             surl = saga.url(url)
             host = surl.host
             port = surl.port
@@ -477,19 +479,35 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
             scheme = "%s://"%surl.scheme
         except:
             """ Fallback URL parser based on Python urlparse library """
-            logger.error("URL %s could not be parsed")
+            logger.error("URL %s could not be parsed"%(url))
             traceback.print_exc(file=sys.stderr)
             result = urlparse.urlparse(url)
+            logger.debug("Result: " + str(result))
             host = result.hostname
+            #host = None
             port = result.port
             username = result.username
             password = result.password
+            scheme = "%s://"%result.scheme 
+            if host==None:
+                logger.debug("Python 2.6 fallback")
+                if url.find("/", len(scheme)) > 0:
+                    host = url[len(scheme):url.find("/", len(scheme))]
+                else:
+                    host = url[len(scheme):]
+                if host.find(":")>1:
+                    logger.debug(host)
+                    comp = host.split(":")
+                    host = comp[0]
+                    port = int(comp[1])
+                    
             if url.find("?")>0:
                 query = url[url.find("?")+1:]
             else:
                 query = None
-            scheme = "%s://"%result.scheme
             
+        
+        logger.debug("%s %s %s"%(scheme, host, port))
         return scheme, username, password, host, port, query     
             
     
@@ -574,7 +592,7 @@ sftp.put("%s", "%s")
                 sftp.close()
                 client.close()
             except:
-		self.__print_traceback()	
+                self.__print_traceback()	
                 logger.warn("Error creating directory: " + str(target_path) 
                              + " at: " + str(target_host) + " Already exists?" )
              
@@ -584,9 +602,9 @@ sftp.put("%s", "%s")
         client.load_system_host_keys()
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         user = self.__discover_ssh_user(hostname)
-	logger.debug("discovered user: " + user)
+        logger.debug("discovered user: " + user)
         client.connect(hostname, username=user)
-	return client
+        return client
     
     
     def __discover_ssh_user(self, hostname):
