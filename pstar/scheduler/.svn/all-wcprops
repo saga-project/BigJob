@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/repos/saga-projects/!svn/ver/6121/applications/pilotstore/src/bigdata/scheduler
+END
+data_compute_affinity_scheduler.py
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/repos/saga-projects/!svn/ver/6121/applications/pilotstore/src/bigdata/scheduler/data_compute_affinity_scheduler.py
+END
+random_scheduler.py
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/repos/saga-projects/!svn/ver/5891/applications/pilotstore/src/bigdata/scheduler/random_scheduler.py
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/repos/saga-projects/!svn/ver/5661/applications/pilotstore/src/bigdata/scheduler/__init__.py
+END
+data_compute_scheduler.py
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/repos/saga-projects/!svn/ver/6051/applications/pilotstore/src/bigdata/scheduler/data_compute_scheduler.py
+END
