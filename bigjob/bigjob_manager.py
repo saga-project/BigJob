@@ -209,7 +209,10 @@ class bigjob(api.base.bigjob):
         # Stage BJ Input files
         # build target url
         # this will also create the remote directory for the BJ
-        bigjob_working_directory_url = "ssh://" + lrms_saga_url.host + self.__get_bigjob_working_dir()
+        if lrms_saga_url.username!=None and lrms_saga_url.username!="":
+            bigjob_working_directory_url = "ssh://" + lrms_saga_url.username + "@" + lrms_saga_url.host + self.__get_bigjob_working_dir()
+        else:
+            bigjob_working_directory_url = "ssh://" + lrms_saga_url.host + self.__get_bigjob_working_dir()
         self.__stage_files(filetransfers, bigjob_working_directory_url)
     
         logger.debug("Adaptor specific modifications: "  + str(lrms_saga_url.scheme))
@@ -581,12 +584,17 @@ sftp.put("%s", "%s")
         scheme = target_url[:target_url.find("://")+3]
         target_host = target_url[len(scheme):target_url.find("/", len(scheme))]
         target_path = target_url[len(scheme)+len(target_host):]    
+        target_user = None
+        if target_host.find("@")>1:
+            comp = target_host.split("@")
+            target_host =comp[1]
+            target_user =comp[0]
         logger.debug("Create remote directory; scheme: %s, host: %s, path: %s"%(scheme, target_host, target_path))
         if scheme.startswith("fork") or target_host.startswith("localhost"):
             os.makedirs(target_path)
         else:
             try:
-                client = self.__get_ssh_client(target_host)
+                client = self.__get_ssh_client(target_host, target_user)
                 sftp = client.open_sftp()            
                 sftp.mkdir(target_path)
                 sftp.close()
@@ -597,12 +605,12 @@ sftp.put("%s", "%s")
                              + " at: " + str(target_host) + " Already exists?" )
              
         
-    def __get_ssh_client(self, hostname):
+    def __get_ssh_client(self, hostname, user=None):
         client = paramiko.SSHClient()
         client.load_system_host_keys()
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        user = self.__discover_ssh_user(hostname)
-        logger.debug("discovered user: " + user)
+        if user == None: user = self.__discover_ssh_user(hostname)
+        if user!=None: logger.debug("discovered user: " + user)
         client.connect(hostname, username=user)
         return client
     
