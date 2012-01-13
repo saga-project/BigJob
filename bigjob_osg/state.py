@@ -17,7 +17,7 @@ Unknown = "Unknown"
 def saga_to_subjob_state(saga_state):
     if saga_state == saga.job.Running:
         return Running
-    elif saga_sate == saga.job.Failed: 
+    elif saga_state == saga.job.Failed: 
         return Failed
     elif saga_state == saga.job.New:
         return New
