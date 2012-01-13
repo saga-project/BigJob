@@ -6,17 +6,32 @@ __author__    = "Ole Christian Weidner"
 __copyright__ = "Copyright 2012, Ole Christian Weidner"
 __license__   = "MIT"
 
+import saga
+import state
+
 class osg_subjob(object):
     
-    def __init__(self):
-        pass
+    __slots__ = ['state', 'description', '_condor_job']
     
-    def submit_job(self, pilot_url, jd):
-        pass
+    def __init__(self):
+        self.state = state.Unknown
+        self._condor_job = None
+    
+    def submit_job(self, bigjob, jd):
+        self.description = jd
+        try:
+            self._condor_job = bigjob._condor_pool.create_job(self.description)
+            self._condor_job.run()
+        except saga.exception, e:
+            print "Oh noes! A SAGA error: " 
+            for err in e.get_all_messages():
+                print err
+            raise Exception("A SAGA error occured.")
+
     
     def get_state(self):        
-        pass
+        self._condor_job.get_state()
     
     def cancel(self):
-        pass
+        self._condor_job.cancel()
 
