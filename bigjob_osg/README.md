@@ -68,7 +68,7 @@ def bigjob_osg_example_simple():
     ##############################
     # Submit the workload to the pilot job
     sj = subjob()
-    sj.submit_job(bj.pilot_url, jd)
+    sj.submit_job(bj, jd)
     while 1:
         state = str(sj.get_state())
         print "Subjob state: " + state
