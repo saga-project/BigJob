@@ -27,8 +27,8 @@ While <b>bigjob_osg</b> is 100% API compatible with the existing, regular BigJob
 This is an example of how to submit a single <i>BFAST</i> task to the OSG Condor pool via BigJob:
 
 ```
+import time
 from bigjob_osg import bigjob, subjob, description, state
-
 
 def bigjob_osg_example_simple():
     lrms_url = "condor://localhost"
@@ -69,6 +69,12 @@ def bigjob_osg_example_simple():
     # Submit the workload to the pilot job
     sj = subjob()
     sj.submit_job(bj.pilot_url, jd)
+    while 1:
+        state = str(sj.get_state())
+        print "Subjob state: " + state
+        if(state=="Failed" or state=="Done"):
+            break
+        time.sleep(5)
 
     ##############################
     # Stop the pilot job 
