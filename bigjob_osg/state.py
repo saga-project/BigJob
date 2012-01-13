@@ -6,6 +6,7 @@ __author__    = "Ole Christian Weidner"
 __copyright__ = "Copyright 2012, Ole Christian Weidner"
 __license__   = "MIT"
 
+import saga
 
 Running = "Running"
 New     = "New"
@@ -14,4 +15,13 @@ Done    = "Done"
 Unknown = "Unknown"
 
 def saga_to_subjob_state(saga_state):
-    pass
+    if saga_state == saga.job.Running:
+        return Running
+    elif saga_sate == saga.job.Failed: 
+        return Failed
+    elif saga_state == saga.job.New:
+        return New
+    elif saga_state == saga.job.Done:
+        return Done
+    else:
+        return Unknown
