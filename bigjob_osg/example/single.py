@@ -6,8 +6,8 @@ __author__    = "Ole Christian Weidner"
 __copyright__ = "Copyright 2012, Ole Christian Weidner"
 __license__   = "MIT"
 
+import time
 from bigjob_osg import bigjob, subjob, description, state
-
 
 def bigjob_osg_example_simple():
     lrms_url = "condor://localhost"
@@ -47,7 +47,13 @@ def bigjob_osg_example_simple():
     ##############################
     # Submit the workload to the pilot job
     sj = subjob()
-    sj.submit_job(bj.pilot_url, jd)
+    sj.submit_job(bj, jd)
+    while 1:
+        state = str(sj.get_state())
+        print "Subjob state: " + state
+        if(state=="Failed" or state=="Done"):
+            break
+        time.sleep(5)
 
     ##############################
     # Stop the pilot job 

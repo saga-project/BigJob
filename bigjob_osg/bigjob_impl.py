@@ -7,16 +7,18 @@ __copyright__ = "Copyright 2012, Ole Christian Weidner"
 __license__   = "MIT"
 
 import uuid
+import saga
 import state
 
 class osg_bigjob(object):
 
-    __slots__ = ['lrms_url', 'pilot_url', 'state']
+    __slots__ = ['lrms_url', 'pilot_url', 'state', '_condor_pool']
        
     def __init__(self, database_host):  
         self.lrms_url = None
         self.pilot_url = None
         self.state = state.Unknown
+        self._condor_pool = None
     
     def start_pilot_job(self, 
                         lrms_url, 
@@ -34,6 +36,15 @@ class osg_bigjob(object):
         else:
             self.lrms_url = lrms_url         
             self.pilot_url = "%s/%s" % (lrms_url, uuid.uuid4())       
+            
+            try:
+                self._condor_pool = saga.job.service("condor://localhost")
+            except saga.exception, e:
+                print "Oh noes! A SAGA error: "
+                for err in e.get_all_messages():
+                    print err
+                raise Exception("A SAGA error occured.")
+
             self.state = state.Running
 
     def get_state(self):        
