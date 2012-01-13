@@ -29,8 +29,15 @@ class osg_subjob(object):
             raise Exception("A SAGA error occured.")
 
     
-    def get_state(self):        
-        self._condor_job.get_state()
+    def get_state(self):       
+        try: 
+            self.state = self._condor_job.get_state()
+        except saga.exception, e:
+            print "Oh noes! A SAGA error: "
+            for err in e.get_all_messages():
+                print err
+            raise Exception("A SAGA error occured.")
+        return state.saga_to_subjob_state(self.state)
     
     def cancel(self):
         self._condor_job.cancel()
