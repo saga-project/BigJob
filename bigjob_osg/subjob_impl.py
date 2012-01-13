@@ -8,7 +8,7 @@ __license__   = "MIT"
 
 class osg_subjob(object):
     
-    def __init__(self, database_host):
+    def __init__(self):
         pass
     
     def submit_job(self, pilot_url, jd):
