@@ -196,7 +196,7 @@ class bigjob_agent:
             number_nodes =  os.environ.get("PBS_NNODES")
             self.freenodes=[]
             for i in range(0, int(number_nodes)):
-                slot = "slot-%d"%i
+                slot = "slot-%d\n"%i
                 logger.debug("add slot: " + slot)
                 self.freenodes.append(slot)            
         else:
@@ -277,16 +277,25 @@ class bigjob_agent:
                         
                 environment = os.environ
                 envi = ""
+                self.number_subjobs=1
                 if (job_dict.has_key("Environment") == True):
                     env_raw = job_dict['Environment']
                     if type(env_raw) == types.ListType:
                         env_list = env_raw
                     else:
                         env_list = eval(job_dict["Environment"])
+
+                    logger.debug("Environment: " + str(env_list))
                     for i in env_list:
-                        envi_1 = "export " + i +"; "
-                        envi = envi + envi_1
-                        logger.debug(envi) 
+                        logger.debug("Eval " + i)
+                        if i.startswith("NUMBER_SUBJOBS"):
+                            self.number_subjobs=int(i.split("=")[1].strip())
+                            logger.debug("NUMBER_SUBJOBS: " + str(self.number_subjobs))
+                        else:
+                            envi_1 = "export " + i +"; "
+                            envi = envi + envi_1
+                            logger.debug(envi) 
+                
                 executable = job_dict["Executable"]
                 
                 workingdirectory = os.path.join(os.getcwd(), job_id)  
@@ -320,12 +329,20 @@ class bigjob_agent:
                 logger.debug("stdout: " + output_file + " stderr: " + error_file)
                 stdout = open(output_file, "w")
                 stderr = open(error_file, "w")
-                if (spmdvariation.lower()!="mpi"):
-                    command =  envi + executable + " " + arguments
-                elif self.LAUNCH_METHOD=="aprun" and envi!="":
+                if self.LAUNCH_METHOD=="aprun":
                     env_strip = envi.strip()
                     env_command = env_strip[:(len(env_strip)-1)]
-                    command = "aprun -n " + numberofprocesses + " " + env_command + " & " + executable + " " + arguments
+                    command = "aprun  -n " + str(self.number_subjobs) + " -d " + numberofprocesses + " " + executable + " " + arguments
+
+                    # MPMD Mode => all subjobs on Kraken fail because aprun returns 1 as returncode
+                    #command = "aprun"
+                    #for i in range(0, self.number_subjobs):
+                    #    command = command +   " -d " + numberofprocesses + " " + executable + " " + arguments  
+                    #    # + " 1 > "+ str(i)+ "-out.txt " + " 2 > "+ str(i)+ "-err.txt"
+                    #    if i != self.number_subjobs-1:
+                    #        command = command + " : "
+                elif (spmdvariation.lower()!="mpi"):
+                    command =  envi + executable + " " + arguments
                 else:
                     command =  executable + " " + arguments
                 #pdb.set_trace()
@@ -554,9 +571,8 @@ class bigjob_agent:
                 p_state = p.poll()
                 logger.debug(self.print_job(i) + " state: " + str(p_state) + " return code: " + str(p.returncode))
                 if (p_state != None and (p_state==0 or p_state==255)):
-                    logger.debug("Job successful: " + self.print_job(i))
+                    logger.debug("Job successful: " + self.print_job(i) + " - set state to Done")
                     self.coordination.set_job_state(i, str(bigjob.state.Done))
-                    #i.set_attribute("state", str(saga.job.Done))
                     self.free_nodes(i)
                     del self.processes[i]
                 elif p_state!=0 and p_state!=255 and p_state != None:
