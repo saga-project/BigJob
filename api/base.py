@@ -35,7 +35,7 @@ class bigjob(object):
                     
 class subjob(object):
     
-    def __init__(self, database_host):
+    def __init__(self, database_host=None):
         pass
     
     def submit_job(self, pilot_url, jd):
