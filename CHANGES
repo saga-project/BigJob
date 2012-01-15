@@ -1,3 +1,7 @@
+0.4.3x
+- improved working directory handling (remote creation). Fails gracefully if ssh is not possible. 
+- modified bootstrap script to work with Globus 5.0.x
+
 0.4.3
 - Added pilot api
 
