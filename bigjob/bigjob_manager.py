@@ -205,7 +205,7 @@ class bigjob(api.base.bigjob):
             # will fail if home directory is not the same on remote machine
             # but this is just a guess to avoid failing
             self.working_directory = os.path.expanduser("~") 
-        
+            
         # Stage BJ Input files
         # build target url
         # this will also create the remote directory for the BJ
@@ -213,8 +213,17 @@ class bigjob(api.base.bigjob):
             bigjob_working_directory_url = "ssh://" + lrms_saga_url.username + "@" + lrms_saga_url.host + self.__get_bigjob_working_dir()
         else:
             bigjob_working_directory_url = "ssh://" + lrms_saga_url.host + self.__get_bigjob_working_dir()
-        self.__stage_files(filetransfers, bigjob_working_directory_url)
-    
+        
+        # determine working directory of bigjob 
+        # if a remote sandbox can be created via ssh => create a own dir for each bj job id
+        # otherwise use specified working directory
+        if self.__create_remote_directory(bigjob_working_directory_url)==True:
+            self.working_directory = self.__get_bigjob_working_dir()
+            self.__stage_files(filetransfers, bigjob_working_directory_url)
+        else:        
+            logger.warn("For file staging. SSH (incl. password-less authentication is required.")
+         
+        logger.debug("BJ Working Directory: %s", self.working_directory)
         logger.debug("Adaptor specific modifications: "  + str(lrms_saga_url.scheme))
         if lrms_saga_url.scheme == "condorg":
             jd.arguments = [ "-a", self.coordination.get_address(), "-b",self.pilot_url]
@@ -235,7 +244,7 @@ class bigjob(api.base.bigjob):
                 bootstrap_script = self.escape_ssh(bootstrap_script)
                 # PBS specific BJ plugin
                 pbssshj = pbsssh(bootstrap_script, lrms_saga_url, walltime, number_nodes, 
-                                 processes_per_node, userproxy, self.working_directory, self.__get_bigjob_working_dir())
+                                 processes_per_node, userproxy, self.working_directory, self.working_directory)
                 self.job = pbssshj
                 self.job.run()
                 return
@@ -263,10 +272,9 @@ class bigjob(api.base.bigjob):
             jd.working_directory = self.working_directory
     
             logger.debug("Working directory: " + jd.working_directory)
-            jd.output = os.path.join(self.__get_bigjob_working_dir(), "stdout-bigjob_agent.txt")
-            jd.error = os.path.join(self.__get_bigjob_working_dir(),"stderr-bigjob_agent.txt")
-         
- 
+            jd.output = os.path.join(self.working_directory, "stdout-bigjob_agent.txt")
+            jd.error = os.path.join(self.working_directory,"stderr-bigjob_agent.txt")
+          
            
         # Submit job
         js = None    
@@ -524,7 +532,6 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
 
     def __stage_files(self, filetransfers, target_url):
         logger.debug("Stage: %s to %s"%(filetransfers, target_url))
-        self.__create_remote_directory(target_url)
         if filetransfers==None:
             return
         for i in filetransfers:
@@ -592,6 +599,7 @@ sftp.put("%s", "%s")
         logger.debug("Create remote directory; scheme: %s, host: %s, path: %s"%(scheme, target_host, target_path))
         if scheme.startswith("fork") or target_host.startswith("localhost"):
             os.makedirs(target_path)
+            return True
         else:
             try:
                 client = self.__get_ssh_client(target_host, target_user)
@@ -599,10 +607,12 @@ sftp.put("%s", "%s")
                 sftp.mkdir(target_path)
                 sftp.close()
                 client.close()
+                return True
             except:
                 self.__print_traceback()	
                 logger.warn("Error creating directory: " + str(target_path) 
-                             + " at: " + str(target_host) + " Already exists?" )
+                             + " at: " + str(target_host) + " SSH password-less login activated?" )
+                return False
              
         
     def __get_ssh_client(self, hostname, user=None):
