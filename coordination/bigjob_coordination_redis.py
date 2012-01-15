@@ -115,6 +115,7 @@ class bigjob_coordination(object):
     # Sub-Job State    
     def set_job_state(self, job_url, new_state):
         #self.resource_lock.acquire()        
+        logger.debug("set job state to: " + str(new_state))
         self.redis.hset(job_url, "state", str(new_state))
         #self.resource_lock.release()
         
