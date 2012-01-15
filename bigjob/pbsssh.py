@@ -4,7 +4,7 @@ import textwrap
 import re
 
 from bigjob import logger
-from bigjob_manager import BigJobError
+import bigjob
 
 try:
     import saga
@@ -99,7 +99,7 @@ os.system( "qsub  " + qsub_file_name)
         self.job_id=(joboutput.read()).split(".")[0]
         logger.debug("PBS JobID: " + str(self.job_id))
         if self.job_id==None or self.job_id=="":
-            raise BigJobError("BigJob submission via pbs-ssh:// failed")
+            raise Exception("BigJob submission via pbs-ssh:// failed")
 
 
     def get_state(self):
