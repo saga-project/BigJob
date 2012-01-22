@@ -226,11 +226,10 @@ class bigjob(api.base.bigjob):
         logger.debug("BJ Working Directory: %s", self.working_directory)
         logger.debug("Adaptor specific modifications: "  + str(lrms_saga_url.scheme))
         if lrms_saga_url.scheme == "condorg":
-            jd.arguments = [ "-a", self.coordination.get_address(), "-b",self.pilot_url]
-            logger.debug("\n\n-a", self.coordination.get_address(),"-b", self.pilot_url)
-            agent_exe = os.path.abspath(os.path.join(os.getcwd(),"..","bootstrap","bigjob-condor-bootstrap.py"))
-            logger.debug(agent_exe) 
-            jd.executable = agent_exe            
+            jd.arguments = [ self.coordination.get_address(), self.pilot_url]
+            agent_exe = os.path.abspath(os.path.join(os.path.dirname(__file__),"..","bootstrap","bigjob-condor-bootstrap.py"))
+            logger.debug("agent_exe",agent_exe)
+            jd.executable = agent_exe             
         else:
             bootstrap_script = self.generate_bootstrap_script(self.coordination.get_address(), self.pilot_url)
             if lrms_saga_url.scheme == "gram":
