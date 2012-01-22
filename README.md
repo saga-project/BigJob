@@ -206,4 +206,4 @@ and your subjob description should look like this
 forced to use stand alone Bigjob Agent ie without SAGA on the resource. So we utilize redis as the co-ordinantion backend 
 which work well on backend with Python Version >= 2.5 as the default environment.
 
-
+5) Please refer to examples/example_condorg_single.py for more details.
