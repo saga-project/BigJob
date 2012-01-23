@@ -95,11 +95,13 @@ os.system( "qsub  " + qsub_file_name)
         pbssshjob = js.create_job(jd)
         print "Submit pilot job to: " + str(self.lrms_saga_url)
         pbssshjob.run()
-        joboutput= pbssshjob.get_stdout()
-        self.job_id=(joboutput.read()).split(".")[0]
+        pbssshjob.wait()
+        outstr = pbssshjob.get_stdout().read()
+        errstr = pbssshjob.get_stderr().read()
+        self.job_id=(outstr).split(".")[0]
         logger.debug("PBS JobID: " + str(self.job_id))
         if self.job_id==None or self.job_id=="":
-            raise Exception("BigJob submission via pbs-ssh:// failed")
+            raise Exception("BigJob submission via pbs-ssh:// failed: %s %s" % (outstr,errstr))
 
 
     def get_state(self):
