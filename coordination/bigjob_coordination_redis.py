@@ -64,7 +64,7 @@ class bigjob_coordination(object):
                 server_port = int(server_and_port.split(":")[1])
         else:
             self.password = username
-            if self.password != None:
+            if self.password != None and self.password!="":
                 self.address = "%s%s@%s:%i"%(REDIS_URL_SCHEME, self.password, server, server_port)
         
         logger.debug("Connect to Redis: " + server + " Port: " + str(server_port))
@@ -115,6 +115,7 @@ class bigjob_coordination(object):
     # Sub-Job State    
     def set_job_state(self, job_url, new_state):
         #self.resource_lock.acquire()        
+        logger.debug("set job state to: " + str(new_state))
         self.redis.hset(job_url, "state", str(new_state))
         #self.resource_lock.release()
         

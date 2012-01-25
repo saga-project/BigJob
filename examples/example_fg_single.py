@@ -20,11 +20,11 @@ import sys
         tcp://* (ZMQ - listening to all interfaces)
 """
 
-COORDINATION_URL = "advert://localhost/?dbtype=sqlite3"
+#COORDINATION_URL = "advert://localhost/?dbtype=sqlite3"
 #COORDINATION_URL = "advert://SAGA:SAGA_client@advert.cct.lsu.edu:8080/?dbtype=postgresql"
 #COORDINATION_URL = "tcp://*"
-#COORDINATION_URL = "redis://localhost:6379"
-#COORDINATION_URL = "redis://gw68.quarry.iu.teragrid.org:2525"
+COORDINATION_URL = "redis://cyder.cct.lsu.edu:2525"
+#COORDINATION_URL = "redis://<password>@gw68.quarry.iu.teragrid.org:6379"
 #COORDINATION_URL="sqlasyncadvert://gw68.quarry.iu.teragrid.org/"
 
 # for running BJ from local dir
@@ -41,9 +41,9 @@ def main():
     queue=None # if None default queue is used
     project=None # if None default allocation is used 
     walltime=10
-    processes_per_node=4
-    number_of_processes = 8
-    workingdirectory=os.path.join(os.getcwd(), "agent")  # working directory for agent
+    processes_per_node=8
+    number_nodes = 1
+    workingdirectory="/N/u/luckow" # working directory for agent
     userproxy = None # userproxy (not supported yet due to context issue w/ SAGA)
 
     
@@ -59,7 +59,7 @@ def main():
     
     Please ensure that the respective SAGA adaptor is installed and working
     """
-    lrms_url = "fork://localhost" # resource url to run the jobs on localhost
+    lrms_url = "pbs-ssh://sierra.futuregrid.org" # resource url to run the jobs on localhost
    
     ##########################################################################################
 
@@ -67,7 +67,7 @@ def main():
     bj = bigjob(COORDINATION_URL)
     bj.start_pilot_job( lrms_url,
                         None,
-                        number_of_processes,
+                        number_nodes,
                         queue,
                         project,
                         workingdirectory,
