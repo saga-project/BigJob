@@ -41,8 +41,8 @@ def main():
     queue=None # if None default queue is used
     project=None # if None default allocation is used 
     walltime=10
-    processes_per_node=4
-    number_of_processes = 8
+    processes_per_node=12
+    number_of_processes = 12
     workingdirectory=os.path.join(os.getcwd(), "agent")  # working directory for agent
     userproxy = None # userproxy (not supported yet due to context issue w/ SAGA)
 
@@ -59,7 +59,7 @@ def main():
     
     Please ensure that the respective SAGA adaptor is installed and working
     """
-    lrms_url = "fork://localhost" # resource url to run the jobs on localhost
+    lrms_url = "gram://gridftp1.ls4.tacc.utexas.edu:2119/jobmanager-sge" # resource url to run the jobs on localhost
    
     ##########################################################################################
 

@@ -23,6 +23,7 @@ import traceback
 import logging
 import textwrap
 import urlparse
+import pdb
 
 try:
     import paramiko
@@ -193,36 +194,56 @@ class bigjob(api.base.bigjob):
         # create job description
         jd = saga.job.description()
         
+        # XXX Isn't the working directory about the remote site?
+        # Yes, it is: This is to make sure that if fork
+        if working_directory != None:
+            if not os.path.isdir(working_directory) and lrms_saga_url.scheme=="fork":
+                os.mkdir(working_directory)
+            self.working_directory = working_directory
+        else:
+            # if no working dir is set assume use home directory
+            # will fail if home directory is not the same on remote machine
+            # but this is just a guess to avoid failing
+            self.working_directory = os.path.expanduser("~") 
+            
+        # Stage BJ Input files
+        # build target url
+        # this will also create the remote directory for the BJ
+        if lrms_saga_url.username!=None and lrms_saga_url.username!="":
+            bigjob_working_directory_url = "ssh://" + lrms_saga_url.username + "@" + lrms_saga_url.host + self.__get_bigjob_working_dir()
+        else:
+            bigjob_working_directory_url = "ssh://" + lrms_saga_url.host + self.__get_bigjob_working_dir()
         
+        # determine working directory of bigjob 
+        # if a remote sandbox can be created via ssh => create a own dir for each bj job id
+        # otherwise use specified working directory
+        if self.__create_remote_directory(bigjob_working_directory_url)==True:
+            self.working_directory = self.__get_bigjob_working_dir()
+            self.__stage_files(filetransfers, bigjob_working_directory_url)
+        else:        
+            logger.warn("For file staging. SSH (incl. password-less authentication is required.")
+         
+        logger.debug("BJ Working Directory: %s", self.working_directory)
         logger.debug("Adaptor specific modifications: "  + str(lrms_saga_url.scheme))
         if lrms_saga_url.scheme == "condorg":
-            jd.arguments = [ "-a", self.coordination.get_address(), "-b",self.pilot_url]
-            logger.debug("\n\n-a", self.coordination.get_address(),"-b", self.pilot_url)
-            agent_exe = os.path.abspath(os.path.join(os.getcwd(),"..","bootstrap","bigjob-condor-bootstrap.py"))
-            logger.debug(agent_exe) 
-            jd.executable = agent_exe
-            
+            jd.arguments = [ self.coordination.get_address(), self.pilot_url]
+            agent_exe = os.path.abspath(os.path.join(os.path.dirname(__file__),"..","bootstrap","bigjob-condor-bootstrap.py"))
+            logger.debug("agent_exe",agent_exe)
+            jd.executable = agent_exe             
         else:
             bootstrap_script = self.generate_bootstrap_script(self.coordination.get_address(), self.pilot_url)
             if lrms_saga_url.scheme == "gram":
                 bootstrap_script = self.escape_rsl(bootstrap_script)
-            elif lrms_saga_url.scheme == "pbspro":                
+            elif lrms_saga_url.scheme == "pbspro" or lrms_saga_url.scheme=="xt5torque" or lrms_saga_url.scheme=="torque":                
                 bootstrap_script = self.escape_pbs(bootstrap_script)
             elif lrms_saga_url.scheme == "ssh":
                 bootstrap_script = self.escape_ssh(bootstrap_script)
             ############ submit pbs script which launches bigjob agent using ssh adaptors########## 
             elif lrms_saga_url.scheme == "pbs-ssh":
-                # change the url scheme ssh to use ssh adaptors to launch job
                 bootstrap_script = self.escape_ssh(bootstrap_script)
-                ### convert walltime in minutes to PBS representation of time ###
-                hrs=walltime/60 
-                minu=walltime%60 
-                walltimepbs=""+str(hrs)+":"+str(minu)+":00"
-                if number_nodes%processes_per_node == 0:
-                    number_nodes = number_nodes/processes_per_node
-                else:
-                    number_nodes = ( number_nodes/processes_per_node) + 1
-                pbssshj = pbsssh(bootstrap_script,lrms_saga_url, walltimepbs,number_nodes,processes_per_node,userproxy,working_directory)
+                # PBS specific BJ plugin
+                pbssshj = pbsssh(bootstrap_script, lrms_saga_url, walltime, number_nodes, 
+                                 processes_per_node, userproxy, self.working_directory, self.working_directory)
                 self.job = pbssshj
                 self.job.run()
                 return
@@ -238,8 +259,8 @@ class bigjob(api.base.bigjob):
                 
             jd.spmd_variation = "single"
             #jd.arguments = [bigjob_agent_executable, self.coordination.get_address(), self.pilot_url]
-            jd.arguments = ["-c", bootstrap_script]
-            jd.executable = "python"
+            jd.arguments = ["python", "-c", bootstrap_script]
+            jd.executable = "/usr/bin/env"
             if queue != None:
                 jd.queue = queue
             if project !=None:
@@ -247,24 +268,12 @@ class bigjob(api.base.bigjob):
             if walltime!=None:
                 jd.wall_time_limit=str(walltime)
         
-            # XXX Isn't the working directory about the remote site?
-            if working_directory != None:
-                if not os.path.isdir(working_directory) and lrms_saga_url.scheme=="fork":
-                    os.mkdir(working_directory)
-                self.working_directory = working_directory
-            else:
-                self.working_directory = os.path.expanduser("~")
-    
             jd.working_directory = self.working_directory
     
             logger.debug("Working directory: " + jd.working_directory)
-            jd.output = os.path.join(self.__get_bigjob_working_dir(), "stdout-bigjob_agent.txt")
-            jd.error = os.path.join(self.__get_bigjob_working_dir(),"stderr-bigjob_agent.txt")
-         
-        # Stage BJ Input files
-        # build target url
-        bigjob_working_directory_url = "ssh://" + lrms_saga_url.host + self.__get_bigjob_working_dir()
-        self.__stage_files(filetransfers, bigjob_working_directory_url)
+            jd.output = os.path.join(self.working_directory, "stdout-bigjob_agent.txt")
+            jd.error = os.path.join(self.working_directory,"stderr-bigjob_agent.txt")
+          
            
         # Submit job
         js = None    
@@ -294,31 +303,33 @@ import os
 import urllib
 import sys
 import time
-
 start_time = time.time()
-
-home = os.environ["HOME"]
-
+home = os.environ.get("HOME")
 BIGJOB_AGENT_DIR= os.path.join(home, ".bigjob")
 if not os.path.exists(BIGJOB_AGENT_DIR): os.mkdir (BIGJOB_AGENT_DIR)
 BIGJOB_PYTHON_DIR=BIGJOB_AGENT_DIR+"/python/"
 BOOTSTRAP_URL="https://raw.github.com/drelu/BigJob/master/bootstrap/bigjob-bootstrap.py"
 BOOTSTRAP_FILE=BIGJOB_AGENT_DIR+"/bigjob-bootstrap.py"
-
-try: import saga
-except: print "SAGA and SAGA Python Bindings not found: BigJob only work w/ non-SAGA backends e.g. Redis, ZMQ.";print "Python version: ",  os.system("python -V");print "Python path: " + str(sys.path)
-
+#ensure that BJ in .bigjob is upfront in sys.path
 sys.path.insert(0, os.getcwd() + "/../")
 sys.path.insert(0, os.getcwd() + "/../../")
-
+p = list()
+for i in sys.path:
+    if i.find(\".bigjob/python\")>1:
+          p.insert(0, i)
+for i in p: sys.path.insert(0, i)
+print str(sys.path)
+try: import saga
+except: print "SAGA and SAGA Python Bindings not found: BigJob only work w/ non-SAGA backends e.g. Redis, ZMQ.";print "Python version: ",  os.system("python -V");print "Python path: " + str(sys.path)
 try: import bigjob.bigjob_agent
 except: print "BigJob not installed. Attempting to install it."; opener = urllib.FancyURLopener({}); opener.retrieve(BOOTSTRAP_URL, BOOTSTRAP_FILE); os.system("python " + BOOTSTRAP_FILE + " " + BIGJOB_PYTHON_DIR); activate_this = BIGJOB_PYTHON_DIR+'bin/activate_this.py'; execfile(activate_this, dict(__file__=activate_this))
-
 #try to import BJ once again
 import bigjob.bigjob_agent
-
 # execute bj agent
-args = ["bigjob_agent.py", \"%s\", \"%s\"]
+args = list()
+args.append("bigjob_agent.py")
+args.append(\"%s\")
+args.append(\"%s\")
 print "Bootstrap time: " + str(time.time()-start_time)
 print "Starting BigJob Agents with following args: " + str(args)
 bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
@@ -462,6 +473,8 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
     
     def __parse_url(self, url):
         try:
+            if is_bliss==True:
+                raise BigJobError("BLISS URL broken.")
             surl = saga.url(url)
             host = surl.host
             port = surl.port
@@ -471,19 +484,35 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
             scheme = "%s://"%surl.scheme
         except:
             """ Fallback URL parser based on Python urlparse library """
-            logger.error("URL %s could not be parsed")
+            logger.error("URL %s could not be parsed"%(url))
             traceback.print_exc(file=sys.stderr)
             result = urlparse.urlparse(url)
+            logger.debug("Result: " + str(result))
             host = result.hostname
+            #host = None
             port = result.port
             username = result.username
             password = result.password
+            scheme = "%s://"%result.scheme 
+            if host==None:
+                logger.debug("Python 2.6 fallback")
+                if url.find("/", len(scheme)) > 0:
+                    host = url[len(scheme):url.find("/", len(scheme))]
+                else:
+                    host = url[len(scheme):]
+                if host.find(":")>1:
+                    logger.debug(host)
+                    comp = host.split(":")
+                    host = comp[0]
+                    port = int(comp[1])
+                    
             if url.find("?")>0:
                 query = url[url.find("?")+1:]
             else:
                 query = None
-            scheme = "%s://"%result.scheme
             
+        
+        logger.debug("%s %s %s"%(scheme, host, port))
         return scheme, username, password, host, port, query     
             
     
@@ -497,7 +526,6 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
 
     def __stage_files(self, filetransfers, target_url):
         logger.debug("Stage: %s to %s"%(filetransfers, target_url))
-        self.__create_remote_directory(target_url)
         if filetransfers==None:
             return
         for i in filetransfers:
@@ -557,23 +585,59 @@ sftp.put("%s", "%s")
         scheme = target_url[:target_url.find("://")+3]
         target_host = target_url[len(scheme):target_url.find("/", len(scheme))]
         target_path = target_url[len(scheme)+len(target_host):]    
+        target_user = None
+        if target_host.find("@")>1:
+            comp = target_host.split("@")
+            target_host =comp[1]
+            target_user =comp[0]
         logger.debug("Create remote directory; scheme: %s, host: %s, path: %s"%(scheme, target_host, target_path))
         if scheme.startswith("fork") or target_host.startswith("localhost"):
             os.makedirs(target_path)
+            return True
         else:
             try:
-                client = paramiko.SSHClient()
-                client.load_system_host_keys()
-                client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-                client.connect(target_host)
+                client = self.__get_ssh_client(target_host, target_user)
                 sftp = client.open_sftp()            
                 sftp.mkdir(target_path)
                 sftp.close()
                 client.close()
+                return True
             except:
+                self.__print_traceback()	
                 logger.warn("Error creating directory: " + str(target_path) 
-                             + " at: " + str(target_host) + " Already exists?" )
+                             + " at: " + str(target_host) + " SSH password-less login activated?" )
+                return False
              
+        
+    def __get_ssh_client(self, hostname, user=None):
+        client = paramiko.SSHClient()
+        client.load_system_host_keys()
+        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        if user == None: user = self.__discover_ssh_user(hostname)
+        if user!=None: logger.debug("discovered user: " + user)
+        client.connect(hostname, username=user)
+        return client
+    
+    
+    def __discover_ssh_user(self, hostname):
+        # discover username
+        user = None
+        ssh_config = os.path.join(os.path.expanduser("~"), ".ssh/config")
+        ssh_config_file = open(ssh_config, "r")
+        lines = ssh_config_file.readlines()
+        for i in range(0, len(lines)):
+            line = lines[i]
+            if line.find(hostname)>0:
+                for k in range(i + 1, len(lines)):
+                    sub_line = lines[k]
+                    if sub_line.startswith(" ")==False and sub_line.startswith("\t")==False:
+                        break # configuration for next host
+                    elif sub_line.find("User")>0:
+                        stripped_sub_line = sub_line.strip()
+                        user = stripped_sub_line.split()[1]
+                        break
+        ssh_config_file.close() 
+        return user
     
     
     def __print_traceback(self):

@@ -4,6 +4,7 @@ import textwrap
 import re
 
 from bigjob import logger
+import bigjob
 
 try:
     import saga
@@ -14,7 +15,7 @@ import os
 
 class pbsssh:
     """Constructor"""
-    def __init__(self,bootstrap_script,lrms_saga_url,walltime,nodes,ppn,userproxy,working_directory=None):
+    def __init__(self, bootstrap_script, lrms_saga_url, walltime, number_nodes, processes_per_node, userproxy, working_directory=None, bj_working_directory=None):
         self.job_id = ""
         self.lrms_saga_url = lrms_saga_url
         self.lrms_saga_url.scheme="ssh"
@@ -24,6 +25,21 @@ class pbsssh:
             self.working_directory = ""
         else:
             self.working_directory = working_directory
+        if bj_working_directory==None:
+            bj_working_directory=self.working_directory
+        ### convert walltime in minutes to PBS representation of time ###
+        walltime_pbs="1:00:00"
+        if walltime!=None and walltime!="":    
+            hrs=walltime/60 
+            minu=walltime%60 
+            walltime_pbs=""+str(hrs)+":"+str(minu)+":00"
+
+        if number_nodes%processes_per_node == 0:
+            nodes = number_nodes/processes_per_node
+        else:
+            nodes = (number_nodes/processes_per_node) + 1    
+        
+        ppn = processes_per_node
 
         self.bootstrap_script = textwrap.dedent("""import sys
 import os
@@ -39,17 +55,22 @@ qsub_file.write("#PBS -l nodes=%s:ppn=%s")
 qsub_file.write("\\n")
 qsub_file.write("#PBS -l walltime=%s")
 qsub_file.write("\\n")
+qsub_file.write("#PBS -o %s/stdout-bigjob_agent.txt")
+qsub_file.write("\\n")
+qsub_file.write("#PBS -e %s/stderr-bigjob_agent.txt")
+qsub_file.write("\\n")
 qsub_file.write("cd %s")
 qsub_file.write("\\n")
 qsub_file.write("python -c XX" + textwrap.dedent(\"\"%s\"\") + "XX")
 qsub_file.close()
 os.system( "qsub  " + qsub_file_name)
-""") % (str(nodes),str(ppn),str(walltime),str(self.working_directory),bootstrap_script)
+""") % (str(nodes),str(ppn),str(walltime_pbs), bj_working_directory, bj_working_directory, str(self.working_directory), bootstrap_script)
         ### escaping characters
         self.bootstrap_script = self.bootstrap_script.replace("\"","\\\"")
         self.bootstrap_script = self.bootstrap_script.replace("\\\\","\\\\\\\\\\")
         self.bootstrap_script = self.bootstrap_script.replace("XX","\\\\\\\"")
         self.bootstrap_script = "\"" + self.bootstrap_script+ "\""
+        logger.debug(self.bootstrap_script)
 
 
     def run(self):
@@ -74,8 +95,14 @@ os.system( "qsub  " + qsub_file_name)
         pbssshjob = js.create_job(jd)
         print "Submit pilot job to: " + str(self.lrms_saga_url)
         pbssshjob.run()
-        joboutput= pbssshjob.get_stdout()
-        self.job_id=(joboutput.read()).split(".")[0]
+        pbssshjob.wait()
+        outstr = pbssshjob.get_stdout().read()
+        errstr = pbssshjob.get_stderr().read()
+        self.job_id=(outstr).split(".")[0]
+        logger.debug("PBS JobID: " + str(self.job_id))
+        if self.job_id==None or self.job_id=="":
+            raise Exception("BigJob submission via pbs-ssh:// failed: %s %s" % (outstr,errstr))
+
 
     def get_state(self):
         jd = saga.job.description()

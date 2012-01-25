@@ -73,11 +73,12 @@ class bigjob_agent:
         self.CPR = default_dict["cpr"]
         self.SHELL=default_dict["shell"]
         self.MPIRUN=default_dict["mpirun"]
-        logging.debug("cpr: " + self.CPR + " mpi: " + self.MPIRUN + " shell: " + self.SHELL)
+        self.LAUNCH_METHOD=self.__get_launch_method(default_dict["launch_method"])
+        
+        logging.debug("Launch Method: " + self.LAUNCH_METHOD + " mpi: " + self.MPIRUN + " shell: " + self.SHELL)
         
         # init rms (SGE/PBS)
         self.init_rms()
-
         self.failed_polls = 0
         
         ##############################################################################
@@ -186,27 +187,40 @@ class bigjob_agent:
 
     def init_pbs(self):
         """ initialize free nodes list from PBS environment """
-        pbs_node_file = os.environ.get("PBS_NODEFILE")    
-        if pbs_node_file == None:
-            return
-        f = open(pbs_node_file)
-        self.freenodes = f.readlines()
-        f.close()
-
-        # check whether pbs node file contains the correct number of nodes
-        num_cpus = self.get_num_cpus()
-        node_dict={}
-        for i in set(self.freenodes):
-            node_dict[i] = self.freenodes.count(i)
-            if node_dict[i] < num_cpus:
-                node_dict[i] = num_cpus
+        if self.LAUNCH_METHOD == "aprun":
+            # Workaround for Kraken
+            # PBS_NODEFILE does only contain front node
+            # thus we create a dummy node file with the respective 
+            # number of slots
+            # aprun does not rely on the nodefile for job launching
+            number_nodes =  os.environ.get("PBS_NNODES")
+            self.freenodes=[]
+            for i in range(0, int(number_nodes)):
+                slot = "slot-%d\n"%i
+                logger.debug("add slot: " + slot)
+                self.freenodes.append(slot)            
+        else:
+            pbs_node_file = os.environ.get("PBS_NODEFILE")    
+            if pbs_node_file == None:
+                return
+            f = open(pbs_node_file)
+            self.freenodes = f.readlines()
+            f.close()
     
-        self.freenodes=[]
-        for i in node_dict.keys():
-            logger.debug("host: " + i + " nodes: " + str(node_dict[i]))
-            for j in range(0, node_dict[i]):
-                logger.debug("add host: " + i.strip())
-                self.freenodes.append(i)
+            # check whether pbs node file contains the correct number of nodes
+            num_cpus = self.get_num_cpus()
+            node_dict={}
+            for i in set(self.freenodes):
+                node_dict[i] = self.freenodes.count(i)
+                if node_dict[i] < num_cpus:
+                    node_dict[i] = num_cpus
+        
+            self.freenodes=[]
+            for i in node_dict.keys():
+                logger.debug("host: " + i + " nodes: " + str(node_dict[i]))
+                for j in range(0, node_dict[i]):
+                    logger.debug("add host: " + i.strip())
+                    self.freenodes.append(i)
 
     def get_num_cpus(self):
         cpuinfo = open("/proc/cpuinfo", "r")
@@ -263,16 +277,25 @@ class bigjob_agent:
                         
                 environment = os.environ
                 envi = ""
+                self.number_subjobs=1
                 if (job_dict.has_key("Environment") == True):
                     env_raw = job_dict['Environment']
                     if type(env_raw) == types.ListType:
                         env_list = env_raw
                     else:
                         env_list = eval(job_dict["Environment"])
+
+                    logger.debug("Environment: " + str(env_list))
                     for i in env_list:
-                        envi_1 = "export " + i +"; "
-                        envi = envi + envi_1
- 
+                        logger.debug("Eval " + i)
+                        if i.startswith("NUMBER_SUBJOBS"):
+                            self.number_subjobs=int(i.split("=")[1].strip())
+                            logger.debug("NUMBER_SUBJOBS: " + str(self.number_subjobs))
+                        else:
+                            envi_1 = "export " + i +"; "
+                            envi = envi + envi_1
+                            logger.debug(envi) 
+                
                 executable = job_dict["Executable"]
                 
                 workingdirectory = os.path.join(os.getcwd(), job_id)  
@@ -303,11 +326,22 @@ class bigjob_agent:
                 # create stdout/stderr file descriptors
                 output_file = os.path.abspath(output)
                 error_file = os.path.abspath(error)
-                logger.debug("stdout: " + output_file + " stderr: " + error_file 
-                             + " env: " + str(environment))
+                logger.debug("stdout: " + output_file + " stderr: " + error_file)
                 stdout = open(output_file, "w")
                 stderr = open(error_file, "w")
-                if ( spmdvariation.lower( )!="mpi"):
+                if self.LAUNCH_METHOD=="aprun":
+                    env_strip = envi.strip()
+                    env_command = env_strip[:(len(env_strip)-1)]
+                    command = "aprun  -n " + str(self.number_subjobs) + " -d " + numberofprocesses + " " + executable + " " + arguments
+
+                    # MPMD Mode => all subjobs on Kraken fail because aprun returns 1 as returncode
+                    #command = "aprun"
+                    #for i in range(0, self.number_subjobs):
+                    #    command = command +   " -d " + numberofprocesses + " " + executable + " " + arguments  
+                    #    # + " 1 > "+ str(i)+ "-out.txt " + " 2 > "+ str(i)+ "-err.txt"
+                    #    if i != self.number_subjobs-1:
+                    #        command = command + " : "
+                elif (spmdvariation.lower()!="mpi"):
                     command =  envi + executable + " " + arguments
                 else:
                     command =  executable + " " + arguments
@@ -328,14 +362,20 @@ class bigjob_agent:
                     logger.debug("Not enough resources to run: " + job_url)
                     self.coordination.queue_job(self.base_url, job_url)
                     return # job cannot be run at the moment
-
-                # start application process
-                if (spmdvariation.lower( )=="mpi"):
-                    command = "cd " + workingdirectory + "; " + envi +  self.MPIRUN + " -np " + numberofprocesses + " -machinefile " + machinefile + " " + command
-                    #if (host != socket.gethostname()):
-                    #    command ="ssh  " + host + " \"cd " + workingdirectory + "; " + command +"\""     
+                
+                # build execution command
+                if self.LAUNCH_METHOD == "aprun":
+                    command ="cd " + workingdirectory + "; " + command
                 else:
-                    command ="ssh  " + host + " \"cd " + workingdirectory + "; " + command +"\""     
+                    if (spmdvariation.lower( )=="mpi"):
+                        command = "cd " + workingdirectory + "; " + envi +  self.MPIRUN + " -np " + numberofprocesses + " -machinefile " + machinefile + " " + command
+                    elif host == "localhost":
+                        command ="cd " + workingdirectory + "; " + command
+                    else:    
+                        command ="ssh  " + host + " \"cd " + workingdirectory + "; " + command +"\""
+                        
+                
+                # start application process                    
                 shell = self.SHELL 
                 logger.debug("execute: " + command + " in " + workingdirectory + " from: " + str(socket.gethostname()) + " (Shell: " + shell +")")
                 # bash works fine for launching on QB but fails for Abe :-(
@@ -348,6 +388,7 @@ class bigjob_agent:
             except:
                 traceback.print_exc(file=sys.stderr)
     
+   
             
     def allocate_nodes(self, job_dict):
         """ allocate nodes
@@ -421,11 +462,13 @@ class bigjob_agent:
         job.run()
         job.wait()
     
+    
     def print_machine_file(self, filename):
         fh = open(filename, "r")
         lines = fh.readlines()
         fh.close
         logger.debug("Machinefile: " + filename + " Hosts: " + str(lines))
+       
          
     def free_nodes(self, job_url):
         job_dict = self.coordination.get_job(job_url)
@@ -528,9 +571,8 @@ class bigjob_agent:
                 p_state = p.poll()
                 logger.debug(self.print_job(i) + " state: " + str(p_state) + " return code: " + str(p.returncode))
                 if (p_state != None and (p_state==0 or p_state==255)):
-                    logger.debug("Job successful: " + self.print_job(i))
+                    logger.debug("Job successful: " + self.print_job(i) + " - set state to Done")
                     self.coordination.set_job_state(i, str(bigjob.state.Done))
-                    #i.set_attribute("state", str(saga.job.Done))
                     self.free_nodes(i)
                     del self.processes[i]
                 elif p_state!=0 and p_state!=255 and p_state != None:
@@ -590,6 +632,34 @@ class bigjob_agent:
 
     def stop_background_thread(self):        
         self.stop=True
+        
+    
+    def __get_launch_method(self, requested_method):
+        """ returns desired execution method: ssh, aprun """
+        
+        aprun_available = False
+        try:
+            aprun_available = (subprocess.call("aprun -n 1 /bin/date", shell=True)==0)
+        except:
+            pass
+        
+        ssh_available = False
+        try:
+            ssh_available = (subprocess.call("ssh localhost /bin/date", shell=True)==0)
+        except:
+            pass
+        
+        launch_method = "ssh"
+        if requested_method=="aprun" and aprun_available == True:
+            launch_method="aprun"
+        elif requested_method=="ssh" and ssh_available == True:
+            launch_method="ssh"
+        # aprun fallback
+        elif ssh_available==False and aprun_available==True:
+            launch_method="aprun"
+        logger.debug("aprun: " + str(aprun_available) + " ssh: " + str(ssh_available) 
+                     + " Launch method: " + str(launch_method))
+        return launch_method
     
   
 #########################################################

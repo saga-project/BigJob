@@ -25,7 +25,7 @@ setup(name='BigJob',
                     'Topic :: Utilities',
                     ],
       platforms = ('Unix', 'Linux', 'Mac OS'),
-      packages=['bigjob', 'bigjob_dynamic', 'coordination', 'examples', 'api', 'bootstrap'],
+      packages=['bigjob', 'bigjob_dynamic', 'coordination', 'pstar', 'examples', 'api', 'bootstrap'],
       #data_files=['bigjob_agent.conf', 
       #            'bigjob.conf', "VERSION", "README.md"],
       data_files = [( '', ['bigjob_agent.conf', 'bigjob_agent.conf']),  
@@ -38,7 +38,7 @@ setup(name='BigJob',
 #        '': ['README', 'README'],
 #        '': ['VERSION', 'VERSION']
 #      },
-      install_requires=['paramiko-on-pypi', 'multiprocessing', 'uuid', 'threadpool', 'virtualenv', 'redis==2.2.4', 'bliss'],
+      install_requires=['paramiko-on-pypi', 'uuid', 'threadpool', 'virtualenv', 'redis==2.2.4', 'bliss'],
       entry_points = {
         'console_scripts': [
             'test-bigjob = examples.example_local_single:main',
