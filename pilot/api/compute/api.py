@@ -1,5 +1,5 @@
 """ 
-This file contains the API for the TROY PilotJob Framework.
+This file contains the API for the PilotJob Framework.
 It is not supposed to be used directly by applications. 
 """
 
@@ -14,8 +14,8 @@ class State(object):
     
 
 
-class PilotJobDescription(dict):
-    """ TROY PilotJobDescription.
+class PilotComputeDescription(dict):
+    """  PilotJobDescription.
         
         A PilotJobDescription is a based on the SAGA Job Description.
 
@@ -74,8 +74,8 @@ class PilotJobDescription(dict):
     
     
 
-class PilotJob(object):
-    """ TROY PilotJob. 
+class PilotCompute(object):
+    """ PilotCompute (PilotJob). 
     
         This is the object that is returned by the PilotJobService when a 
         new PilotJob is created based on a PilotJobDescription.
@@ -136,10 +136,10 @@ class PilotJob(object):
     def get_state(self):
         pass
 #
-# TROY PilotJob Service
+#  Pilot ComputeService
 #
-class PilotJobService(object):
-    """ TROY PilotJobService.
+class PilotComputeService(object):
+    """  PilotJobService.
     
         The PilotJobService is responsible for creating and managing 
         the PilotJobs.
@@ -164,13 +164,13 @@ class PilotJobService(object):
         """
         pass
 
-    def create_pilotjob(self, rm, pilotjob_description, pj_type=None, context=None):
+    def create_pilot(self, rm, pilotcompute_description, pj_type=None, context=None):
         """ Add a PilotJob to the PilotJobService
 
             Keyword arguments:
             rm -- Contact string for the resource manager
-            pilotjob_desc -- PilotJob Description
-            pj_type -- TROY backend type (optional)
+            pilotcompute_description -- PilotJob Description
+            pj_type --  backend type (optional)
             context -- Security context (optional)
 
             Return value:
@@ -196,10 +196,10 @@ class PilotJobService(object):
 
 
 #
-# TROY WorkUnitService
+#  ComputeUnitService
 # 
-class WorkUnitService(object):
-    """ TROY WorkUnitService.
+class ComputeUnitService(object):
+    """  WorkUnitService.
     
         The WorkUnitService is the application's interface to submit 
         WorkUnits to the Pilot-Manager in the P* Model.
@@ -249,7 +249,7 @@ class WorkUnitService(object):
         pass
 
 
-    def submit_work_unit(self, wud):
+    def submit_compute_unit(self, wud):
         """ Submit a WU to this Work Unit Service.
 
             Keyword argument:
@@ -283,10 +283,10 @@ class WorkUnitService(object):
 
 
 #
-# TROY WorkUnitDescription
+#  ComuteUnitDescription
 # 
-class WorkUnitDescription(dict):
-    """ TROY WorkUnitDescription.
+class ComputeUnitDescription(dict):
+    """  WorkUnitDescription.
     
         The WorkUnitDescription is a job/task/call description based on 
         SAGA Job Description. 
@@ -340,10 +340,10 @@ class WorkUnitDescription(dict):
 
 
 #
-# TROY WorkUnit(WU)
+#  ComputeUnit(WU)
 # 
-class WorkUnit(object):
-    """ TROY WorkUnit.
+class ComputeUnit(object):
+    """  WorkUnit.
     
         This is the object that is returned by the WorkUnitService when a 
         new WorkUnit is created based on a WorkUnitDescription.
@@ -387,7 +387,7 @@ class WorkUnit(object):
         pass
     
 #
-# TROY Callback (Abstract) Class
+#  Callback (Abstract) Class
 #
 class Callback(object):
     """ Callback class.
