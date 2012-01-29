@@ -2,7 +2,8 @@ import compute.api
 import data.api
 
 
-class WorkDataDescription(compute.api.WorkUnitDescription):
+
+class ComputeDataDescription(compute.api.WorkUnitDescription):
     """ TROY WorkUnitDescription.
         {
             'executable': <path to executable>,  
@@ -54,7 +55,7 @@ class WorkDataDescription(compute.api.WorkUnitDescription):
     
 
 
-class WorkDataService(compute.api.WorkUnitService, data.api.PilotDataService):
+class ComputeDataService(compute.api.WorkUnitService, data.api.PilotDataService):
     """ TROY WorkDataService.
     
         The WorkDataService is the application's interface to submit 

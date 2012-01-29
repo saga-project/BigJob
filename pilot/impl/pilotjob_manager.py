@@ -13,7 +13,7 @@ import bigjob
 from bigjob import logger
 from bigjob import bigjob, subjob
 from bigjob_dynamic.many_job import *
-from pstar.api.compute.api import PilotJob, PilotJobService
+from pstar.api.compute.api import PilotCompute, PilotComputeService
 
 
 from pstar.coordination.advert import AdvertCoordinationAdaptor as CoordinationAdaptor

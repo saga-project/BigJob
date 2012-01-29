@@ -2,8 +2,8 @@
 This file contains the API for the (proposed) TROY PilotData Framework.
 """
     
-class PilotStoreDescription(dict):
-    """ TROY PilotStoreDescription.
+class PilotDataDescription(dict):
+    """ PilotDataDescription.
         {
             'service_url': "ssh://localhost/tmp/pilotstore/",
             'size':100,
@@ -28,7 +28,7 @@ class PilotStoreDescription(dict):
 
 
 class PilotStore(object):
-    """ TROY PilotStore.  """
+    """ PilotStore.  """
 
     # Class members
     __slots__ = (
@@ -56,7 +56,7 @@ class PilotStore(object):
 
 
 class PilotStoreService(object):
-    """ TROY PilotStoreService (PSS).   """
+    """ PilotStoreService (PSS).   """
 
     # Class members
     __slots__ = (
@@ -101,10 +101,10 @@ class PilotStoreService(object):
 
 
 #
-# TROY PilotDataService
+# PilotDataService
 # 
 class PilotDataService(object):
-    """ TROY PilotDataService (PDS).   
+    """ PilotDataService (PDS).   
     """
    
     def __init__(self, pds_id=None):
@@ -168,10 +168,10 @@ class PilotDataService(object):
         pass
 
 #
-# TROY PilotDataDescription
+# DataUnitDescription
 # 
-class PilotDataDescription(dict):
-    """ TROY PilotDataDescription.
+class DataUnitDescription(dict):
+    """ PilotDataDescription.
         {
             'file_urls': [file1, file2, file3]        
         } 
@@ -190,10 +190,10 @@ class PilotDataDescription(dict):
     
     
 #
-# TROY PilotData 
+# DataUnitSet 
 # 
-class PilotData(object):
-    """ TROY PilotData. Holds a set of data units.        
+class DataUnitSet(object):
+    """ PilotData. Holds a set of data units.        
     """
 
     # Class members
@@ -234,7 +234,7 @@ class PilotData(object):
     
 
 class DataUnit(object):
-    """ TROY DataUnit """
+    """ DataUnit """
 
     __slots__ = (
         'id',        
