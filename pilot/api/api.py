@@ -3,7 +3,7 @@ import data.api
 
 
 
-class ComputeDataDescription(compute.api.WorkUnitDescription):
+class ComputeDataDescription(compute.api.ComputeUnitDescription):
     """ TROY WorkUnitDescription.
         {
             'executable': <path to executable>,  
@@ -55,7 +55,7 @@ class ComputeDataDescription(compute.api.WorkUnitDescription):
     
 
 
-class ComputeDataService(compute.api.WorkUnitService, data.api.PilotDataService):
+class ComputeDataService(compute.api.ComputeUnitService, data.api.PilotDataService):
     """ TROY WorkDataService.
     
         The WorkDataService is the application's interface to submit 
@@ -72,4 +72,4 @@ class ComputeDataService(compute.api.WorkUnitService, data.api.PilotDataService)
             wds_id -- Reconnect to an existing WDS (optional).
         """
         pass   
-  
+
