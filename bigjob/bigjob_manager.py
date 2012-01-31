@@ -638,39 +638,6 @@ sftp.put("%s", "%s")
                         break
         ssh_config_file.close() 
         return user
-
-    def has_finished(self,state):
-        state = state.lower()
-        if state=="done" or state=="failed" or state=="canceled":
-            return True
-        else:
-            return False
-
-    def wait_for_all_jobs(self,jobs, job_start_times, job_states):
-        """ waits for all jobs that are in list to terminate """
-        while 1:
-            finish_counter=0
-            result_map = {}
-            number_of_jobs = len(jobs)
-            for i in range(0, number_of_jobs):
-                old_state = job_states[jobs[i]]
-                state = jobs[i].get_state()
-                if result_map.has_key(state)==False:
-                    result_map[state]=1
-                else:
-                    result_map[state] = result_map[state]+1
-                    #pdb.set_trace()
-                if old_state != state:
-                    print "Job " + str(jobs[i]) + " changed from: " + old_state + " to " + state
-                if old_state != state and self.has_finished(state)==True:
-                    print "Job: " + str(jobs[i]) + " Runtime: " + str(time.time()-job_start_times[jobs[i]]) + " s."
-                if self.has_finished(state)==True:
-                    finish_counter = finish_counter + 1
-                job_states[jobs[i]]=state
-
-            if finish_counter == number_of_jobs:
-                break
-            time.sleep(2)
     
     def __print_traceback(self):
         exc_type, exc_value, exc_traceback = sys.exc_info()
