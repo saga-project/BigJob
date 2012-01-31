@@ -639,7 +639,6 @@ sftp.put("%s", "%s")
         ssh_config_file.close() 
         return user
     
-    
     def __print_traceback(self):
         exc_type, exc_value, exc_traceback = sys.exc_info()
         print "*** print_exception:"
