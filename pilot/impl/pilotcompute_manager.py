@@ -13,10 +13,9 @@ import bigjob
 from bigjob import logger
 from bigjob import bigjob, subjob
 from bigjob_dynamic.many_job import *
-from pstar.api.compute.api import PilotCompute, PilotComputeService
 
-
-from pstar.coordination.advert import AdvertCoordinationAdaptor as CoordinationAdaptor
+from pilot.api import PilotCompute, PilotComputeService, State
+from pilot.coordination.advert import AdvertCoordinationAdaptor as CoordinationAdaptor
 
 
 """ This variable defines the coordination system that is used by BigJob
@@ -29,8 +28,8 @@ from pstar.coordination.advert import AdvertCoordinationAdaptor as CoordinationA
 COORDINATION_URL = "advert://localhost/?dbtype=sqlite3"
 
 
-class PilotJobService(PilotJobService):
-    """ TROY PilotJobService based on BigJob.
+class PilotComputeService(PilotComputeService):
+    """ PilotJobService based on BigJob.
                     
     """
 
@@ -41,7 +40,7 @@ class PilotJobService(PilotJobService):
         'id',           # Reference to this PJS
         'url',
         'state',       # Status of the PJS
-        'pilot_jobs',    # List of PJs under this PJS
+        'pilot_computes',    # List of PJs under this PJS
         '__mjs'
     )
 
@@ -52,7 +51,7 @@ class PilotJobService(PilotJobService):
             pjs_id -- Don't create a new, but connect to an existing (optional)
         """
         self.__mjs = None
-        self.pilot_jobs=[]
+        self.pilot_computes=[]
         
         if pjs_url==None:      # new pjs          
             self.id = self.PJS_ID_PREFIX+str(uuid.uuid1())
@@ -61,11 +60,11 @@ class PilotJobService(PilotJobService):
             logger.error("Reconnect to PJS currently not supported.")
             
 
-    def create_pilotjob(self, rm=None, pilot_job_description=None, pj_type=None, context=None):
+    def create_pilot(self, rm=None, pilot_compute_description=None, pj_type=None, context=None):
         """ Add a PilotJob to the PilotJobService
 
             Keyword arguments:
-            pilot_job_description -- PilotJob Description
+            pilot_compute_description -- PilotJob Description
             
             Return value:
             A PilotJob handle
@@ -75,34 +74,34 @@ class PilotJobService(PilotJobService):
             logging.debug("Create Dynamic BigJob Service")            
             self.__mjs = many_job_service([], COORDINATION_URL)
             
-        resource_description = self.__translate_pj_bj_description(pilot_job_description)
+        resource_description = self.__translate_pj_bj_description(pilot_compute_description)
         bigjob = self.__mjs.add_resource(resource_description)
-        pj = PilotJob(self, bigjob, pilot_job_description)
-        self.pilot_jobs.append(pj)
+        pj = PilotCompute(self, bigjob, pilot_compute_description)
+        self.pilot_computes.append(pj)
         return pj
         
-    def __translate_pj_bj_description(self, pilot_job_description):
+    def __translate_pj_bj_description(self, pilot_compute_description):
         resource_description={}
-        if pilot_job_description.has_key("service_url"):
-            resource_description["resource_url"] = pilot_job_description["service_url"] 
+        if pilot_compute_description.has_key("service_url"):
+            resource_description["resource_url"] = pilot_compute_description["service_url"] 
             
-        if pilot_job_description.has_key("queue"):
-            resource_description["queue"] = pilot_job_description["queue"] 
+        if pilot_compute_description.has_key("queue"):
+            resource_description["queue"] = pilot_compute_description["queue"] 
         else:
             resource_description["queue"] = None
             
-        if pilot_job_description.has_key("allocation"):
-            resource_description["allocation"] = pilot_job_description["allocation"] 
+        if pilot_compute_description.has_key("allocation"):
+            resource_description["allocation"] = pilot_compute_description["allocation"] 
         else:
             resource_description["allocation"] = None
         
-        for i in pilot_job_description.keys():
-            resource_description[i] = pilot_job_description[i] 
+        for i in pilot_compute_description.keys():
+            resource_description[i] = pilot_compute_description[i] 
         
         return resource_description
     
-    def list_pilotjobs(self):
-        return self.pilot_jobs
+    def list_pilots(self):
+        return self.pilot_computes
         
     
     def cancel(self):
@@ -119,32 +118,32 @@ class PilotJobService(PilotJobService):
         self.__mjs.cancel()
         
         
-    def _submit_wu(self, work_unit):
+    def _submit_cu(self, compute_unit):
         """ Submits work unit to Dynamic Bigjob (ManyJob) 
             Scheduler of Dynamic Bigjob will assign appropriate PJ to WorkUnit        
         """
-        subjob = self.__mjs.create_job(work_unit.subjob_description)
+        subjob = self.__mjs.create_job(compute_unit.subjob_description)
         subjob.run()
-        work_unit.subjob=subjob
-        return work_unit
+        compute_unit.subjob=subjob
+        return compute_unit
     
     
     def __repr__(self):
         status_string = "{\n"
-        for i in self.pilot_jobs:
+        for i in self.pilot_computes:
             status_string = status_string + " PJ: %s, State: %s;"%(i.get_url(), i.get_state())
         status_string = status_string + "\n}"
         return status_string
     
     
     
-class PilotJob(PilotJob):
-    """ TROY Wrapper for BigJob class """
+class PilotCompute(PilotCompute):
+    """ Wrapper for BigJob class """
      
-    def __init__(self, pilot_job_service, bigjob, pilot_job_description):
-        logging.debug("Create PilotJob for BigJob: " + str(bigjob))
-        self.pilot_job_description=pilot_job_description
-        self.__pilot_job_service=pilot_job_service
+    def __init__(self, pilot_compute_service, bigjob, pilot_compute_description):
+        logging.debug("Create PilotCompute for BigJob: " + str(bigjob))
+        self.pilot_compute_description=pilot_compute_description
+        self.__pilot_compute_service=pilot_compute_service
         self.__bigjob = bigjob        
         self.__subjobs = []
         
@@ -157,14 +156,14 @@ class PilotJob(PilotJob):
     def get_url(self):
         return self.__bigjob.pilot_url
     
-    def _submit_wu(self, work_unit):
+    def _submit_cu(self, compute_unit):
         """ Submits work unit to Bigjob """
         logging.debug("Submit sub-job to big-job")
         sj = bigjob.bigjob_manager.subjob()
-        sj.submit_job(self.__bigjob.pilot_url, work_unit.subjob_description)
+        sj.submit_job(self.__bigjob.pilot_url, compute_unit.subjob_description)
         self.__subjobs.append(sj)
-        work_unit.subjob=sj
-        return work_unit
+        compute_unit.subjob=sj
+        return compute_unit
         
         
         

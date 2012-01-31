@@ -6,7 +6,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)) + "/../../../webhd
 
 
 
-from pstar.api.compute.api import State
+from pilot.api import State
 from bigjob import logger
 logger.debug(str(sys.path))
 

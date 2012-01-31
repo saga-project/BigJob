@@ -1,4 +1,4 @@
-""" TROY PilotData 
+""" PilotData 
 """ 
 import sys
 import os
@@ -12,21 +12,258 @@ import time
 import pdb
 import Queue
 
-
 import saga
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
+from bigjob import logger
 
-from pstar.api.data.api import PilotData, DataUnit, PilotDataService
-from pstar.api.compute.api import State
-from pstar.impl.pilotstore_manager import *
-from pstar.scheduler.random_scheduler import Scheduler
+from pilot.api import PilotData, DataUnit, PilotDataService
+from pilot.api import State
+from pilot.filemanagement.ssh_adaptor import SSHFileAdaptor 
+from pilot.filemanagement.webhdfs_adaptor import WebHDFSFileAdaptor 
+from pilot.coordination.advert import AdvertCoordinationAdaptor as CoordinationAdaptor
 
-from pstar.coordination.advert import AdvertCoordinationAdaptor as CoordinationAdaptor
-
-    
 
 class PilotData(PilotData):
-    """ TROY PilotData. Holds a set of data units.
+    """ PilotData. 
+    
+        Reserves a space of physical storage on the resource specified in the pilot_data_description
+    """   
+    
+    PS_ID_PREFIX="ps-"   
+
+        
+    def __init__(self, pilot_data_service=None, pilot_data_description=None, ps_url=None):    
+        """ 
+            Initialize PilotData at given service url:
+            
+            ssh://<hostname>
+            gsissh://<hostname>
+            
+            Currently only ssh schemes are supported. In the future all 
+            SAGA URL schemes/adaptors should be supported.        
+        """ 
+        self.id = None
+        self.url = None
+        self.pilot_data_description = None
+        self.service_url=None
+        self.size = None
+        self.data_unit_description = None
+        self.data_units={}
+        
+        if ps_url==None and pilot_data_service!=None:      # new ps          
+            self.id = self.PS_ID_PREFIX+str(uuid.uuid1())
+            self.pilot_data_description = pilot_data_description
+            self.url = CoordinationAdaptor.add_ps(CoordinationAdaptor.get_base_url(bigdata.application_id)+"/"+pilot_data_service.id, self)
+        elif ps_url != None:
+            logger.warn("Reconnect to PilotData: %s"%ps_url)
+            dictionary = CoordinationAdaptor.get_ps(ps_url)
+            ps_dict = dictionary["pilot_data"]
+            for i in ps_dict:
+                self.__setattr__(i, ps_dict[i])
+                        
+        self.initialize_pilot_data()
+        
+            
+    def initialize_pilot_data(self):
+        if self.pilot_data_description!=None:
+            self.service_url=self.pilot_data_description["service_url"]
+            self.size = self.pilot_data_description["size"]
+            
+            # initialize file adaptor
+            if self.service_url.startswith("ssh:"):
+                logger.debug("Use SSH backend")
+                self.__filemanager = SSHFileAdaptor(self.service_url)
+            elif self.service_url.startswith("http:"):
+                logger.debug("Use WebHDFS backend")
+                self.__filemanager = WebHDFSFileAdaptor(self.service_url)
+                
+            self.__filemanager.initialize_pilotdata()
+            self.__filemanager.get_pilotdata_size()
+            
+
+    def __get_ps_id(self, ps_url):
+        start = ps_url.index(self.PS_ID_PREFIX)
+        end =ps_url.index("/", start)
+        return ps_url[start:end]
+    
+
+    def cancel(self):        
+        """ Cancel PilotData 
+
+            Keyword arguments:
+            None
+        """
+        self.__filemanager.delete_pilotdata()
+        
+        
+    def url_for_du(self, du):
+        if self.pilot_data.has_key(du.id):
+            return self.service_url + "/" + str(du.id)
+        return None
+    
+    
+    def create_du(self, du):
+        self.__filemanager.create_du(du.id)
+        
+        
+    def put_du(self, du):
+        logging.debug("Put PD: %s to PS: %s"%(du.id,self.service_url))
+        self.__filemanager.create_du(du.id)
+        self.__filemanager.put_du(du)
+        self.pilot_data[du.id] = du
+        CoordinationAdaptor.update_ps(self)
+        
+        
+    def remove_du(self, du):
+        """ Remove pilot data from pilot data """
+        if self.pilot_data.has_key(du.id):
+            self.__filemanager.remove_du(du)
+            del self.pilot_data[du.id]
+        CoordinationAdaptor.update_ps(self)
+        
+    
+    def copy_du(self, du, ps_new):
+        ps_new.create_du(du)
+        self.__filemanager.copy_du(du, ps_new)
+        
+        # update meta data at ps_new
+        ps_new.pilot_data[du.id] = du
+        CoordinationAdaptor.update_ps(ps_new)
+        
+    
+    def list_pilotdata(self):           
+        return self.pilot_data.values()
+    
+    
+    def get_state(self):
+        return self.__filemanager.get_state()
+    
+    
+    def export_du(self, du, target_url):
+        self.__filemanager.get_du(du, target_url)
+    
+    
+    def to_dict(self):
+        ps_dict = {}
+        ps_dict["id"]=self.id
+        ps_dict["url"]=self.url
+        ps_dict["pilot_data_description"]=self.pilot_data_description
+        logger.debug("PS Dictionary: " + str(ps_dict))
+        return ps_dict
+    
+    
+    def __repr__(self):
+        return self.service_url
+    
+    
+    @classmethod
+    def create_pilot_data_from_dict(cls, ps_dict):
+        ps = PilotData()
+        for i in ps_dict.keys():
+            ps.__setattr__(i, ps_dict[i])
+        ps.initialize_pilot_data()
+        logger.debug("created ps " + str(ps))
+        return ps
+    
+
+class PilotDataService(PilotDataService):
+    """ PilotDataService (PSS)."""
+    
+    PSS_ID_PREFIX="pss-"
+
+    # Class members
+    __slots__ = (
+        'id',             # Reference to this PJS
+        'url',            # URL for referencing PilotDataService
+        'state',          # Status of the PJS
+        'data_unit'    # List of PJs under this PJS
+        'affinity_list'   # List of PS on that are affine to each other
+    )
+
+    def __init__(self, pss_url=None):
+        """ Create a PilotDataService
+
+            Keyword arguments:
+            pss_id -- restore from pss_id
+        """        
+        self.pilot_data={}
+        
+        if pss_url == None:
+            self.id = self.PSS_ID_PREFIX + str(uuid.uuid1())
+            application_url = CoordinationAdaptor.get_base_url(bigdata.application_id)
+            self.url = CoordinationAdaptor.add_pss(application_url, self)
+        else:
+            self.id = self.__get_pss_id(pss_url)
+    
+    
+    def __get_pss_id(self, pss_url):
+        start = pss_url.index(self.PSS_ID_PREFIX)
+        end =pss_url.index("/", start)
+        return pss_url[start:end]
+    
+    def __restore_ps(self, pss_url):
+        ps_list=CoordinationAdaptor.list_ps(pss_url) 
+        for i in ps_list:
+           pass
+
+    def create_pilot(self, pilot_data_description):
+        """ Create a PilotData 
+
+            Keyword arguments:
+            pilot_data_description -- PilotData Description    
+            {
+                'service_url': "ssh://<hostname>/base-url/"                
+                'size': "1000"
+            }
+            Return value:
+            A PilotData handle
+        """
+        ps = PilotData(pilot_data_service=self, 
+                        pilot_data_description=pilot_data_description)
+        self.pilot_data[ps.id]=ps
+        
+        # store pilot store in central data space
+        CoordinationAdaptor.add_ps(self.url, ps)        
+        return ps
+    
+    
+    def get_pilot(self, ps_id):
+        if self.pilot_data.has_key(ps_id):
+            return self.pilot_data[ps_id]
+        return None
+
+
+    def list_pilots(self):
+        """ List all PSs of PSS """
+        return self.pilot_data.values()
+    
+
+    def cancel(self):
+        """ Cancel the PilotDataService.
+            
+            Keyword arguments:
+            None
+
+            Return value:
+            Result of operation
+        """
+        for i in self.pilot_data.values():
+            i.cancel()
+ 
+    
+    def to_dict(self):
+        pss_dict = self.__dict__
+        pss_dict["id"]=self.id
+        return pss_dict
+ 
+ 
+    def __del__(self):
+        self.cancel()         
+            
+    
+
+class DataUnit(DataUnit):
+    """ Holds a set of file
     
         State model:
             New: PD object created
@@ -34,21 +271,21 @@ class PilotData(PilotData):
             Running: At least 1 replica of PD is persistent in a pilot store            
     """
     
-    PD_ID_PREFIX="pd-"  
+    DU_ID_PREFIX="du-"  
 
-    def __init__(self, pilot_data_service=None, pilot_data_description=None, pd_url=None):
+    def __init__(self, pilot_data_service=None, data_unit_description=None, pd_url=None):
         """
-            1.) create a new Pilot Data: pilot_data_service and pilot_data_description required
+            1.) create a new Pilot Data: pilot_data_service and data_unit_description required
             2.) reconnect to an existing Pilot Data: pd_url required 
             
         """
         if pd_url==None:
-            self.id = self.PD_ID_PREFIX + str(uuid.uuid1())
-            self.pilot_data_description = pilot_data_description        
-            self.pilot_stores=[]
+            self.id = self.DU_ID_PREFIX + str(uuid.uuid1())
+            self.data_unit_description = data_unit_description        
+            self.pilot_data=[]
             self.url = CoordinationAdaptor.add_pd(pilot_data_service.url, self)
             self.state = State.New
-            self.data_units = DataUnit.create_data_unit_list(self, self.pilot_data_description["file_urls"]) 
+            self.data_unit_items = DataUnitItem.create_data_unit_list(self, self.data_unit_description["file_urls"]) 
             CoordinationAdaptor.update_pd(self)
         else:
             self.id = self.__get_pd_id(pd_url)
@@ -58,14 +295,14 @@ class PilotData(PilotData):
     
     def __restore_state(self):
         pd_dict = CoordinationAdaptor.get_pd(self.url)
-        self.pilot_data_description = pd_dict["pilot_data_description"]
+        self.data_unit_description = pd_dict["data_unit_description"]
         self.state = pd_dict["state"]
         data_unit_dict_list = pd_dict["data_units"]
-        self.data_units = [DataUnit.create_data_unit_from_dict(i) for i in data_unit_dict_list]
+        self.data_unit_items = [DataUnitItem.create_data_unit_from_dict(i) for i in data_unit_dict_list]
         self.pilot_stores = [] 
         for i in pd_dict["pilot_stores"]:
             logger.debug("PS:"+str(i)) 
-            ps = PilotStore(ps_url=str(i))
+            ps = PilotData(ps_url=str(i))
             self.pilot_stores.append(ps) 
             
             
@@ -75,19 +312,19 @@ class PilotData(PilotData):
         CoordinationAdaptor.update_pd(self)
             
     def add_data_unit(self, data_unit):
-        self.data_units.append(data_unit)    
+        self.data_unit_items.append(data_unit)    
         CoordinationAdaptor.update_pd(self)
         # TODO Update Pilot Stores
         
         
     def remove_data_unit(self, data_unit):
-        self.data_units.remove(data_unit)
+        self.data_unit_items.remove(data_unit)
         CoordinationAdaptor.update_pd(self)
         # TODO Update Pilot Stores
         
         
     def list_data_units(self):        
-        return self.data_units
+        return self.data_unit_items
         
     
     def get_state(self):        
@@ -148,17 +385,17 @@ class PilotData(PilotData):
     
     def __repr__(self):        
         return "PD: " + str(self.url) 
-        + " \nData Units: " + str(self.data_units)
+        + " \nData Units: " + str(self.data_unit_items)
         + " \nPilot Stores: " + str(self.pilot_stores)
     
 
-class DataUnit(DataUnit):
-    """ TROY DataUnit """
-    DU_ID_PREFIX="du-"  
+class DataUnitItem():
+    """ DataUnitItem """
+    DUI_ID_PREFIX="dui-"  
    
     def __init__(self, pd=None, local_url=None):        
         if local_url!=None:
-            self.id = self.DU_ID_PREFIX + str(uuid.uuid1())
+            self.id = self.DUI_ID_PREFIX + str(uuid.uuid1())
             self.local_url = local_url        
             if pd != None:
                 self.url = pd.url + os.path.basename(local_url)
@@ -223,52 +460,5 @@ class DataUnit(DataUnit):
         for i in du_dict.keys():
             du.__setattr__(i, du_dict[i])
         return du
-    
-    
-
-    
-###############################################################################
-    
-if __name__ == "__main__":        
-    
-    # What files? Create Pilot Data Description
-    base_dir = "/Users/luckow/workspace-saga/applications/pilot-store/test/data1"
-    url_list = os.listdir(base_dir)
-    absolute_url_list = []
-    for i in url_list:
-        if os.path.isdir(i)==False:
-            absolute_url_list.append(os.path.join(base_dir, i))
-    pilot_data_description = {"file_urls":absolute_url_list}
-    
-    # create pilot data service
-    pilot_data_service = PilotDataService()
-    #note: will be scheduled as soon as a suitable pilot store is available
-    pd = pilot_data_service.submit_pilot_data(pilot_data_description) 
-    
-    # create pilot store service (factory for pilot stores (physical, distributed storage))
-    pilot_store_service = PilotStoreService()
-    ps = pilot_store_service.create_pilotstore({
-                                'service_url': "ssh://localhost/tmp/pilotstore/",
-                                'size':100                                
-                                })
-    
-    # add resources to pilot data service    
-    pilot_data_service.add(pilot_store_service) 
-    
-    logging.debug("Finished setup of PSS and PDS. Waiting for scheduling of PD")
-    
-    while pd.get_state() != State.Done:
-        state = pd.get_state()
-        print "PD URL: %s State: %s"%(pd, state)
-        if state==State.Running:
-            break
-        time.sleep(2)  
-    
-    logging.debug("Terminate Pilot Data/Store Service")
-    pilot_data_service.cancel()
-    pilot_store_service.cancel()
-    
-    
-    
     
     

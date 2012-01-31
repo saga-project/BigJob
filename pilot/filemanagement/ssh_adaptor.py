@@ -12,7 +12,7 @@ import logging
 import traceback
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
-from pstar.api.compute.api import State
+from pilot.api import State
 from bigjob import logger
 
 class SSHFileAdaptor(object):
@@ -33,7 +33,7 @@ class SSHFileAdaptor(object):
         self.__state=State.New
                         
         
-    def initialize_pilotstore(self):
+    def initialize_pilotdata(self):
         # check whether directory exists
         try:
             self.__sftp.chdir(self.path)            
@@ -43,13 +43,13 @@ class SSHFileAdaptor(object):
         self.__state=State.Running
         
         
-    def get_pilotstore_size(self):
+    def get_pilotdata_size(self):
         # check size
         size = self.__sftp.stat(self.path).st_size
         return size
     
     
-    def delete_pilotstore(self):
+    def delete_pilotdata(self):
         self.__remove_directory(self.path)
         self.__state=State.Done
     

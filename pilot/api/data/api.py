@@ -1,5 +1,5 @@
 """ 
-This file contains the API for the (proposed) TROY PilotData Framework.
+This file contains the API for the PilotData Framework.
 """
     
 class PilotDataDescription(dict):
@@ -27,8 +27,8 @@ class PilotDataDescription(dict):
 
 
 
-class PilotStore(object):
-    """ PilotStore.  """
+class PilotData(object):
+    """ PilotData.  """
 
     # Class members
     __slots__ = (
@@ -41,7 +41,7 @@ class PilotStore(object):
     )
 
     def cancel(self):        
-        """ Cancel PilotStore 
+        """ Cancel PilotData 
 
             Keyword arguments:
             None
@@ -55,8 +55,8 @@ class PilotStore(object):
        
 
 
-class PilotStoreService(object):
-    """ PilotStoreService (PSS).   """
+class PilotDataService(object):
+    """ PilotDataService (PDS).   """
 
     # Class members
     __slots__ = (
@@ -73,23 +73,23 @@ class PilotStoreService(object):
         """
         pass
 
-    def create_pilotstore(self, pilot_store_description):
+    def create_pilot(self, pilot_data_description):
         """ Create a PilotStore 
 
             Keyword arguments:
-            pilot_store_description -- PilotStore Description            
+            pilot_data_description -- PilotData Description            
             
             Return value:
-            A PilotStore handle
+            A PilotData handle
         """
         pass
 
-    def list_pilotstores(self):
-        """ List all PSs of PSS """
+    def list_pilots(self):
+        """ List all PDs of PDS """
         pass
 
     def cancel(self):
-        """ Cancel the PilotStoreService.
+        """ Cancel the PilotDataService.
             
             Keyword arguments:
             None
@@ -103,19 +103,19 @@ class PilotStoreService(object):
 #
 # PilotDataService
 # 
-class PilotDataService(object):
+class DataUnitService(object):
     """ PilotDataService (PDS).   
     """
    
     def __init__(self, pds_id=None):
-        """ Create a PilotDataService.
+        """ Create a DataUnitService.
 
             Keyword arguments:
-            pds_id -- Reconnect to an existing PilotDataService 
+            pds_id -- Reconnect to an existing DataUnitService 
         """
         pass
 
-    def add_pilot_store_service(self, pss):
+    def add_pilot_data_service(self, pss):
         """ Add a PilotStoreService 
 
             Keyword arguments:
@@ -126,7 +126,7 @@ class PilotDataService(object):
         """
         pass
 
-    def remove_pilot_store_service(self, pss):
+    def remove_pilot_data_service(self, pss):
         """ Remove a PilotStoreService 
 
             
@@ -143,7 +143,7 @@ class PilotDataService(object):
         pass
     
 
-    def submit_pilot_data(self, pilot_data_description):
+    def submit_pilot_data_set(self, data_unit_description):
         """ Create Pilot Data object and schedule it to a Pilot Store """
         pass
     
@@ -190,9 +190,9 @@ class DataUnitDescription(dict):
     
     
 #
-# DataUnitSet 
+# DataUnit 
 # 
-class DataUnitSet(object):
+class DataUnit(object):
     """ PilotData. Holds a set of data units.        
     """
 
@@ -201,7 +201,7 @@ class DataUnitSet(object):
         'id',               # Reference 
         'description',      # Description
         'state',            # State
-        'data_units'        # DU managed by PilotData object
+        'file_list'        # files managed by PilotData object
     )
 
     def cancel(self):
@@ -231,19 +231,3 @@ class DataUnitSet(object):
         """ copies content of PD to a directory on the local machine"""
         pass    
         
-    
-
-class DataUnit(object):
-    """ DataUnit """
-
-    __slots__ = (
-        'id',        
-        'url'
-    )
-    
-    def __init__(self):
-        pass
-    
-    
-    
-    

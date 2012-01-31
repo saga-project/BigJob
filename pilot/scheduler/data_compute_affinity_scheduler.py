@@ -9,12 +9,12 @@ import logging
 class Scheduler:
     
     def __init__(self):
-        self.pilot_stores=[]
+        self.pilot_data=[]
         self.pilot_jobs=[]
     
-    def set_pilot_stores(self, pilot_stores):
+    def set_pilot_data(self, pilot_data):
         """ set resources which are used for scheduling """
-        self.pilot_stores=pilot_stores
+        self.pilot_data=pilot_data
         
     
     def set_pilot_jobs(self, pilot_jobs):
@@ -23,24 +23,24 @@ class Scheduler:
     
         
     def schedule_pilot_data(self, pilot_data_description=None):
-        logging.debug("Schedule to PS - # Avail stores: %d"%len(self.pilot_stores))     
-        candidate_pilot_stores = []  
+        logging.debug("Schedule to PS - # Avail stores: %d"%len(self.pilot_data))     
+        candidate_pilot_data = []  
         if pilot_data_description.has_key("affinity_datacenter_label") and pilot_data_description.has_key("affinity_machine_label"):
-            for i in self.pilot_stores: 
+            for i in self.pilot_data: 
                 pilot_store_description = i.pilot_store_description
                 if pilot_store_description["affinity_datacenter_label"] == pilot_data_description["affinity_datacenter_label"]\
                 and pilot_store_description["affinity_machine_label"] == pilot_data_description["affinity_machine_label"]:
-                    candidate_pilot_stores.append(i)
+                    candidate_pilot_data.append(i)
         else:
-            candidate_pilot_stores = self.pilot_stores
+            candidate_pilot_data = self.pilot_data
             
-        if len(candidate_pilot_stores)>0:
-            return random.choice(candidate_pilot_stores)
+        if len(candidate_pilot_data)>0:
+            return random.choice(candidate_pilot_data)
         
         return None
         
-        #if len(self.pilot_stores)!=0:
-        #    return random.choice(self.pilot_stores)
+        #if len(self.pilot_data)!=0:
+        #    return random.choice(self.pilot_data)
         return None
     
     
@@ -55,7 +55,7 @@ class Scheduler:
         candidate_pilot_jobs = []
         if work_unit_description.has_key("affinity_datacenter_label") and work_unit_description.has_key("affinity_machine_label"):
             for i in self.pilot_jobs:
-                pilot_job_description = i.pilot_job_description
+                pilot_job_description = i.pilot_compute_description
                 if pilot_job_description["affinity_datacenter_label"] == work_unit_description["affinity_datacenter_label"]\
                 and pilot_job_description["affinity_machine_label"] == work_unit_description["affinity_machine_label"]:
                     candidate_pilot_jobs.append(i)
@@ -71,4 +71,4 @@ class Scheduler:
         pilot_data_dependencies = work_unit_description["input_pilot_data"]
         for i in pilot_data_dependencies:
             pd = PilotData.pilot
-            ps = i.get_pilot_stores()
+            ps = i.get_pilot_data()

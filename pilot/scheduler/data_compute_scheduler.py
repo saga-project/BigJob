@@ -6,12 +6,12 @@ import logging
 class Scheduler:
     
     def __init__(self):
-        self.pilot_stores=[]
+        self.pilot_data=[]
         self.pilot_jobs=[]
     
-    def set_pilot_stores(self, pilot_stores):
+    def set_pilot_data(self, pilot_data):
         """ set resources which are used for scheduling """
-        self.pilot_stores=pilot_stores
+        self.pilot_data=pilot_data
         
     
     def set_pilot_jobs(self, pilot_jobs):
@@ -20,9 +20,9 @@ class Scheduler:
     
         
     def schedule_pilot_data(self):
-        logging.debug("Schedule to PS - # Avail stores: %d"%len(self.pilot_stores))        
-        if len(self.pilot_stores)!=0:
-            return random.choice(self.pilot_stores)
+        logging.debug("Schedule to PS - # Avail stores: %d"%len(self.pilot_data))        
+        if len(self.pilot_data)!=0:
+            return random.choice(self.pilot_data)
         return None
     
     
