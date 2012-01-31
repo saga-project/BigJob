@@ -8,7 +8,7 @@ The SAGA BigJob framework is a SAGA-based pilot job implementation. The  Simple 
 
 
 Web Page & Mailing List
--------------
+-----------------------
 
 Web page: http://faust.cct.lsu.edu/trac/bigjob
 
