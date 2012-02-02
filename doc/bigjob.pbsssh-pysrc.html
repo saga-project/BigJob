@@ -163,7 +163,9 @@ bigjob.description" class="py-name" href="#" onclick="return doclink('link-7', '
 <a name="L96"></a><tt class="py-lineno"> 96</tt>  <tt class="py-line">        <tt class="py-keyword">print</tt> <tt class="py-string">"Submit pilot job to: "</tt> <tt class="py-op">+</tt> <tt class="py-name">str</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">lrms_saga_url</tt><tt class="py-op">)</tt> </tt>
 <a name="L97"></a><tt class="py-lineno"> 97</tt>  <tt class="py-line">        <tt class="py-name">pbssshjob</tt><tt class="py-op">.</tt><tt id="link-13" class="py-name" targets="Method bigjob.pbsssh.pbsssh.run()=bigjob.pbsssh.pbsssh-class.html#run,Method bigjob_dynamic.many_job.sub_job.run()=bigjob_dynamic.many_job.sub_job-class.html#run"><a title="bigjob.pbsssh.pbsssh.run
 bigjob_dynamic.many_job.sub_job.run" class="py-name" href="#" onclick="return doclink('link-13', 'run', 'link-13');">run</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
-<a name="L98"></a><tt class="py-lineno"> 98</tt>  <tt class="py-line">        <tt class="py-name">pbssshjob</tt><tt class="py-op">.</tt><tt id="link-14" class="py-name" targets="Method bigjob_dynamic.many_job.sub_job.wait()=bigjob_dynamic.many_job.sub_job-class.html#wait"><a title="bigjob_dynamic.many_job.sub_job.wait" class="py-name" href="#" onclick="return doclink('link-14', 'wait', 'link-14');">wait</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L98"></a><tt class="py-lineno"> 98</tt>  <tt class="py-line">        <tt class="py-name">pbssshjob</tt><tt class="py-op">.</tt><tt id="link-14" class="py-name" targets="Method api.base.bigjob.wait()=api.base.bigjob-class.html#wait,Method bigjob.bigjob_manager.bigjob.wait()=bigjob.bigjob_manager.bigjob-class.html#wait,Method bigjob_dynamic.many_job.sub_job.wait()=bigjob_dynamic.many_job.sub_job-class.html#wait"><a title="api.base.bigjob.wait
+bigjob.bigjob_manager.bigjob.wait
+bigjob_dynamic.many_job.sub_job.wait" class="py-name" href="#" onclick="return doclink('link-14', 'wait', 'link-14');">wait</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
 <a name="L99"></a><tt class="py-lineno"> 99</tt>  <tt class="py-line">        <tt class="py-name">outstr</tt> <tt class="py-op">=</tt> <tt class="py-name">pbssshjob</tt><tt class="py-op">.</tt><tt class="py-name">get_stdout</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt class="py-name">read</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
 <a name="L100"></a><tt class="py-lineno">100</tt>  <tt class="py-line">        <tt class="py-name">errstr</tt> <tt class="py-op">=</tt> <tt class="py-name">pbssshjob</tt><tt class="py-op">.</tt><tt class="py-name">get_stderr</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt class="py-name">read</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
 <a name="L101"></a><tt class="py-lineno">101</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">job_id</tt><tt class="py-op">=</tt><tt class="py-op">(</tt><tt class="py-name">outstr</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt class="py-name">split</tt><tt class="py-op">(</tt><tt class="py-string">"."</tt><tt class="py-op">)</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt> </tt>
@@ -185,7 +187,9 @@ bigjob.description" class="py-name" href="#" onclick="return doclink('link-17', 
 <a name="L116"></a><tt class="py-lineno">116</tt>  <tt class="py-line">        <tt class="py-name">job</tt><tt class="py-op">.</tt><tt id="link-20" class="py-name"><a title="bigjob.pbsssh.pbsssh.run
 bigjob_dynamic.many_job.sub_job.run" class="py-name" href="#" onclick="return doclink('link-20', 'run', 'link-13');">run</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
 <a name="L117"></a><tt class="py-lineno">117</tt>  <tt class="py-line">        <tt class="py-comment"># wait for the job to complete</tt> </tt>
-<a name="L118"></a><tt class="py-lineno">118</tt>  <tt class="py-line">        <tt class="py-name">job</tt><tt class="py-op">.</tt><tt id="link-21" class="py-name"><a title="bigjob_dynamic.many_job.sub_job.wait" class="py-name" href="#" onclick="return doclink('link-21', 'wait', 'link-14');">wait</a></tt><tt class="py-op">(</tt><tt class="py-op">-</tt><tt class="py-number">1</tt><tt class="py-op">)</tt> </tt>
+<a name="L118"></a><tt class="py-lineno">118</tt>  <tt class="py-line">        <tt class="py-name">job</tt><tt class="py-op">.</tt><tt id="link-21" class="py-name"><a title="api.base.bigjob.wait
+bigjob.bigjob_manager.bigjob.wait
+bigjob_dynamic.many_job.sub_job.wait" class="py-name" href="#" onclick="return doclink('link-21', 'wait', 'link-14');">wait</a></tt><tt class="py-op">(</tt><tt class="py-op">-</tt><tt class="py-number">1</tt><tt class="py-op">)</tt> </tt>
 <a name="L119"></a><tt class="py-lineno">119</tt>  <tt class="py-line">        <tt class="py-comment"># print the job's output</tt> </tt>
 <a name="L120"></a><tt class="py-lineno">120</tt>  <tt class="py-line">        <tt class="py-name">output</tt> <tt class="py-op">=</tt> <tt class="py-name">job</tt><tt class="py-op">.</tt><tt class="py-name">get_stdout</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
 <a name="L121"></a><tt class="py-lineno">121</tt>  <tt class="py-line">        <tt class="py-name">output</tt><tt class="py-op">.</tt><tt class="py-name">readline</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
@@ -213,7 +217,9 @@ bigjob.description" class="py-name" href="#" onclick="return doclink('link-33', 
 <a name="L142"></a><tt class="py-lineno">142</tt>  <tt class="py-line">        <tt class="py-name">job</tt><tt class="py-op">.</tt><tt id="link-36" class="py-name"><a title="bigjob.pbsssh.pbsssh.run
 bigjob_dynamic.many_job.sub_job.run" class="py-name" href="#" onclick="return doclink('link-36', 'run', 'link-13');">run</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
 <a name="L143"></a><tt class="py-lineno">143</tt>  <tt class="py-line">        <tt class="py-comment"># wait for the job to complete</tt> </tt>
-<a name="L144"></a><tt class="py-lineno">144</tt>  <tt class="py-line">        <tt class="py-name">job</tt><tt class="py-op">.</tt><tt id="link-37" class="py-name"><a title="bigjob_dynamic.many_job.sub_job.wait" class="py-name" href="#" onclick="return doclink('link-37', 'wait', 'link-14');">wait</a></tt><tt class="py-op">(</tt><tt class="py-op">-</tt><tt class="py-number">1</tt><tt class="py-op">)</tt> </tt>
+<a name="L144"></a><tt class="py-lineno">144</tt>  <tt class="py-line">        <tt class="py-name">job</tt><tt class="py-op">.</tt><tt id="link-37" class="py-name"><a title="api.base.bigjob.wait
+bigjob.bigjob_manager.bigjob.wait
+bigjob_dynamic.many_job.sub_job.wait" class="py-name" href="#" onclick="return doclink('link-37', 'wait', 'link-14');">wait</a></tt><tt class="py-op">(</tt><tt class="py-op">-</tt><tt class="py-number">1</tt><tt class="py-op">)</tt> </tt>
 </div></div><a name="L145"></a><tt class="py-lineno">145</tt>  <tt class="py-line"> </tt><script type="text/javascript">
 <!--
 expandto(location.href);
@@ -249,7 +255,7 @@ expandto(location.href);
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Tue Jan 31 21:15:49 2012
+    Generated by Epydoc 3.0.1 on Thu Feb  2 21:57:42 2012
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

@@ -90,7 +90,7 @@ bigjob.bigjob_manager.bigjob" class="py-name" href="#" onclick="return doclink('
 <a name="L24"></a><tt class="py-lineno"> 24</tt>  <tt class="py-line"><tt class="py-string">        tcp://* (ZMQ - listening to all interfaces)</tt> </tt>
 <a name="L25"></a><tt class="py-lineno"> 25</tt>  <tt class="py-line"><tt class="py-string">"""</tt> </tt>
 <a name="L26"></a><tt class="py-lineno"> 26</tt>  <tt class="py-line"> </tt>
-<a name="L27"></a><tt class="py-lineno"> 27</tt>  <tt class="py-line"><tt id="link-3" class="py-name" targets="Variable bigjob_dynamic.many_job.COORDINATION_URL=bigjob_dynamic.many_job-module.html#COORDINATION_URL,Variable examples.example_condorg_single.COORDINATION_URL=examples.example_condorg_single-module.html#COORDINATION_URL,Variable examples.example_fg_single.COORDINATION_URL=examples.example_fg_single-module.html#COORDINATION_URL,Variable examples.example_local_multiple.COORDINATION_URL=examples.example_local_multiple-module.html#COORDINATION_URL,Variable examples.example_local_single.COORDINATION_URL=examples.example_local_single-module.html#COORDINATION_URL,Variable examples.example_local_single_filestaging.COORDINATION_URL=examples.example_local_single_filestaging-module.html#COORDINATION_URL,Variable examples.example_ls_single.COORDINATION_URL=examples.example_ls_single-module.html#COORDINATION_URL,Variable examples.example_manyjob_affinity.COORDINATION_URL=examples.example_manyjob_affinity-module.html#COORDINATION_URL,Variable examples.example_manyjob_local.COORDINATION_URL=examples.example_manyjob_local-module.html#COORDINATION_URL"><a title="bigjob_dynamic.many_job.COORDINATION_URL
+<a name="L27"></a><tt class="py-lineno"> 27</tt>  <tt class="py-line"><tt id="link-3" class="py-name" targets="Variable bigjob_dynamic.many_job.COORDINATION_URL=bigjob_dynamic.many_job-module.html#COORDINATION_URL,Variable examples.example_condorg_single.COORDINATION_URL=examples.example_condorg_single-module.html#COORDINATION_URL,Variable examples.example_fg_single.COORDINATION_URL=examples.example_fg_single-module.html#COORDINATION_URL,Variable examples.example_local_multiple.COORDINATION_URL=examples.example_local_multiple-module.html#COORDINATION_URL,Variable examples.example_local_single.COORDINATION_URL=examples.example_local_single-module.html#COORDINATION_URL,Variable examples.example_local_single_filestaging.COORDINATION_URL=examples.example_local_single_filestaging-module.html#COORDINATION_URL,Variable examples.example_ls_single.COORDINATION_URL=examples.example_ls_single-module.html#COORDINATION_URL,Variable examples.example_manyjob_affinity.COORDINATION_URL=examples.example_manyjob_affinity-module.html#COORDINATION_URL,Variable examples.example_manyjob_local.COORDINATION_URL=examples.example_manyjob_local-module.html#COORDINATION_URL,Variable pilot.impl.pilotcompute_manager.COORDINATION_URL=pilot.impl.pilotcompute_manager-module.html#COORDINATION_URL"><a title="bigjob_dynamic.many_job.COORDINATION_URL
 examples.example_condorg_single.COORDINATION_URL
 examples.example_fg_single.COORDINATION_URL
 examples.example_local_multiple.COORDINATION_URL
@@ -98,7 +98,8 @@ examples.example_local_single.COORDINATION_URL
 examples.example_local_single_filestaging.COORDINATION_URL
 examples.example_ls_single.COORDINATION_URL
 examples.example_manyjob_affinity.COORDINATION_URL
-examples.example_manyjob_local.COORDINATION_URL" class="py-name" href="#" onclick="return doclink('link-3', 'COORDINATION_URL', 'link-3');">COORDINATION_URL</a></tt> <tt class="py-op">=</tt> <tt class="py-string">"advert://localhost/?dbtype=sqlite3"</tt> </tt>
+examples.example_manyjob_local.COORDINATION_URL
+pilot.impl.pilotcompute_manager.COORDINATION_URL" class="py-name" href="#" onclick="return doclink('link-3', 'COORDINATION_URL', 'link-3');">COORDINATION_URL</a></tt> <tt class="py-op">=</tt> <tt class="py-string">"advert://localhost/?dbtype=sqlite3"</tt> </tt>
 <a name="L28"></a><tt class="py-lineno"> 28</tt>  <tt class="py-line"><tt class="py-comment">#COORDINATION_URL = "advert://SAGA:SAGA_client@advert.cct.lsu.edu:8080/?dbtype=postgresql"</tt> </tt>
 <a name="L29"></a><tt class="py-lineno"> 29</tt>  <tt class="py-line"><tt class="py-comment">#COORDINATION_URL = "tcp://*"</tt> </tt>
 <a name="L30"></a><tt class="py-lineno"> 30</tt>  <tt class="py-line"><tt class="py-comment">#COORDINATION_URL = "redis://localhost:6379"</tt> </tt>
@@ -161,7 +162,8 @@ examples.example_local_single.COORDINATION_URL
 examples.example_local_single_filestaging.COORDINATION_URL
 examples.example_ls_single.COORDINATION_URL
 examples.example_manyjob_affinity.COORDINATION_URL
-examples.example_manyjob_local.COORDINATION_URL" class="py-name" href="#" onclick="return doclink('link-9', 'COORDINATION_URL', 'link-3');">COORDINATION_URL</a></tt><tt class="py-op">)</tt> </tt>
+examples.example_manyjob_local.COORDINATION_URL
+pilot.impl.pilotcompute_manager.COORDINATION_URL" class="py-name" href="#" onclick="return doclink('link-9', 'COORDINATION_URL', 'link-3');">COORDINATION_URL</a></tt><tt class="py-op">)</tt> </tt>
 <a name="L71"></a><tt class="py-lineno"> 71</tt>  <tt class="py-line">     </tt>
 <a name="L72"></a><tt class="py-lineno"> 72</tt>  <tt class="py-line">    <tt class="py-name">bj_filetransfers</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-string">"ssh://"</tt> <tt class="py-op">+</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">dirname</tt><tt class="py-op">(</tt><tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">abspath</tt><tt class="py-op">(</tt><tt class="py-name">__file__</tt><tt class="py-op">)</tt><tt class="py-op">)</tt>  </tt>
 <a name="L73"></a><tt class="py-lineno"> 73</tt>  <tt class="py-line">                        <tt class="py-op">+</tt> <tt class="py-string">"/test.txt &gt; BIGJOB_WORK_DIR"</tt><tt class="py-op">]</tt> </tt>
@@ -179,12 +181,25 @@ bigjob.bigjob_manager.bigjob.start_pilot_job" class="py-name" href="#" onclick="
 <a name="L84"></a><tt class="py-lineno"> 84</tt>  <tt class="py-line">                        <tt class="py-name">processes_per_node</tt><tt class="py-op">,</tt> </tt>
 <a name="L85"></a><tt class="py-lineno"> 85</tt>  <tt class="py-line">                        <tt class="py-name">bj_filetransfers</tt><tt class="py-op">)</tt> </tt>
 <a name="L86"></a><tt class="py-lineno"> 86</tt>  <tt class="py-line">     </tt>
-<a name="L87"></a><tt class="py-lineno"> 87</tt>  <tt class="py-line">    <tt class="py-keyword">print</tt> <tt class="py-string">"Pilot Job/BigJob URL: "</tt> <tt class="py-op">+</tt> <tt class="py-name">bj</tt><tt class="py-op">.</tt><tt class="py-name">pilot_url</tt> <tt class="py-op">+</tt> <tt class="py-string">" State: "</tt> <tt class="py-op">+</tt> <tt class="py-name">str</tt><tt class="py-op">(</tt><tt class="py-name">bj</tt><tt class="py-op">.</tt><tt id="link-11" class="py-name" targets="Method api.base.bigjob.get_state()=api.base.bigjob-class.html#get_state,Method api.base.subjob.get_state()=api.base.subjob-class.html#get_state,Method bigjob.bigjob_manager.bigjob.get_state()=bigjob.bigjob_manager.bigjob-class.html#get_state,Method bigjob.bigjob_manager.subjob.get_state()=bigjob.bigjob_manager.subjob-class.html#get_state,Method bigjob.pbsssh.pbsssh.get_state()=bigjob.pbsssh.pbsssh-class.html#get_state,Method bigjob_dynamic.many_job.sub_job.get_state()=bigjob_dynamic.many_job.sub_job-class.html#get_state"><a title="api.base.bigjob.get_state
+<a name="L87"></a><tt class="py-lineno"> 87</tt>  <tt class="py-line">    <tt class="py-keyword">print</tt> <tt class="py-string">"Pilot Job/BigJob URL: "</tt> <tt class="py-op">+</tt> <tt class="py-name">bj</tt><tt class="py-op">.</tt><tt class="py-name">pilot_url</tt> <tt class="py-op">+</tt> <tt class="py-string">" State: "</tt> <tt class="py-op">+</tt> <tt class="py-name">str</tt><tt class="py-op">(</tt><tt class="py-name">bj</tt><tt class="py-op">.</tt><tt id="link-11" class="py-name" targets="Method api.base.bigjob.get_state()=api.base.bigjob-class.html#get_state,Method api.base.subjob.get_state()=api.base.subjob-class.html#get_state,Method bigjob.bigjob_manager.bigjob.get_state()=bigjob.bigjob_manager.bigjob-class.html#get_state,Method bigjob.bigjob_manager.subjob.get_state()=bigjob.bigjob_manager.subjob-class.html#get_state,Method bigjob.pbsssh.pbsssh.get_state()=bigjob.pbsssh.pbsssh-class.html#get_state,Method bigjob_dynamic.many_job.sub_job.get_state()=bigjob_dynamic.many_job.sub_job-class.html#get_state,Method pilot.api.compute.api.ComputeUnit.get_state()=pilot.api.compute.api.ComputeUnit-class.html#get_state,Method pilot.api.compute.api.ComputeUnitService.get_state()=pilot.api.compute.api.ComputeUnitService-class.html#get_state,Method pilot.api.compute.api.PilotCompute.get_state()=pilot.api.compute.api.PilotCompute-class.html#get_state,Method pilot.api.data.api.DataUnit.get_state()=pilot.api.data.api.DataUnit-class.html#get_state,Method pilot.api.data.api.DataUnitService.get_state()=pilot.api.data.api.DataUnitService-class.html#get_state,Method pilot.api.data.api.PilotData.get_state()=pilot.api.data.api.PilotData-class.html#get_state,Method pilot.filemanagement.ssh_adaptor.SSHFileAdaptor.get_state()=pilot.filemanagement.ssh_adaptor.SSHFileAdaptor-class.html#get_state,Method pilot.filemanagement.webhdfs_adaptor.WebHDFSFileAdaptor.get_state()=pilot.filemanagement.webhdfs_adaptor.WebHDFSFileAdaptor-class.html#get_state,Method pilot.impl.pilot_manager.ComputeDataService.get_state()=pilot.impl.pilot_manager.ComputeDataService-class.html#get_state,Method pilot.impl.pilot_manager.ComputeUnit.get_state()=pilot.impl.pilot_manager.ComputeUnit-class.html#get_state,Method pilot.impl.pilotcompute_manager.PilotCompute.get_state()=pilot.impl.pilotcompute_manager.PilotCompute-class.html#get_state,Method pilot.impl.pilotdata_manager.DataUnit.get_state()=pilot.impl.pilotdata_manager.DataUnit-class.html#get_state,Method pilot.impl.pilotdata_manager.PilotData.get_state()=pilot.impl.pilotdata_manager.PilotData-class.html#get_state"><a title="api.base.bigjob.get_state
 api.base.subjob.get_state
 bigjob.bigjob_manager.bigjob.get_state
 bigjob.bigjob_manager.subjob.get_state
 bigjob.pbsssh.pbsssh.get_state
-bigjob_dynamic.many_job.sub_job.get_state" class="py-name" href="#" onclick="return doclink('link-11', 'get_state', 'link-11');">get_state</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+bigjob_dynamic.many_job.sub_job.get_state
+pilot.api.compute.api.ComputeUnit.get_state
+pilot.api.compute.api.ComputeUnitService.get_state
+pilot.api.compute.api.PilotCompute.get_state
+pilot.api.data.api.DataUnit.get_state
+pilot.api.data.api.DataUnitService.get_state
+pilot.api.data.api.PilotData.get_state
+pilot.filemanagement.ssh_adaptor.SSHFileAdaptor.get_state
+pilot.filemanagement.webhdfs_adaptor.WebHDFSFileAdaptor.get_state
+pilot.impl.pilot_manager.ComputeDataService.get_state
+pilot.impl.pilot_manager.ComputeUnit.get_state
+pilot.impl.pilotcompute_manager.PilotCompute.get_state
+pilot.impl.pilotdata_manager.DataUnit.get_state
+pilot.impl.pilotdata_manager.PilotData.get_state" class="py-name" href="#" onclick="return doclink('link-11', 'get_state', 'link-11');">get_state</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
 <a name="L88"></a><tt class="py-lineno"> 88</tt>  <tt class="py-line"> </tt>
 <a name="L89"></a><tt class="py-lineno"> 89</tt>  <tt class="py-line">    <tt class="py-comment">##########################################################################################</tt> </tt>
 <a name="L90"></a><tt class="py-lineno"> 90</tt>  <tt class="py-line">    <tt class="py-comment"># Submit SubJob through BigJob</tt> </tt>
@@ -214,7 +229,20 @@ api.base.subjob.get_state
 bigjob.bigjob_manager.bigjob.get_state
 bigjob.bigjob_manager.subjob.get_state
 bigjob.pbsssh.pbsssh.get_state
-bigjob_dynamic.many_job.sub_job.get_state" class="py-name" href="#" onclick="return doclink('link-16', 'get_state', 'link-11');">get_state</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+bigjob_dynamic.many_job.sub_job.get_state
+pilot.api.compute.api.ComputeUnit.get_state
+pilot.api.compute.api.ComputeUnitService.get_state
+pilot.api.compute.api.PilotCompute.get_state
+pilot.api.data.api.DataUnit.get_state
+pilot.api.data.api.DataUnitService.get_state
+pilot.api.data.api.PilotData.get_state
+pilot.filemanagement.ssh_adaptor.SSHFileAdaptor.get_state
+pilot.filemanagement.webhdfs_adaptor.WebHDFSFileAdaptor.get_state
+pilot.impl.pilot_manager.ComputeDataService.get_state
+pilot.impl.pilot_manager.ComputeUnit.get_state
+pilot.impl.pilotcompute_manager.PilotCompute.get_state
+pilot.impl.pilotdata_manager.DataUnit.get_state
+pilot.impl.pilotdata_manager.PilotData.get_state" class="py-name" href="#" onclick="return doclink('link-16', 'get_state', 'link-11');">get_state</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
 <a name="L109"></a><tt class="py-lineno">109</tt>  <tt class="py-line">        <tt class="py-keyword">print</tt> <tt class="py-string">"state: "</tt> <tt class="py-op">+</tt> <tt id="link-17" class="py-name"><a title="bigjob.state" class="py-name" href="#" onclick="return doclink('link-17', 'state', 'link-15');">state</a></tt> </tt>
 <a name="L110"></a><tt class="py-lineno">110</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt><tt class="py-op">(</tt><tt id="link-18" class="py-name"><a title="bigjob.state" class="py-name" href="#" onclick="return doclink('link-18', 'state', 'link-15');">state</a></tt><tt class="py-op">==</tt><tt class="py-string">"Failed"</tt> <tt class="py-keyword">or</tt> <tt id="link-19" class="py-name"><a title="bigjob.state" class="py-name" href="#" onclick="return doclink('link-19', 'state', 'link-15');">state</a></tt><tt class="py-op">==</tt><tt class="py-string">"Done"</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
 <a name="L111"></a><tt class="py-lineno">111</tt>  <tt class="py-line">            <tt class="py-keyword">break</tt> </tt>
@@ -222,13 +250,28 @@ bigjob_dynamic.many_job.sub_job.get_state" class="py-name" href="#" onclick="ret
 <a name="L113"></a><tt class="py-lineno">113</tt>  <tt class="py-line"> </tt>
 <a name="L114"></a><tt class="py-lineno">114</tt>  <tt class="py-line">    <tt class="py-comment">##########################################################################################</tt> </tt>
 <a name="L115"></a><tt class="py-lineno">115</tt>  <tt class="py-line">    <tt class="py-comment"># Cleanup - stop BigJob</tt> </tt>
-<a name="L116"></a><tt class="py-lineno">116</tt>  <tt class="py-line">    <tt class="py-name">bj</tt><tt class="py-op">.</tt><tt id="link-20" class="py-name" targets="Method api.base.bigjob.cancel()=api.base.bigjob-class.html#cancel,Method api.base.subjob.cancel()=api.base.subjob-class.html#cancel,Method bigjob.bigjob_manager.bigjob.cancel()=bigjob.bigjob_manager.bigjob-class.html#cancel,Method bigjob.bigjob_manager.subjob.cancel()=bigjob.bigjob_manager.subjob-class.html#cancel,Method bigjob.pbsssh.pbsssh.cancel()=bigjob.pbsssh.pbsssh-class.html#cancel,Method bigjob_dynamic.many_job.many_job_service.cancel()=bigjob_dynamic.many_job.many_job_service-class.html#cancel,Method bigjob_dynamic.many_job.sub_job.cancel()=bigjob_dynamic.many_job.sub_job-class.html#cancel"><a title="api.base.bigjob.cancel
+<a name="L116"></a><tt class="py-lineno">116</tt>  <tt class="py-line">    <tt class="py-name">bj</tt><tt class="py-op">.</tt><tt id="link-20" class="py-name" targets="Method api.base.bigjob.cancel()=api.base.bigjob-class.html#cancel,Method api.base.subjob.cancel()=api.base.subjob-class.html#cancel,Method bigjob.bigjob_manager.bigjob.cancel()=bigjob.bigjob_manager.bigjob-class.html#cancel,Method bigjob.bigjob_manager.subjob.cancel()=bigjob.bigjob_manager.subjob-class.html#cancel,Method bigjob.pbsssh.pbsssh.cancel()=bigjob.pbsssh.pbsssh-class.html#cancel,Method bigjob_dynamic.many_job.many_job_service.cancel()=bigjob_dynamic.many_job.many_job_service-class.html#cancel,Method bigjob_dynamic.many_job.sub_job.cancel()=bigjob_dynamic.many_job.sub_job-class.html#cancel,Method pilot.api.compute.api.ComputeUnit.cancel()=pilot.api.compute.api.ComputeUnit-class.html#cancel,Method pilot.api.compute.api.ComputeUnitService.cancel()=pilot.api.compute.api.ComputeUnitService-class.html#cancel,Method pilot.api.compute.api.PilotCompute.cancel()=pilot.api.compute.api.PilotCompute-class.html#cancel,Method pilot.api.compute.api.PilotComputeService.cancel()=pilot.api.compute.api.PilotComputeService-class.html#cancel,Method pilot.api.data.api.DataUnit.cancel()=pilot.api.data.api.DataUnit-class.html#cancel,Method pilot.api.data.api.DataUnitService.cancel()=pilot.api.data.api.DataUnitService-class.html#cancel,Method pilot.api.data.api.PilotData.cancel()=pilot.api.data.api.PilotData-class.html#cancel,Method pilot.api.data.api.PilotDataService.cancel()=pilot.api.data.api.PilotDataService-class.html#cancel,Method pilot.impl.pilot_manager.ComputeDataService.cancel()=pilot.impl.pilot_manager.ComputeDataService-class.html#cancel,Method pilot.impl.pilot_manager.ComputeUnit.cancel()=pilot.impl.pilot_manager.ComputeUnit-class.html#cancel,Method pilot.impl.pilotcompute_manager.PilotCompute.cancel()=pilot.impl.pilotcompute_manager.PilotCompute-class.html#cancel,Method pilot.impl.pilotcompute_manager.PilotComputeService.cancel()=pilot.impl.pilotcompute_manager.PilotComputeService-class.html#cancel,Method pilot.impl.pilotdata_manager.DataUnit.cancel()=pilot.impl.pilotdata_manager.DataUnit-class.html#cancel,Method pilot.impl.pilotdata_manager.PilotData.cancel()=pilot.impl.pilotdata_manager.PilotData-class.html#cancel,Method pilot.impl.pilotdata_manager.PilotDataService.cancel()=pilot.impl.pilotdata_manager.PilotDataService-class.html#cancel"><a title="api.base.bigjob.cancel
 api.base.subjob.cancel
 bigjob.bigjob_manager.bigjob.cancel
 bigjob.bigjob_manager.subjob.cancel
 bigjob.pbsssh.pbsssh.cancel
 bigjob_dynamic.many_job.many_job_service.cancel
-bigjob_dynamic.many_job.sub_job.cancel" class="py-name" href="#" onclick="return doclink('link-20', 'cancel', 'link-20');">cancel</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+bigjob_dynamic.many_job.sub_job.cancel
+pilot.api.compute.api.ComputeUnit.cancel
+pilot.api.compute.api.ComputeUnitService.cancel
+pilot.api.compute.api.PilotCompute.cancel
+pilot.api.compute.api.PilotComputeService.cancel
+pilot.api.data.api.DataUnit.cancel
+pilot.api.data.api.DataUnitService.cancel
+pilot.api.data.api.PilotData.cancel
+pilot.api.data.api.PilotDataService.cancel
+pilot.impl.pilot_manager.ComputeDataService.cancel
+pilot.impl.pilot_manager.ComputeUnit.cancel
+pilot.impl.pilotcompute_manager.PilotCompute.cancel
+pilot.impl.pilotcompute_manager.PilotComputeService.cancel
+pilot.impl.pilotdata_manager.DataUnit.cancel
+pilot.impl.pilotdata_manager.PilotData.cancel
+pilot.impl.pilotdata_manager.PilotDataService.cancel" class="py-name" href="#" onclick="return doclink('link-20', 'cancel', 'link-20');">cancel</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
 </div><a name="L117"></a><tt class="py-lineno">117</tt>  <tt class="py-line">    <tt class="py-comment">#time.sleep(30)</tt> </tt>
 <a name="L118"></a><tt class="py-lineno">118</tt>  <tt class="py-line"> </tt>
 <a name="L119"></a><tt class="py-lineno">119</tt>  <tt class="py-line"> </tt>
@@ -275,7 +318,7 @@ expandto(location.href);
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Tue Jan 31 21:15:49 2012
+    Generated by Epydoc 3.0.1 on Thu Feb  2 21:57:41 2012
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"
