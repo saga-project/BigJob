@@ -630,9 +630,9 @@ sftp.put("%s", "%s")
             if line.find(hostname)>0:
                 for k in range(i + 1, len(lines)):
                     sub_line = lines[k]
-                    if sub_line.startswith(" ")==False and sub_line.startswith("\t")==False:
+                    if sub_line.startswith(" ")==True and sub_line.startswith("\t")==True:
                         break # configuration for next host
-                    elif sub_line.find("User")>0:
+                    elif sub_line.find("User")!=-1:
                         stripped_sub_line = sub_line.strip()
                         user = stripped_sub_line.split()[1]
                         break
