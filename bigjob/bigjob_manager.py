@@ -467,9 +467,36 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
             pass
             #traceback.print_stack()
 
+    def wait(self):
+        """ Waits for completion of all sub-jobs """        
+        while 1:
+            jobs = self.coordination.get_jobs_of_pilot(self.pilot_url)
+            finish_counter=0
+            result_map = {}
+            for i in jobs:
+                state = self.coordination.get_job_state(str(i))            
+                #state = job_detail["state"]                
+                if result_map.has_key(state)==False:
+                    result_map[state]=1
+                else:
+                    result_map[state] = result_map[state]+1
+                if self.__has_finished(state)==True:
+                    finish_counter = finish_counter + 1                   
+            logger.debug("Total Jobs: %s States: %s"%(len(jobs), str(result_map)))
+            if finish_counter == len(jobs):
+                break
+            time.sleep(2)
+
 
     ###########################################################################
     # internal methods
+    
+    def __has_finished(self, state):
+        state = state.lower()
+        if state=="done" or state=="failed" or state=="canceled":
+            return True
+        else:
+            return False
     
     def __parse_url(self, url):
         try:
