@@ -1,0 +1,929 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>pilot.impl.pilot_manager.ComputeDataService</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="http://faust.cct.lsu.edu/trac/bigjob/">BigJob</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="pilot-module.html">Package&nbsp;pilot</a> ::
+        <a href="pilot.impl-module.html">Package&nbsp;impl</a> ::
+        <a href="pilot.impl.pilot_manager-module.html">Module&nbsp;pilot_manager</a> ::
+        Class&nbsp;ComputeDataService
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="pilot.impl.pilot_manager.ComputeDataService-class.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS DESCRIPTION ==================== -->
+<h1 class="epydoc">Class ComputeDataService</h1><p class="nomargin-top"><span class="codelink"><a href="pilot.impl.pilot_manager-pysrc.html#ComputeDataService">source&nbsp;code</a></span></p>
+<center>
+<center>  <map id="uml_class_diagram_for_pilot_im" name="uml_class_diagram_for_pilot_im">
+<area shape="rect" id="node1_19" href="pilot.impl.pilot_manager.ComputeDataService-class.html#CDS_ID_PREFIX" title="pilot.impl.pilot_manager.ComputeDataService.CDS_ID_PREFIX" alt="" coords="124,255,475,273"/>
+<area shape="rect" id="node1_20" href="pilot.impl.pilot_manager.ComputeDataService-class.html#__init__" title="Create a Work Data Service object." alt="" coords="124,276,475,295"/>
+<area shape="rect" id="node1_21" href="pilot.impl.pilot_manager.ComputeDataService-class.html#add_pilot_compute_service" title="Add a PilotJobService to this CDS." alt="" coords="124,295,475,313"/>
+<area shape="rect" id="node1_22" href="pilot.impl.pilot_manager.ComputeDataService-class.html#remove_pilot_compute_service" title="Remove a PilotJobService from this CDS." alt="" coords="124,313,475,332"/>
+<area shape="rect" id="node1_23" href="pilot.impl.pilot_manager.ComputeDataService-class.html#submit_compute_unit" title="Submit a WU to this Work Unit Service." alt="" coords="124,332,475,351"/>
+<area shape="rect" id="node1_24" href="pilot.impl.pilot_manager.ComputeDataService-class.html#add_pilot_data_service" title="Add a PilotDataService" alt="" coords="124,351,475,369"/>
+<area shape="rect" id="node1_25" href="pilot.impl.pilot_manager.ComputeDataService-class.html#remove_pilot_data_service" title="Remove a PilotDataService" alt="" coords="124,369,475,388"/>
+<area shape="rect" id="node1_26" href="pilot.impl.pilot_manager.ComputeDataService-class.html#list_pilot_compute" title="List all PDs of PDS" alt="" coords="124,388,475,407"/>
+<area shape="rect" id="node1_27" href="pilot.impl.pilot_manager.ComputeDataService-class.html#list_pilot_data" title="List all PDs of PDS" alt="" coords="124,407,475,425"/>
+<area shape="rect" id="node1_28" href="pilot.impl.pilot_manager.ComputeDataService-class.html#list_data_units" title="List all PDs of PDS" alt="" coords="124,425,475,444"/>
+<area shape="rect" id="node1_29" href="pilot.impl.pilot_manager.ComputeDataService-class.html#get_data_unit" title="pilot.impl.pilot_manager.ComputeDataService.get_data_unit" alt="" coords="124,444,475,463"/>
+<area shape="rect" id="node1_30" href="pilot.impl.pilot_manager.ComputeDataService-class.html#submit_data_unit" title="creates a data unit object and binds it to a physical resource (a &#160;pilotdata)" alt="" coords="124,463,475,481"/>
+<area shape="rect" id="node1_31" href="pilot.impl.pilot_manager.ComputeDataService-class.html#cancel" title="Cancel the PDS." alt="" coords="124,481,475,500"/>
+<area shape="rect" id="node1_32" href="pilot.impl.pilot_manager.ComputeDataService-class.html#get_state" title="pilot.impl.pilot_manager.ComputeDataService.get_state" alt="" coords="124,500,475,519"/>
+<area shape="rect" id="node1_33" href="pilot.impl.pilot_manager.ComputeDataService-class.html#get_id" title="pilot.impl.pilot_manager.ComputeDataService.get_id" alt="" coords="124,519,475,537"/>
+<area shape="rect" id="node1" href="pilot.impl.pilot_manager.ComputeDataService-class.html" title="TROY WorkDataService." alt="" coords="111,230,486,543"/>
+<area shape="rect" id="node2" href="pilot.api.ComputeDataService-class.html" title="pilot.api.ComputeDataService" alt="" coords="207,166,390,210"/>
+<area shape="rect" id="node3_34" href="pilot.api.data.api.PilotDataService-class.html#create_pilot" title="Create a PilotStore" alt="" coords="17,39,280,57"/>
+<area shape="rect" id="node3_35" href="pilot.api.data.api.PilotDataService-class.html#list_pilots" title="List all PDs of PDS" alt="" coords="17,57,280,76"/>
+<area shape="rect" id="node3" href="pilot.api.data.api.PilotDataService-class.html" title="PilotDataService (PDS)." alt="" coords="5,6,291,82"/>
+<area shape="rect" id="node4" href="pilot.api.api.ComputeDataService-class.html" title="WorkDataService." alt="" coords="197,102,403,146"/>
+<area shape="rect" id="node5_36" href="pilot.api.compute.api.ComputeUnitService-class.html#add_pilot_job_service" title="Add a PilotJobService to this WUS." alt="" coords="333,39,571,57"/>
+<area shape="rect" id="node5_37" href="pilot.api.compute.api.ComputeUnitService-class.html#remove_pilot_job_service" title="Remove a PilotJobService from this WUS." alt="" coords="333,57,571,76"/>
+<area shape="rect" id="node5" href="pilot.api.compute.api.ComputeUnitService-class.html" title="WorkUnitService." alt="" coords="321,6,583,82"/>
+</map>
+  <img src="uml_class_diagram_for_pilot_im.gif" alt='' usemap="#uml_class_diagram_for_pilot_im" ismap="ismap" class="graph-without-title" />
+</center>
+</center>
+<hr />
+<p>TROY WorkDataService.</p>
+  <p>The WorkDataService is the application's interface to submit 
+  ComputeUnits and PilotData/DataUnit to the Pilot-Manager in the P* 
+  Model.</p>
+
+<!-- ==================== INSTANCE METHODS ==================== -->
+<a name="section-InstanceMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="pilot.impl.pilot_manager.ComputeDataService-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">cds_url</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Create a Work Data Service object.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.impl.pilot_manager-pysrc.html#ComputeDataService.__init__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="__get_cds_id"></a><span class="summary-sig-name">__get_cds_id</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">cds_url</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.impl.pilot_manager-pysrc.html#ComputeDataService.__get_cds_id">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="pilot.impl.pilot_manager.ComputeDataService-class.html#add_pilot_compute_service" class="summary-sig-name">add_pilot_compute_service</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">pjs</span>)</span><br />
+      Add a PilotJobService to this CDS.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.impl.pilot_manager-pysrc.html#ComputeDataService.add_pilot_compute_service">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="pilot.impl.pilot_manager.ComputeDataService-class.html#remove_pilot_compute_service" class="summary-sig-name">remove_pilot_compute_service</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">pjs</span>)</span><br />
+      Remove a PilotJobService from this CDS.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.impl.pilot_manager-pysrc.html#ComputeDataService.remove_pilot_compute_service">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="pilot.impl.pilot_manager.ComputeDataService-class.html#submit_compute_unit" class="summary-sig-name">submit_compute_unit</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">compute_unit_description</span>)</span><br />
+      Submit a WU to this Work Unit Service.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.impl.pilot_manager-pysrc.html#ComputeDataService.submit_compute_unit">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="pilot.impl.pilot_manager.ComputeDataService-class.html#add_pilot_data_service" class="summary-sig-name">add_pilot_data_service</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">pds</span>)</span><br />
+      Add a PilotDataService</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.impl.pilot_manager-pysrc.html#ComputeDataService.add_pilot_data_service">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="pilot.impl.pilot_manager.ComputeDataService-class.html#remove_pilot_data_service" class="summary-sig-name">remove_pilot_data_service</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">pds</span>)</span><br />
+      Remove a PilotDataService</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.impl.pilot_manager-pysrc.html#ComputeDataService.remove_pilot_data_service">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="list_pilot_compute"></a><span class="summary-sig-name">list_pilot_compute</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      List all PDs of PDS</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.impl.pilot_manager-pysrc.html#ComputeDataService.list_pilot_compute">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="list_pilot_data"></a><span class="summary-sig-name">list_pilot_data</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      List all PDs of PDS</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.impl.pilot_manager-pysrc.html#ComputeDataService.list_pilot_data">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="list_data_units"></a><span class="summary-sig-name">list_data_units</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      List all PDs of PDS</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.impl.pilot_manager-pysrc.html#ComputeDataService.list_data_units">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="get_data_unit"></a><span class="summary-sig-name">get_data_unit</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">du_id</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.impl.pilot_manager-pysrc.html#ComputeDataService.get_data_unit">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="submit_data_unit"></a><span class="summary-sig-name">submit_data_unit</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">data_unit_description</span>)</span><br />
+      creates a data unit object and binds it to a physical resource (a 
+      pilotdata)</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.impl.pilot_manager-pysrc.html#ComputeDataService.submit_data_unit">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="pilot.impl.pilot_manager.ComputeDataService-class.html#cancel" class="summary-sig-name">cancel</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Cancel the PDS.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.impl.pilot_manager-pysrc.html#ComputeDataService.cancel">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="pilot.impl.pilot_manager.ComputeDataService-class.html#get_state" class="summary-sig-name">get_state</a>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.impl.pilot_manager-pysrc.html#ComputeDataService.get_state">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="pilot.impl.pilot_manager.ComputeDataService-class.html#get_id" class="summary-sig-name">get_id</a>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.impl.pilot_manager-pysrc.html#ComputeDataService.get_id">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="__update_scheduler_resources"></a><span class="summary-sig-name">__update_scheduler_resources</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.impl.pilot_manager-pysrc.html#ComputeDataService.__update_scheduler_resources">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="pilot.impl.pilot_manager.ComputeDataService-class.html#_schedule_du" class="summary-sig-name" onclick="show_private();">_schedule_du</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">du</span>)</span><br />
+      Schedule PD to a suitable pilot store</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.impl.pilot_manager-pysrc.html#ComputeDataService._schedule_du">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_schedule_cu"></a><span class="summary-sig-name">_schedule_cu</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">cu</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.impl.pilot_manager-pysrc.html#ComputeDataService._schedule_cu">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_scheduler_thread"></a><span class="summary-sig-name">_scheduler_thread</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.impl.pilot_manager-pysrc.html#ComputeDataService._scheduler_thread">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="pilot.impl.pilot_manager.ComputeDataService-class.html#__expand_working_directory" class="summary-sig-name" onclick="show_private();">__expand_working_directory</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">compute_unit</span>,
+        <span class="summary-sig-arg">pilot_job</span>)</span><br />
+      Expand pilotdata:// url specified in the compute_unit_description 
+ to a local url on the machine of the PJ</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.impl.pilot_manager-pysrc.html#ComputeDataService.__expand_working_directory">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="__stage_du_to_pj"></a><span class="summary-sig-name">__stage_du_to_pj</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">pilotdata</span>,
+        <span class="summary-sig-arg">pilotjob</span>)</span><br />
+      stage required files to machine of pilot job</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.impl.pilot_manager-pysrc.html#ComputeDataService.__stage_du_to_pj">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="__find_pd_at_pj_resource"></a><span class="summary-sig-name">__find_pd_at_pj_resource</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">pilotjob</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.impl.pilot_manager-pysrc.html#ComputeDataService.__find_pd_at_pj_resource">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="pilot.api.compute.api.ComputeUnitService-class.html">api.compute.api.ComputeUnitService</a></code></b>:
+      <code><a href="pilot.api.compute.api.ComputeUnitService-class.html#add_pilot_job_service">add_pilot_job_service</a></code>,
+      <code><a href="pilot.api.compute.api.ComputeUnitService-class.html#remove_pilot_job_service">remove_pilot_job_service</a></code>
+      </p>
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="pilot.api.data.api.PilotDataService-class.html">api.data.api.PilotDataService</a></code></b>:
+      <code><a href="pilot.api.data.api.PilotDataService-class.html#create_pilot">create_pilot</a></code>,
+      <code><a href="pilot.api.data.api.PilotDataService-class.html#list_pilots">list_pilots</a></code>
+      </p>
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__delattr__</code>,
+      <code>__format__</code>,
+      <code>__getattribute__</code>,
+      <code>__hash__</code>,
+      <code>__new__</code>,
+      <code>__reduce__</code>,
+      <code>__reduce_ex__</code>,
+      <code>__repr__</code>,
+      <code>__setattr__</code>,
+      <code>__sizeof__</code>,
+      <code>__str__</code>,
+      <code>__subclasshook__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS VARIABLES ==================== -->
+<a name="section-ClassVariables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Class Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-ClassVariables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="CDS_ID_PREFIX"></a><span class="summary-name">CDS_ID_PREFIX</span> = <code title="&quot;cds-&quot;">&quot;cds-&quot;</code>
+    </td>
+  </tr>
+</table>
+<!-- ==================== PROPERTIES ==================== -->
+<a name="section-Properties"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Properties</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Properties"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__class__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="__init__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">cds_url</span>=<span class="sig-default">None</span>)</span>
+    <br /><em class="fname">(Constructor)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="pilot.impl.pilot_manager-pysrc.html#ComputeDataService.__init__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Create a Work Data Service object.</p>
+  <p>Keyword arguments: cds_url -- Reconnect to an existing WDS 
+  (optional).</p>
+  <dl class="fields">
+    <dt>Overrides:
+        object.__init__
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="add_pilot_compute_service"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">add_pilot_compute_service</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">pjs</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="pilot.impl.pilot_manager-pysrc.html#ComputeDataService.add_pilot_compute_service">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <pre class="literalblock">
+Add a PilotJobService to this CDS.
+
+Keyword arguments:
+pilotjob_services -- The PilotJob Service(s) to which this 
+                     Work Unit Service will connect.
+
+Return:
+Result
+
+</pre>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="remove_pilot_compute_service"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">remove_pilot_compute_service</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">pjs</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="pilot.impl.pilot_manager-pysrc.html#ComputeDataService.remove_pilot_compute_service">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <pre class="literalblock">
+Remove a PilotJobService from this CDS.
+
+Note that it won't cancel the PilotJobService, it will just no
+longer be connected to this WUS.
+
+Keyword arguments:
+pilotjob_services -- The PilotJob Service(s) to remove from this
+                     Work Unit Service. 
+
+Return:
+Result
+
+</pre>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="submit_compute_unit"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">submit_compute_unit</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">compute_unit_description</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="pilot.impl.pilot_manager-pysrc.html#ComputeDataService.submit_compute_unit">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Submit a WU to this Work Unit Service.</p>
+  <p>Keyword argument: cud -- The ComputeUnitDescription from the 
+  application</p>
+  <p>Return: ComputeUnit object</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="pilot.api.compute.api.ComputeUnitService-class.html#submit_compute_unit">api.compute.api.ComputeUnitService.submit_compute_unit</a>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="add_pilot_data_service"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">add_pilot_data_service</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">pds</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="pilot.impl.pilot_manager-pysrc.html#ComputeDataService.add_pilot_data_service">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Add a PilotDataService</p>
+  <p>Keyword arguments: pds -- The PilotDataService to add.</p>
+  <p>Return: None</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="remove_pilot_data_service"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">remove_pilot_data_service</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">pds</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="pilot.impl.pilot_manager-pysrc.html#ComputeDataService.remove_pilot_data_service">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Remove a PilotDataService</p>
+  <p>Keyword arguments: pds -- The PilotDataService to remove</p>
+  <p>Return: None</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="cancel"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">cancel</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="pilot.impl.pilot_manager-pysrc.html#ComputeDataService.cancel">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Cancel the PDS. All associated PD objects are deleted and removed from
+  the associated pilot stores.</p>
+  <p>Keyword arguments: None</p>
+  <p>Return: None</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="pilot.api.data.api.PilotDataService-class.html#cancel">api.data.api.PilotDataService.cancel</a>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="get_state"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">get_state</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="pilot.impl.pilot_manager-pysrc.html#ComputeDataService.get_state">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="pilot.api.compute.api.ComputeUnitService-class.html#get_state">api.compute.api.ComputeUnitService.get_state</a>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="get_id"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">get_id</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="pilot.impl.pilot_manager-pysrc.html#ComputeDataService.get_id">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="pilot.api.compute.api.ComputeUnitService-class.html#get_id">api.compute.api.ComputeUnitService.get_id</a>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_schedule_du"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_schedule_du</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">du</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="pilot.impl.pilot_manager-pysrc.html#ComputeDataService._schedule_du">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <pre class="literalblock">
+Schedule PD to a suitable pilot store
+
+Currently one level of scheduling is used:
+    1.) Add all resources managed by PSS of this PSS
+    2.) Select one resource
+
+</pre>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="__expand_working_directory"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__expand_working_directory</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">compute_unit</span>,
+        <span class="sig-arg">pilot_job</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="pilot.impl.pilot_manager-pysrc.html#ComputeDataService.__expand_working_directory">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <pre class="literalblock">
+Expand pilotdata:// url specified in the compute_unit_description 
+ to a local url on the machine of the PJ
+ 
+ pilotdata://localhost/434bfc5c-23fd-11e1-a43f-00264a13ca4c
+ 
+ to
+ 
+/tmp/pilotstore//434bfc5c-23fd-11e1-a43f-00264a13ca4c on machine running pilot_job        
+
+</pre>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="http://faust.cct.lsu.edu/trac/bigjob/">BigJob</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Thu Feb  2 21:57:41 2012
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>
