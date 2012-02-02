@@ -127,16 +127,19 @@ class bigjob_coordination(object):
         
     
     def get_jobs_of_pilot(self, pilot_url):
-        pilot_url = self.get_url(pilot_url)
+        pilot_url = self.get_url(pilot_url + "/jobs")
         """ returns array of job_url that are associated with a pilot """
         pilot_dir = saga.advert.directory(saga.url(pilot_url), saga.advert.Create | saga.advert.CreateParents | saga.advert.ReadWrite)
-        jobs = pilot_dir.list()        
-        return jobs
+        jobs = pilot_dir.list()   
+        j = [self.__remove_dbtype(pilot_url) + "/" + i.get_string() for i in jobs]
+        return j
+    
     
     def delete_pilot(self, pilot_url):
         pilot_url = self.get_url(pilot_url)
         pilot_dir = saga.advert.directory(saga.url(pilot_url), saga.advert.Create | saga.advert.CreateParents | saga.advert.ReadWrite)
         pilot_dir.remove(pilot_url, saga.name_space.Recursive)    
+    
     
     #####################################################################################
     # Sub-Job State    

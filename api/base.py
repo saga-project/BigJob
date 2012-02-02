@@ -31,6 +31,9 @@ class bigjob(object):
     
     def cancel(self):        
         pass
+    
+    def wait(self):        
+        pass
                     
                     
 class subjob(object):

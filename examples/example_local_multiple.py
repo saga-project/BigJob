@@ -25,9 +25,9 @@ sys.path.insert(0, os.getcwd() + "/../")
 """
 
 ### EDIT COORDINATION_URL to point to advert server.  
-#COORDINATION_URL = "advert://advert.cct.lsu.edu:5432/"
-#COORDINATION_URL = "advert://advert.cct.lsu.edu:8080/"
 COORDINATION_URL = "advert://localhost/?dbtype=sqlite3"
+#COORDINATION_URL = "redis://localhost"
+#COORDINATION_URL = "advert://advert.cct.lsu.edu:8080/"
 
 from bigjob import bigjob, subjob, description
 
@@ -109,30 +109,7 @@ if __name__ == "__main__":
         job_start_times[sj]=time.time()
         job_states[sj] = sj.get_state()
 
-    # busy wait for completion
-    while 1:
-        finish_counter=0
-        result_map = {}
-        for i in range(0, NUMBER_JOBS):
-            old_state = job_states[jobs[i]]
-            state = jobs[i].get_state()
-            #print "Job " + str(jobs[i]) + " state: " + state
-            if result_map.has_key(state)==False:
-                result_map[state]=1
-            else:
-                result_map[state] = result_map[state]+1
-            #pdb.set_trace()
-            if old_state != state:
-                print "Job " + str(jobs[i]) + " changed from: " + old_state + " to " + state
-            if old_state != state and has_finished(state)==True:
-                print "Job: " + str(jobs[i]) + " Runtime: " + str(time.time()-job_start_times[jobs[i]]) + " s."
-            if has_finished(state)==True:
-                finish_counter = finish_counter + 1
-            job_states[jobs[i]]=state
-
-        if finish_counter == NUMBER_JOBS:
-            break
-        time.sleep(2)
+    bj.wait()
 
     runtime = time.time()-starttime
     print "Runtime: " + str(runtime) + " s; Runtime per Job: " + str(runtime/NUMBER_JOBS)
