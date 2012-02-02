@@ -4,7 +4,7 @@ import data.api
 
 
 class ComputeDataDescription(compute.api.ComputeUnitDescription):
-    """ TROY WorkUnitDescription.
+    """ WorkUnitDescription.
         {
             'executable': <path to executable>,  
             'arguments': <arguments>,           # Arguments 
@@ -14,9 +14,9 @@ class ComputeDataDescription(compute.api.ComputeUnitDescription):
             # A pilot data url will be translated to the local pilot store url, e.g.
             #     pilotdata://localhost/c2fafeae-03a9-11e1-9934-109addae22a3' 
             #     =>           
-            #     ssh://localhost/tmp/pilotstore//c2fafeae-03a9-11e1-9934-109addae22a3
+            #     ssh://localhost/tmp/pilotdata/c2fafeae-03a9-11e1-9934-109addae22a3
             #
-            #     i.e. job is executed in /tmp/pilotstore/c2fafeae-03a9-11e1-9934-109addae22a3
+            #     i.e. job is executed in /tmp/pilotdata/c2fafeae-03a9-11e1-9934-109addae22a3
             #     where file can be accessed using relative paths
             'working_directory': <working directory>,  
             
@@ -56,7 +56,7 @@ class ComputeDataDescription(compute.api.ComputeUnitDescription):
 
 
 class ComputeDataService(compute.api.ComputeUnitService, data.api.PilotDataService):
-    """ TROY WorkDataService.
+    """ WorkDataService.
     
         The WorkDataService is the application's interface to submit 
         WorkUnits and PilotData/DataUnit to the Pilot-Manager 
