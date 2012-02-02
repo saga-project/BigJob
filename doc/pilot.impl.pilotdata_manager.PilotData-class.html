@@ -1,0 +1,616 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>pilot.impl.pilotdata_manager.PilotData</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="http://faust.cct.lsu.edu/trac/bigjob/">BigJob</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="pilot-module.html">Package&nbsp;pilot</a> ::
+        <a href="pilot.impl-module.html">Package&nbsp;impl</a> ::
+        <a href="pilot.impl.pilotdata_manager-module.html">Module&nbsp;pilotdata_manager</a> ::
+        Class&nbsp;PilotData
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="pilot.impl.pilotdata_manager.PilotData-class.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS DESCRIPTION ==================== -->
+<h1 class="epydoc">Class PilotData</h1><p class="nomargin-top"><span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#PilotData">source&nbsp;code</a></span></p>
+<center>
+<center>  <map id="uml_class_diagram_for_pilot_im_6" name="uml_class_diagram_for_pilot_im_6">
+<area shape="rect" id="node1_15" href="pilot.impl.pilotdata_manager.PilotData-class.html#PS_ID_PREFIX" title="pilot.impl.pilotdata_manager.PilotData.PS_ID_PREFIX" alt="" coords="17,159,549,177"/>
+<area shape="rect" id="node1_16" href="pilot.impl.pilotdata_manager.PilotData-class.html#__init__" title="Initialize PilotData at given service url:" alt="" coords="17,180,549,199"/>
+<area shape="rect" id="node1_17" href="pilot.impl.pilotdata_manager.PilotData-class.html#initialize_pilot_data" title="pilot.impl.pilotdata_manager.PilotData.initialize_pilot_data" alt="" coords="17,199,549,217"/>
+<area shape="rect" id="node1_18" href="pilot.impl.pilotdata_manager.PilotData-class.html#cancel" title="Cancel PilotData" alt="" coords="17,217,549,236"/>
+<area shape="rect" id="node1_19" href="pilot.impl.pilotdata_manager.PilotData-class.html#url_for_du" title="pilot.impl.pilotdata_manager.PilotData.url_for_du" alt="" coords="17,236,549,255"/>
+<area shape="rect" id="node1_20" href="pilot.impl.pilotdata_manager.PilotData-class.html#create_du" title="pilot.impl.pilotdata_manager.PilotData.create_du" alt="" coords="17,255,549,273"/>
+<area shape="rect" id="node1_21" href="pilot.impl.pilotdata_manager.PilotData-class.html#put_du" title="pilot.impl.pilotdata_manager.PilotData.put_du" alt="" coords="17,273,549,292"/>
+<area shape="rect" id="node1_22" href="pilot.impl.pilotdata_manager.PilotData-class.html#remove_du" title="Remove pilot data from pilot data" alt="" coords="17,292,549,311"/>
+<area shape="rect" id="node1_23" href="pilot.impl.pilotdata_manager.PilotData-class.html#copy_du" title="pilot.impl.pilotdata_manager.PilotData.copy_du" alt="" coords="17,311,549,329"/>
+<area shape="rect" id="node1_24" href="pilot.impl.pilotdata_manager.PilotData-class.html#list_pilotdata" title="pilot.impl.pilotdata_manager.PilotData.list_pilotdata" alt="" coords="17,329,549,348"/>
+<area shape="rect" id="node1_25" href="pilot.impl.pilotdata_manager.PilotData-class.html#get_state" title="pilot.impl.pilotdata_manager.PilotData.get_state" alt="" coords="17,348,549,367"/>
+<area shape="rect" id="node1_26" href="pilot.impl.pilotdata_manager.PilotData-class.html#export_du" title="pilot.impl.pilotdata_manager.PilotData.export_du" alt="" coords="17,367,549,385"/>
+<area shape="rect" id="node1_27" href="pilot.impl.pilotdata_manager.PilotData-class.html#to_dict" title="pilot.impl.pilotdata_manager.PilotData.to_dict" alt="" coords="17,385,549,404"/>
+<area shape="rect" id="node1_28" href="pilot.impl.pilotdata_manager.PilotData-class.html#__repr__" title="repr(x)" alt="" coords="17,404,549,423"/>
+<area shape="rect" id="node1_29" href="pilot.impl.pilotdata_manager.PilotData-class.html#create_pilot_data_from_dict" title="pilot.impl.pilotdata_manager.PilotData.create_pilot_data_from_dict" alt="" coords="17,423,549,441"/>
+<area shape="rect" id="node1" href="pilot.impl.pilotdata_manager.PilotData-class.html" title="PilotData." alt="" coords="5,134,561,447"/>
+<area shape="rect" id="node2" href="pilot.api.PilotData-class.html" title="pilot.api.PilotData" alt="" coords="231,70,337,114"/>
+<area shape="rect" id="node3" href="pilot.api.data.api.PilotData-class.html" title="PilotData." alt="" coords="202,6,363,50"/>
+</map>
+  <img src="uml_class_diagram_for_pilot_im_6.gif" alt='' usemap="#uml_class_diagram_for_pilot_im_6" ismap="ismap" class="graph-without-title" />
+</center>
+</center>
+<hr />
+<p>PilotData.</p>
+  <p>Reserves a space of physical storage on the resource specified in the 
+  pilot_data_description</p>
+
+<!-- ==================== INSTANCE METHODS ==================== -->
+<a name="section-InstanceMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="pilot.impl.pilotdata_manager.PilotData-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">pilot_data_service</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">pilot_data_description</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">ps_url</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Initialize PilotData at given service url:</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#PilotData.__init__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="initialize_pilot_data"></a><span class="summary-sig-name">initialize_pilot_data</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#PilotData.initialize_pilot_data">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="__get_ps_id"></a><span class="summary-sig-name">__get_ps_id</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">ps_url</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#PilotData.__get_ps_id">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="pilot.impl.pilotdata_manager.PilotData-class.html#cancel" class="summary-sig-name">cancel</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Cancel PilotData</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#PilotData.cancel">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="url_for_du"></a><span class="summary-sig-name">url_for_du</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">du</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#PilotData.url_for_du">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="create_du"></a><span class="summary-sig-name">create_du</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">du</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#PilotData.create_du">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="put_du"></a><span class="summary-sig-name">put_du</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">du</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#PilotData.put_du">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="remove_du"></a><span class="summary-sig-name">remove_du</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">du</span>)</span><br />
+      Remove pilot data from pilot data</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#PilotData.remove_du">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="copy_du"></a><span class="summary-sig-name">copy_du</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">du</span>,
+        <span class="summary-sig-arg">ps_new</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#PilotData.copy_du">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="list_pilotdata"></a><span class="summary-sig-name">list_pilotdata</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#PilotData.list_pilotdata">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="pilot.impl.pilotdata_manager.PilotData-class.html#get_state" class="summary-sig-name">get_state</a>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#PilotData.get_state">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="export_du"></a><span class="summary-sig-name">export_du</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">du</span>,
+        <span class="summary-sig-arg">target_url</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#PilotData.export_du">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="to_dict"></a><span class="summary-sig-name">to_dict</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#PilotData.to_dict">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="pilot.impl.pilotdata_manager.PilotData-class.html#__repr__" class="summary-sig-name">__repr__</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      repr(x)</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#PilotData.__repr__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__delattr__</code>,
+      <code>__format__</code>,
+      <code>__getattribute__</code>,
+      <code>__hash__</code>,
+      <code>__new__</code>,
+      <code>__reduce__</code>,
+      <code>__reduce_ex__</code>,
+      <code>__setattr__</code>,
+      <code>__sizeof__</code>,
+      <code>__str__</code>,
+      <code>__subclasshook__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS METHODS ==================== -->
+<a name="section-ClassMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Class Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-ClassMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="create_pilot_data_from_dict"></a><span class="summary-sig-name">create_pilot_data_from_dict</span>(<span class="summary-sig-arg">cls</span>,
+        <span class="summary-sig-arg">ps_dict</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#PilotData.create_pilot_data_from_dict">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS VARIABLES ==================== -->
+<a name="section-ClassVariables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Class Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-ClassVariables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="PS_ID_PREFIX"></a><span class="summary-name">PS_ID_PREFIX</span> = <code title="&quot;ps-&quot;">&quot;ps-&quot;</code>
+    </td>
+  </tr>
+</table>
+<!-- ==================== PROPERTIES ==================== -->
+<a name="section-Properties"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Properties</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Properties"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__class__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="__init__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">pilot_data_service</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">pilot_data_description</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">ps_url</span>=<span class="sig-default">None</span>)</span>
+    <br /><em class="fname">(Constructor)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#PilotData.__init__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Initialize PilotData at given service url:</p>
+  <p>ssh://&lt;hostname&gt; gsissh://&lt;hostname&gt;</p>
+  <p>Currently only ssh schemes are supported. In the future all SAGA URL 
+  schemes/adaptors should be supported.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        object.__init__
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="cancel"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">cancel</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#PilotData.cancel">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Cancel PilotData</p>
+  <p>Keyword arguments: None</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="pilot.api.data.api.PilotData-class.html#cancel">api.data.api.PilotData.cancel</a>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="get_state"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">get_state</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#PilotData.get_state">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="pilot.api.data.api.PilotData-class.html#get_state">api.data.api.PilotData.get_state</a>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="__repr__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__repr__</span>(<span class="sig-arg">self</span>)</span>
+    <br /><em class="fname">(Representation operator)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#PilotData.__repr__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>repr(x)</p>
+  <dl class="fields">
+    <dt>Overrides:
+        object.__repr__
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="http://faust.cct.lsu.edu/trac/bigjob/">BigJob</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Thu Feb  2 21:57:41 2012
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>
