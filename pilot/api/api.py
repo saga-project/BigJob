@@ -4,7 +4,7 @@ import data.api
 
 
 class ComputeDataDescription(compute.api.ComputeUnitDescription):
-    """ WorkUnitDescription.
+    """ ComputeDataDescription.
         {
             'executable': <path to executable>,  
             'arguments': <arguments>,           # Arguments 
@@ -56,17 +56,16 @@ class ComputeDataDescription(compute.api.ComputeUnitDescription):
 
 
 class ComputeDataService(compute.api.ComputeUnitService, data.api.PilotDataService):
-    """ WorkDataService.
+    """ ComputeDataService.
     
-        The WorkDataService is the application's interface to submit 
-        WorkUnits and PilotData/DataUnit to the Pilot-Manager 
-        in the P* Model.
-        
+        The ComputeDataService is the application's interface to submit 
+        ComputeUnits and PilotData/DataUnit to the Pilot-Manager 
+        in the P* Model.        
     """
    
 
     def __init__(self, wds_id=None):
-        """ Create a Work Data Service object.
+        """ Create a Compute Data Service object.
 
             Keyword arguments:
             wds_id -- Reconnect to an existing WDS (optional).

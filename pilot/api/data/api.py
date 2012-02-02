@@ -33,11 +33,11 @@ class PilotData(object):
     # Class members
     __slots__ = (
         'id',           # Reference to this PJ
-        'description',  # Description of PilotStore
+        'description',  # Description of PilotData
         'context',      # SAGA context
         'resource_url', # Resource  URL       
-        'state',        # State of the PilotStore
-        'state_detail', # Adaptor specific state of the PilotStore       
+        'state',        # State of the PilotData
+        'state_detail', # Adaptor specific state of the PilotData       
     )
 
     def cancel(self):        
@@ -66,7 +66,7 @@ class PilotDataService(object):
     )
 
     def __init__(self, pss_id=None):
-        """ Create a PilotStoreService
+        """ Create a PilotDataService
 
             Keyword arguments:
             pss_id -- restore from pss_id
@@ -74,7 +74,7 @@ class PilotDataService(object):
         pass
 
     def create_pilot(self, pilot_data_description):
-        """ Create a PilotStore 
+        """ Create a PilotData 
 
             Keyword arguments:
             pilot_data_description -- PilotData Description            
@@ -116,10 +116,10 @@ class DataUnitService(object):
         pass
 
     def add_pilot_data_service(self, pss):
-        """ Add a PilotStoreService 
+        """ Add a PilotDataService 
 
             Keyword arguments:
-            pss -- The PilotStoreService to add.
+            pss -- The PilotDataService to add.
 
             Return:
             Result
@@ -127,11 +127,11 @@ class DataUnitService(object):
         pass
 
     def remove_pilot_data_service(self, pss):
-        """ Remove a PilotStoreService 
+        """ Remove a PilotDataService 
 
             
             Keyword arguments:
-            pss -- The PilotStoreService to remove 
+            pss -- The PilotDataService to remove 
             Return:
             Result
         """
@@ -144,7 +144,7 @@ class DataUnitService(object):
     
 
     def submit_pilot_data_set(self, data_unit_description):
-        """ Create Pilot Data object and schedule it to a Pilot Store """
+        """ Create Pilot Data object and schedule it to a Pilot Data """
         pass
     
     
@@ -171,7 +171,7 @@ class DataUnitService(object):
 # DataUnitDescription
 # 
 class DataUnitDescription(dict):
-    """ PilotDataDescription.
+    """ DataUnitDescription.
         {
             'file_urls': [file1, file2, file3]        
         } 
@@ -193,7 +193,7 @@ class DataUnitDescription(dict):
 # DataUnit 
 # 
 class DataUnit(object):
-    """ PilotData. Holds a set of data units.        
+    """ DataUnit. Holds a set of files.        
     """
 
     # Class members
