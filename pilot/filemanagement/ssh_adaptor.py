@@ -61,18 +61,18 @@ class SSHFileAdaptor(object):
             self.__state=State.Failed
             return self.__state            
             
-    def create_pd(self, pd_id):
-        pd_dir = os.path.join(self.path, str(pd_id))
-        logger.debug("mkdir: " + pd_dir)
+    def create_du(self, du_id):
+        du_dir = os.path.join(self.path, str(du_id))
+        logger.debug("mkdir: " + du_dir)
         try:
-            self.__sftp.mkdir(pd_dir)
+            self.__sftp.mkdir(du_dir)
         except:
             pass # dir already exists
         
         
-    def put_pd(self, pd):
-        for i in pd.list_data_units():     
-            remote_path = os.path.join(self.path, str(pd.id), os.path.basename(i.local_url))
+    def put_du(self, du):
+        for i in du.list_data_unit_items():     
+            remote_path = os.path.join(self.path, str(du.id), os.path.basename(i.local_url))
             logging.debug("Put file: %s to %s"%(i.local_url, remote_path))
                         
             if i.local_url.startswith("ssh://"):
@@ -85,11 +85,12 @@ class SSHFileAdaptor(object):
                 if stat.S_ISDIR(os.stat(i.local_url).st_mode):
                     logging.warning("Path %s is a directory. Ignored."%i.local_url)                
                     continue            
-                self.__sftp.put(i.local_url, remote_path, self.put_progress, True)
+                #self.__sftp.put(i.local_url, remote_path, self.put_progress, True)
+                self.__sftp.put(i.local_url, remote_path)
                              
 
-    def copy_pd_to_url(self, pd,  local_url, remote_url):
-        base_dir = self.__get_path_for_pd(pd)
+    def copy_du_to_url(self, du,  local_url, remote_url):
+        base_dir = self.__get_path_for_du(du)
         self.__create_remote_directory(remote_url)  
         for filename in self.__sftp.listdir(base_dir):
             file_url = local_url + "/" + filename
@@ -98,20 +99,20 @@ class SSHFileAdaptor(object):
             self.__third_party_transfer_host(file_url, file_remote_url)
 
 
-    def copy_pd(self, pd, ps_new):
-        remote_url = ps_new.service_url + "/" + str(pd.id)
-        local_url =  self.service_url  + "/" + str(pd.id)
-        self.copy_pd_to_url(pd, local_url, remote_url)  
+    def copy_du(self, du, ps_new):
+        remote_url = ps_new.service_url + "/" + str(du.id)
+        local_url =  self.service_url  + "/" + str(du.id)
+        self.copy_du_to_url(du, local_url, remote_url)  
         
     
-    def get_pd(self, pd, target_url):
+    def get_du(self, du, target_url):
         remote_url = target_url
-        local_url =  self.service_url  + "/" + str(pd.id)
-        self.copy_pd_to_url(pd, local_url, remote_url)  
+        local_url =  self.service_url  + "/" + str(du.id)
+        self.copy_du_to_url(du, local_url, remote_url)  
         
         
-    def remove_pd(self, pd):
-        self.__remove_directory(os.path.join(self.path, pd.id))
+    def remove_du(self, du):
+        self.__remove_directory(os.path.join(self.path, du.id))
     
         
     def put_progress(self, transfered_bytes, total_bytes):
@@ -121,8 +122,8 @@ class SSHFileAdaptor(object):
     
     ###########################################################################
     # Private support methods
-    def __get_path_for_pd(self, pd):
-        return os.path.join(self.path, str(pd.id))
+    def __get_path_for_du(self, du):
+        return os.path.join(self.path, str(du.id))
     
     def __remove_directory(self, path):
         """Remove remote directory that may contain files.        

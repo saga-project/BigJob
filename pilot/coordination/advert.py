@@ -19,7 +19,7 @@ class AdvertCoordinationAdaptor:
         
         
         advert://advert.cct.lsu.edu/pilot/3d0d5960-296d-11e1-8896-00264a13ca4c/data/pds/ => pilot store service
-        advert://advert.cct.lsu.edu/pilot/3d0d5960-296d-11e1-8896-00264a13ca4c/data/pds/pilot-store-description => pilot store description
+        advert://advert.cct.lsu.edu/pilot/3d0d5960-296d-11e1-8896-00264a13ca4c/data/pds/pilot-data-description => pilot data description
     
         This class is stateless - the application's base_url needs to be passed into every method.    
     """
@@ -74,36 +74,36 @@ class AdvertCoordinationAdaptor:
         pds_url = cls.__remove_dbtype(pds_url)        
         pd_url =pds_url+"/" + pd.id
         pd_description_url = cls.__get_url(pd_url + "/description")
-        logger.debug("PSS URL: %s, PS Description URL: %s"%(pds_url, pd_description_url))
+        logger.debug("PDS URL: %s, PD Description URL: %s"%(pds_url, pd_description_url))
         # directory is recursively created
         pd_desc_entry = saga.advert.entry(saga.url(pd_description_url),
                                            saga.advert.Create | saga.advert.CreateParents | saga.advert.ReadWrite)
         logger.debug("initialized advert entry for pds: " + pd_description_url)
-        pd_desc_entry.store_string(json.dumps(pd.pilot_data_description))
+        pd_desc_entry.store_string(json.dumps(pd.data_unit_description))
         return pd_url
     
     @classmethod
     def update_pd(cls, pd):
-        if len(pd.pilot_data) > 0:
-            pd_urls = [i.url for i in pd.pilot_data.values()]
-            cls.__store_entry(cls.__remove_dbtype(pd.url)+"/pilot-data", pd_urls)
-        cls.__store_entry(cls.__remove_dbtype(pd.url)+"/pilot-store", pd.to_dict())
+        if len(pd.data_units) > 0:
+            du_urls = [i.url for i in pd.data_units.values()]
+            cls.__store_entry(cls.__remove_dbtype(pd.url)+"/data-units", du_urls)
+        cls.__store_entry(cls.__remove_dbtype(pd.url)+"/pilot-data", pd.to_dict())
     
     
     @classmethod
-    def get_pd(cls, pd_url):
-        logger.debug("GET PS: " + pd_url)     
+    def get_pd(cls, pds_url):
+        logger.debug("GET PD: " + pds_url)     
         pd_dict={}        
-        #pd_dict["pilot_data" ]=  cls.__retrieve_entry(cls.__remove_dbtype(pd_url)+"/pilot-data")
-        pd_dict["pilot_data"] = cls.__retrieve_entry(cls.__remove_dbtype(pd_url)+"/pilot-store") 
+        #pd_dict["pilot_data" ]=  cls.__retrieve_entry(cls.__remove_dbtype(pds_url)+"/pilot-data")
+        pd_dict["pilot_data"] = cls.__retrieve_entry(cls.__remove_dbtype(pds_url)+"/pilot-data") 
         return pd_dict
         
     
     @classmethod
     def list_pd(cls, pds_url):
-        """ return a list of urls to pd managed by the PSS """
+        """ return a list of urls to pd managed by the PDS """
         pds_url = cls.__get_url(pds_url)
-        logger.debug("List PS at %s"%pds_url)
+        logger.debug("List PD at %s"%pds_url)
         pds_dir = saga.advert.directory(pds_url, saga.advert.Create | 
                                        saga.advert.CreateParents | 
                                        saga.advert.ReadWrite)
@@ -115,17 +115,17 @@ class AdvertCoordinationAdaptor:
         return pd_full_urls
     
     @classmethod
-    def delete_pd(cls, pd_url):
-        pd_url = cls.__get_url(pd_url)
-        pd_dir = saga.advert.directory(saga.url(pd_url), 
+    def delete_pd(cls, pds_url):
+        pds_url = cls.__get_url(pds_url)
+        pd_dir = saga.advert.directory(saga.url(pds_url), 
                                         saga.advert.Create | 
                                         saga.advert.CreateParents | 
                                         saga.advert.ReadWrite)
-        pd_dir.remove(pd_url, saga.name_space.Recursive)  
+        pd_dir.remove(pds_url, saga.name_space.Recursive)  
     
         
     ###########################################################################
-    # Work Data Service related methods
+    # Compute Data Service related methods
     @classmethod  
     def add_cds(cls, application_url, cds):
         cds_url_no_dbtype = cls.get_cds_url(application_url, cds.id)
@@ -144,7 +144,7 @@ class AdvertCoordinationAdaptor:
         cls.__store_entry(cls.__remove_dbtype(cds_url)+"/pds/", pds_urls)
         
         pjs_urls = [i.url for i in cds.pilot_job_services]
-        cls.__store_entry(cls.__remove_dbtype(cds_url)+"/pcs/", pjs_urls)
+        cls.__store_entry(cls.__remove_dbtype(cds_url)+"/cds/", pjs_urls)
         
         # currently managed PDs and WUs
         pd_urls = [i.url for i in cds.data_units.values()]
@@ -198,15 +198,15 @@ class AdvertCoordinationAdaptor:
         cls.__store_entry(cls.__remove_dbtype(du.url)+"/state", du.state)
                 
         du_urls = [i.url for i in du.pilot_data]
-        cls.__store_entry(cls.__remove_dbtype(du.url)+"/pilot-stores", du_urls)
+        cls.__store_entry(cls.__remove_dbtype(du.url)+"/pilot-data", du_urls)
                 
-        du_dict_list = [i.to_dict() for i in du.data_units]
+        du_dict_list = [i.to_dict() for i in du.data_unit_items]
         cls.__store_entry(cls.__remove_dbtype(du.url)+"/data-units", du_dict_list)
         
        
     @classmethod
     def list_du(cls, dus_url):
-        """ return a list of urls to du managed by the PSS """
+        """ return a list of urls to du managed by the PDS """
         dus_url = cls.__get_url(dus_url)
         logger.debug("List PDS at %s"%dus_url)
         dus_dir = saga.advert.directory(dus_url, saga.advert.Create | 
@@ -236,14 +236,14 @@ class AdvertCoordinationAdaptor:
     
     @classmethod
     def get_pds_url(cls, application_url, pds_id):
-        pds_url = application_url+AdvertCoordinationAdaptor.PILOT_STORE_SERVICE_PATH+"/"+pds_id        
-        logger.debug("PSS URL: %s"%(pds_url))
+        pds_url = application_url+AdvertCoordinationAdaptor.PILOT_DATA_SERVICE_PATH+"/"+pds_id        
+        logger.debug("PDS URL: %s"%(pds_url))
         return pds_url
     
     @classmethod
     def get_cds_url(cls, application_url, cds_id):
         cds_url = application_url+AdvertCoordinationAdaptor.COMPUTE_DATA_SERVICE_PATH+"/"+cds_id        
-        logger.debug("PDS URL: %s"%(cds_url))
+        logger.debug("CDS URL: %s"%(cds_url))
         return cds_url
     
     ###########################################################################
