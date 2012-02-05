@@ -227,6 +227,13 @@ class DataUnit(object):
         """
         pass
     
+    
+    def wait(self):
+        """ Wait until in Running state 
+            (or Failed state)
+        """
+        pass
+    
     def export(self, target_directory):
         """ copies content of PD to a directory on the local machine"""
         pass    

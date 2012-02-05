@@ -150,17 +150,17 @@ class ComputeDataService(ComputeDataService):
     
     
     def list_pilot_compute(self):
-        """ List all PDs of PDS """
+        """ List all pilot compute of CDS """
         return self.pilot_job_service
     
     
     def list_pilot_data(self):
-        """ List all PDs of PDS """
+        """ List all pilot data of CDS """
         return self.pilot_data_services
     
     
     def list_data_units(self):
-        """ List all PDs of PDS """
+        """ List all DUs of CDS """
         return self.data_units.items()
     
     
@@ -214,10 +214,10 @@ class ComputeDataService(ComputeDataService):
         self.scheduler.set_pilot_jobs(pj)
     
     def _schedule_du(self, du):
-        """ Schedule PD to a suitable pilot store
+        """ Schedule DU to a suitable pilot data
         
             Currently one level of scheduling is used:
-                1.) Add all resources managed by PSS of this PSS
+                1.) Add all resources managed by the contained PDS 
                 2.) Select one resource
         """ 
         logging.debug("Schedule PD")
@@ -226,7 +226,7 @@ class ComputeDataService(ComputeDataService):
         return selected_pilot_data 
     
     def _schedule_cu(self, cu):
-        logging.debug("Schedule PD")
+        logging.debug("Schedule CU")
         self.__update_scheduler_resources()
         selected_pilot_job = self.scheduler.schedule_pilot_job(cu.compute_unit_description)
         return selected_pilot_job
@@ -240,8 +240,9 @@ class ComputeDataService(ComputeDataService):
                 if isinstance(du, DataUnit):
                     pd=self._schedule_du(du)                
                     if(pd!=None):                        
-                        logging.debug("Transfer to PD finished.")
+                        logging.debug("Initiate Transfer to PD.")
                         du.add_pilot_data(pd)
+                        logging.debug("Transfer to PD finished.")
                         du.update_state(State.Running)                    
                     else:
                         self.du_queue.put(du)
@@ -357,13 +358,23 @@ class ComputeUnit(ComputeUnit):
         if self.subjob != None:
             return self.subjob.get_state()
         return self.state
+    
+    
+    def wait(self):
+        """ Wait until in Done state 
+            (or Failed state)
+        """
+        while self.state!=State.Done and self.state!=State.Failed:
+            logger.debug("Compute Unit - State: %s"%self.state)
+            time.sleep(2)
 
-
+    
     def cancel(self):
         if self.subjob != None:
             return self.subjob.cancel()
         return None
 
+    
     def _update_compute_unit_description(self, compute_unit_description):
         self.compute_unit_description = compute_unit_description # WU Description
         self.subjob_description = self.__translate_cu_sj_description(compute_unit_description)

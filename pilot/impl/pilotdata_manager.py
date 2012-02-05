@@ -100,7 +100,8 @@ class PilotData(PilotData):
             Keyword arguments:
             None
         """
-        self.__filemanager.delete_pilotdata()
+        #self.__filemanager.delete_pilotdata()
+        pass
         
         
     def url_for_du(self, du):
@@ -299,6 +300,8 @@ class DataUnit(DataUnit):
             self.id = self.__get_du_id(du_url)
             self.url = du_url            
             self.__restore_state()
+            
+        self.transfer_threads=[]
     
     
     def __restore_state(self):
@@ -309,13 +312,13 @@ class DataUnit(DataUnit):
         self.data_unit_items = [DataUnitItem.create_data_unit_from_dict(i) for i in data_unit_dict_list]
         self.pilot_data = [] 
         for i in du_dict["pilot_data"]:
-            logger.debug("PS:"+str(i)) 
+            logger.debug("PD: "+str(i)) 
             du = DataUnit(du_url=str(i))
             self.pilot_data.append(du) 
             
             
     def cancel(self):
-        """ Cancel the PD. """
+        """ Cancel the DU. """
         self.state = State.Done    
         CoordinationAdaptor.update_du(self)
             
@@ -339,16 +342,28 @@ class DataUnit(DataUnit):
         return self.state  
     
     
+    def wait(self):
+        """ Wait until in running state 
+            (or failed state)
+        """
+        
+        # Wait for all transfers to finish
+        for i in self.transfer_threads:
+            i.join()
+        
+        # Wait for state to change
+        while self.state!=State.Running and self.state!=State.Failed:
+            logger.debug("State: %s"%self.state)
+            time.sleep(2)
+    
+    
     def add_pilot_data(self, pilot_data):
-        """ add PD to a certain pilot data 
+        """ add DU to a certain pilot data 
             data will be moved into this data
         """
-        if len(self.pilot_data) > 0: # copy files from other pilot data
-            self.pilot_data[0].copy_du(self, pilot_data)
-        else: # copy files from original location
-            pilot_data.put_du(self)
-        self.pilot_data.append(pilot_data)
-        CoordinationAdaptor.update_du(self)  
+        transfer_thread=threading.Thread(target=self.__add_pilot_data, args=[pilot_data])
+        transfer_thread.start()        
+        self.transfer_threads.append(transfer_thread)
         
     
     def get_pilot_data(self):
@@ -379,6 +394,16 @@ class DataUnit(DataUnit):
         CoordinationAdaptor.update_du(self)
 
     
+    def __add_pilot_data(self, pilot_data):
+        logger.debug("add du to pilot data")
+        if len(self.pilot_data) > 0: # copy files from other pilot data
+            self.pilot_data[0].copy_du(self, pilot_data)
+        else: # copy files from original location
+            pilot_data.put_du(self)
+        self.pilot_data.append(pilot_data)
+        CoordinationAdaptor.update_du(self)  
+        
+        
     def __get_du_id(self, du_url):
         try:
             start = du_url.index(self.PD_ID_PREFIX)
@@ -392,10 +417,12 @@ class DataUnit(DataUnit):
             logger.error("No valid PD URL")
         return None
     
+    
     def __repr__(self):        
         return "PD: " + str(self.url) 
         + " \nData Units: " + str(self.data_unit_items)
         + " \nPilot Stores: " + str(self.pilot_data)
+    
     
 
 class DataUnitItem():
