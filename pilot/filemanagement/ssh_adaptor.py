@@ -143,14 +143,15 @@ class SSHFileAdaptor(object):
         target_host = result.netloc
         target_path = result.path
         try:
-            client = paramiko.SSHClient()
-            client.load_system_host_keys()
-            client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            client.connect(target_host)
-            sftp = client.open_sftp()            
-            sftp.mkdir(target_path)
-            sftp.close()
-            client.close()
+            if not self.__is_remote_directory(target_url):
+                client = paramiko.SSHClient()
+                client.load_system_host_keys()
+                client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                client.connect(target_host)
+                sftp = client.open_sftp()  
+                sftp.mkdir(target_path)
+                sftp.close()
+                client.close()
         except:
             logger.error("Error creating directory: " + str(target_path) 
                          + " at: " + str(target_host))
