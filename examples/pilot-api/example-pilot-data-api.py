@@ -53,6 +53,7 @@ if __name__ == "__main__":
     
     # submit pilot data to a pilot store    
     data_unit = compute_data_service.submit_data_unit(data_unit_description)
+    data_unit.wait()
     logging.debug("Pilot Data URL: %s Description: \n%s"%(data_unit, str(pilot_data_description)))
     
     

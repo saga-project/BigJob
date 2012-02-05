@@ -362,10 +362,12 @@ class ComputeUnit(object):
         'callback'          # Callback object
     )
 
+    
     def cancel(self):
         """ Cancel the WU. """
         pass
 
+    
     def set_callback(self, member, cb):
         """ Set a callback function for a member.
 
@@ -375,6 +377,7 @@ class ComputeUnit(object):
         """
         pass
 
+    
     def unset_callback(self, member):
         """ Unset a callback function from a member
 
@@ -382,10 +385,16 @@ class ComputeUnit(object):
             member -- The member to unset the callback from.
         """
         pass
+    
 
     def get_state(self):
         pass
     
+    
+    def wait(self):
+        """ Wait until in Done state 
+            (or Failed state)
+        """
 #
 #  Callback (Abstract) Class
 #
