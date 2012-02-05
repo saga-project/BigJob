@@ -298,7 +298,8 @@ class DataUnit(DataUnit):
             CoordinationAdaptor.update_du(self)
         else:
             self.id = self.__get_du_id(du_url)
-            self.url = du_url            
+            self.url = du_url   
+            logger.debug("Restore du: %s"%self.id)         
             self.__restore_state()
             
         self.transfer_threads=[]
@@ -310,11 +311,13 @@ class DataUnit(DataUnit):
         self.state = du_dict["state"]
         data_unit_dict_list = du_dict["data_units"]
         self.data_unit_items = [DataUnitItem.create_data_unit_from_dict(i) for i in data_unit_dict_list]
+        
+        # restore pilot data
         self.pilot_data = [] 
         for i in du_dict["pilot_data"]:
             logger.debug("PD: "+str(i)) 
-            du = DataUnit(du_url=str(i))
-            self.pilot_data.append(du) 
+            pd = PilotData(pd_url=str(i))
+            self.pilot_data.append(pd) 
             
             
     def cancel(self):
@@ -406,7 +409,7 @@ class DataUnit(DataUnit):
         
     def __get_du_id(self, du_url):
         try:
-            start = du_url.index(self.PD_ID_PREFIX)
+            start = du_url.index(self.DU_ID_PREFIX)
             end = du_url.find("/", start)
             if end==-1:
                 end = du_url.find("?", start)
@@ -425,7 +428,7 @@ class DataUnit(DataUnit):
     
     
 
-class DataUnitItem():
+class DataUnitItem(object):
     """ DataUnitItem """
     DUI_ID_PREFIX="dui-"  
    
@@ -494,6 +497,7 @@ class DataUnitItem():
         du = DataUnitItem()
         logger.debug("Restore DU: " + str(du_dict))
         for i in du_dict.keys():
+            logger.debug("Set attribute: %s", i)
             du.__setattr__(i, du_dict[i])
         return du
     
