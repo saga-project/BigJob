@@ -173,12 +173,13 @@ class ComputeDataService(ComputeDataService):
     def submit_data_unit(self, data_unit_description):
         """ creates a data unit object and binds it to a physical resource (a pilotdata) """
         du = DataUnit(pilot_data_service=self, 
-                      data_units_description=data_unit_description)
+                      data_unit_description=data_unit_description)
         self.data_units[du.id]=du
         self.du_queue.put(du)
         # queue currently not persisted
         CoordinationAdaptor.update_cds(self.url, self)
         return du
+    
     
     def cancel(self):
         """ Cancel the PDS. 
@@ -193,6 +194,7 @@ class ComputeDataService(ComputeDataService):
         # terminate background thread
         self.stop.set()
         CoordinationAdaptor.delete_cds(self.url)
+   
    
     def get_state(self):
         return self.state
@@ -235,7 +237,7 @@ class ComputeDataService(ComputeDataService):
                 logging.debug("Scheduler Thread: " + str(self.__class__) + " Pilot Data")
                 du = self.du_queue.get(True, 1)  
                 # check whether this is a real du object  
-                if isinstance(du, PilotData):
+                if isinstance(du, DataUnit):
                     pd=self._schedule_du(du)                
                     if(pd!=None):                        
                         logging.debug("Transfer to PD finished.")
@@ -287,7 +289,7 @@ class ComputeDataService(ComputeDataService):
                 pj_description = pilot_job.pilot_compute_description
                 pj_dc_affinity = pj_description["affinity_datacenter_label"]
                 pj_machine_affinity = pj_description["affinity_machine_label"]
-                pd = [s for i in self.pilot_data_services for s in i.list_pilotstores()]
+                pd = [s for i in self.pilot_data_services for s in i.list_pilots()]
                 
                 # find all pilot stores with the same affinity
                 candidate_pd = []
@@ -302,21 +304,23 @@ class ComputeDataService(ComputeDataService):
                 target_pd = None  
                 target_du = None  
                 for pd in candidate_pd:
-                    for du in pd.list_pilotdata():
+                    for du in pd.list_data_units():
+                        logger.debug("DU URL:%s"%(du.url))
                         if du.url == pilot_data_url:
                             logging.debug("Found PD %s at %s"%(du.url, pd.service_url))
                             target_pd = pd 
                             target_du = du
                             break
                 if target_du == None:
-                    self.__stage_du_to_pj(pilot_data_url, pj)
-                    
-                pd_url = target_pd.url_for_du(target_du)
-                components = urlparse.urlparse(pd_url)
-                compute_unit.compute_unit_description["working_directory"] = components.path
-                compute_unit._update_compute_unit_description(compute_unit.compute_unit_description)
-                logging.debug("__expand_working_directory %s: Set working directory to %s"%(pilot_data_url, compute_unit.compute_unit_description["working_directory"]))
-                return compute_unit
+                    self.__stage_du_to_pj(pilot_data_url, pilot_job)
+                
+                if target_pd!=None:
+                    pd_url = target_pd.url_for_du(target_du)
+                    components = urlparse.urlparse(pd_url)
+                    compute_unit.compute_unit_description["working_directory"] = components.path
+                    compute_unit._update_compute_unit_description(compute_unit.compute_unit_description)
+                    logging.debug("__expand_working_directory %s: Set working directory to %s"%(pilot_data_url, compute_unit.compute_unit_description["working_directory"]))
+                    return compute_unit
          
         return compute_unit
             

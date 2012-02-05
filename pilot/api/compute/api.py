@@ -15,11 +15,11 @@ class State(object):
 
 
 class PilotComputeDescription(dict):
-    """  PilotJobDescription.
+    """  PilotComputeDescription.
         
-        A PilotJobDescription is a based on the SAGA Job Description.
+        A PilotComputeDescription is a based on the SAGA Job Description.
 
-        The PilotJobDescription is used by the application to specify 
+        The PilotComputeDescription is used by the application to specify 
         what kind of PilotJobs it requires.
     """
 
@@ -77,31 +77,31 @@ class PilotComputeDescription(dict):
 class PilotCompute(object):
     """ PilotCompute (PilotJob). 
     
-        This is the object that is returned by the PilotJobService when a 
-        new PilotJob is created based on a PilotJobDescription.
+        This is the object that is returned by the PilotComputeService when a 
+        new PilotCompute is created based on a PilotComputeDescription.
 
-        The PilotJob object can be used by the application to keep track 
-        of PilotJobs that are active.
+        The PilotCompute object can be used by the application to keep track 
+        of PilotComputes that are active.
         
-        A PilotJob has state, can be queried, can be cancelled and be 
+        A PilotCompute has state, can be queried, can be cancelled and be 
         re-initialized.
     """
 
     # Class members
     __slots__ = (
         'id',           # Reference to this PJ
-        'description',  # Description of PilotJob
+        'description',  # Description of PilotCompute
         'context',      # SAGA context
         'rm',           # Resource Manager URL
         'pj_type',      # Type of TROY backend
-        'state',        # State of the PilotJob
-        'state_detail', # Adaptor specific state of the PilotJob
+        'state',        # State of the PilotCompute
+        'state_detail', # Adaptor specific state of the PilotCompute
         'callback',     # Callback object
         'wall_time_left'      # Remaining wallclock time left
     )
 
     def cancel(self):        
-        """ Remove the PilotJob from the PilotJob Service.
+        """ Remove the PilotCompute from the PilotCompute Service.
 
             Keyword arguments:
             None
@@ -109,10 +109,10 @@ class PilotCompute(object):
         pass
 
     def reinitialize(self, pilotjob_description):        
-        """ Re-Initialize the PilotJob to the (new) PilotJobDescription.
+        """ Re-Initialize the PilotCompute to the (new) PilotComputeDescription.
         
             Keyword arguments:
-            pilotjob_description -- A PilotJobDescription
+            pilotjob_description -- A PilotComputeDescription
         """
         pass
 
@@ -139,10 +139,10 @@ class PilotCompute(object):
 #  Pilot ComputeService
 #
 class PilotComputeService(object):
-    """  PilotJobService.
+    """  PilotComputeService.
     
-        The PilotJobService is responsible for creating and managing 
-        the PilotJobs.
+        The PilotComputeService is responsible for creating and managing 
+        the PilotComputes.
 
         It is the application's interface to the Pilot-Manager in the 
         P* Model.
@@ -157,7 +157,7 @@ class PilotComputeService(object):
     )
 
     def __init__(self, pjs_id=None):
-        """ Create a PilotJobService object.
+        """ Create a PilotComputeService object.
 
             Keyword arguments:
             pjs_id -- Don't create a new, but connect to an existing (optional)
@@ -165,21 +165,21 @@ class PilotComputeService(object):
         pass
 
     def create_pilot(self, rm, pilotcompute_description, pj_type=None, context=None):
-        """ Add a PilotJob to the PilotJobService
+        """ Add a PilotCompute to the PilotComputeService
 
             Keyword arguments:
             rm -- Contact string for the resource manager
-            pilotcompute_description -- PilotJob Description
+            pilotcompute_description -- PilotCompute Description
             pj_type --  backend type (optional)
             context -- Security context (optional)
 
             Return value:
-            A PilotJob handle
+            A PilotCompute handle
         """
         pass
 
     def cancel(self):
-        """ Cancel the PilotJobService.
+        """ Cancel the PilotComputeService.
 
             This also cancels all the PilotJobs that were under control of this PJS.
 
@@ -207,7 +207,7 @@ class ComputeUnitService(object):
         It can provide the application with a list of WorkUnits that are 
         managed by the Pilot-Manager.
 
-        The WorkUnitService is linked to a PilotJobService for the actual 
+        The WorkUnitService is linked to a PilotComputeService for the actual 
         execution of the WorkUnits.
     """
 
@@ -221,10 +221,10 @@ class ComputeUnitService(object):
 
 
     def add_pilot_job_service(self, pjs):
-        """ Add a PilotJobService to this WUS.
+        """ Add a PilotComputeService to this WUS.
 
             Keyword arguments:
-            pilotjob_services -- The PilotJob Service(s) to which this 
+            pilotjob_services -- The PilotCompute Service(s) to which this 
                                  Work Unit Service will connect.
 
             Return:
@@ -234,13 +234,13 @@ class ComputeUnitService(object):
 
 
     def remove_pilot_job_service(self, pjs):
-        """ Remove a PilotJobService from this WUS.
+        """ Remove a PilotComputeService from this WUS.
 
-            Note that it won't cancel the PilotJobService, it will just no
+            Note that it won't cancel the PilotComputeService, it will just no
             longer be connected to this WUS.
 
             Keyword arguments:
-            pilotjob_services -- The PilotJob Service(s) to remove from this
+            pilotjob_services -- The PilotCompute Service(s) to remove from this
                                  Work Unit Service. 
 
             Return:
