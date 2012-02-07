@@ -1,9 +1,9 @@
 """ Example application demonstrating how to submit a N 
     /bin/echo Jobs with single BigJob. 
 
-    if number_of_processes (BigJob size) = (number_of_processes/Job) * N. In this case all Jobs are executed     
+    if number_of_processes (BigJob size) = (number_of_processes/Job) * N, all Jobs are executed     
     concurrently.
-    if number_of_processes (BigJob size) < (number_of_processes/Job) * N. In this case, First set of Jobs 
+    if number_of_processes (BigJob size) < (number_of_processes/Job) * N, a set of Jobs 
     which satisfy the resource requirements are processed. Unprocessed Jobs are stored in a FIFO queue. 
     As resources become available, Jobs are processed..  
 """
@@ -19,7 +19,6 @@ COORDINATION_URL = "redis://ILikeBigJob_wITH-REdIS@gw68.quarry.iu.teragrid.org:6
 
 #For remote machines username should be provided in the resource manager url as mentiond as above.
 RESOURCEMGR_URL = "pbs-ssh://username@Target_machines_host_name"
-RESOURCEMGR_URL = "pbs-ssh://pmantha@localhost"
 
 from bigjob import bigjob, subjob, description
 

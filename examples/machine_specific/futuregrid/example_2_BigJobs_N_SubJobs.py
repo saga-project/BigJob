@@ -36,7 +36,7 @@ if __name__ == "__main__":
     # 
 
     RESOURCEMGR_URL = "pbs-ssh://username@Target_machines_host_name"
-    queue="normal"          # You can switch to development for very short runs
+    queue"normal"          # Queue information to which BigJob has to be submitted. if None, default queue is considered.
     project=None            # Allocation information 
     walltime=30             # Time in minutes. There are limits on the time you can request. 
     processes_per_node=8    # ppn
