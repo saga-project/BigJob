@@ -153,8 +153,14 @@ class PilotCompute(PilotCompute):
     def get_state(self):
         return self.__bigjob.get_state()
     
+    def wait(self):
+        """ Waits for completion of CUs """
+        self.__bigjob.wait()
+    
     def get_url(self):
         return self.__bigjob.pilot_url
+    
+    
     
     def _submit_cu(self, compute_unit):
         """ Submits work unit to Bigjob """
