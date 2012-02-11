@@ -62,7 +62,7 @@ if __name__ == "__main__":
     ###########################################################################
     # DU1 should only be scheduled to machine 1
     # DU2 should only be scheduled to machine 2
-    du1 = compute_data_service.submit_data_unit(data_unit_description1)
+    #du1 = compute_data_service.submit_data_unit(data_unit_description1)
     du2 = compute_data_service.submit_data_unit(data_unit_description2)
     
     
