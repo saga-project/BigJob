@@ -86,8 +86,10 @@ class SSHFileAdaptor(object):
                     logging.warning("Path %s is a directory. Ignored."%i.local_url)                
                     continue            
                 #self.__sftp.put(i.local_url, remote_path, self.put_progress, True)
-                self.__sftp.put(i.local_url, remote_path)
-                             
+                ssh_client, sftp_client = self.__create_sftp_client()
+                sftp_client.put(i.local_url, remote_path)
+                sftp_client.close()
+                ssh_client.close()           
 
     def copy_du_to_url(self, du,  local_url, remote_url):
         base_dir = self.__get_path_for_du(du)
@@ -173,6 +175,15 @@ class SSHFileAdaptor(object):
             return False
         sftp.close()
         client.close()
+        
+    def __create_sftp_client(self):
+        ssh_client = paramiko.SSHClient()
+        ssh_client.load_system_host_keys()
+        ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh_client.connect(self.host)
+        sftp_client = ssh_client.open_sftp()
+        sftp_client.chdir(self.path)
+        return ssh_client, sftp_client
         
     def __third_party_transfer_host(self, source_url, target_url):
         """
