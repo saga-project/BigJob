@@ -17,7 +17,7 @@ RESOURCEMGR_URL  = "gram://gridftp1.ls4.tacc.utexas.edu:2119/jobmanager-sge"
 from bigjob import bigjob, subjob, description
 
 
-### yye00 : this is the number of sub-jobs you want to run
+### this is the number of sub-jobs you want to run
 NUMBER_JOBS=8
 
 def has_finished(state):
@@ -34,15 +34,15 @@ if __name__ == "__main__":
     starttime=time.time()
 
     ##########################################################################################
-    # yye00: make sure you are familiar with the queue structure on lonestar, your project id
+    # make sure you are familiar with the queue structure on lonestar, your project id
     #        and the walltime limits on each queue. Change accordingly
     # Edit parameters for BigJob
     queue="normal" # you can switch to development for very short runs
     project="TG-XXXXXXXX"  # Shantenu's allocation. Please do not burn all SUs
     walltime=10  # There are limits on the time you can request. Read the user guide for the machine if unsure
-    processes_per_node=12   # if you want more memory per process you can reduce this to 6, 2  or 1
-    number_of_processes =24 # The total number of processes you want running, depends on the value above
-    # yye00: to keep things clean: create the directory agent where you intend to run the script
+    processes_per_node=16   # if you want more memory per process you can reduce this to 6, 2  or 1
+    number_of_processes =32 # The total number of processes you want running, depends on the value above
+    # to keep things clean: create the directory agent where you intend to run the script
     # you can start by doing this in $WORK and moving to $SCRATCH if you run out of space. This directory
     # will get big quickly so keep an eye out and do not put it in $HOME
     #workingdirectory= os.path.join(os.getcwd(), "agent") # working directory for agent. Do NOT change this
@@ -64,7 +64,7 @@ if __name__ == "__main__":
     print "Pilot Job/BigJob URL: " + bj.pilot_url + " State: " + str(bj.get_state())
 
     ##########################################################################################
-    # yye00: Submit SubJob through BigJob
+    # Submit SubJob through BigJob
     # Here you can add any arguments to each replica, change the ouput and error filenames and so on
     # change this to your heart's content, but be careful
     jobs = []
