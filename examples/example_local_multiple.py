@@ -111,11 +111,3 @@ if __name__ == "__main__":
 
     print "Terminating application. You can reconnect to BJ via the following URL: %s"%bj.pilot_url
 
-    #bj.wait()
-
-    #runtime = time.time()-starttime
-    #print "Runtime: " + str(runtime) + " s; Runtime per Job: " + str(runtime/NUMBER_JOBS)
-    ##########################################################################################
-    # Cleanup - stop BigJob
-    #bj.cancel()
-    #time.sleep(30)
