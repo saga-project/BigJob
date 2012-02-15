@@ -51,7 +51,7 @@ if __name__ == "__main__":
     if len(sys.argv)==2:
         reconnect_url=sys.argv[1]
     else:
-        print "Usage: " + sys.executable + " " + __file__ + " <Data Unit URL to Reconnect to>"
+        print "Usage: " + sys.executable + " " + __file__ + " <BigJob URL to Reconnect to>"
         sys.exit(-1)
 
     print "Reconnect to Pilot Job/BigJob at: " + reconnect_url
