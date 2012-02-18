@@ -59,6 +59,7 @@ import api.base
 sys.path.append(os.path.dirname(__file__))
 
 from pbsssh import pbsssh
+from sgessh import sgessh
 
 if sys.version_info < (2, 5):
     sys.path.append(os.path.dirname( __file__ ) + "/ext/uuid-1.30/")
@@ -261,6 +262,15 @@ class bigjob(api.base.bigjob):
                 pbssshj = pbsssh(bootstrap_script, lrms_saga_url, walltime, number_nodes, 
                                  processes_per_node, userproxy, self.working_directory, self.working_directory)
                 self.job = pbssshj
+                self.job.run()
+                return
+            ############ submit sge script which launches bigjob agent using ssh adaptors########## 
+            elif lrms_saga_url.scheme == "sge-ssh":
+                bootstrap_script = self.escape_ssh(bootstrap_script)
+                # PBS specific BJ plugin
+                sgesshj = sgessh(bootstrap_script, lrms_saga_url, walltime, number_nodes, 
+                                 processes_per_node, userproxy, project, queue, self.working_directory, self.working_directory)
+                self.job = sgesshj
                 self.job.run()
                 return
             elif is_bliss:
