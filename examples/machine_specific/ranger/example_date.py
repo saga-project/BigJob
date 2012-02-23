@@ -45,8 +45,8 @@ if __name__ == "__main__":
     #to keep things clean: create the directory agent where you intend to run the script
     # you can start by doing this in $WORK and moving to $SCRATCH if you run out of space. This directory
     # will get big quickly so keep an eye out and do not put it in $HOME
-    #CHANGE THIS TO YOUR USERNAME.
-    workingdirectory = "/share/home/01871/<yourUsername>/agent" 
+    #CHANGE THIS TO THE PATH TO YOUR AGENT DIRECTORY ON RANGER.
+    workingdirectory = "/path/to/your/agent" 
 
 
     ##########################################################################################

@@ -12,7 +12,7 @@ import sys
 sys.path.insert(0, os.getcwd() + "/../")
 
 COORDINATION_URL = "redis://ILikeBigJob_wITH-REdIS@gw68.quarry.iu.teragrid.org:6379"
-RESOURCEMGR_URL  = "gram://gridftp1.ls4.tacc.utexas.edu:2119/jobmanager-sge" 
+RESOURCEMGR_URL  = "gram://gatekeeper.ranger.tacc.teragrid.org:2119/jobmanager-sge"
 
 from bigjob import bigjob, subjob, description
 
@@ -45,8 +45,9 @@ if __name__ == "__main__":
     # to keep things clean: create the directory agent where you intend to run the script
     # you can start by doing this in $WORK and moving to $SCRATCH if you run out of space. This directory
     # will get big quickly so keep an eye out and do not put it in $HOME
-    #workingdirectory= os.path.join(os.getcwd(), "agent") # working directory for agent. Do NOT change this
-    workingdirectory = "/share/home/01871/<yourUsername>/agent"
+    #workingdirectory= os.path.join(os.getcwd(), "agent") 
+    # working directory for agent. Change this to the path to your agent directory on Ranger
+    workingdirectory = "/path/on/ranger/agent"
     ##########################################################################################
 
     print "Start Pilot Job/BigJob at: " + RESOURCEMGR_URL
@@ -72,10 +73,10 @@ if __name__ == "__main__":
     job_states = {}
     for i in range(0, NUMBER_JOBS):
         jd = description()
-        jd.executable = "/share1/projects/tg/repex/amber11/bin/sander.MPI"
+        jd.executable = "/scratch/projects/xsede/repex/amber11/bin/sander.MPI"
         jd.number_of_processes = "4"
         jd.spmd_variation = "mpi"
-        jd.arguments = ["-O -i inputfile -o outputfile -p test.prmtop -c test.prmcrd -r test.restrt"]
+        jd.arguments = ["-O -i "+workingdirectory+"/inputfile -o outputfile -p "+workingdirectory+"/test.prmtop -c "+workingdirectory+"/test.prmcrd -r test.restrt"]
         jd.output = "sj-stdout-"+str(i)+".txt"
         jd.error = "sj-stderr-"+str(i)+".txt"
 
