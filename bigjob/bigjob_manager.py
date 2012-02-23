@@ -59,6 +59,7 @@ import api.base
 sys.path.append(os.path.dirname(__file__))
 
 from pbsssh import pbsssh
+from sgessh import sgessh
 
 if sys.version_info < (2, 5):
     sys.path.append(os.path.dirname( __file__ ) + "/ext/uuid-1.30/")
@@ -96,7 +97,9 @@ class BigJobError(Exception):
 
 class bigjob(api.base.bigjob):
     
-    def __init__(self, coordination_url="advert://localhost/"):    
+    __APPLICATION_NAME="bigjob" 
+    
+    def __init__(self, coordination_url="advert://localhost/", pilot_url=None):    
         """ Initializes BigJob's coordination system
             e.g.:
             advert://localhost (SAGA/Advert SQLITE)
@@ -104,22 +107,36 @@ class bigjob(api.base.bigjob):
             redis://localhost:6379 (Redis at localhost)
             tcp://localhost (ZMQ)
         """  
-        
-        self.uuid = "bj-" + str(get_uuid())
-        
-        logger.debug("init BigJob w/: " + coordination_url)
         self.coordination_url = coordination_url
         self.coordination = self.__init_coordination(coordination_url)
-        __APPLICATION_NAME="bigjob"        
-        self.app_url = __APPLICATION_NAME +":" + str(self.uuid) 
         
-        self.state=Unknown
-        self.pilot_url=""
-        self.job = None
-        self.working_directory = None
-        logger.debug("initialized BigJob: " + self.app_url)
+        # restore existing BJ or initialize new BJ
+        if pilot_url!=None:
+            logger.debug("Reconnect to BJ: %s"%pilot_url)
+            self.pilot_url=pilot_url
+            self.uuid = self.__get_bj_id(pilot_url)
+            self.app_url = self.__APPLICATION_NAME +":" + str(self.uuid)
+            self.job = None
+            self.working_directory = None
+            self.state=self.get_state_detail()
+            pilot_url_dict[self.pilot_url]=self
+        else:
+            self.uuid = "bj-" + str(get_uuid())        
+            logger.debug("init BigJob w/: " + coordination_url)
+            self.app_url =self. __APPLICATION_NAME +":" + str(self.uuid) 
+            self.state=Unknown
+            self.pilot_url=""
+            self.job = None
+            self.working_directory = None
+            logger.debug("initialized BigJob: " + self.app_url)
         
-        
+       
+    def __get_bj_id(self, pilot_url):
+        start = pilot_url.index("bj-")
+        end =pilot_url.index(":", start)
+        return pilot_url[start:end]
+    
+     
     def __init_coordination(self, coordination_url):        
         if(coordination_url.startswith("advert://") or coordination_url.startswith("sqlasyncadvert://")):
             try:
@@ -247,6 +264,15 @@ class bigjob(api.base.bigjob):
                 self.job = pbssshj
                 self.job.run()
                 return
+            ############ submit sge script which launches bigjob agent using ssh adaptors########## 
+            elif lrms_saga_url.scheme == "sge-ssh":
+                bootstrap_script = self.escape_ssh(bootstrap_script)
+                # PBS specific BJ plugin
+                sgesshj = sgessh(bootstrap_script, lrms_saga_url, walltime, number_nodes, 
+                                 processes_per_node, userproxy, project, queue, self.working_directory, self.working_directory)
+                self.job = sgesshj
+                self.job.run()
+                return
             elif is_bliss:
                 bootstrap_script = self.escape_bliss(bootstrap_script)
 
@@ -295,7 +321,7 @@ class bigjob(api.base.bigjob):
         self.job = js.create_job(jd)
         logger.debug("Submit pilot job to: " + str(lrms_saga_url))
         self.job.run()
-        #return self.job
+        return self.pilot_url
         
     def generate_bootstrap_script(self, coordination_host, coordination_namespace):
         script = textwrap.dedent("""import sys
@@ -361,6 +387,18 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
         bootstrap_script = "\'" + bootstrap_script+ "\'"
         return bootstrap_script
      
+    def list_subjobs(self):
+        sj_list = self.coordination.get_jobs_of_pilot(self.pilot_url)
+        logger.debug(str(sj_list))
+        subjobs = []
+        for i in sj_list:
+            url = i 
+            if url.find("/")>0:
+                url = url[url.find("bigjob"):]
+                url =  url.replace("/", ":")    
+            sj = subjob(job_url=url)
+            subjobs.append(sj)
+        return subjobs
      
     def add_subjob(self, jd, job_url, job_id):
         logger.debug("Stage input files for sub-job")
@@ -418,7 +456,8 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
         try:
             return self.job.get_state()
         except:
-            return None
+            return self.get_state_detail()
+            #return None
     
     def get_state_detail(self): 
         """ internal state of BigJob agent """ 
@@ -676,22 +715,42 @@ sftp.put("%s", "%s")
         return self.pilot_url 
 
     def __del__(self):
-        self.cancel()
+        """ BJ is not cancelled when object terminates
+            Application can reconnect to BJ via pilot url later on"""
+        pass
+        #self.cancel()
 
 
                     
                     
 class subjob(api.base.subjob):
     
-    def __init__(self, coordination_url=None):
+    def __init__(self, coordination_url=None, job_url=None):
         """Constructor"""
-        self.coordination_url = coordination_url
-        self.job_url=None
-        self.uuid = "sj-" + str(get_uuid())
-        self.job_url = None
-        self.pilot_url = None
-        self.bj = None
         
+        self.coordination_url = coordination_url
+        if job_url!=None:
+            self.job_url=job_url
+            self.uuid = self.__get_sj_id(job_url)
+            self.pilot_url = self.__get_pilot_url(job_url)
+            logger.debug("Reconnect SJ: %s Pilot %s"%(self.job_url, self.pilot_url))
+        else:
+            self.uuid = "sj-" + str(get_uuid())
+            self.job_url = None
+            self.pilot_url = None
+            self.bj = None
+            
+    
+    def __get_sj_id(self, job_url):
+        start = job_url.index("sj-")        
+        return job_url[start:]
+    
+    
+    def __get_pilot_url(self, job_url):
+        end =job_url.index(":jobs")
+        return job_url[:end]    
+    
+                    
     def get_job_url(self, pilot_url):
         self.job_url = pilot_url + ":jobs:" + str(self.uuid)
         return self.job_url
@@ -743,7 +802,9 @@ class subjob(api.base.subjob):
         return arguments
 
     def __del__(self):
-        self.cancel()
+        """ Do nothing - keep subjobs alive and allow a later reconnection"""
+        pass
+        #self.cancel()
     
     def __repr__(self):        
         if(self.job_url==None):

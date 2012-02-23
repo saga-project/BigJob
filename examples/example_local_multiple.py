@@ -109,11 +109,5 @@ if __name__ == "__main__":
         job_start_times[sj]=time.time()
         job_states[sj] = sj.get_state()
 
-    bj.wait()
+    print "Terminating application. You can reconnect to BJ via the following URL: %s"%bj.pilot_url
 
-    runtime = time.time()-starttime
-    print "Runtime: " + str(runtime) + " s; Runtime per Job: " + str(runtime/NUMBER_JOBS)
-    ##########################################################################################
-    # Cleanup - stop BigJob
-    bj.cancel()
-    #time.sleep(30)

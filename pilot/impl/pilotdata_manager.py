@@ -148,6 +148,26 @@ class PilotData(PilotData):
         return self.__filemanager.get_state()
     
     
+    def wait(self):
+        while 1:
+            finish_counter=0
+            result_map = {}
+            dus = self.data_units.values()
+            for du in dus: 
+                state = du.get_state()           
+                #state = job_detail["state"]                
+                if result_map.has_key(state)==False:
+                    result_map[state]=1
+                else:
+                    result_map[state] = result_map[state]+1
+                if self.__has_finished(state)==True:
+                    finish_counter = finish_counter + 1                   
+            logger.debug("Total DUs: %s States: %s"%(len(dus), str(result_map)))
+            if finish_counter == len(dus):
+                break
+            time.sleep(2)
+
+    
     def export_du(self, du, target_url):
         self.__filemanager.get_du(du, target_url)
     
@@ -164,6 +184,13 @@ class PilotData(PilotData):
     def __repr__(self):
         return self.service_url
     
+    
+    def __has_finished(self, state):
+        state = state.lower()
+        if state=="running" or state=="failed" or state=="canceled":
+            return True
+        else:
+            return False
     
     @classmethod
     def create_pilot_data_from_dict(cls, pd_dict):
