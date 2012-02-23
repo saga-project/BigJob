@@ -9,7 +9,7 @@ import bigjob
 try:
     import saga
 except:
-    logger.warn("sge-ssh://<hostname> plugin not compatible with SAGA Bliss. Use pbs+ssh://<hostname>")
+    logger.warn("sge-ssh://<hostname> plugin not compatible with SAGA Bliss.")
 
 import os
 
@@ -102,7 +102,7 @@ str(self.working_directory), bootstrap_script)
         self.job_id=(outstr).split("\n")[-1]
         print "SGE JobID: " + str(self.job_id)
         if self.job_id==None or self.job_id=="":
-            raise Exception("BigJob submission via pbs-ssh:// failed: %s %s" % (outstr,errstr))
+            raise Exception("BigJob submission via sge-ssh:// failed: %s %s" % (outstr,errstr))
 
 
     def get_state(self):
