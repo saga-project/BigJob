@@ -15,14 +15,15 @@ if __name__ == "__main__":
 
     ##########################################################################################
     # Edit parameters for BigJob
-    queue = "normal" # if None default queue is used
-    project = "TG-MCB090174" # if None default allocation is used 
-    walltime = 100
-    tasks_per_node = 16
-    total_cores = 32
-    workingdirectory = "/share/home/01539/pmantha"
+    queue = "normal" # provide queue information
+    project = "TG-MCB090174" # provide allocation information 
+    walltime = 100 # provide wall time in minutes
+    tasks_per_node = 16 # provide tasks per node
+    total_cores = 32 # provide total cores required
+    workingdirectory = "/share/home/01539/pmantha" # provide working directory 
     userproxy = None # userproxy (not supported yet due to context issue w/ SAGA)
-    lrms_url = "sge-ssh://login3.ranger.tacc.utexas.edu" 
+    #Provide resource url in the format sge-ssh://username@target_machine_name
+    lrms_url = "sge-ssh://pmantha@login3.ranger.tacc.utexas.edu" 
 
     ##########################################################################################
     # Start Pilot Job/BigJob
@@ -46,7 +47,7 @@ if __name__ == "__main__":
         jd = description()
         jd.executable = "/bin/date"
         jd.number_of_processes = "4"
-        jd.spmd_variation = "mpi"
+        jd.spmd_variation = "mpi" # single for serial jobs
         jd.arguments = [""]
         jd.output = "sj-stdout-"+str(i)+".txt"
         jd.error = "sj-stderr-"+str(i)+".txt"
