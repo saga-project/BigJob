@@ -195,7 +195,19 @@ class ComputeDataService(ComputeDataService):
         self.stop.set()
         CoordinationAdaptor.delete_cds(self.url)
    
-   
+    def wait(self):
+        """ Waits for CUs and DUs
+            Return if all du's are running 
+                   AND
+                   cu's are done
+            
+        """
+        self.cu_queue.join()
+        self.du_queue.join()
+        [pc.wait() for i in self.pilot_job_services for pc in i.list_pilots()]
+        [pd.wait() for i in self.pilot_data_services for pd in i.list_pilots()]
+                
+        
     def get_state(self):
         return self.state
     
@@ -243,8 +255,10 @@ class ComputeDataService(ComputeDataService):
                         logging.debug("Initiate Transfer to PD.")
                         du.add_pilot_data(pd)
                         logging.debug("Transfer to PD finished.")
-                        du.update_state(State.Running)                    
+                        du.update_state(State.Running) 
+                        self.du_queue.task_done()                   
                     else:
+                        self.du_queue.task_done() 
                         self.du_queue.put(du)
             except Queue.Empty:
                 pass
@@ -256,8 +270,10 @@ class ComputeDataService(ComputeDataService):
                     pj=self._schedule_cu(cu) 
                     if pj !=None:
                         cu = self.__expand_working_directory(cu, pj)                        
-                        pj._submit_cu(cu)                    
+                        pj._submit_cu(cu)           
+                        self.cu_queue.task_done()         
                     else:
+                        self.cu_queue.task_done() 
                         self.cu_queue.put(du)
             except Queue.Empty:
                 pass

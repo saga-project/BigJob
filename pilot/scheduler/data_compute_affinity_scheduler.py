@@ -22,14 +22,14 @@ class Scheduler:
         self.pilot_jobs=pilot_jobs
     
         
-    def schedule_pilot_data(self, pilot_data_description=None):
+    def schedule_pilot_data(self, data_unit_description=None):
         logging.debug("Schedule to PD - # Avail pilots: %d"%len(self.pilot_data))     
         candidate_pilot_data = []  
-        if pilot_data_description.has_key("affinity_datacenter_label") and pilot_data_description.has_key("affinity_machine_label"):
+        if data_unit_description.has_key("affinity_datacenter_label") and data_unit_description.has_key("affinity_machine_label"):
             for i in self.pilot_data: 
                 pilot_data_description = i.pilot_data_description
-                if pilot_data_description["affinity_datacenter_label"] == pilot_data_description["affinity_datacenter_label"]\
-                and pilot_data_description["affinity_machine_label"] == pilot_data_description["affinity_machine_label"]:
+                if data_unit_description["affinity_datacenter_label"] == pilot_data_description["affinity_datacenter_label"]\
+                and data_unit_description["affinity_machine_label"] == pilot_data_description["affinity_machine_label"]:
                     candidate_pilot_data.append(i)
         else:
             candidate_pilot_data = self.pilot_data
