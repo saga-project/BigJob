@@ -83,6 +83,7 @@ if __name__ == "__main__":
 
         sj = subjob()
         sj.submit_job(bj.pilot_url, jd)
+	jobs.append(sj)
         job_start_times[sj]=time.time()
         job_states[sj] = sj.get_state()
 
