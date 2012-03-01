@@ -30,8 +30,8 @@ class sgessh:
         ### convert walltime in minutes to PBS representation of time ###
         walltime_sge="1:00:00"
         if walltime!=None and walltime!="":    
-            hrs=walltime/60 
-            minu=walltime%60 
+            hrs=int(walltime)/60 
+            minu=int(walltime)%60 
             walltime_sge=""+str(hrs)+":"+str(minu)+":00"
 
         self.bootstrap_script = textwrap.dedent("""import sys
