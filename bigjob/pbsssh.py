@@ -30,8 +30,8 @@ class pbsssh:
         ### convert walltime in minutes to PBS representation of time ###
         walltime_pbs="1:00:00"
         if walltime!=None and walltime!="":    
-            hrs=walltime/60 
-            minu=walltime%60 
+            hrs=int(walltime)/60 
+            minu=int(walltime)%60 
             walltime_pbs=""+str(hrs)+":"+str(minu)+":00"
 
         if int(number_nodes)%int(processes_per_node) == 0:
