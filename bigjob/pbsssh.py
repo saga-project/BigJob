@@ -34,10 +34,10 @@ class pbsssh:
             minu=walltime%60 
             walltime_pbs=""+str(hrs)+":"+str(minu)+":00"
 
-        if number_nodes%processes_per_node == 0:
-            nodes = number_nodes/processes_per_node
+        if int(number_nodes)%int(processes_per_node) == 0:
+            nodes = int(number_nodes)/int(processes_per_node)
         else:
-            nodes = (number_nodes/processes_per_node) + 1    
+            nodes = (int(number_nodes)/int(processes_per_node)) + 1    
         
         ppn = processes_per_node
 
