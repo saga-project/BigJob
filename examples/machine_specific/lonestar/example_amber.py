@@ -75,7 +75,7 @@ if __name__ == "__main__":
         jd.executable = "/share1/projects/tg/repex/amber11/bin/sander.MPI"
         jd.number_of_processes = "4"
         jd.spmd_variation = "mpi"
-        jd.arguments = ["-O -i inputfile -o outputfile -p test.prmtop -c test.prmcrd -r test.restrt"]
+        jd.arguments = ["-O -i "+workingdirectory+"/inputfile -o outputfile -p "+workingdirectory+"/test.prmtop -c "+workingdirectory+"/test.prmcrd -r test.restrt"]
         jd.output = "sj-stdout-"+str(i)+".txt"
         jd.error = "sj-stderr-"+str(i)+".txt"
 
