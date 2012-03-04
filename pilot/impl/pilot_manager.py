@@ -387,8 +387,11 @@ class ComputeUnit(ComputeUnit):
         """ Wait until in Done state 
             (or Failed state)
         """
-        while self.state!=State.Done and self.state!=State.Failed:
-            logger.debug("Compute Unit - State: %s"%self.state)
+        while True:
+            state = self.get_state()
+            logger.debug("Compute Unit - State: %s"%self.state)            
+            if state!=State.Done and state!=State.Failed:
+                break
             time.sleep(2)
 
     

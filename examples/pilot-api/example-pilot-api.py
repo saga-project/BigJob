@@ -40,6 +40,9 @@ if __name__ == "__main__":
     }    
     compute_unit = compute_data_service.submit_compute_unit(compute_unit_description)
     
+    
+    compute_data_service.wait()
+    
     logging.debug("Finished setup. Waiting for scheduling of CU")
     while compute_unit != State.Done:
         logging.debug("Check state")
