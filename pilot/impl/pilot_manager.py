@@ -204,8 +204,15 @@ class ComputeDataService(ComputeDataService):
         """
         self.cu_queue.join()
         self.du_queue.join()
-        [pc.wait() for i in self.pilot_job_services for pc in i.list_pilots()]
-        [pd.wait() for i in self.pilot_data_services for pd in i.list_pilots()]
+        
+        for i in self.data_units.values():
+            i.wait()
+            
+        for i in self.compute_units.values():
+            i.wait()        
+        
+        #[pc.wait() for i in self.pilot_job_services for pc in i.list_pilots()]
+        #[pd.wait() for i in self.pilot_data_services for pd in i.list_pilots()]
                 
         
     def get_state(self):
