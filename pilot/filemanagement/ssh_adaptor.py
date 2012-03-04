@@ -71,6 +71,11 @@ class SSHFileAdaptor(object):
         
         
     def put_du(self, du):
+        self.put_du_scp(du)
+                
+                
+    def put_du_paramiko(self, du):
+        logging.debug("Copy DU using Paramiko")
         for i in du.list_data_unit_items():     
             remote_path = os.path.join(self.path, str(du.id), os.path.basename(i.local_url))
             logging.debug("Put file: %s to %s"%(i.local_url, remote_path))
@@ -91,6 +96,36 @@ class SSHFileAdaptor(object):
                 sftp_client.close()
                 ssh_client.close()           
 
+
+    def put_du_scp(self, du):
+        logging.debug("Copy DU using SCP")
+        for i in du.list_data_unit_items():     
+            remote_path = os.path.join(self.path, str(du.id), os.path.basename(i.local_url))
+            logging.debug("Put file: %s to %s"%(i.local_url, remote_path))                        
+            if i.local_url.startswith("ssh://"):
+                # check if remote path is directory
+                if self.__is_remote_directory(i.local_url):
+                    logging.warning("Path %s is a directory. Ignored."%i.local_url)                
+                    continue
+                
+               
+                #self.__third_party_transfer(i.local_url, remote_path)                
+            else:
+                if stat.S_ISDIR(os.stat(i.local_url).st_mode):
+                    logging.warning("Path %s is a directory. Ignored."%i.local_url)                
+                    continue         
+            result = urlparse.urlparse(i.local_url)
+            source_host = result.netloc
+            source_path = result.path
+            logger.debug(str((source_host, source_path, self.host, remote_path)))
+            if source_host == "" or source_host==None:
+                cmd = "scp "+ source_path + " " + self.host + ":" + remote_path
+            else:
+                cmd = "scp "+ source_host+":"+source_path + " " + self.host + ":" + remote_path
+            logger.debug("Command: %s"%cmd)
+            os.system(cmd)                   
+                
+    
     def copy_du_to_url(self, du,  local_url, remote_url):
         base_dir = self.__get_path_for_du(du)
         self.__create_remote_directory(remote_url)  
@@ -100,9 +135,10 @@ class SSHFileAdaptor(object):
             logger.debug("Copy " + file_url + " to " + file_remote_url)
             self.__third_party_transfer_host(file_url, file_remote_url)
 
+        
 
-    def copy_du(self, du, ps_new):
-        remote_url = ps_new.service_url + "/" + str(du.id)
+    def copy_du(self, du, pd_new):
+        remote_url = pd_new.service_url + "/" + str(du.id)
         local_url =  self.service_url  + "/" + str(du.id)
         self.copy_du_to_url(du, local_url, remote_url)  
         
@@ -164,17 +200,19 @@ class SSHFileAdaptor(object):
         result = urlparse.urlparse(url)
         host = result.netloc
         path = result.path
-        client = paramiko.SSHClient()
-        client.load_system_host_keys()
-        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        client.connect(host)
-        sftp = client.open_sftp()
-        if stat.S_ISDIR(sftp.stat(path).st_mode):
-            return True
-        else:
-            return False
-        sftp.close()
-        client.close()
+        if path.endswith("/"):
+            client = paramiko.SSHClient()
+            client.load_system_host_keys()
+            client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            client.connect(host)
+            sftp = client.open_sftp()
+            if stat.S_ISDIR(sftp.stat(path).st_mode):
+                return True
+            else:
+                return False
+            sftp.close()
+            client.close()
+        return False
         
     def __create_sftp_client(self):
         ssh_client = paramiko.SSHClient()

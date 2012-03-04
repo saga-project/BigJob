@@ -154,6 +154,7 @@ class PilotData(PilotData):
             result_map = {}
             dus = self.data_units.values()
             for du in dus: 
+                du.wait()
                 state = du.get_state()           
                 #state = job_detail["state"]                
                 if result_map.has_key(state)==False:
@@ -162,7 +163,7 @@ class PilotData(PilotData):
                     result_map[state] = result_map[state]+1
                 if self.__has_finished(state)==True:
                     finish_counter = finish_counter + 1                   
-            logger.debug("Total DUs: %s States: %s"%(len(dus), str(result_map)))
+            logger.debug("PD ID: " + str(self.id) + " Total DUs: %s States: %s"%(len(dus), str(result_map)))
             if finish_counter == len(dus):
                 break
             time.sleep(2)
@@ -286,6 +287,11 @@ class PilotDataService(PilotDataService):
         for i in self.pilot_data.values():
             i.cancel()
  
+ 
+    def wait(self):
+        for i in self.pilot_data.values():
+            i.wait()
+ 
     
     def to_dict(self):
         pds_dict = self.__dict__
@@ -376,7 +382,7 @@ class DataUnit(DataUnit):
         """ Wait until in running state 
             (or failed state)
         """
-        
+        logger.debug("DU: %s wait()"%(str(self.id)))
         # Wait for all transfers to finish
         for i in self.transfer_threads:
             i.join()
@@ -408,7 +414,7 @@ class DataUnit(DataUnit):
         if len(self.pilot_data) > 0:
             self.pilot_data[0].export_du(self, target_url)
         else:
-            logger.error("No Pilot Store for PD found")
+            logger.error("No Pilot Data for PD found")
     
     
     def to_dict(self):

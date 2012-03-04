@@ -270,8 +270,8 @@ class AdvertCoordinationAdaptor:
                                            saga.advert.Create | 
                                            saga.advert.CreateParents | saga.advert.ReadWrite)
         entry.store_string(json.dumps(content))
-        logger.debug("Store Advert entry at: " + entry_url 
-                      + " Content: " + str(json.dumps(content)))
+        #logger.debug("Store Advert entry at: " + entry_url 
+        #              + " Content: " + str(json.dumps(content)))
         
     @classmethod
     def __retrieve_entry(cls, entry_url):
@@ -282,6 +282,6 @@ class AdvertCoordinationAdaptor:
                                            saga.advert.Create | 
                                            saga.advert.CreateParents | saga.advert.ReadWrite)
         content = json.loads(entry.retrieve_string())
-        logger.debug("Retrieve Advert entry at: " + entry_url 
-                      + " Content: " + str(json.dumps(content)))
+        #logger.debug("Retrieve Advert entry at: " + entry_url 
+        #              + " Content: " + str(json.dumps(content)))
         return content

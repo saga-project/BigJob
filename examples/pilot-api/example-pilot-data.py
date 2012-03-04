@@ -65,29 +65,19 @@ if __name__ == "__main__":
     du1 = compute_data_service.submit_data_unit(data_unit_description1)
     du2 = compute_data_service.submit_data_unit(data_unit_description2)
     
-    
     logging.debug("Finished setup of Pilot Data and Compute Data Service. Waiting for scheduling of Data Units")
     
-    while True:
-        state1 = du1.get_state()
-        print "PD URL: %s State: %s"%(du1, state1)
-        
-        state2 = du2.get_state()
-        print "PD URL: %s State: %s"%(du2, state2)
-        
-        if state1==State.Running and state2==State.Running:
-            break
-        time.sleep(2)  
+    compute_data_service.wait()
     
-    logging.debug("Export files of PD to India")
-    #du1.export("/tmp/pilot-store-export/du1/")
-    du2.export("ssh://hotel.futuregrid.org/N/u/luckow/pilot-store-export/")
+    logging.debug("Export files of PD")
+    du1.export("/tmp/pilot-data-export/")
+    #du2.export("ssh://hotel.futuregrid.org/N/u/luckow/pilot-store-export/")
         
     print "***************************************************************"
     print "To reconnect to Data Unit 1 use the following URL: %s"%du1.url
     print "Run:\n\n " + sys.executable + " example-pilot-data-reconnect.py %s"%du1.url
     print "\n\n******************* SLEEPING *********************************"
-    time.sleep(1200)
+    #time.sleep(1200)
     
     logging.debug("Terminate Pilot Data/Compute Data Service")
     compute_data_service.cancel()
