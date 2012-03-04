@@ -9,13 +9,13 @@ import bigjob
 try:
     import saga
 except:
-    logger.warn("pbs-ssh://<hostname> plugin not compatible with SAGA Bliss. Use pbs+ssh://<hostname>")
+    logger.warn("sge-ssh://<hostname> plugin not compatible with SAGA Bliss.")
 
 import os
 
-class pbsssh:
+class sgessh:
     """Constructor"""
-    def __init__(self, bootstrap_script, lrms_saga_url, walltime, number_nodes, processes_per_node, userproxy, working_directory=None, bj_working_directory=None):
+    def __init__(self, bootstrap_script, lrms_saga_url, walltime, number_nodes, processes_per_node, userproxy, project, queue, working_directory=None, bj_working_directory=None):
         self.job_id = ""
         self.lrms_saga_url = lrms_saga_url
         self.lrms_saga_url.scheme="ssh"
@@ -28,18 +28,11 @@ class pbsssh:
         if bj_working_directory==None:
             bj_working_directory=self.working_directory
         ### convert walltime in minutes to PBS representation of time ###
-        walltime_pbs="1:00:00"
+        walltime_sge="1:00:00"
         if walltime!=None and walltime!="":    
             hrs=int(walltime)/60 
             minu=int(walltime)%60 
-            walltime_pbs=""+str(hrs)+":"+str(minu)+":00"
-
-        if int(number_nodes)%int(processes_per_node) == 0:
-            nodes = int(number_nodes)/int(processes_per_node)
-        else:
-            nodes = (int(number_nodes)/int(processes_per_node)) + 1    
-        
-        ppn = processes_per_node
+            walltime_sge=""+str(hrs)+":"+str(minu)+":00"
 
         self.bootstrap_script = textwrap.dedent("""import sys
 import os
@@ -48,23 +41,30 @@ import sys
 import time
 import textwrap
 
-qsub_file_name="bigjob_pbs_ssh"
+qsub_file_name="bigjob_sge_ssh"
 
 qsub_file = open(qsub_file_name, "w")
-qsub_file.write("#PBS -l nodes=%s:ppn=%s")
+qsub_file.write("#$ -pe %sway %s")
 qsub_file.write("\\n")
-qsub_file.write("#PBS -l walltime=%s")
+qsub_file.write("#$ -V")
 qsub_file.write("\\n")
-qsub_file.write("#PBS -o %s/stdout-bigjob_agent.txt")
+qsub_file.write("#$ -l h_rt=%s")
 qsub_file.write("\\n")
-qsub_file.write("#PBS -e %s/stderr-bigjob_agent.txt")
+qsub_file.write("#$ -q %s")
+qsub_file.write("\\n")
+qsub_file.write("#$ -A %s")
+qsub_file.write("\\n")
+qsub_file.write("#$ -o %s/stdout-bigjob_agent.txt")
+qsub_file.write("\\n")
+qsub_file.write("#$ -e %s/stderr-bigjob_agent.txt")
 qsub_file.write("\\n")
 qsub_file.write("cd %s")
 qsub_file.write("\\n")
 qsub_file.write("python -c XX" + textwrap.dedent(\"\"%s\"\") + "XX")
 qsub_file.close()
-os.system( "qsub  " + qsub_file_name)
-""") % (str(nodes),str(ppn),str(walltime_pbs), bj_working_directory, bj_working_directory, str(self.working_directory), bootstrap_script)
+os.system( "qsub  -terse " + qsub_file_name)
+""") % (str(processes_per_node),str(number_nodes),str(walltime_sge), str(queue), str(project), bj_working_directory,bj_working_directory, 
+str(self.working_directory), bootstrap_script)
         ### escaping characters
         self.bootstrap_script = self.bootstrap_script.replace("\"","\\\"")
         self.bootstrap_script = self.bootstrap_script.replace("\\\\","\\\\\\\\\\")
@@ -92,23 +92,23 @@ os.system( "qsub  " + qsub_file_name)
         else:
             print "use standard proxy"
             js = saga.job.service(self.lrms_saga_url)
-        pbssshjob = js.create_job(jd)
+        sgesshjob = js.create_job(jd)
         print "Submit pilot job to: " + str(self.lrms_saga_url)
-        pbssshjob.run()
-        pbssshjob.wait()
-        outstr = pbssshjob.get_stdout().read()
-        errstr = pbssshjob.get_stderr().read()
-        self.job_id=(outstr).split(".")[0]
-        logger.debug("PBS JobID: " + str(self.job_id))
+        sgesshjob.run()
+        sgesshjob.wait()
+        outstr = (sgesshjob.get_stdout().read()).rstrip()
+        errstr = sgesshjob.get_stderr().read()
+        print "Output - \n" + str(outstr)
+        self.job_id=(outstr).split("\n")[-1]
+        print "SGE JobID: " + str(self.job_id)
         if self.job_id==None or self.job_id=="":
-            raise Exception("BigJob submission via pbs-ssh:// failed: %s %s" % (outstr,errstr))
+            raise Exception("BigJob submission via sge-ssh:// failed: %s %s" % (outstr,errstr))
 
 
     def get_state(self):
         jd = saga.job.description()
         jd.set_attribute("Executable", "qstat")
         jd.set_attribute("Interactive", "True")
-        jd.set_vector_attribute("Arguments", [self.job_id])
         # connect to the local job service
         js = saga.job.service(self.lrms_saga_url);
         # submit the job
@@ -117,15 +117,20 @@ os.system( "qsub  " + qsub_file_name)
         # wait for the job to complete
         job.wait(-1)
         # print the job's output
-        output = job.get_stdout()
-        output.readline()
-        output.readline()
-        state=output.readline()
-        state=(re.sub(r'\s+',' ',state)).split(' ')[4]
-        if state == "R":
+        output = ((job.get_stdout()).read()).rstrip()
+        jobs=output.split("\n")
+        for k in jobs:
+            jinfo = k.split(" ")            
+            jinfo = filter(lambda x: x!='',jinfo)
+            if jinfo[0] == self.job_id:
+                state=jinfo[4]
+                break
+        if state.upper() == "R":
             state = "Running"
-        elif state == "C" or state == "E":
+        elif state.upper() == "C" or state.upper() == "E":
             state = "Done"
+        elif state.upper() == "QW":
+            state = "Queue"
         else:
             state = "Unknown"
         return state 
