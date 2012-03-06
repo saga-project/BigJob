@@ -29,8 +29,8 @@ if __name__ == "__main__":
     
     # start work unit
     compute_unit_description = {
-            "executable": "/bin/date",
-            "arguments": [],
+            "executable": "/bin/sleep",
+            "arguments": ["200"],
             "total_core_count": 1,
             "number_of_processes": 1,            
             "output": "stdout.txt",
