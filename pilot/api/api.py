@@ -40,9 +40,9 @@ class ComputeDataDescription(compute.api.ComputeUnitDescription):
             'total_cpu_time': <cpu time>,
             'wall_time_limit': <walltime in sec, e.g. 600 (sec)>,            
             
-            # Data - input/output data flow for WorkUnit
-            'input_data': [<pilot data url>, ... ],      
-            'output_data': [<pilot data url>, ... ]
+            # Data - input/output data flow for ComputeUnit
+            'input_data': [<data unit url>, ... ],      
+            'output_data': [<data unit url>, ... ]
         }
     """
     
