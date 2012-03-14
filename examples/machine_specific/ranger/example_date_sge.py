@@ -20,7 +20,7 @@ if __name__ == "__main__":
     walltime = 100 # provide wall time in minutes
     tasks_per_node = 16 # provide tasks per node
     total_cores = 32 # provide total cores required
-    workingdirectory =  # provide working directory 
+    workingdirectory = os.path.join(os.getcwd(), "agent") # provide working directory 
     userproxy = None # userproxy (not supported yet due to context issue w/ SAGA)
     #Provide resource url in the format sge-ssh://username@target_machine_name
     lrms_url = "sge-ssh://username@login#.ranger.tacc.utexas.edu" 
