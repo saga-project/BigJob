@@ -18,8 +18,8 @@ if __name__ == "__main__":
     queue = "normal" # provide queue information
     project = "TG-XXXXXXXX" # provide allocation information 
     walltime = 100 # provide wall time in minutes
-    tasks_per_node = 16 # provide tasks per node
-    total_cores = 32 # provide total cores required
+    tasks_per_node = 12 # provide tasks per node
+    total_cores = 24 # provide total cores required
     workingdirectory =  os.path.join(os.getcwd(), "agent") # provide working directory 
     userproxy = None # userproxy (not supported yet due to context issue w/ SAGA)
     #Provide resource url in the format sge-ssh://username@target_machine_name
