@@ -59,8 +59,8 @@ if __name__ == "__main__":
     
     # start work unit
     compute_unit_description = {
-            "executable": "/bin/cat",
-            "arguments": ["test1.txt"],
+            "executable": "/bin/sleep",
+            "arguments": ["100"],
             "total_core_count": 1,
             "number_of_processes": 1,
             "working_directory": data_unit.url,
