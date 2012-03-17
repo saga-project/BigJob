@@ -390,7 +390,7 @@ class ComputeUnit(ComputeUnit):
         while True:
             state = self.get_state()
             logger.debug("Compute Unit - State: %s"%self.state)            
-            if state!=State.Done and state!=State.Failed:
+            if state==State.Done or state==State.Failed:
                 break
             time.sleep(2)
 
