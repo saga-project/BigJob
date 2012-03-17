@@ -7,10 +7,13 @@ logging.basicConfig(level=logging.DEBUG)
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 from pilot import PilotComputeService, PilotDataService, ComputeDataService, State
 
- 
+COORDINATION_URL = "advert://localhost/?dbtype=sqlite3"
+#COORDINATION_URL = "advert://SAGA:SAGA_client@advert.cct.lsu.edu:8080/?dbtype=postgresql"
+#COORDINATION_URL = "redis://localhost:6379"
+
 if __name__ == "__main__":      
     
-    pilot_compute_service = PilotComputeService()
+    pilot_compute_service = PilotComputeService(coordination_url=COORDINATION_URL)
 
     # create pilot job service and initiate a pilot job
     pilot_compute_description = {
@@ -40,12 +43,12 @@ if __name__ == "__main__":
     compute_data_service.add_pilot_data_service(pilot_data_service)
     
     # Create Data Unit Description
-    base_dir = "/Users/luckow/workspace-saga/applications/pilot-store/test/data1"
-    url_list = os.listdir(base_dir)
+    #base_dir = "../data1"
+    #url_list = os.listdir(base_dir)
     # make absolute paths
-    absolute_url_list = [os.path.join(base_dir, i) for i in url_list]
+    #absolute_url_list = [os.path.join(base_dir, i) for i in url_list]
     data_unit_description = {
-                              "file_urls":absolute_url_list,
+                              "file_urls": [os.path.join(os.getcwd(), "../test.txt")],
                               "affinity_datacenter_label": "eu-de-south",              
                               "affinity_machine_label": "mymachine-1"
                              }    
@@ -59,8 +62,8 @@ if __name__ == "__main__":
     
     # start work unit
     compute_unit_description = {
-            "executable": "/bin/sleep",
-            "arguments": ["100"],
+            "executable": "/bin/cat",
+            "arguments": ["test.txt"],
             "total_core_count": 1,
             "number_of_processes": 1,
             "working_directory": data_unit.url,
