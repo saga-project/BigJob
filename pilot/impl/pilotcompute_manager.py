@@ -41,10 +41,11 @@ class PilotComputeService(PilotComputeService):
         'url',
         'state',       # Status of the PJS
         'pilot_computes',    # List of PJs under this PJS
+        'coordination_url',
         '__mjs'
     )
 
-    def __init__(self, pjs_url=None):
+    def __init__(self, coordination_url=COORDINATION_URL, pjs_url=None):
         """ Create a PilotJobService object.
 
             Keyword arguments:
@@ -52,6 +53,7 @@ class PilotComputeService(PilotComputeService):
         """
         self.__mjs = None
         self.pilot_computes=[]
+        self.coordination_url=coordination_url
         
         if pjs_url==None:      # new pjs          
             self.id = self.PJS_ID_PREFIX+str(uuid.uuid1())
@@ -72,7 +74,7 @@ class PilotComputeService(PilotComputeService):
         
         if self.__mjs == None:
             logging.debug("Create Dynamic BigJob Service")            
-            self.__mjs = many_job_service([], COORDINATION_URL)
+            self.__mjs = many_job_service([], self.coordination_url)
             
         resource_description = self.__translate_pj_bj_description(pilot_compute_description)
         bigjob = self.__mjs.add_resource(resource_description)

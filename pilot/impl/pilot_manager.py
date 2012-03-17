@@ -120,9 +120,9 @@ class ComputeDataService(ComputeDataService):
         CoordinationAdaptor.update_cds(self.url, self)
         return cu
     
-    ###########################################################################
-    # Pilot Data 
     
+    ###########################################################################
+    # Pilot Data     
     def add_pilot_data_service(self, pds):
         """ Add a PilotDataService 
 
@@ -423,7 +423,7 @@ class ComputeUnit(ComputeUnit):
             jd.working_directory = compute_unit_description["working_directory"]
         if compute_unit_description.has_key("output"): 
             jd.output =  compute_unit_description["output"]
-        if compute_unit_description.has_key("stderr"): 
-            jd.error = compute_unit_description["stderr"]
+        if compute_unit_description.has_key("error"): 
+            jd.error = compute_unit_description["error"]
         return jd
         
