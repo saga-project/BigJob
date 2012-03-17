@@ -234,6 +234,7 @@ class bigjob(api.base.bigjob):
         # determine working directory of bigjob 
         # if a remote sandbox can be created via ssh => create a own dir for each bj job id
         # otherwise use specified working directory
+        logger.debug("BigJob working directory: %s"%bigjob_working_directory_url)
         if self.__create_remote_directory(bigjob_working_directory_url)==True:
             self.working_directory = self.__get_bigjob_working_dir()
             self.__stage_files(filetransfers, bigjob_working_directory_url)
@@ -245,7 +246,7 @@ class bigjob(api.base.bigjob):
         if lrms_saga_url.scheme == "condorg":
             jd.arguments = [ self.coordination.get_address(), self.pilot_url]
             agent_exe = os.path.abspath(os.path.join(os.path.dirname(__file__),"..","bootstrap","bigjob-condor-bootstrap.py"))
-            logger.debug("agent_exe",agent_exe)
+            logger.debug("agent_exe", agent_exe)
             jd.executable = agent_exe             
         else:
             bootstrap_script = self.generate_bootstrap_script(self.coordination.get_address(), self.pilot_url)
