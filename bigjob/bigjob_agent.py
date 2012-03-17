@@ -91,11 +91,16 @@ class bigjob_agent:
         logger.debug("BigJob ID: %s"%self.id)
         
         # create bj directory
-        self.bj_dir = os.path.join(os.getcwd(), self.id)
-        try:
-            os.makedirs(self.bj_dir)
-        except:
-            logger.debug("Directory already exists.")
+        work_dir = os.getcwd()
+        if work_dir.find(self.id)!=-1: # working directory already contains BJ id
+            self.bj_dir = os.path.join(os.getcwd(), self.id)
+            logger.debug("Agent working directory: %s"%self.bj_dir)
+            try:
+                os.makedirs(self.bj_dir)
+            except:
+                logger.debug("Directory already exists.")
+        else:
+            self.bj_dir = os.getcwd()
         
         os.chdir(self.bj_dir)
         

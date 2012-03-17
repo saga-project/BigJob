@@ -14,6 +14,7 @@ try:
     default_dict = _config.defaults()
     
     level = default_dict["logging.level"]
+    print("Logging level: %s"%level) 
     if level.startswith("logging."):
         logging_level = eval(level)        
         print("Set logging level: %s/%s"%(level,logging_level))
