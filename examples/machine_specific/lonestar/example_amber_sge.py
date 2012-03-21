@@ -45,7 +45,7 @@ if __name__ == "__main__":
     # Submit SubJob through BigJob
     for i in range(0, NUMBER_JOBS):
         jd = description()
-        jd.executable = "/scratch/projects/xsede/repex/amber11/bin/sander.MPI"
+        jd.executable = "/share1/projects/xsede/repex/amber11/bin/sander.MPI"
         jd.number_of_processes = "4"
         jd.spmd_variation = "mpi" # single for serial jobs
         jd.arguments = ["-O -i "+workingdirectory+"/inputfile -o outputfile -p "+workingdirectory+"/test.prmtop -c "+workingdirectory+"/test.prmcrd -r test.restrt"]
