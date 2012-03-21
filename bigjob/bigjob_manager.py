@@ -24,6 +24,7 @@ import logging
 import textwrap
 import urlparse
 import pdb
+import subprocess
 
 try:
     import paramiko
@@ -109,6 +110,7 @@ class bigjob(api.base.bigjob):
         """  
         self.coordination_url = coordination_url
         self.coordination = self.__init_coordination(coordination_url)
+        self.launch_method=""
         
         # restore existing BJ or initialize new BJ
         if pilot_url!=None:
@@ -231,6 +233,9 @@ class bigjob(api.base.bigjob):
         else:
             bigjob_working_directory_url = "ssh://" + lrms_saga_url.host + self.__get_bigjob_working_dir()
         
+        # Determine whether target machine use gsissh or ssh to logon.
+        self.launch_method = self.__get_launch_method(lrms_saga_url.host,lrms_saga_url.username)
+        
         # determine working directory of bigjob 
         # if a remote sandbox can be created via ssh => create a own dir for each bj job id
         # otherwise use specified working directory
@@ -260,7 +265,7 @@ class bigjob(api.base.bigjob):
             elif lrms_saga_url.scheme == "pbs-ssh":
                 bootstrap_script = self.escape_ssh(bootstrap_script)
                 # PBS specific BJ plugin
-                pbssshj = pbsssh(bootstrap_script, lrms_saga_url, walltime, number_nodes, 
+                pbssshj = pbsssh(bootstrap_script, self.launch_method, queue, project,lrms_saga_url, walltime, number_nodes, 
                                  processes_per_node, userproxy, self.working_directory, self.working_directory)
                 self.job = pbssshj
                 self.job.run()
@@ -649,6 +654,7 @@ sftp.put("%s", "%s")
         #target_path = result.path
         
         # Python 2.6 compatible URL parsing
+        
         scheme = target_url[:target_url.find("://")+3]
         target_host = target_url[len(scheme):target_url.find("/", len(scheme))]
         target_path = target_url[len(scheme)+len(target_host):]    
@@ -661,6 +667,12 @@ sftp.put("%s", "%s")
         if scheme.startswith("fork") or target_host.startswith("localhost"):
             os.makedirs(target_path)
             return True
+        ### Creating remote directories using gsissh...
+        elif self.launch_method == "gsissh":
+            if target_user == None:
+                os.system("gsissh " + target_host + " mkdir " + target_path)
+            else:
+                os.system("gsissh " + target_user + "@"+ target_host + " mkdir " + target_path)    
         else:
             try:
                 client = self.__get_ssh_client(target_host, target_user)
@@ -684,6 +696,30 @@ sftp.put("%s", "%s")
         if user!=None: logger.debug("discovered user: " + user)
         client.connect(hostname, username=user)
         return client
+    
+    def __get_launch_method(self, hostname, user=None):
+        """ returns desired execution method: ssh, aprun """
+        if user == None: user = self.__discover_ssh_user(hostname)
+        if user!=None: logger.debug("discovered user: " + user)
+        gsissh_available = False
+        try:
+            gsissh_available = (subprocess.call("gsissh "+ user + "@" + hostname+" /bin/date", shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)==0)
+        except:
+            pass
+    
+        ssh_available = False
+        try:
+            ssh_available = (subprocess.call("ssh "+ user + "@" + hostname+" /bin/date", shell=True, stdout=subprocess.PIPE,stderr=subprocess.PIPE)==0)
+        except:
+            pass
+    
+        launch_method = "ssh"
+        if ssh_available == False and gsissh_available == True:
+            launch_method="gsissh"
+        else:
+            launch_method="ssh"
+        logging.debug(" launch method used " + str(launch_method))
+        return launch_method
     
     
     def __discover_ssh_user(self, hostname):

@@ -2,6 +2,7 @@
 
 import textwrap
 import re
+import pdb
 
 from bigjob import logger
 import bigjob
@@ -15,10 +16,13 @@ import os
 
 class pbsssh:
     """Constructor"""
-    def __init__(self, bootstrap_script, lrms_saga_url, walltime, number_nodes, processes_per_node, userproxy, working_directory=None, bj_working_directory=None):
+    def __init__(self, bootstrap_script, launch_method, queue, project, lrms_saga_url, walltime, number_nodes, processes_per_node, userproxy, working_directory=None, bj_working_directory=None):
         self.job_id = ""
         self.lrms_saga_url = lrms_saga_url
-        self.lrms_saga_url.scheme="ssh"
+        if launch_method == "ssh":
+            self.lrms_saga_url.scheme="ssh"
+        else:
+            self.lrms_saga_url.scheme="gsissh"
         self.userproxy = userproxy
         self.working_directory = ""
         if working_directory == None:
@@ -40,7 +44,6 @@ class pbsssh:
             nodes = (int(number_nodes)/int(processes_per_node)) + 1    
         
         ppn = processes_per_node
-
         self.bootstrap_script = textwrap.dedent("""import sys
 import os
 import urllib
@@ -51,8 +54,17 @@ import textwrap
 qsub_file_name="bigjob_pbs_ssh"
 
 qsub_file = open(qsub_file_name, "w")
-qsub_file.write("#PBS -l nodes=%s:ppn=%s")
+if ( %s == 1 ):
+    qsub_file.write("#PBS -l size=%s")
+else:
+    qsub_file.write("#PBS -l nodes=%s:ppn=%s")
 qsub_file.write("\\n")
+if ( "%s" != None ):
+    qsub_file.write("#PBS -q %s")
+    qsub_file.write("\\n")
+if (  "%s" != None ):
+    qsub_file.write("#PBS -A %s")
+    qsub_file.write("\\n")    
 qsub_file.write("#PBS -l walltime=%s")
 qsub_file.write("\\n")
 qsub_file.write("#PBS -o %s/stdout-bigjob_agent.txt")
@@ -64,7 +76,7 @@ qsub_file.write("\\n")
 qsub_file.write("python -c XX" + textwrap.dedent(\"\"%s\"\") + "XX")
 qsub_file.close()
 os.system( "qsub  " + qsub_file_name)
-""") % (str(nodes),str(ppn),str(walltime_pbs), bj_working_directory, bj_working_directory, str(self.working_directory), bootstrap_script)
+""") % (str(ppn),str(nodes),str(nodes),str(ppn),str(queue),str(queue),str(project),str(project),str(walltime_pbs), bj_working_directory, bj_working_directory, str(self.working_directory), bootstrap_script)
         ### escaping characters
         self.bootstrap_script = self.bootstrap_script.replace("\"","\\\"")
         self.bootstrap_script = self.bootstrap_script.replace("\\\\","\\\\\\\\\\")
