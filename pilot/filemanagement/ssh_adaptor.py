@@ -15,6 +15,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 from pilot.api import State
 from bigjob import logger
 
+
 class SSHFileAdaptor(object):
     """ BigData Coordination File Management for Pilot Store """
     
@@ -128,7 +129,7 @@ class SSHFileAdaptor(object):
     
     def copy_du_to_url(self, du,  local_url, remote_url):
         base_dir = self.__get_path_for_du(du)
-        self.__create_remote_directory(remote_url)  
+        self.create_remote_directory(remote_url)  
         for filename in self.__sftp.listdir(base_dir):
             file_url = local_url + "/" + filename
             file_remote_url = remote_url + "/" + filename
@@ -158,6 +159,31 @@ class SSHFileAdaptor(object):
     
         
     
+    ####################################################################################
+    # pure file management methods
+    # used by BJ file staging
+    def transfer(self, source_url, target_url):
+        self.__third_party_transfer_host(source_url, target_url)    
+    
+    def create_remote_directory(self, target_url):
+        result = urlparse.urlparse(target_url)
+        target_host = result.netloc
+        target_path = result.path
+        try:
+            if not self.__is_remote_directory(target_url):
+                client = paramiko.SSHClient()
+                client.load_system_host_keys()
+                client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                client.connect(target_host)
+                sftp = client.open_sftp()  
+                sftp.mkdir(target_path)
+                sftp.close()
+                client.close()
+        except:
+            logger.error("Error creating directory: " + str(target_path) 
+                         + " at: " + str(target_host))
+            self.__print_traceback()
+    
     ###########################################################################
     # Private support methods
     def __get_path_for_du(self, du):
@@ -176,42 +202,28 @@ class SSHFileAdaptor(object):
                     self.__sftp.remove(filepath)
             self.__sftp.rmdir(path)
             
-    def __create_remote_directory(self, target_url):
-        result = urlparse.urlparse(target_url)
-        target_host = result.netloc
-        target_path = result.path
-        try:
-            if not self.__is_remote_directory(target_url):
-                client = paramiko.SSHClient()
-                client.load_system_host_keys()
-                client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-                client.connect(target_host)
-                sftp = client.open_sftp()  
-                sftp.mkdir(target_path)
-                sftp.close()
-                client.close()
-        except:
-            logger.error("Error creating directory: " + str(target_path) 
-                         + " at: " + str(target_host))
-            self.__print_traceback()
+  
             
         
     def __is_remote_directory(self, url):
         result = urlparse.urlparse(url)
         host = result.netloc
         path = result.path
-        if path.endswith("/"):
-            client = paramiko.SSHClient()
-            client.load_system_host_keys()
-            client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            client.connect(host)
-            sftp = client.open_sftp()
+        #if path.endswith("/"):
+        client = paramiko.SSHClient()
+        client.load_system_host_keys()
+        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        client.connect(host)
+        sftp = client.open_sftp()
+        try:
             if stat.S_ISDIR(sftp.stat(path).st_mode):
                 return True
             else:
                 return False
-            sftp.close()
-            client.close()
+        except:
+            logger.error("Directory not found: %s"%path)
+        sftp.close()
+        client.close()
         return False
         
     def __create_sftp_client(self):

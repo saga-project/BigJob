@@ -92,7 +92,7 @@ class bigjob_agent:
         
         # create bj directory
         work_dir = os.getcwd()
-        if work_dir.find(self.id)!=-1: # working directory already contains BJ id
+        if work_dir.find(self.id)==-1: # working directory already contains BJ id
             self.bj_dir = os.path.join(os.getcwd(), self.id)
             logger.debug("Agent working directory: %s"%self.bj_dir)
             try:

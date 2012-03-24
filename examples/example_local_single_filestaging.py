@@ -10,8 +10,8 @@ import time
 import pdb
 import sys
 
-import bigjob
-bigjob.SAGA_BLISS=False
+#import bigjob
+#bigjob.SAGA_BLISS=False
 
 # configuration
 """ This variable defines the coordination system that is used by BigJob
@@ -32,8 +32,11 @@ COORDINATION_URL = "advert://localhost/?dbtype=sqlite3"
 #COORDINATION_URL="sqlasyncadvert://gw68.quarry.iu.teragrid.org/"
 
 # for running BJ from local dir
-sys.path.insert(0, os.getcwd() + "/../")
+sys.path.insert(0, os.path.join(os.getcwd(), ".."))
+#sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
+#sys.path.insert(0, os.getcwd() + "/../")
 
+print(str(sys.path))
 from bigjob import bigjob, subjob, description
 
 def main():
@@ -96,7 +99,7 @@ def main():
     #jd.working_directory = os.getcwd() 
     jd.output = "stdout.txt"
     jd.error = "stderr.txt"
-    jd.filetransfer = ["ssh://" + os.path.dirname(os.path.abspath(__file__)) 
+    jd.file_transfer = ["ssh://" + os.path.dirname(os.path.abspath(__file__)) 
                        + "/test.txt > SUBJOB_WORK_DIR"]
     
     sj = subjob()

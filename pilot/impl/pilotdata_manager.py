@@ -18,11 +18,20 @@ from bigjob import logger
 
 from pilot.api import PilotData, DataUnit, PilotDataService
 from pilot.api import State
+
+
 from pilot.filemanagement.ssh_adaptor import SSHFileAdaptor 
 try:
     from pilot.filemanagement.webhdfs_adaptor import WebHDFSFileAdaptor
 except:
     logger.warn("WebHDFS package not found.") 
+try:
+    from pilot.filemanagement.globusonline_adaptor import GlobusOnlineFileAdaptor
+except:
+    logger.warn("Globus Online package not found.") 
+
+
+
 from pilot.coordination.advert import AdvertCoordinationAdaptor as CoordinationAdaptor
 
 

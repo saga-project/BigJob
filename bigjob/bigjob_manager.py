@@ -26,11 +26,6 @@ import urlparse
 import pdb
 import subprocess
 
-try:
-    import paramiko
-except:
-    logger.warn("Paramiko not found. Without Paramiko file staging is not supported!")
-
 from bigjob import SAGA_BLISS 
 from bigjob.state import Running, New, Failed, Done, Unknown
 
@@ -54,6 +49,7 @@ else:
     except:
         logger.warn("SAGA Bliss not found")
 
+
 # import other BigJob packages
 # import API
 import api.base
@@ -61,6 +57,15 @@ sys.path.append(os.path.dirname(__file__))
 
 from pbsssh import pbsssh
 from sgessh import sgessh
+
+
+
+#
+#try:
+#    import paramiko
+#except:
+#    logger.warn("Paramiko not found. Without Paramiko file staging is not supported!")
+
 
 if sys.version_info < (2, 5):
     sys.path.append(os.path.dirname( __file__ ) + "/ext/uuid-1.30/")
@@ -131,6 +136,9 @@ class bigjob(api.base.bigjob):
             self.job = None
             self.working_directory = None
             logger.debug("initialized BigJob: " + self.app_url)
+        
+        self.__filemanager=None
+        self.__initialize_pilot_data("ssh://localhost") # dummy URL not relevant for third party transfers
         
        
     def __get_bj_id(self, pilot_url):
@@ -240,7 +248,7 @@ class bigjob(api.base.bigjob):
         # if a remote sandbox can be created via ssh => create a own dir for each bj job id
         # otherwise use specified working directory
         logger.debug("BigJob working directory: %s"%bigjob_working_directory_url)
-        if self.__create_remote_directory(bigjob_working_directory_url)==True:
+        if self.__filemanager!=None and self.__filemanager.create_remote_directory(bigjob_working_directory_url)==True:
             self.working_directory = self.__get_bigjob_working_dir()
             self.__stage_files(filetransfers, bigjob_working_directory_url)
         else:        
@@ -407,10 +415,10 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
         return subjobs
      
     def add_subjob(self, jd, job_url, job_id):
-        logger.debug("Stage input files for sub-job")
-        if jd.attribute_exists ("filetransfer"):
+        if jd.attribute_exists ("FileTransfer"):
             try:
-                self.__stage_files(jd.filetransfer, self.__get_subjob_working_dir(job_id))
+                logger.debug("Stage input files for sub-job")
+                self.__stage_files(jd.file_transfer, self.__get_subjob_working_dir(job_id))
             except:
                 logger.error("File Stagein failed. Is Paramiko installed?")
         logger.debug("add subjob to queue of PJ: " + str(self.pilot_url))        
@@ -589,113 +597,148 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
             
     
     def __get_bigjob_working_dir(self):
-        return os.path.join(self.working_directory, self.uuid)
+        if self.working_directory.find(self.uuid)!=-1: # working directory already contains BJ id
+            return self.working_directory
+        else:
+            return os.path.join(self.working_directory, self.uuid)
     
     
     def __get_subjob_working_dir(self, sj_id):
         return os.path.join(self.__get_bigjob_working_dir(), sj_id)
     
 
+    ###########################################################################
+    # File Management
+    
+    def __initialize_pilot_data(self, service_url):
+        # initialize file adaptor
+        # Pilot Data API for File Management
+        if service_url.startswith("ssh:"):
+            logger.debug("Use SSH backend")
+            try:
+                from pilot.filemanagement.ssh_adaptor import SSHFileAdaptor
+                self.__filemanager = SSHFileAdaptor(service_url) 
+            except:
+                logger.warn("SSH/Paramiko package not found.")            
+        elif service_url.startswith("http:"):
+            logger.debug("Use WebHDFS backend")
+            try:
+                from pilot.filemanagement.webhdfs_adaptor import WebHDFSFileAdaptor
+                self.__filemanager = WebHDFSFileAdaptor(service_url)
+            except:
+                logger.warn("WebHDFS package not found.")        
+        elif service_url.startswith("go:"):
+            logger.debug("Use Globus Online backend")
+            try:
+                from pilot.filemanagement.globusonline_adaptor import GlobusOnlineFileAdaptor
+                self.__filemanager = GlobusOnlineFileAdaptor(service_url)
+            except:
+                logger.warn("Globus Online package not found.") 
+            
+                  
+
     def __stage_files(self, filetransfers, target_url):
         logger.debug("Stage: %s to %s"%(filetransfers, target_url))
         if filetransfers==None:
-            return
+            return       
+        self.__filemanager.create_remote_directory(target_url)
         for i in filetransfers:
             source_file=i
             if i.find(">")>0:
                 source_file = i[:i.find(">")].strip()
             target_url_full = os.path.join(target_url, os.path.basename(source_file))
             logger.debug("Stage: %s to %s"%(source_file, target_url_full))
-            self.__third_party_transfer(source_file, target_url_full)
+            #self.__third_party_transfer(source_file, target_url_full)
+            self.__filemanager.transfer(source_file, target_url_full)
            
         
-    def __third_party_transfer(self, source_url, target_url):
-        """
-            Transfers from source URL to machine of PS (target path)
-        """
-        result = urlparse.urlparse(source_url)
-        source_host = result.netloc
-        source_path = result.path
-        
-        result = urlparse.urlparse(target_url)
-        target_host = result.netloc
-        target_path = result.path
-          
-        python_script= """import sys
-import os
-import urllib
-import sys
-import time
-import paramiko
-
-client = paramiko.SSHClient()
-client.load_system_host_keys()
-client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-client.connect("%s")
-sftp = client.open_sftp()
-sftp.put("%s", "%s")
-"""%(target_host, source_path, target_path)
-
-        logging.debug("Execute: \n%s"%python_script)
-        source_client = paramiko.SSHClient()
-        source_client.load_system_host_keys()
-        source_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        source_client.connect(source_host)
-        stdin, stdout, stderr = source_client.exec_command("python -c \'%s\'"%python_script)
-        stdin.close()
-        logging.debug("************************************************")
-        logging.debug("Stdout: %s\nStderr:%s", stdout.read(), stderr.read())
-        logging.debug("************************************************")
-      
-    
-    def __create_remote_directory(self, target_url):
-        #result = urlparse.urlparse(target_url)
-        #target_host = result.netloc
-        #target_path = result.path
-        
-        # Python 2.6 compatible URL parsing
-        
-        scheme = target_url[:target_url.find("://")+3]
-        target_host = target_url[len(scheme):target_url.find("/", len(scheme))]
-        target_path = target_url[len(scheme)+len(target_host):]    
-        target_user = None
-        if target_host.find("@")>1:
-            comp = target_host.split("@")
-            target_host =comp[1]
-            target_user =comp[0]
-        logger.debug("Create remote directory; scheme: %s, host: %s, path: %s"%(scheme, target_host, target_path))
-        if scheme.startswith("fork") or target_host.startswith("localhost"):
-            os.makedirs(target_path)
-            return True
-        ### Creating remote directories using gsissh...
-        elif self.launch_method == "gsissh":
-            if target_user == None:
-                os.system("gsissh " + target_host + " mkdir " + target_path)
-            else:
-                os.system("gsissh " + target_user + "@"+ target_host + " mkdir " + target_path)    
-        else:
-            try:
-                client = self.__get_ssh_client(target_host, target_user)
-                sftp = client.open_sftp()            
-                sftp.mkdir(target_path)
-                sftp.close()
-                client.close()
-                return True
-            except:
-                self.__print_traceback()	
-                logger.warn("Error creating directory: " + str(target_path) 
-                             + " at: " + str(target_host) + " SSH password-less login activated?" )
-                return False
-             
-        
-    def __get_ssh_client(self, hostname, user=None):
-        client = paramiko.SSHClient()
-        client.load_system_host_keys()
-        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        if user == None: user = self.__discover_ssh_user(hostname)
-        if user!=None: logger.debug("discovered user: " + user)
-        client.connect(hostname, username=user)
-        return client
+#    def __third_party_transfer(self, source_url, target_url):
+#        """
+#            Transfers from source URL to machine of PS (target path)
+#        """
+#        result = urlparse.urlparse(source_url)
+#        source_host = result.netloc
+#        source_path = result.path
+#        
+#        result = urlparse.urlparse(target_url)
+#        target_host = result.netloc
+#        target_path = result.path
+#          
+#        python_script= """import sys
+#import os
+#import urllib
+#import sys
+#import time
+#import paramiko
+#
+#client = paramiko.SSHClient()
+#client.load_system_host_keys()
+#client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+#client.connect("%s")
+#sftp = client.open_sftp()
+#sftp.put("%s", "%s")
+#"""%(target_host, source_path, target_path)
+#
+#        logging.debug("Execute: \n%s"%python_script)
+#        source_client = paramiko.SSHClient()
+#        source_client.load_system_host_keys()
+#        source_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+#        source_client.connect(source_host)
+#        stdin, stdout, stderr = source_client.exec_command("python -c \'%s\'"%python_script)
+#        stdin.close()
+#        logging.debug("************************************************")
+#        logging.debug("Stdout: %s\nStderr:%s", stdout.read(), stderr.read())
+#        logging.debug("************************************************")
+#      
+#    
+#    def __create_remote_directory(self, target_url):
+#        #result = urlparse.urlparse(target_url)
+#        #target_host = result.netloc
+#        #target_path = result.path
+#        
+#        # Python 2.6 compatible URL parsing
+#        
+#        scheme = target_url[:target_url.find("://")+3]
+#        target_host = target_url[len(scheme):target_url.find("/", len(scheme))]
+#        target_path = target_url[len(scheme)+len(target_host):]    
+#        target_user = None
+#        if target_host.find("@")>1:
+#            comp = target_host.split("@")
+#            target_host =comp[1]
+#            target_user =comp[0]
+#        logger.debug("Create remote directory; scheme: %s, host: %s, path: %s"%(scheme, target_host, target_path))
+#        if scheme.startswith("fork") or target_host.startswith("localhost"):
+#            os.makedirs(target_path)
+#            return True
+#        ### Creating remote directories using gsissh...
+#        elif self.launch_method == "gsissh":
+#            if target_user == None:
+#                os.system("gsissh " + target_host + " mkdir " + target_path)
+#            else:
+#                os.system("gsissh " + target_user + "@"+ target_host + " mkdir " + target_path)    
+#        else:
+#            try:
+#                client = self.__get_ssh_client(target_host, target_user)
+#                sftp = client.open_sftp()            
+#                sftp.mkdir(target_path)
+#                sftp.close()
+#                client.close()
+#                return True
+#            except:
+#                self.__print_traceback()	
+#                logger.warn("Error creating directory: " + str(target_path) 
+#                             + " at: " + str(target_host) + " SSH password-less login activated?" )
+#                return False
+#             
+#        
+#    def __get_ssh_client(self, hostname, user=None):
+#        client = paramiko.SSHClient()
+#        client.load_system_host_keys()
+#        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+#        if user == None: user = self.__discover_ssh_user(hostname)
+#        if user!=None: logger.debug("discovered user: " + user)
+#        client.connect(hostname, username=user)
+#        return client
     
     def __get_launch_method(self, hostname, user=None):
         """ returns desired execution method: ssh, aprun """
