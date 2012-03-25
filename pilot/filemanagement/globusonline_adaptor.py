@@ -153,7 +153,7 @@ class GlobusOnlineFileAdaptor(object):
             logger.debug("GO EP: %s Directory: %s Creation Result: %s"%(target_ep, target_path, str(result)))      
             #task_id = result[2]["task_id"]
             #logger.debug("Transfer Request Result: %s Task ID: %s"%(str(result), task_id))
-            self.__wait_for_task(task_id)
+            #self.__wait_for_task(task_id)
             return True
         return True
     
@@ -229,7 +229,7 @@ class GlobusOnlineFileAdaptor(object):
         logger.debug("Transfer ID: %s"%transfer_id)    
         transfer = api_client.Transfer(transfer_id, source_ep, target_ep,
                                        deadline=None, sync_level=None, label=None)
-        transfer.add_item(source_path=source_path, destination_path=target_path, recursive=True )        
+        transfer.add_item(source_path=source_path, destination_path=target_path, recursive=False )        
         result = self.api.transfer(transfer)
         task_id = result[2]["task_id"]
         logger.debug("Transfer Request Result: %s Task ID: %s"%(str(result), task_id))
