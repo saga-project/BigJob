@@ -179,11 +179,17 @@ class SSHFileAdaptor(object):
                 sftp.mkdir(target_path)
                 sftp.close()
                 client.close()
+                return True
         except:
             logger.error("Error creating directory: " + str(target_path) 
                          + " at: " + str(target_host))
             self.__print_traceback()
-    
+        return False
+        
+    def get_path(self, target_url):
+        result = urlparse.urlparse(target_url)
+        return result.path
+        
     ###########################################################################
     # Private support methods
     def __get_path_for_du(self, du):
