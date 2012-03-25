@@ -116,6 +116,7 @@ class bigjob(api.base.bigjob):
         self.coordination_url = coordination_url
         self.coordination = self.__init_coordination(coordination_url)
         self.launch_method=""
+        self.__filemanager=None
         
         # restore existing BJ or initialize new BJ
         if pilot_url!=None:
@@ -137,8 +138,7 @@ class bigjob(api.base.bigjob):
             self.working_directory = None
             logger.debug("initialized BigJob: " + self.app_url)
         
-        self.__filemanager=None
-        self.__initialize_pilot_data("ssh://localhost") # dummy URL not relevant for third party transfers
+       
         
        
     def __get_bj_id(self, pilot_url):
@@ -224,7 +224,7 @@ class bigjob(api.base.bigjob):
         # XXX Isn't the working directory about the remote site?
         # Yes, it is: This is to make sure that if fork
         if working_directory != None:
-            if not os.path.isdir(working_directory) and lrms_saga_url.scheme=="fork":
+            if not os.path.isdir(working_directory) and lrms_saga_url.scheme=="fork" and working_directory.startswith("go:")==False:
                 os.mkdir(working_directory)
             self.working_directory = working_directory
         else:
@@ -233,28 +233,48 @@ class bigjob(api.base.bigjob):
             # but this is just a guess to avoid failing
             self.working_directory = os.path.expanduser("~") 
             
-        # Stage BJ Input files
-        # build target url
-        # this will also create the remote directory for the BJ
-        if lrms_saga_url.username!=None and lrms_saga_url.username!="":
-            bigjob_working_directory_url = "ssh://" + lrms_saga_url.username + "@" + lrms_saga_url.host + self.__get_bigjob_working_dir()
-        else:
-            bigjob_working_directory_url = "ssh://" + lrms_saga_url.host + self.__get_bigjob_working_dir()
-        
+            
         # Determine whether target machine use gsissh or ssh to logon.
         self.launch_method = self.__get_launch_method(lrms_saga_url.host,lrms_saga_url.username)
+            
+        ##############################################################################
+        # File Management
+        
+        # build target url for working directory
+        # this will also create the remote directory for the BJ
+        # Fallback if working directory is not a valid URL
+        if not (self.working_directory.startswith("go:") or self.working_directory.startswith("ssh://")):            
+            if lrms_saga_url.username!=None and lrms_saga_url.username!="":
+                bigjob_working_directory_url = "ssh://" + lrms_saga_url.username + "@" + lrms_saga_url.host + self.__get_bigjob_working_dir()
+            else:
+                bigjob_working_directory_url = "ssh://" + lrms_saga_url.host + self.__get_bigjob_working_dir()
+        else:
+            # working directory is a valid file staging URL
+            bigjob_working_directory_url=self.working_directory
+            
+            
+        # initialize file manager that takes care of file movement and directory creation
+        if self.__filemanager==None:
+            self.__initialize_pilot_data(bigjob_working_directory_url) # determines the url
+        
+        if not self.working_directory.startswith("/"):
+            self.working_directory = self.__filemanager.get_path(bigjob_working_directory_url)
         
         # determine working directory of bigjob 
         # if a remote sandbox can be created via ssh => create a own dir for each bj job id
         # otherwise use specified working directory
         logger.debug("BigJob working directory: %s"%bigjob_working_directory_url)
+        
+               
         if self.__filemanager!=None and self.__filemanager.create_remote_directory(bigjob_working_directory_url)==True:
             self.working_directory = self.__get_bigjob_working_dir()
             self.__stage_files(filetransfers, bigjob_working_directory_url)
         else:        
-            logger.warn("For file staging. SSH (incl. password-less authentication is required.")
-         
-        logger.debug("BJ Working Directory: %s", self.working_directory)
+            logger.warn("For file staging. SSH (incl. password-less authentication or Globus Online is required.")
+        
+        logger.debug("BJ Working Directory: %s", self.working_directory)        
+        ##############################################################################
+        
         logger.debug("Adaptor specific modifications: "  + str(lrms_saga_url.scheme))
         if lrms_saga_url.scheme == "condorg":
             jd.arguments = [ self.coordination.get_address(), self.pilot_url]
@@ -634,6 +654,8 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
                 self.__filemanager = GlobusOnlineFileAdaptor(service_url)
             except:
                 logger.warn("Globus Online package not found.") 
+                self.__print_traceback()
+                
             
                   
 
