@@ -39,6 +39,12 @@ sys.path.insert(0, os.path.join(os.getcwd(), ".."))
 print(str(sys.path))
 from bigjob import bigjob, subjob, description
 
+##############################################################################################
+# PLEASE SET YOUR GLOBUS ONLINE PASSWORD HERE!!!
+
+GLOBUS_ONLINE_USER="xxxx"
+GLOBUS_ONLINE_PASSWORD="xxxx"
+
 def main():
     # Start BigJob
 
@@ -68,13 +74,13 @@ def main():
     """
         To use Globus Online the working directory must be specified using the following conventions
     """ 
-    workingdirectory="go://drelu:bigjob@globusonline.org?ep=xsede#lonestar4&path=~/bigjob/"
+    workingdirectory="go://"+GLOBUS_ONLINE_USER+":"+GLOBUS_ONLINE_PASSWORD+"@globusonline.org?ep=xsede#lonestar4&path=~/bigjob/"
     ##########################################################################################
 
     print "Start Pilot Job/BigJob at: " + lrms_url
     bj = bigjob(COORDINATION_URL)
     
-    bj_filetransfers = ["go://drelu:bigjob@globusonline.org?ep=drelu#MacBook&path=" + os.path.dirname(os.path.abspath(__file__)) 
+    bj_filetransfers = ["go://"+GLOBUS_ONLINE_USER+":"+GLOBUS_ONLINE_PASSWORD+"@globusonline.org?ep=drelu#MacBook&path=" + os.path.dirname(os.path.abspath(__file__)) 
                         + "/test.txt > BIGJOB_WORK_DIR"]
     
     
@@ -100,7 +106,7 @@ def main():
     jd.arguments = ["test.txt"]
     jd.output = "stdout.txt"
     jd.error = "stderr.txt"
-    jd.file_transfer = ["go://drelu:bigjob@globusonline.org?ep=drelu#MacBook&path=" + os.path.dirname(os.path.abspath(__file__)) 
+    jd.file_transfer = ["go://"+GLOBUS_ONLINE_USER+":"+GLOBUS_ONLINE_PASSWORD+"@globusonline.org?ep=drelu#MacBook&path=" + os.path.dirname(os.path.abspath(__file__)) 
                        + "/test.txt > SUBJOB_WORK_DIR"]
     
     sj = subjob()
