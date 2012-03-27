@@ -336,7 +336,7 @@ class bigjob_agent:
                 stderr = open(error_file, "w")
                 if self.LAUNCH_METHOD=="aprun":                    
                     if (spmdvariation.lower()=="mpi"):
-                        command = "aprun  -n " + str(numberofprocesses) + executable + " "                    
+                        command = "aprun  -n " + str(numberofprocesses) + " " + executable + " "                    
                     else:
                         env_strip = envi.strip()
                         env_command = env_strip[:(len(env_strip)-1)]
