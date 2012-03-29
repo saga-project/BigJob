@@ -279,7 +279,7 @@ class bigjob(api.base.bigjob):
         if lrms_saga_url.scheme == "condorg":
             jd.arguments = [ self.coordination.get_address(), self.pilot_url]
             agent_exe = os.path.abspath(os.path.join(os.path.dirname(__file__),"..","bootstrap","bigjob-condor-bootstrap.py"))
-            logger.debug("agent_exe", agent_exe)
+            logger.debug("Agent_exe: %s"%(agent_exe))
             jd.executable = agent_exe             
         else:
             bootstrap_script = self.generate_bootstrap_script(self.coordination.get_address(), self.pilot_url)
@@ -668,6 +668,9 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
             source_file=i
             if i.find(">")>0:
                 source_file = i[:i.find(">")].strip()
+            if source_file.startswith("ssh://")==False and source_file.startswith("go://")==False:
+                logger.error("Staging of file: %s not supported. Please use URL in form ssh://<filename>"%source_file)
+                continue
             target_url_full = os.path.join(target_url, os.path.basename(source_file))
             logger.debug("Stage: %s to %s"%(source_file, target_url_full))
             #self.__third_party_transfer(source_file, target_url_full)
