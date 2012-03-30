@@ -21,7 +21,7 @@ if __name__ == "__main__":
     walltime = 10 # provide wall time in minutes
     size = 12 # provide total cores required
     #### Working directory should be in $SCRATCHDIR 
-    workingdirectory = "/lustre/scratch/pmantha/agent/"  
+    workingdirectory = "/lustre/scratch/<username>/agent/"  
     userproxy = None # userproxy (not supported yet due to context issue w/ SAGA)
     #Provide resource url in the format sge-ssh://username@target_machine_name
     lrms_url = "pbs-ssh://<username>@kraken-gsi.nics.teragrid.org"
@@ -47,8 +47,8 @@ if __name__ == "__main__":
     for i in range(NUMBER_JOBS):
         jd = description()
         jd.executable = "/bin/date"
-        jd.number_of_processes = "1" # > 1 for MPI jobs
-        jd.spmd_variation = "single"
+        jd.number_of_processes = "4" 
+        jd.spmd_variation = "mpi"
         jd.arguments = [""]
         jd.output = "sj-stdout"+str(i)+".txt"
         jd.error = "sj-stderr"+str(i)+".txt"
