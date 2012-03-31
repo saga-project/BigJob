@@ -239,40 +239,40 @@ class bigjob(api.base.bigjob):
             
         ##############################################################################
         # File Management
-        
-        # build target url for working directory
-        # this will also create the remote directory for the BJ
-        # Fallback if working directory is not a valid URL
-        if not (self.working_directory.startswith("go:") or self.working_directory.startswith("ssh://")):            
-            if lrms_saga_url.username!=None and lrms_saga_url.username!="":
-                bigjob_working_directory_url = "ssh://" + lrms_saga_url.username + "@" + lrms_saga_url.host + self.__get_bigjob_working_dir()
+        if lrms_saga_url.scheme.startswith("condor")==False:
+           
+            # build target url for working directory
+            # this will also create the remote directory for the BJ
+            # Fallback if working directory is not a valid URL
+            if not (self.working_directory.startswith("go:") or self.working_directory.startswith("ssh://")):            
+                if lrms_saga_url.username!=None and lrms_saga_url.username!="":
+                    bigjob_working_directory_url = "ssh://" + lrms_saga_url.username + "@" + lrms_saga_url.host + self.__get_bigjob_working_dir()
+                else:
+                    bigjob_working_directory_url = "ssh://" + lrms_saga_url.host + self.__get_bigjob_working_dir()
             else:
-                bigjob_working_directory_url = "ssh://" + lrms_saga_url.host + self.__get_bigjob_working_dir()
-        else:
-            # working directory is a valid file staging URL
-            bigjob_working_directory_url=self.working_directory
+                # working directory is a valid file staging URL
+                bigjob_working_directory_url=self.working_directory            
+                
+            # initialize file manager that takes care of file movement and directory creation
+            if self.__filemanager==None:
+                self.__initialize_pilot_data(bigjob_working_directory_url) # determines the url
             
+            if not self.working_directory.startswith("/"):
+                self.working_directory = self.__filemanager.get_path(bigjob_working_directory_url)
             
-        # initialize file manager that takes care of file movement and directory creation
-        if self.__filemanager==None:
-            self.__initialize_pilot_data(bigjob_working_directory_url) # determines the url
+            # determine working directory of bigjob 
+            # if a remote sandbox can be created via ssh => create a own dir for each bj job id
+            # otherwise use specified working directory
+            logger.debug("BigJob working directory: %s"%bigjob_working_directory_url)
+            if self.__filemanager!=None and self.__filemanager.create_remote_directory(bigjob_working_directory_url)==True:
+                self.working_directory = self.__get_bigjob_working_dir()
+                self.__stage_files(filetransfers, bigjob_working_directory_url)
+            else:        
+                logger.warn("For file staging. SSH (incl. password-less authentication or Globus Online is required.")
+            
+            logger.debug("BJ Working Directory: %s", self.working_directory)        
         
-        if not self.working_directory.startswith("/"):
-            self.working_directory = self.__filemanager.get_path(bigjob_working_directory_url)
         
-        # determine working directory of bigjob 
-        # if a remote sandbox can be created via ssh => create a own dir for each bj job id
-        # otherwise use specified working directory
-        logger.debug("BigJob working directory: %s"%bigjob_working_directory_url)
-        
-               
-        if self.__filemanager!=None and self.__filemanager.create_remote_directory(bigjob_working_directory_url)==True:
-            self.working_directory = self.__get_bigjob_working_dir()
-            self.__stage_files(filetransfers, bigjob_working_directory_url)
-        else:        
-            logger.warn("For file staging. SSH (incl. password-less authentication or Globus Online is required.")
-        
-        logger.debug("BJ Working Directory: %s", self.working_directory)        
         ##############################################################################
         
         logger.debug("Adaptor specific modifications: "  + str(lrms_saga_url.scheme))
@@ -311,16 +311,27 @@ class bigjob(api.base.bigjob):
                 bootstrap_script = self.escape_bliss(bootstrap_script)
 
             #logger.debug(bootstrap_script)
-            if is_bliss==False:
-                jd.number_of_processes = str(number_nodes)
-                jd.processes_per_host=str(processes_per_node)
+            if lrms_saga_url.scheme.startswith("condor")==True:
+                logger.debug("Using Condor - NO SPMD_VARIATION")
+                condor_bootstrap_filename = os.path.join(self.working_directory, "bootstrap-"+str(self.uuid))
+                condor_bootstrap_file = open(condor_bootstrap_filename, "w")
+                condor_bootstrap_file.write(bootstrap_script)
+                condor_bootstrap_file.close()
+                file_transfer_spec = condor_bootstrap_filename + " > " + os.path.basename(condor_bootstrap_filename)
+                logger.debug("Condor file transfer: " + file_transfer_spec)
+                jd.executable = "/usr/bin/env"
+                jd.arguments = ["python", condor_bootstrap_filename]                
+                jd.file_transfer = [file_transfer_spec]
             else:
-                jd.TotalCPUCount=str(int(number_nodes)*int(processes_per_node))
-                
-            jd.spmd_variation = "single"
-            #jd.arguments = [bigjob_agent_executable, self.coordination.get_address(), self.pilot_url]
-            jd.arguments = ["python", "-c", bootstrap_script]
-            jd.executable = "/usr/bin/env"
+                if is_bliss==False:
+                    jd.number_of_processes = str(number_nodes)
+                    jd.processes_per_host=str(processes_per_node)
+                else:
+                    jd.TotalCPUCount=str(int(number_nodes)*int(processes_per_node))                    
+                jd.spmd_variation = "single"
+                jd.arguments = ["python", "-c", bootstrap_script]
+                jd.executable = "/usr/bin/env"           
+           
             if queue != None:
                 jd.queue = queue
             if project !=None:
@@ -332,7 +343,7 @@ class bigjob(api.base.bigjob):
     
             logger.debug("Working directory: " + jd.working_directory)
             jd.output = os.path.join(self.working_directory, "stdout-bigjob_agent.txt")
-            jd.error = os.path.join(self.working_directory,"stderr-bigjob_agent.txt")
+            jd.error = os.path.join(self.working_directory, "stderr-bigjob_agent.txt")
           
            
         # Submit job
@@ -365,24 +376,39 @@ import sys
 import time
 start_time = time.time()
 home = os.environ.get("HOME")
+#print "Home: " + home
+if home==None:
+    home = os.getcwd()
 BIGJOB_AGENT_DIR= os.path.join(home, ".bigjob")
 if not os.path.exists(BIGJOB_AGENT_DIR): os.mkdir (BIGJOB_AGENT_DIR)
 BIGJOB_PYTHON_DIR=BIGJOB_AGENT_DIR+"/python/"
+if not os.path.exists(BIGJOB_PYTHON_DIR): os.mkdir(BIGJOB_PYTHON_DIR)
 BOOTSTRAP_URL="https://raw.github.com/saga-project/BigJob/master/bootstrap/bigjob-bootstrap.py"
 BOOTSTRAP_FILE=BIGJOB_AGENT_DIR+"/bigjob-bootstrap.py"
 #ensure that BJ in .bigjob is upfront in sys.path
 sys.path.insert(0, os.getcwd() + "/../")
-sys.path.insert(0, os.getcwd() + "/../../")
+#sys.path.insert(0, os.getcwd() + "/../../")
 p = list()
 for i in sys.path:
     if i.find(\".bigjob/python\")>1:
           p.insert(0, i)
 for i in p: sys.path.insert(0, i)
-print str(sys.path)
+print "Python path: " + str(sys.path)
+print "Python version: " + str(sys.version_info)
 try: import saga
-except: print "SAGA and SAGA Python Bindings not found: BigJob only work w/ non-SAGA backends e.g. Redis, ZMQ.";print "Python version: ",  os.system("python -V");print "Python path: " + str(sys.path)
+except: print "SAGA and SAGA Python Bindings not found: BigJob only work w/ non-SAGA backends e.g. Redis, ZMQ.";
 try: import bigjob.bigjob_agent
-except: print "BigJob not installed. Attempting to install it."; opener = urllib.FancyURLopener({}); opener.retrieve(BOOTSTRAP_URL, BOOTSTRAP_FILE); os.system("python " + BOOTSTRAP_FILE + " " + BIGJOB_PYTHON_DIR); activate_this = BIGJOB_PYTHON_DIR+'bin/activate_this.py'; execfile(activate_this, dict(__file__=activate_this))
+except: 
+    print "BigJob not installed. Attempting to install it."; 
+    opener = urllib.FancyURLopener({}); 
+    opener.retrieve(BOOTSTRAP_URL, BOOTSTRAP_FILE); 
+    print "wrote bootstrap file to " + BOOTSTRAP_FILE
+    print "Execute: " + "python " + BOOTSTRAP_FILE + " " + BIGJOB_PYTHON_DIR
+    #print  os.system("/usr/bin/env python")
+    os.system("/usr/bin/python " + BOOTSTRAP_FILE + " " + BIGJOB_PYTHON_DIR); 
+    activate_this = BIGJOB_PYTHON_DIR+'bin/activate_this.py'; 
+    print "Activate virtualenv: " + activate_this
+    execfile(activate_this, dict(__file__=activate_this))
 #try to import BJ once again
 import bigjob.bigjob_agent
 # execute bj agent
@@ -398,9 +424,15 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
     
     def escape_rsl(self, bootstrap_script):
         logger.debug("Escape RSL")
-        bootstrap_script = bootstrap_script.replace("\"", "\"\"")
+        bootstrap_script = bootstrap_script.replace("\"", "\"\"")        
         return bootstrap_script
     
+    def escape_condor(self, bootstrap_script):
+        logger.debug("Escape Condor")
+        bootstrap_script = bootstrap_script.replace("\"", "\"\"")
+        bootstrap_script = "\'" + bootstrap_script+ "\'"
+        logger.debug(bootstrap_script)
+        return bootstrap_script
     
     def escape_pbs(self, bootstrap_script):
         logger.debug("Escape PBS")
@@ -676,95 +708,8 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
             #self.__third_party_transfer(source_file, target_url_full)
             self.__filemanager.transfer(source_file, target_url_full)
            
-        
-#    def __third_party_transfer(self, source_url, target_url):
-#        """
-#            Transfers from source URL to machine of PS (target path)
-#        """
-#        result = urlparse.urlparse(source_url)
-#        source_host = result.netloc
-#        source_path = result.path
-#        
-#        result = urlparse.urlparse(target_url)
-#        target_host = result.netloc
-#        target_path = result.path
-#          
-#        python_script= """import sys
-#import os
-#import urllib
-#import sys
-#import time
-#import paramiko
-#
-#client = paramiko.SSHClient()
-#client.load_system_host_keys()
-#client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-#client.connect("%s")
-#sftp = client.open_sftp()
-#sftp.put("%s", "%s")
-#"""%(target_host, source_path, target_path)
-#
-#        logging.debug("Execute: \n%s"%python_script)
-#        source_client = paramiko.SSHClient()
-#        source_client.load_system_host_keys()
-#        source_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-#        source_client.connect(source_host)
-#        stdin, stdout, stderr = source_client.exec_command("python -c \'%s\'"%python_script)
-#        stdin.close()
-#        logging.debug("************************************************")
-#        logging.debug("Stdout: %s\nStderr:%s", stdout.read(), stderr.read())
-#        logging.debug("************************************************")
-#      
-#    
-#    def __create_remote_directory(self, target_url):
-#        #result = urlparse.urlparse(target_url)
-#        #target_host = result.netloc
-#        #target_path = result.path
-#        
-#        # Python 2.6 compatible URL parsing
-#        
-#        scheme = target_url[:target_url.find("://")+3]
-#        target_host = target_url[len(scheme):target_url.find("/", len(scheme))]
-#        target_path = target_url[len(scheme)+len(target_host):]    
-#        target_user = None
-#        if target_host.find("@")>1:
-#            comp = target_host.split("@")
-#            target_host =comp[1]
-#            target_user =comp[0]
-#        logger.debug("Create remote directory; scheme: %s, host: %s, path: %s"%(scheme, target_host, target_path))
-#        if scheme.startswith("fork") or target_host.startswith("localhost"):
-#            os.makedirs(target_path)
-#            return True
-#        ### Creating remote directories using gsissh...
-#        elif self.launch_method == "gsissh":
-#            if target_user == None:
-#                os.system("gsissh " + target_host + " mkdir " + target_path)
-#            else:
-#                os.system("gsissh " + target_user + "@"+ target_host + " mkdir " + target_path)    
-#        else:
-#            try:
-#                client = self.__get_ssh_client(target_host, target_user)
-#                sftp = client.open_sftp()            
-#                sftp.mkdir(target_path)
-#                sftp.close()
-#                client.close()
-#                return True
-#            except:
-#                self.__print_traceback()	
-#                logger.warn("Error creating directory: " + str(target_path) 
-#                             + " at: " + str(target_host) + " SSH password-less login activated?" )
-#                return False
-#             
-#        
-#    def __get_ssh_client(self, hostname, user=None):
-#        client = paramiko.SSHClient()
-#        client.load_system_host_keys()
-#        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-#        if user == None: user = self.__discover_ssh_user(hostname)
-#        if user!=None: logger.debug("discovered user: " + user)
-#        client.connect(hostname, username=user)
-#        return client
-    
+       
+
     def __get_launch_method(self, hostname, user=None):
         """ returns desired execution method: ssh, aprun """
         if user == None: user = self.__discover_ssh_user(hostname)
