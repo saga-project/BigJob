@@ -27,6 +27,8 @@ logging.debug(str(sys.path))
 from threadpool import *
 from bigjob import logger
 
+
+logger.debug("Python Version: " + str(sys.version_info))
 if sys.version_info < (2, 5):
     sys.path.append(os.path.dirname( __file__ ) + "/../../ext/uuid-1.30/")
     sys.stderr.write("Warning: Using unsupported Python version\n")
@@ -130,6 +132,7 @@ class bigjob_agent:
         self.coordination = bigjob_coordination(server_connect_url=self.coordination_url)
     
         # update state of pilot job to running
+        logger.debug("set state to : " +  str(bigjob.state.Running))
         self.coordination.set_pilot_state(self.base_url, str(bigjob.state.Running), False)
 
         
