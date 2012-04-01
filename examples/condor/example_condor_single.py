@@ -64,6 +64,10 @@ def main():
 
     ##########################################################################################
 
+
+    input_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "test.txt")
+    bj_filetransfers = [input_file +" > test.txt"]
+
     print "Start Pilot Job/BigJob at: " + lrms_url
     bj = bigjob(COORDINATION_URL)
     bj.start_pilot_job( lrms_url,
@@ -74,7 +78,8 @@ def main():
                         workingdirectory,
                         userproxy,
                         walltime,
-                        processes_per_node)
+                        processes_per_node,
+                        bj_filetransfers)
     
     print "Pilot Job/BigJob URL: " + bj.pilot_url + " State: " + str(bj.get_state())
 
@@ -82,10 +87,10 @@ def main():
     # Submit SubJob through BigJob
     jd = description()
 
-    jd.executable = "/bin/date"
+    jd.executable = "/bin/cat"
     jd.number_of_processes = "1"
     jd.spmd_variation = "single"
-    jd.arguments = [""]
+    jd.arguments = ["test.txt"]
     #jd.working_directory = "" 
     jd.output = "sj-stdout.txt"
     jd.error = "sj-stderr.txt"    

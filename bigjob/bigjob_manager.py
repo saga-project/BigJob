@@ -23,7 +23,6 @@ import traceback
 import logging
 import textwrap
 import urlparse
-import pdb
 import subprocess
 
 from bigjob import SAGA_BLISS 
@@ -212,7 +211,7 @@ class bigjob(api.base.bigjob):
         
         logger.debug("create pilot job entry on backend server: " + self.pilot_url)
         self.coordination.set_pilot_state(self.pilot_url, str(Unknown), False)
-                
+        self.coordination.set_pilot_description(self.pilot_url, filetransfers)    
         logger.debug("set pilot state to: " + str(Unknown))
         ##############################################################################
         
@@ -308,16 +307,23 @@ class bigjob(api.base.bigjob):
         # in Condor case bootstrap script is staged 
         # (Python app cannot be passed inline in Condor job description)
         if lrms_saga_url.scheme.startswith("condor")==True:
-            logger.debug("Using Condor - NO SPMD_VARIATION")
+            logger.debug("Using Condor")
             condor_bootstrap_filename = os.path.join("/tmp", "bootstrap-"+str(self.uuid))
             condor_bootstrap_file = open(condor_bootstrap_filename, "w")
             condor_bootstrap_file.write(bootstrap_script)
             condor_bootstrap_file.close()
-            file_transfer_spec = condor_bootstrap_filename + " > " + os.path.basename(condor_bootstrap_filename)
-            logger.debug("Condor file transfer: " + file_transfer_spec)
+           
             jd.executable = "/usr/bin/env"
             jd.arguments = ["python", condor_bootstrap_filename]                
-            jd.file_transfer = [file_transfer_spec]
+            
+            bj_file_transfers = []
+            file_transfer_spec = condor_bootstrap_filename + " > " + os.path.basename(condor_bootstrap_filename)
+            bj_file_transfers.append(file_transfer_spec)
+            if filetransfers != None:
+                for t in filetransfers:
+                    bj_file_transfers.append(t)
+            logger.debug("Condor file transfers: " + str(bj_file_transfers))
+            jd.file_transfer = bj_file_transfers
         else:
             if is_bliss==False:
                 jd.number_of_processes = str(number_nodes)
@@ -383,6 +389,7 @@ BOOTSTRAP_URL="https://raw.github.com/saga-project/BigJob/master/bootstrap/bigjo
 BOOTSTRAP_FILE=BIGJOB_AGENT_DIR+"/bigjob-bootstrap.py"
 #ensure that BJ in .bigjob is upfront in sys.path
 sys.path.insert(0, os.getcwd() + "/../")
+#sys.path.insert(0, /User/luckow/.bigjob/python/lib")
 #sys.path.insert(0, os.getcwd() + "/../../")
 p = list()
 for i in sys.path:
@@ -561,7 +568,7 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
             logger.debug("delete pilot job: " + str(self.pilot_url))                      
             if CLEANUP:
                 self.coordination.delete_pilot(self.pilot_url)                    
-            os.remove(os.path.join("/tmp", "bootstrap-"+str(self.uuid)))            
+            #os.remove(os.path.join("/tmp", "bootstrap-"+str(self.uuid)))            
         except:
             pass
             #traceback.print_stack()
