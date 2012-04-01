@@ -29,7 +29,7 @@ COORDINATION_URL = "redis://gw68.quarry.iu.teragrid.org:2525"
 #COORDINATION_URL="sqlasyncadvert://gw68.quarry.iu.teragrid.org/"
 
 # for running BJ from local dir
-sys.path.insert(0, os.getcwd() + "/../")
+sys.path.insert(0, os.getcwd() + "/../../")
 
 from bigjob import bigjob, subjob, description
 
@@ -44,7 +44,7 @@ def main():
     walltime=10
     processes_per_node=4
     number_of_processes = 8
-    workingdirectory="/this/dir/is/ignored"  # working directory for agent
+    workingdirectory= os.path.join(os.getcwd(), "agent")
     userproxy = None # userproxy (not supported yet due to context issue w/ SAGA)
 
     
@@ -60,10 +60,8 @@ def main():
     
     Please ensure that the respective SAGA adaptor is installed and working
     """
-    #lrms_url = "fork://localhost" # resource url to run the jobs on localhost
-    lrms_url = "condorg://brgw1.renci.org:2119/jobmanager-pbs"
+    lrms_url = "condor://localhost"
 
-    #lrms_url = "ssh://smaddi2@cyder.cct.lsu.edu" 
     ##########################################################################################
 
     print "Start Pilot Job/BigJob at: " + lrms_url
@@ -84,13 +82,13 @@ def main():
     # Submit SubJob through BigJob
     jd = description()
 
-    jd.executable = "bfast"
+    jd.executable = "/bin/date"
     jd.number_of_processes = "1"
     jd.spmd_variation = "single"
-    jd.arguments = ["match -f  bgr1.fa -A 0  -r reads_1.fastq -n 4 -T /tmp/ > bfast.matches.file.bgr.1.bmf"]
+    jd.arguments = [""]
     #jd.working_directory = "" 
-    jd.output = "bfast-stdout.txt"
-    jd.error = "bfast-stderr.txt"    
+    jd.output = "sj-stdout.txt"
+    jd.error = "sj-stderr.txt"    
 
     sj = subjob()
     sj.submit_job(bj.pilot_url, jd)
@@ -99,7 +97,8 @@ def main():
     # busy wait for completion
     while 1:
         state = str(sj.get_state())
-        print "state: " + state
+        bj_state = bj.get_state()
+        print "bj state: " + str(bj_state) + " state: " + state
         if(state=="Failed" or state=="Done"):
             break
         time.sleep(2)
