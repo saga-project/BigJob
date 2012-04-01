@@ -221,10 +221,11 @@ class bigjob(api.base.bigjob):
         # create job description
         jd = saga.job.description()
         
-        # XXX Isn't the working directory about the remote site?
-        # Yes, it is: This is to make sure that if fork
+        #  Attempt to create working directory (e.g. in local scenario)
         if working_directory != None:
-            if not os.path.isdir(working_directory) and lrms_saga_url.scheme=="fork" and working_directory.startswith("go:")==False:
+            if not os.path.isdir(working_directory) \
+                and (lrms_saga_url.scheme.startswith("fork") or lrms_saga_url.scheme.startswith("condor")) \
+                and working_directory.startswith("go:")==False:
                 os.mkdir(working_directory)
             self.working_directory = working_directory
         else:
@@ -238,9 +239,8 @@ class bigjob(api.base.bigjob):
         self.launch_method = self.__get_launch_method(lrms_saga_url.host,lrms_saga_url.username)
             
         ##############################################################################
-        # File Management
-        if lrms_saga_url.scheme.startswith("condor")==False:
-           
+        # File Management and Stage-In
+        if lrms_saga_url.scheme.startswith("condor")==False:           
             # build target url for working directory
             # this will also create the remote directory for the BJ
             # Fallback if working directory is not a valid URL
@@ -270,80 +270,76 @@ class bigjob(api.base.bigjob):
             else:        
                 logger.warn("For file staging. SSH (incl. password-less authentication or Globus Online is required.")
             
-            logger.debug("BJ Working Directory: %s", self.working_directory)        
+            logger.debug("BJ Working Directory: %s", self.working_directory)      
         
         
         ##############################################################################
-        
+        # Create and process BJ bootstrap script
         logger.debug("Adaptor specific modifications: "  + str(lrms_saga_url.scheme))
-        if lrms_saga_url.scheme == "condorg":
-            jd.arguments = [ self.coordination.get_address(), self.pilot_url]
-            agent_exe = os.path.abspath(os.path.join(os.path.dirname(__file__),"..","bootstrap","bigjob-condor-bootstrap.py"))
-            logger.debug("Agent_exe: %s"%(agent_exe))
-            jd.executable = agent_exe             
-        else:
-            bootstrap_script = self.generate_bootstrap_script(self.coordination.get_address(), self.pilot_url)
-            if lrms_saga_url.scheme == "gram":
-                bootstrap_script = self.escape_rsl(bootstrap_script)
-            elif lrms_saga_url.scheme == "pbspro" or lrms_saga_url.scheme=="xt5torque" or lrms_saga_url.scheme=="torque":                
-                bootstrap_script = self.escape_pbs(bootstrap_script)
-            elif lrms_saga_url.scheme == "ssh":
-                bootstrap_script = self.escape_ssh(bootstrap_script)
-            ############ submit pbs script which launches bigjob agent using ssh adaptors########## 
-            elif lrms_saga_url.scheme == "pbs-ssh":
-                bootstrap_script = self.escape_ssh(bootstrap_script)
-                # PBS specific BJ plugin
-                pbssshj = pbsssh(bootstrap_script, self.launch_method, queue, project,lrms_saga_url, walltime, number_nodes, 
-                                 processes_per_node, userproxy, self.working_directory, self.working_directory)
-                self.job = pbssshj
-                self.job.run()
-                return
-            ############ submit sge script which launches bigjob agent using ssh adaptors########## 
-            elif lrms_saga_url.scheme == "sge-ssh":
-                bootstrap_script = self.escape_ssh(bootstrap_script)
-                # PBS specific BJ plugin
-                sgesshj = sgessh(bootstrap_script, lrms_saga_url, walltime, number_nodes, 
-                                 processes_per_node, userproxy, project, queue, self.working_directory, self.working_directory)
-                self.job = sgesshj
-                self.job.run()
-                return
-            elif is_bliss:
-                bootstrap_script = self.escape_bliss(bootstrap_script)
+        bootstrap_script = self.generate_bootstrap_script(self.coordination.get_address(), self.pilot_url)
+        if lrms_saga_url.scheme == "gram":
+            bootstrap_script = self.escape_rsl(bootstrap_script)
+        elif lrms_saga_url.scheme == "pbspro" or lrms_saga_url.scheme=="xt5torque" or lrms_saga_url.scheme=="torque":                
+            bootstrap_script = self.escape_pbs(bootstrap_script)
+        elif lrms_saga_url.scheme == "ssh":
+            bootstrap_script = self.escape_ssh(bootstrap_script)
+        ############ submit pbs script which launches bigjob agent using ssh adaptors########## 
+        elif lrms_saga_url.scheme == "pbs-ssh":
+            bootstrap_script = self.escape_ssh(bootstrap_script)
+            # PBS specific BJ plugin
+            pbssshj = pbsssh(bootstrap_script, self.launch_method, queue, project,lrms_saga_url, walltime, number_nodes, 
+                             processes_per_node, userproxy, self.working_directory, self.working_directory)
+            self.job = pbssshj
+            self.job.run()
+            return
+        ############ submit sge script which launches bigjob agent using ssh adaptors########## 
+        elif lrms_saga_url.scheme == "sge-ssh":
+            bootstrap_script = self.escape_ssh(bootstrap_script)
+            # PBS specific BJ plugin
+            sgesshj = sgessh(bootstrap_script, lrms_saga_url, walltime, number_nodes, 
+                             processes_per_node, userproxy, project, queue, self.working_directory, self.working_directory)
+            self.job = sgesshj
+            self.job.run()
+            return
+        elif is_bliss:
+            bootstrap_script = self.escape_bliss(bootstrap_script)
 
-            #logger.debug(bootstrap_script)
-            if lrms_saga_url.scheme.startswith("condor")==True:
-                logger.debug("Using Condor - NO SPMD_VARIATION")
-                condor_bootstrap_filename = os.path.join(self.working_directory, "bootstrap-"+str(self.uuid))
-                condor_bootstrap_file = open(condor_bootstrap_filename, "w")
-                condor_bootstrap_file.write(bootstrap_script)
-                condor_bootstrap_file.close()
-                file_transfer_spec = condor_bootstrap_filename + " > " + os.path.basename(condor_bootstrap_filename)
-                logger.debug("Condor file transfer: " + file_transfer_spec)
-                jd.executable = "/usr/bin/env"
-                jd.arguments = ["python", condor_bootstrap_filename]                
-                jd.file_transfer = [file_transfer_spec]
+        # Define Agent Executable in Job description
+        # in Condor case bootstrap script is staged 
+        # (Python app cannot be passed inline in Condor job description)
+        if lrms_saga_url.scheme.startswith("condor")==True:
+            logger.debug("Using Condor - NO SPMD_VARIATION")
+            condor_bootstrap_filename = os.path.join("/tmp", "bootstrap-"+str(self.uuid))
+            condor_bootstrap_file = open(condor_bootstrap_filename, "w")
+            condor_bootstrap_file.write(bootstrap_script)
+            condor_bootstrap_file.close()
+            file_transfer_spec = condor_bootstrap_filename + " > " + os.path.basename(condor_bootstrap_filename)
+            logger.debug("Condor file transfer: " + file_transfer_spec)
+            jd.executable = "/usr/bin/env"
+            jd.arguments = ["python", condor_bootstrap_filename]                
+            jd.file_transfer = [file_transfer_spec]
+        else:
+            if is_bliss==False:
+                jd.number_of_processes = str(number_nodes)
+                jd.processes_per_host=str(processes_per_node)
             else:
-                if is_bliss==False:
-                    jd.number_of_processes = str(number_nodes)
-                    jd.processes_per_host=str(processes_per_node)
-                else:
-                    jd.TotalCPUCount=str(int(number_nodes)*int(processes_per_node))                    
-                jd.spmd_variation = "single"
-                jd.arguments = ["python", "-c", bootstrap_script]
-                jd.executable = "/usr/bin/env"           
-           
-            if queue != None:
-                jd.queue = queue
-            if project !=None:
-                jd.job_project = [project]
-            if walltime!=None:
-                jd.wall_time_limit=str(walltime)
-        
-            jd.working_directory = self.working_directory
+                jd.TotalCPUCount=str(int(number_nodes)*int(processes_per_node))                    
+            jd.spmd_variation = "single"
+            jd.arguments = ["python", "-c", bootstrap_script]
+            jd.executable = "/usr/bin/env"           
+       
+        if queue != None:
+            jd.queue = queue
+        if project !=None:
+            jd.job_project = [project]
+        if walltime!=None:
+            jd.wall_time_limit=str(walltime)
     
-            logger.debug("Working directory: " + jd.working_directory)
-            jd.output = os.path.join(self.working_directory, "stdout-bigjob_agent.txt")
-            jd.error = os.path.join(self.working_directory, "stderr-bigjob_agent.txt")
+        jd.working_directory = self.working_directory
+
+        logger.debug("Working directory: " + jd.working_directory)
+        jd.output = os.path.join(self.working_directory, "stdout-bigjob_agent.txt")
+        jd.error = os.path.join(self.working_directory, "stderr-bigjob_agent.txt")
           
            
         # Submit job
@@ -399,16 +395,20 @@ try: import saga
 except: print "SAGA and SAGA Python Bindings not found: BigJob only work w/ non-SAGA backends e.g. Redis, ZMQ.";
 try: import bigjob.bigjob_agent
 except: 
-    print "BigJob not installed. Attempting to install it."; 
+    print "BigJob not installed. Attempt to install it."; 
     opener = urllib.FancyURLopener({}); 
     opener.retrieve(BOOTSTRAP_URL, BOOTSTRAP_FILE); 
-    print "wrote bootstrap file to " + BOOTSTRAP_FILE
     print "Execute: " + "python " + BOOTSTRAP_FILE + " " + BIGJOB_PYTHON_DIR
-    #print  os.system("/usr/bin/env python")
-    os.system("/usr/bin/python " + BOOTSTRAP_FILE + " " + BIGJOB_PYTHON_DIR); 
-    activate_this = BIGJOB_PYTHON_DIR+'bin/activate_this.py'; 
-    print "Activate virtualenv: " + activate_this
-    execfile(activate_this, dict(__file__=activate_this))
+    os.system("/usr/bin/env")
+    try:
+        os.system("python " + BOOTSTRAP_FILE + " " + BIGJOB_PYTHON_DIR); 
+        activate_this = BIGJOB_PYTHON_DIR+'bin/activate_this.py'; 
+        execfile(activate_this, dict(__file__=activate_this))
+    except:
+        print "BJ installation failed. Trying system-level python (/usr/bin/python)";
+        os.system("/usr/bin/python " + BOOTSTRAP_FILE + " " + BIGJOB_PYTHON_DIR); 
+        activate_this = BIGJOB_PYTHON_DIR+'bin/activate_this.py'; 
+        execfile(activate_this, dict(__file__=activate_this))
 #try to import BJ once again
 import bigjob.bigjob_agent
 # execute bj agent
@@ -426,14 +426,7 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
         logger.debug("Escape RSL")
         bootstrap_script = bootstrap_script.replace("\"", "\"\"")        
         return bootstrap_script
-    
-    def escape_condor(self, bootstrap_script):
-        logger.debug("Escape Condor")
-        bootstrap_script = bootstrap_script.replace("\"", "\"\"")
-        bootstrap_script = "\'" + bootstrap_script+ "\'"
-        logger.debug(bootstrap_script)
-        return bootstrap_script
-    
+            
     def escape_pbs(self, bootstrap_script):
         logger.debug("Escape PBS")
         bootstrap_script = "\'" + bootstrap_script+ "\'"
@@ -567,7 +560,8 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
             self.stop_pilot_job()
             logger.debug("delete pilot job: " + str(self.pilot_url))                      
             if CLEANUP:
-                self.coordination.delete_pilot(self.pilot_url)                
+                self.coordination.delete_pilot(self.pilot_url)                    
+            os.remove(os.path.join("/tmp", "bootstrap-"+str(self.uuid)))            
         except:
             pass
             #traceback.print_stack()
