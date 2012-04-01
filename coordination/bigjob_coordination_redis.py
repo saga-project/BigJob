@@ -95,6 +95,18 @@ class bigjob_coordination(object):
         state = self.redis.hgetall(pilot_url)
         return state
     
+    
+    #####################################################################################
+    # Pilot-Job State
+    def set_pilot_description(self, pilot_url, description):     
+        logger.debug("update description of pilot job to: " + str(description))
+        self.redis.hmset(pilot_url + ":description", {"description":description})
+        
+    def get_pilot_description(self, pilot_url):
+        description = self.redis.hgetall(pilot_url + ":description")
+        return description
+    
+    
     #def is_pilot_stopped(self,pilot_url):
     #    state = self.redis.hgetall(pilot_url)
     #    if state==None or not state.has_key("stopped"):
