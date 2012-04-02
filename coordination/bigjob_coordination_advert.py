@@ -125,6 +125,13 @@ class bigjob_coordination(object):
         else:
             return {"state":state, "stopped":True}        
         
+    #####################################################################################
+    # Pilot-Job Description
+    def set_pilot_description(self, pilot_url, description):     
+        pass
+    
+    def get_pilot_description(self, pilot_url):
+        pass
     
     def get_jobs_of_pilot(self, pilot_url):
         pilot_url = self.get_url(pilot_url + "/jobs")
