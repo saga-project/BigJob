@@ -29,7 +29,7 @@ COORDINATION_URL = "redis://gw68.quarry.iu.teragrid.org:2525"
 #COORDINATION_URL="sqlasyncadvert://gw68.quarry.iu.teragrid.org/"
 
 # for running BJ from local dir
-sys.path.insert(0, os.getcwd() + "/../")
+sys.path.insert(0, os.getcwd() + "/../../")
 
 from bigjob import bigjob, subjob, description
 

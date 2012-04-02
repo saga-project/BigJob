@@ -15,6 +15,7 @@ import traceback
 import ConfigParser
 import types
 import logging
+import shutil
 logging.basicConfig(level=logging.DEBUG)
 
 try:
@@ -27,6 +28,8 @@ logging.debug(str(sys.path))
 from threadpool import *
 from bigjob import logger
 
+
+logger.debug("Python Version: " + str(sys.version_info))
 if sys.version_info < (2, 5):
     sys.path.append(os.path.dirname( __file__ ) + "/../../ext/uuid-1.30/")
     sys.stderr.write("Warning: Using unsupported Python version\n")
@@ -91,8 +94,8 @@ class bigjob_agent:
         logger.debug("BigJob ID: %s"%self.id)
         
         # create bj directory
-        work_dir = os.getcwd()
-        if work_dir.find(self.id)==-1: # working directory already contains BJ id
+        self.work_dir = os.getcwd()
+        if self.work_dir.find(self.id)==-1: # working directory already contains BJ id
             self.bj_dir = os.path.join(os.getcwd(), self.id)
             logger.debug("Agent working directory: %s"%self.bj_dir)
             try:
@@ -130,8 +133,9 @@ class bigjob_agent:
         self.coordination = bigjob_coordination(server_connect_url=self.coordination_url)
     
         # update state of pilot job to running
+        logger.debug("set state to : " +  str(bigjob.state.Running))
         self.coordination.set_pilot_state(self.base_url, str(bigjob.state.Running), False)
-
+        self.pilot_description = self.coordination.get_pilot_description(self.base_url)
         
         ##############################################################################
         # start background thread for polling new jobs and monitoring current jobs
@@ -328,6 +332,26 @@ class bigjob_agent:
                 # append job to job list
                 self.jobs.append(job_url)
                 
+                # File Stage-In - Move pilot-level files to working directory of sub-job
+                if self.pilot_description!=None:
+                    file_list = eval(self.pilot_description["description"])
+                    if file_list != None and len(file_list)>0:
+                        logger.debug("Copy %d files to SJ work dir"%len(file_list)>0)
+                        for i in file_list:
+                            logger.debug("Process file: %s"%i)
+                            if i.find(">")>0:
+                                base_filename = os.path.basename(i[:i.index(">")].strip())
+                                if environment.has_key("_CONDOR_SCRATCH_DIR"):
+                                    source_filename = os.path.join(environment["_CONDOR_SCRATCH_DIR"], base_filename)
+                                else:
+                                    source_filename = os.path.join(self.work_dir, base_filename)
+                                target_filename = os.path.join(workingdirectory, base_filename)
+                                try:
+                                    logger.debug("Copy: %s to %s"%(source_filename, target_filename))
+                                    shutil.copyfile(source_filename, target_filename)                
+                                except:
+                                    logger.error("Error copy: %s to %s"%(source_filename, target_filename))
+                
                 # create stdout/stderr file descriptors
                 output_file = os.path.abspath(output)
                 error_file = os.path.abspath(error)
@@ -352,7 +376,9 @@ class bigjob_agent:
                 elif (spmdvariation.lower()!="mpi"):
                     command =  envi + executable + " " + arguments
                 else:
-                    command =  executable + " " + arguments
+                    # In particular for Condor - if executable is staged x flag is not set
+                    command ="chmod +x " + executable +";export PATH=$PATH:" + workingdirectory + ";" +command
+                    # command =  executable + " " + arguments
                 #pdb.set_trace()
                 # special setup for MPI NAMD jobs
                 machinefile = self.allocate_nodes(job_dict)

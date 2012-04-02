@@ -228,7 +228,15 @@ class bigjob_coordination(object):
             self.client_socket.send_pyobj(msg, zmq.NOBLOCK)
             result = self.client_socket.recv_pyobj()            
         return result.value      
-        
+    
+    #####################################################################################
+    # Pilot-Job Description
+    def set_pilot_description(self, pilot_url, description):     
+        pass
+    
+    def get_pilot_description(self, pilot_url):
+        pass
+    
     #####################################################################################
     # Sub-Job Description
     def set_job(self, job_url, job_dict):        
