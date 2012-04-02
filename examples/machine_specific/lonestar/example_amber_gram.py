@@ -73,7 +73,7 @@ if __name__ == "__main__":
     for i in range(0, NUMBER_JOBS):
         jd = description()
         jd.executable = "/share1/projects/tg/repex/amber11/bin/sander.MPI"
-        jd.number_of_processes = "4"
+        jd.number_of_processes = "16"
         jd.spmd_variation = "mpi"
         jd.arguments = ["-O -i "+workingdirectory+"/inputfile -o outputfile -p "+workingdirectory+"/test.prmtop -c "+workingdirectory+"/test.prmcrd -r test.restrt"]
         jd.output = "sj-stdout-"+str(i)+".txt"
