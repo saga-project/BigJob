@@ -67,7 +67,7 @@ def main():
 
     input_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "test.txt")
     bj_filetransfers = [input_file +" > test.txt"]
-
+  
     print "Start Pilot Job/BigJob at: " + lrms_url
     bj = bigjob(COORDINATION_URL)
     bj.start_pilot_job( lrms_url,
