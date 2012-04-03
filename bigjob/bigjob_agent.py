@@ -561,7 +561,7 @@ class bigjob_agent:
             self.threadpool.putRequest(request)
             
         # wait for termination of Worker Threads
-        self.threadpool.wait()   
+        # self.threadpool.wait()   
         logger.debug("Terminating Agent - Dequeue Sub-Jobs Thread")   
        
     #def poll_jobs(self):       
@@ -606,6 +606,7 @@ class bigjob_agent:
                 logger.debug(self.print_job(i) + " state: " + str(p_state) + " return code: " + str(p.returncode))
                 if (p_state != None and (p_state==0 or p_state==255)):
                     logger.debug("Job successful: " + self.print_job(i) + " - set state to Done")
+                    self.update_output_file()
                     self.coordination.set_job_state(i, str(bigjob.state.Done))
                     self.free_nodes(i)
                     del self.processes[i]
@@ -622,6 +623,14 @@ class bigjob_agent:
                     self.coordination.set_job_state(i, str(bigjob.state.Failed))
                     self.free_nodes(i)
                     del self.processes[i]
+    
+    
+    def update_output_file(self):
+        logger.debug("Update output file...")
+        output = subprocess.Popen('tar --exclude=output.tar.gz -cf output.tar.gz *', cwd="..", shell=True)
+        output.wait()
+        logger.debug("Files: "  + str(os.listdir(".")))
+        
     
     def print_job(self, job_url):
         job_dict = self.coordination.get_job(job_url)
@@ -648,8 +657,10 @@ class bigjob_agent:
                 self.failed_polls=self.failed_polls+1
                 if self.failed_polls>3: # after 3 failed attempts exit
                     break
+                
         logger.debug("Terminating Agent - Background Thread")
-        
+      
+    
     
     def is_stopped(self, base_url):
         state = None

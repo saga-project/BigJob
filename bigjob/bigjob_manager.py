@@ -206,6 +206,7 @@ class bigjob(api.base.bigjob):
         # initialization of coordination and communication subsystem
         # Communication & Coordination initialization
         lrms_saga_url = saga.url(lrms_url)
+        self.url = lrms_saga_url
         self.pilot_url = self.app_url + ":" + lrms_saga_url.host
         pilot_url_dict[self.pilot_url]=self
         
@@ -314,11 +315,12 @@ class bigjob(api.base.bigjob):
             condor_bootstrap_file.close()
            
             jd.executable = "/usr/bin/env"
-            jd.arguments = ["python", condor_bootstrap_filename]                
-            
+            jd.arguments = ["python",  condor_bootstrap_filename]                
             bj_file_transfers = []
             file_transfer_spec = condor_bootstrap_filename + " > " + os.path.basename(condor_bootstrap_filename)
             bj_file_transfers.append(file_transfer_spec)
+            output_file_transfer_spec = os.path.join(self.working_directory, "output.tar.gz") +" < output.tar.gz"
+            bj_file_transfers.append(output_file_transfer_spec)
             if filetransfers != None:
                 for t in filetransfers:
                     bj_file_transfers.append(t)
@@ -341,9 +343,17 @@ class bigjob(api.base.bigjob):
         if walltime!=None:
             jd.wall_time_limit=str(walltime)
     
-        jd.working_directory = self.working_directory
+        if lrms_saga_url.scheme.startswith("condor")==False:
+            jd.working_directory = self.working_directory
+        else:
+            jd.working_directory=""
 
         logger.debug("Working directory: " + jd.working_directory)
+        
+        #if lrms_saga_url.scheme.startswith("condor"):
+        #    jd.output = "stdout-bigjob_agent.txt"
+        #    jd.error = "stderr-bigjob_agent.txt"         
+        #else:
         jd.output = os.path.join(self.working_directory, "stdout-bigjob_agent.txt")
         jd.error = os.path.join(self.working_directory, "stderr-bigjob_agent.txt")
           
@@ -559,7 +569,8 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
         """ duck typing for cancel of saga.cpr.job and saga.job.job  """
         logger.debug("Cancel Pilot Job")
         try:
-            self.job.cancel()
+            if self.url.scheme.startswith("condor")==False:
+                self.job.cancel()
         except:
             pass
             #traceback.print_stack()
