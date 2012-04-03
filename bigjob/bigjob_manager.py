@@ -571,6 +571,8 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
         try:
             if self.url.scheme.startswith("condor")==False:
                 self.job.cancel()
+            else:
+                print "Output files are being transfered to file: outpt.tar.gz. Please wait until transfer is complete."
         except:
             pass
             #traceback.print_stack()
