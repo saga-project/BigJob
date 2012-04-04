@@ -389,8 +389,7 @@ import time
 start_time = time.time()
 home = os.environ.get("HOME")
 #print "Home: " + home
-if home==None:
-    home = os.getcwd()
+if home==None: home = os.getcwd()
 BIGJOB_AGENT_DIR= os.path.join(home, ".bigjob")
 if not os.path.exists(BIGJOB_AGENT_DIR): os.mkdir (BIGJOB_AGENT_DIR)
 BIGJOB_PYTHON_DIR=BIGJOB_AGENT_DIR+"/python/"
