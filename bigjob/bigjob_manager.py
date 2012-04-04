@@ -36,14 +36,14 @@ if SAGA_BLISS == False:
     except:
         logger.warn("SAGA C++ and Python bindings not found. Using Bliss.")
         try:
-            import bliss.sagacompat as saga
+            import bliss.saga as saga
             is_bliss=True
         except:
             logger.warn("SAGA Bliss not found")
 else:
     logger.debug("Using SAGA Bliss.")
     try:
-        import bliss.sagacompat as saga
+        import bliss.saga as saga
         is_bliss=True 
     except:
         logger.warn("SAGA Bliss not found")
@@ -57,7 +57,14 @@ sys.path.append(os.path.dirname(__file__))
 from pbsssh import pbsssh
 from sgessh import sgessh
 
-
+if is_bliss:
+    from bliss.saga import Url as SAGAUrl
+    from bliss.saga.job import Description as SAGAJobDescription
+    from bliss.saga.job import Service as SAGAJobService
+else:
+    import saga.url as SAGAUrl
+    import saga.job.description as SAGAJobDescription
+    import saga.job.service as SAGAJobService
 
 #
 #try:
@@ -205,7 +212,7 @@ class bigjob(api.base.bigjob):
         ##############################################################################
         # initialization of coordination and communication subsystem
         # Communication & Coordination initialization
-        lrms_saga_url = saga.url(lrms_url)
+        lrms_saga_url = SAGAUrl(lrms_url)
         self.url = lrms_saga_url
         self.pilot_url = self.app_url + ":" + lrms_saga_url.host
         pilot_url_dict[self.pilot_url]=self
@@ -219,7 +226,7 @@ class bigjob(api.base.bigjob):
         self.number_nodes=int(number_nodes)        
         
         # create job description
-        jd = saga.job.description()
+        jd = SAGAJobDescription()
         
         #  Attempt to create working directory (e.g. in local scenario)
         if working_directory != None:
@@ -331,7 +338,7 @@ class bigjob(api.base.bigjob):
                 jd.number_of_processes = str(number_nodes)
                 jd.processes_per_host=str(processes_per_node)
             else:
-                jd.TotalCPUCount=str(int(number_nodes)*int(processes_per_node))                    
+                jd.total_cpu_count=int(number_nodes)                   
             jd.spmd_variation = "single"
             jd.arguments = ["python", "-c", bootstrap_script]
             jd.executable = "/usr/bin/env"           
@@ -341,7 +348,10 @@ class bigjob(api.base.bigjob):
         if project !=None:
             jd.job_project = [project]
         if walltime!=None:
-            jd.wall_time_limit=str(walltime)
+            if is_bliss:
+                jd.wall_time_limit=int(walltime)
+            else:
+                jd.wall_time_limit=str(walltime)
     
         if lrms_saga_url.scheme.startswith("condor")==False:
             jd.working_directory = self.working_directory
@@ -367,10 +377,10 @@ class bigjob(api.base.bigjob):
             ctx.set_attribute ("UserProxy", userproxy)
             s.add_context(ctx)
             logger.debug("use proxy: " + userproxy)
-            js = saga.job.service(s, lrms_saga_url)
+            js = SAGAJobService(s, lrms_saga_url)
         else:
             logger.debug("use standard proxy")
-            js = saga.job.service(lrms_saga_url)
+            js = SAGAJobService(lrms_saga_url)
 
         logger.debug("Creating pilot job with description: %s" % str(jd))
               
@@ -620,7 +630,7 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
         try:
             if is_bliss==True:
                 raise BigJobError("BLISS URL broken.")
-            surl = saga.url(url)
+            surl = SAGAUrl(url)
             host = surl.host
             port = surl.port
             username = surl.username
@@ -876,5 +886,5 @@ class subjob(api.base.subjob):
             return self.job_url
         
         
-class description(saga.job.description):
+class description(SAGAJobDescription):
     pass
