@@ -377,7 +377,8 @@ class bigjob_agent:
                     command =  envi + executable + " " + arguments
                 else:
                     # In particular for Condor - if executable is staged x flag is not set
-                    command ="chmod +x " + executable +";export PATH=$PATH:" + workingdirectory + ";" +command
+                    #command ="chmod +x " + executable +";export PATH=$PATH:" + workingdirectory + ";" +command
+                    command ="chmod +x " + executable +";export PATH=$PATH:" + workingdirectory + ";" + arguments
                     # command =  executable + " " + arguments
                 #pdb.set_trace()
                 # special setup for MPI NAMD jobs
