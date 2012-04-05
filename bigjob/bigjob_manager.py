@@ -62,9 +62,9 @@ if is_bliss:
     from bliss.saga.job import Description as SAGAJobDescription
     from bliss.saga.job import Service as SAGAJobService
 else:
-    import saga.url as SAGAUrl
-    import saga.job.description as SAGAJobDescription
-    import saga.job.service as SAGAJobService
+    from saga import url as SAGAUrl
+    from saga.job import description as SAGAJobDescription
+    from saga.job import service as SAGAJobService
 
 #
 #try:
@@ -628,8 +628,6 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
     
     def __parse_url(self, url):
         try:
-            if is_bliss==True:
-                raise BigJobError("BLISS URL broken.")
             surl = SAGAUrl(url)
             host = surl.host
             port = surl.port
