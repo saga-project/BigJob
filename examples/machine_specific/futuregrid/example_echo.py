@@ -72,10 +72,10 @@ if __name__ == "__main__":
     job_states = {}
     for i in range(0, NUMBER_JOBS):
         jd = description()
-        jd.executable = "/bin/echo"
-        jd.number_of_processes = "4"
-        jd.spmd_variation = "mpi"
-        jd.arguments = ["$INFRASTRUCTURE"]
+        jd.executable = "/bin/date"
+        jd.number_of_processes = "1"
+        jd.spmd_variation = "single"
+        jd.arguments = [""]
         jd.environment = ["INFRASTRUCTURE=FutureGrid"]
         jd.output = "sj-stdout-"+str(i)+".txt"
         jd.error = "sj-stderr-"+str(i)+".txt"
