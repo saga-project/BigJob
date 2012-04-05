@@ -61,10 +61,14 @@ if is_bliss:
     from bliss.saga import Url as SAGAUrl
     from bliss.saga.job import Description as SAGAJobDescription
     from bliss.saga.job import Service as SAGAJobService
+    from bliss.saga import Session as SAGASession
+    from bliss.saga import Context as SAGAContext
 else:
     from saga import url as SAGAUrl
     from saga.job import description as SAGAJobDescription
     from saga.job import service as SAGAJobService
+    from saga import session as SAGASession
+    from saga import context as SAGAContext
 
 #
 #try:
@@ -371,9 +375,9 @@ class bigjob(api.base.bigjob):
         # Submit job
         js = None    
         if userproxy != None and userproxy != '':
-            s = saga.session()
+            s = SAGASession()
             os.environ["X509_USER_PROXY"]=userproxy
-            ctx = saga.context("x509")
+            ctx = SAGAContext("x509")
             ctx.set_attribute ("UserProxy", userproxy)
             s.add_context(ctx)
             logger.debug("use proxy: " + userproxy)
