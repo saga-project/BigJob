@@ -15,8 +15,8 @@ import pilot
 from bigjob import logger
 from pilot.api import ComputeDataService, ComputeUnit, State
 from pilot.impl.pilotdata_manager import PilotData, DataUnit
-from pilot.coordination.advert import AdvertCoordinationAdaptor as CoordinationAdaptor
-
+#from pilot.coordination.advert import AdvertCoordinationAdaptor as CoordinationAdaptor
+from pilot.coordination.nocoord import NoCoordinationAdaptor as CoordinationAdaptor
 """ Loaded Module determines scheduler:
     
     bigdata.scheduler.data_compute_scheduler - selects random locations for PD and WUs
