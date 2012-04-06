@@ -15,7 +15,8 @@ from bigjob import bigjob, subjob
 from bigjob_dynamic.many_job import *
 
 from pilot.api import PilotCompute, PilotComputeService, State
-from pilot.coordination.advert import AdvertCoordinationAdaptor as CoordinationAdaptor
+#from pilot.coordination.advert import AdvertCoordinationAdaptor as CoordinationAdaptor
+from pilot.coordination.nocoord import NoCoordinationAdaptor as CoordinationAdaptor
 
 
 """ This variable defines the coordination system that is used by BigJob

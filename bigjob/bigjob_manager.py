@@ -257,7 +257,7 @@ class bigjob(api.base.bigjob):
             if self.__filemanager==None:
                 self.__initialize_pilot_data(bigjob_working_directory_url) # determines the url
             
-            if not self.working_directory.startswith("/"):
+            if self.__filemanager != None and not self.working_directory.startswith("/"):
                 self.working_directory = self.__filemanager.get_path(bigjob_working_directory_url)
             
             # determine working directory of bigjob 
