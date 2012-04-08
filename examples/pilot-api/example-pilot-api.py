@@ -41,12 +41,11 @@ if __name__ == "__main__":
     compute_unit = compute_data_service.submit_compute_unit(compute_unit_description)
     
     
+    logging.debug("Finished setup. Waiting for scheduling of CU")
     compute_data_service.wait()
     
-    logging.debug("Finished setup. Waiting for scheduling of CU")
     while compute_unit != State.Done:
-        logging.debug("Check state")
-        
+        logging.debug("Final state check...")
         state_cu = compute_unit.get_state()
         print "PCS State %s" % pilot_compute_service
         print "CU: %s State: %s"%(compute_unit, state_cu)
