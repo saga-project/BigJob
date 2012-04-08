@@ -202,15 +202,22 @@ class ComputeDataService(ComputeDataService):
                    cu's are done
             
         """
+        logger.debug("### START WAIT ###")
         self.cu_queue.join()
+        logger.debug("CU queue empty")        
         self.du_queue.join()
-        
+        logger.debug("DU queue empty")        
+
         for i in self.data_units.values():
             i.wait()
+        logger.debug("DUs done")        
             
         for i in self.compute_units.values():
-            i.wait()        
-        
+            i.wait()     
+        logger.debug("CUs done")        
+               
+        logger.debug("### END WAIT ###")
+
         #[pc.wait() for i in self.pilot_job_services for pc in i.list_pilots()]
         #[pd.wait() for i in self.pilot_data_services for pd in i.list_pilots()]
                 
@@ -389,10 +396,12 @@ class ComputeUnit(ComputeUnit):
         """
         while True:
             state = self.get_state()
-            logger.debug("Compute Unit - State: %s"%self.state)            
+            logger.debug("Compute Unit - State: %s"%state)            
             if state==State.Done or state==State.Failed:
                 break
             time.sleep(2)
+            
+        #logger.debug("### END CU wait")
 
     
     def cancel(self):
