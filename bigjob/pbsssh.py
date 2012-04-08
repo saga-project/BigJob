@@ -59,10 +59,10 @@ if ( %s == 1 ):
 else:
     qsub_file.write("#PBS -l nodes=%s:ppn=%s")
 qsub_file.write("\\n")
-if ( "%s" != None ):
+if ( "%s" != "None" ):
     qsub_file.write("#PBS -q %s")
     qsub_file.write("\\n")
-if (  "%s" != None ):
+if (  "%s" != "None" ):
     qsub_file.write("#PBS -A %s")
     qsub_file.write("\\n")    
 qsub_file.write("#PBS -l walltime=%s")
