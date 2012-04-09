@@ -334,23 +334,27 @@ class bigjob_agent:
                 
                 # File Stage-In - Move pilot-level files to working directory of sub-job
                 if self.pilot_description!=None:
-                    file_list = eval(self.pilot_description["description"])
-                    if file_list != None and len(file_list)>0:
-                        logger.debug("Copy %d files to SJ work dir"%len(file_list)>0)
-                        for i in file_list:
-                            logger.debug("Process file: %s"%i)
-                            if i.find(">")>0:
-                                base_filename = os.path.basename(i[:i.index(">")].strip())
-                                if environment.has_key("_CONDOR_SCRATCH_DIR"):
-                                    source_filename = os.path.join(environment["_CONDOR_SCRATCH_DIR"], base_filename)
-                                else:
-                                    source_filename = os.path.join(self.work_dir, base_filename)
-                                target_filename = os.path.join(workingdirectory, base_filename)
-                                try:
-                                    logger.debug("Copy: %s to %s"%(source_filename, target_filename))
-                                    shutil.copyfile(source_filename, target_filename)                
-                                except:
-                                    logger.error("Error copy: %s to %s"%(source_filename, target_filename))
+                    try:
+                        if self.pilot_description.has_key("description"):
+                            file_list = eval(self.pilot_description["description"])
+                            if file_list != None and len(file_list)>0:
+                                logger.debug("Copy %d files to SJ work dir"%len(file_list)>0)
+                                for i in file_list:
+                                    logger.debug("Process file: %s"%i)
+                                    if i.find(">")>0:
+                                        base_filename = os.path.basename(i[:i.index(">")].strip())
+                                        if environment.has_key("_CONDOR_SCRATCH_DIR"):
+                                            source_filename = os.path.join(environment["_CONDOR_SCRATCH_DIR"], base_filename)
+                                        else:
+                                            source_filename = os.path.join(self.work_dir, base_filename)
+                                        target_filename = os.path.join(workingdirectory, base_filename)
+                                        try:
+                                            logger.debug("Copy: %s to %s"%(source_filename, target_filename))
+                                            shutil.copyfile(source_filename, target_filename)                
+                                        except:
+                                            logger.error("Error copy: %s to %s"%(source_filename, target_filename))
+                    except:
+                        logger.debug("Moving of stage-in files failed.")
                 
                 # create stdout/stderr file descriptors
                 output_file = os.path.abspath(output)
