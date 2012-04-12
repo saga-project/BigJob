@@ -121,7 +121,7 @@ class PilotComputeService(PilotComputeService):
         self.__mjs.cancel()
         
         
-    def _submit_cu(self, compute_unit):
+    def submit_cu(self, compute_unit):
         """ Submits work unit to Dynamic Bigjob (ManyJob) 
             Scheduler of Dynamic Bigjob will assign appropriate PJ to WorkUnit        
         """
@@ -165,7 +165,7 @@ class PilotCompute(PilotCompute):
     
     
     
-    def _submit_cu(self, compute_unit):
+    def submit_cu(self, compute_unit):
         """ Submits work unit to Bigjob """
         logging.debug("Submit sub-job to big-job")
         sj = bigjob.bigjob_manager.subjob()
