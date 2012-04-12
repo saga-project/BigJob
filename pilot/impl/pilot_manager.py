@@ -284,7 +284,7 @@ class ComputeDataService(ComputeDataService):
                     pj=self._schedule_cu(cu) 
                     if pj !=None:
                         cu = self.__expand_working_directory(cu, pj)                        
-                        pj._submit_cu(cu)           
+                        pj.submit_cu(cu)           
                         self.cu_queue.task_done()         
                     else:
                         self.cu_queue.task_done() 
