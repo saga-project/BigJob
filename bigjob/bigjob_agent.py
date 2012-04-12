@@ -364,11 +364,11 @@ class bigjob_agent:
                 stderr = open(error_file, "w")
                 if self.LAUNCH_METHOD=="aprun":                    
                     if (spmdvariation.lower()=="mpi"):
-                        command = "aprun  -n " + str(numberofprocesses) + " " + executable + " "                    
+                        command = envi + "aprun  -n " + str(numberofprocesses) + " " + executable + " " + arguments                   
                     else:
-                        env_strip = envi.strip()
-                        env_command = env_strip[:(len(env_strip)-1)]
-                        command = "aprun  -n " + str(self.number_subjobs) + " -d " + numberofprocesses + " " + executable + " " + arguments
+                        #env_strip = envi.strip()
+                        #env_command = env_strip[:(len(env_strip)-1)]
+                        command = envi + "aprun  -n " + str(self.number_subjobs) + " -d " + numberofprocesses + " " + executable + " " + arguments
 
                     # MPMD Mode => all subjobs on Kraken fail because aprun returns 1 as returncode
                     #command = "aprun"
