@@ -58,14 +58,6 @@ from pbsssh import pbsssh
 from sgessh import sgessh
 
 
-
-#
-#try:
-#    import paramiko
-#except:
-#    logger.warn("Paramiko not found. Without Paramiko file staging is not supported!")
-
-
 if sys.version_info < (2, 5):
     sys.path.append(os.path.dirname( __file__ ) + "/ext/uuid-1.30/")
     sys.stderr.write("Warning: Using unsupported Python version\n")

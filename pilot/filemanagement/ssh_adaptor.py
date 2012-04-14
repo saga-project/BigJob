@@ -16,6 +16,9 @@ from pilot.api import State
 from bigjob import logger
 
 
+paramiko_logger = paramiko.util.logging.getLogger()
+paramiko_logger.setLevel(logging.WARN)
+
 class SSHFileAdaptor(object):
     """ BigData Coordination File Management for Pilot Store """
     
