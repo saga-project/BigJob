@@ -868,6 +868,8 @@ class subjob(api.base.subjob):
         else:
             return self.job_url
         
-        
-class description(saga.job.description):
+try:        
+    class description(saga.job.description):
+        pass
+except:
     pass
