@@ -245,14 +245,6 @@ class bigjob_agent:
     def execute_job(self, job_url, job_dict):
         """ obtain job attributes from c&c and execute process """
         state=str(job_dict["state"])
-       
-        #try:
-        #   state = self.coordination.get_job_state(job_url)
-        #except:
-        #    logger.error("Could not access job state... skip execution attempt and requeuing job")
-        #    result = self.coordination.queue_job(self.base_url, job_url)
-        #    if result == False:
-        #        self.coordination.set_job_state(job_url, str(saga.job.Failed))
         
         if(state==str(bigjob.state.Unknown) or
             state==str(bigjob.state.New)):
@@ -404,7 +396,9 @@ class bigjob_agent:
                 # build execution command
                 if self.LAUNCH_METHOD == "aprun":
                     command ="cd " + workingdirectory + "; " + command
-                else:
+                elif self.LAUNCH_METHOD == "local":
+                    command ="cd " + workingdirectory + "; " + command
+                else: # ssh launch is default
                     if (spmdvariation.lower( )=="mpi"):
                         command = "cd " + workingdirectory + "; " + envi +  self.MPIRUN + " -np " + numberofprocesses + " -machinefile " + machinefile + " " + command
                     elif host == "localhost":
@@ -631,7 +625,7 @@ class bigjob_agent:
     
     def update_output_file(self):
         logger.debug("Update output file...")
-        output = subprocess.Popen('tar --exclude=output.tar.gz -cf output.tar.gz *', cwd="..", shell=True)
+        output = subprocess.Popen('tar --exclude=output.tar.gz -czf output.tar.gz *', cwd="..", shell=True)
         output.wait()
         logger.debug("Files: "  + str(os.listdir(".")))
         
@@ -698,7 +692,7 @@ class bigjob_agent:
         except:
             pass
         
-        launch_method = "ssh"
+        launch_method = "local"
         if requested_method=="aprun" and aprun_available == True:
             launch_method="aprun"
         elif requested_method=="ssh" and ssh_available == True:
