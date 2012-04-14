@@ -18,14 +18,17 @@ try:
     if level.startswith("logging."):
         logging_level = eval(level)        
         print("Set logging level: %s/%s"%(level,logging_level))
-        logging.basicConfig(level=logging_level, datefmt='%m/%d/%Y %I:%M:%S %p',
+        logging.basicConfig(level=logging.INFO, datefmt='%m/%d/%Y %I:%M:%S %p',
                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        logger = logging.getLogger(name='bigjob')
+        logger.setLevel(logging_level)
+    
     else:
-        logging.basicConfig(level=logging.DEBUG, datefmt='%m/%d/%Y %I:%M:%S %p',
+        logging.basicConfig(level=logging.INFO, datefmt='%m/%d/%Y %I:%M:%S %p',
                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')    
-        
-    logger = logging.getLogger(name='bigjob')
+        logger = logging.getLogger(name='bigjob')
             
+      
     saga = default_dict["saga"]
     if saga.lower() == "bliss":
         SAGA_BLISS=True    
