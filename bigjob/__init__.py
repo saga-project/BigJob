@@ -49,7 +49,7 @@ except IOError:
 # define external-facing API
 from bigjob.bigjob_manager import bigjob as myBigjob
 from bigjob.bigjob_manager import subjob as mySubjob
-from bigjob.bigjob_manager import description as myDescription
+
 
 class subjob(mySubjob):
     pass
@@ -59,5 +59,9 @@ class bigjob(myBigjob):
     pass
 
 
-class description(myDescription):
+try:
+    from bigjob.bigjob_manager import description as myDescription
+    class description(myDescription):
+        pass
+except:
     pass
