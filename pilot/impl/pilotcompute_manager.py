@@ -165,7 +165,7 @@ class PilotCompute(PilotCompute):
     
     
     
-    def submit_cu(self, compute_unit):
+    def submit_compute_unit(self, compute_unit):
         """ Submits work unit to Bigjob """
         logging.debug("Submit sub-job to big-job")
         sj = bigjob.bigjob_manager.subjob()
