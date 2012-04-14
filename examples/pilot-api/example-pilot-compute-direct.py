@@ -19,28 +19,32 @@ if __name__ == "__main__":
     pilot_compute_description = {
                              "service_url": 'fork://localhost',
                              "number_of_processes": 1,                             
-                             "working_directory": "/tmp/pilot-compute/",
-                             'affinity_datacenter_label': "eu-de-south",              
-                             'affinity_machine_label': "mymachine-1" 
+                             "working_directory": os.path.join(os.getcwd(), "agent"),
+                             "affinity_datacenter_label": "eu-de-south",              
+                             "affinity_machine_label": "mymachine-1",
+                             "file_transfer": ["ssh://" + os.path.dirname(os.path.abspath(__file__)) 
+                                               + "/../test.txt > BIGJOB_WORK_DIR"]
                             }
     
     pilotjob = pilot_compute_service.create_pilot(pilot_compute_description=pilot_compute_description)
     
     # start compute unit
     compute_unit_description = {
-            "executable": "/bin/date",
-            "arguments": [""],
+            "executable": "/bin/cat",
+            "arguments": ["test.txt"],
             "total_core_count": 1,
             "number_of_processes": 1,
              "output": "stdout.txt",
             "error": "stderr.txt",   
             "affinity_datacenter_label": "eu-de-south",              
-            "affinity_machine_label": "mymachine-1" 
+            "affinity_machine_label": "mymachine-1",
+            "file_transfer": ["ssh://" + os.path.dirname(os.path.abspath(__file__)) 
+                                + "/../test.txt > BIGJOB_WORK_DIR"]
     }    
     
     compute_unit = ComputeUnit(compute_unit_description)
     pilotjob.submit_cu(compute_unit)
-    logging.debug("Finished setup of PSS and PDS. Waiting for scheduling of PD")
+    logging.debug("Finished submission. Waiting for completion of CU")
     compute_unit.wait()
     
     

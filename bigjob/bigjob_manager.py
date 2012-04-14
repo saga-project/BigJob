@@ -58,14 +58,6 @@ from pbsssh import pbsssh
 from sgessh import sgessh
 
 
-
-#
-#try:
-#    import paramiko
-#except:
-#    logger.warn("Paramiko not found. Without Paramiko file staging is not supported!")
-
-
 if sys.version_info < (2, 5):
     sys.path.append(os.path.dirname( __file__ ) + "/ext/uuid-1.30/")
     sys.stderr.write("Warning: Using unsupported Python version\n")
@@ -315,7 +307,7 @@ class bigjob(api.base.bigjob):
             condor_bootstrap_file.close()
            
             jd.executable = "/usr/bin/env"
-            jd.arguments = ["python",  condor_bootstrap_filename]                
+            jd.arguments = ["python",  os.path.basename(condor_bootstrap_filename)]                
             bj_file_transfers = []
             file_transfer_spec = condor_bootstrap_filename + " > " + os.path.basename(condor_bootstrap_filename)
             bj_file_transfers.append(file_transfer_spec)
