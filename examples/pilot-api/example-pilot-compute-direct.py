@@ -5,7 +5,7 @@ import logging
 logging.basicConfig(level=logging.DEBUG)
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
-from pilot import PilotComputeService, ComputeDataService, ComputeUnit, State
+from pilot import PilotComputeService, ComputeDataService, State
 
 COORDINATION_URL = "advert://localhost/?dbtype=sqlite3"
 #COORDINATION_URL = "advert://SAGA:SAGA_client@advert.cct.lsu.edu:8080/?dbtype=postgresql"
@@ -41,9 +41,8 @@ if __name__ == "__main__":
             "file_transfer": ["ssh://" + os.path.dirname(os.path.abspath(__file__)) 
                                 + "/../test.txt > BIGJOB_WORK_DIR"]
     }    
-    
-    compute_unit = ComputeUnit(compute_unit_description)
-    pilotjob.submit_compute_unit(compute_unit)
+   
+    compute_unit = pilotjob.submit_compute_unit(compute_unit_description)
     logging.debug("Finished submission. Waiting for completion of CU")
     compute_unit.wait()
     
