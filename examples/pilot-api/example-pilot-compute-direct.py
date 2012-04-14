@@ -43,7 +43,7 @@ if __name__ == "__main__":
     }    
     
     compute_unit = ComputeUnit(compute_unit_description)
-    pilotjob.submit_cu(compute_unit)
+    pilotjob.submit_compute_unit(compute_unit)
     logging.debug("Finished submission. Waiting for completion of CU")
     compute_unit.wait()
     
