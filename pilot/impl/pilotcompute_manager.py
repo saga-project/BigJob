@@ -15,6 +15,7 @@ from bigjob import bigjob, subjob
 from bigjob_dynamic.many_job import *
 
 from pilot.api import PilotCompute, PilotComputeService, State
+from pilot.impl.pilot_manager import ComputeUnit
 #from pilot.coordination.advert import AdvertCoordinationAdaptor as CoordinationAdaptor
 from pilot.coordination.nocoord import NoCoordinationAdaptor as CoordinationAdaptor
 
@@ -165,14 +166,19 @@ class PilotCompute(PilotCompute):
     
     
     
-    def submit_compute_unit(self, compute_unit):
-        """ Submits work unit to Bigjob """
-        logging.debug("Submit sub-job to big-job")
+    def submit_cu(self, compute_unit):
+        """ Submits compute unit to Bigjob """
+        logging.debug("Submit CU to big-job")
         sj = bigjob.bigjob_manager.subjob()
         sj.submit_job(self.__bigjob.pilot_url, compute_unit.subjob_description)
         self.__subjobs.append(sj)
         compute_unit.subjob=sj
         return compute_unit
+    
+    def submit_compute_unit(self, compute_unit_description):
+        """ Submits work unit to Bigjob """
+        cu = ComputeUnit(compute_unit_description)
+        return self.submit_cu(cu)
         
         
         
