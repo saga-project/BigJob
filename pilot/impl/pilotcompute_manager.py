@@ -179,6 +179,9 @@ class PilotCompute(PilotCompute):
         """ Submits work unit to Bigjob """
         cu = ComputeUnit(compute_unit_description)
         return self.submit_cu(cu)
+    
+    def __repr__(self):
+        return str(self.__bigjob)
         
         
         
