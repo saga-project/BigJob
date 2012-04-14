@@ -308,14 +308,15 @@ class bigjob(api.base.bigjob):
         # in Condor case bootstrap script is staged 
         # (Python app cannot be passed inline in Condor job description)
         if lrms_saga_url.scheme.startswith("condor")==True:
-            logger.debug("Using Condor")
+
             condor_bootstrap_filename = os.path.join("/tmp", "bootstrap-"+str(self.uuid))
             condor_bootstrap_file = open(condor_bootstrap_filename, "w")
             condor_bootstrap_file.write(bootstrap_script)
             condor_bootstrap_file.close()
+            logger.debug("Using Condor - bootstrap file: " + condor_bootstrap_filename)
            
             jd.executable = "/usr/bin/env"
-            jd.arguments = ["python",  condor_bootstrap_filename]                
+            jd.arguments = ["python",  os.path.basename(condor_bootstrap_filename)]                
             bj_file_transfers = []
             file_transfer_spec = condor_bootstrap_filename + " > " + os.path.basename(condor_bootstrap_filename)
             bj_file_transfers.append(file_transfer_spec)
