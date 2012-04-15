@@ -182,8 +182,8 @@ class ComputeDataService(ComputeDataService):
     
     
     def cancel(self):
-        """ Cancel the PDS. 
-            All associated PD objects are deleted and removed from the associated pilot stores.            
+        """ Cancel the CDS. 
+            All associated PC objects are deleted.            
             
             Keyword arguments:
             None
