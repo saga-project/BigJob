@@ -562,14 +562,7 @@ class bigjob_agent:
         # self.threadpool.wait()   
         logger.debug("Terminating Agent - Dequeue Sub-Jobs Thread")   
        
-    #def poll_jobs(self):       
-    #    self.threadpool.wait()
-    #    new_jobs=self.redis.keys(self.base_url+":*")   
-    #    logger.debug("All jobs:" + str(new_jobs))
-    #    for i in new_jobs:            
-    #        request = WorkRequest(self.start_new_job_in_thread, [str(i)])
-    #        logger.debug("WorkRequest: " + str(request))
-    #        self.threadpool.putRequest(request)
+   
         
     def start_new_job_in_thread(self, job_url):
         """evaluates job dir, sanity checks, executes job """
@@ -624,8 +617,10 @@ class bigjob_agent:
     
     
     def update_output_file(self):
-        logger.debug("Update output file...")
-        output = subprocess.Popen('tar --exclude=output.tar.gz -czf output.tar.gz *', cwd="..", shell=True)
+        output_file_name = "output-" + self.id + ".tar.gz"        
+        logger.debug("Update output file: " + output_file_name)
+        output = subprocess.Popen('tar --exclude=output.tar.gz -czf ' + output_file_name + ' *',
+                                   cwd="..", shell=True)
         output.wait()
         logger.debug("Files: "  + str(os.listdir(".")))
         
