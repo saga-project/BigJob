@@ -312,7 +312,9 @@ class bigjob(api.base.bigjob):
             bj_file_transfers = []
             file_transfer_spec = condor_bootstrap_filename + " > " + os.path.basename(condor_bootstrap_filename)
             bj_file_transfers.append(file_transfer_spec)
-            output_file_transfer_spec = os.path.join(self.working_directory, "output.tar.gz") +" < output.tar.gz"
+            output_file_transfer_spec = os.path.join(self.working_directory, "output-" + str(self.uuid) + ".tar.gz") +" < output.tar.gz"
+            #output_file_transfer_spec = os.path.join(self.working_directory, "output.tar.gz") +" < output.tar.gz"
+            logger.debug("Output transfer: " + output_file_transfer_spec)
             bj_file_transfers.append(output_file_transfer_spec)
             if filetransfers != None:
                 for t in filetransfers:
