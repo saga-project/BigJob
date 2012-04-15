@@ -573,9 +573,9 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
             if CLEANUP:
                 self.coordination.delete_pilot(self.pilot_url)                    
             #os.remove(os.path.join("/tmp", "bootstrap-"+str(self.uuid)))            
-        except:
-            pass
-            #traceback.print_stack()
+        except:            
+            traceback.print_stack()
+        logger.debug("Cancel Pilot Job finished")
 
     def wait(self):
         """ Waits for completion of all sub-jobs """        
