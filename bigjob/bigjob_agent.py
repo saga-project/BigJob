@@ -619,7 +619,7 @@ class bigjob_agent:
     def update_output_file(self):
         output_file_name = "output-" + self.id + ".tar.gz"        
         logger.debug("Update output file: " + output_file_name)
-        output = subprocess.Popen('tar --exclude=output.tar.gz -czf ' + output_file_name + ' *',
+        output = subprocess.Popen('tar --exclude=*.bif --exclude=*.fa --exclude=*.fastq --exclude=bfast --exclude=output.tar.gz -czf ' + output_file_name + ' *',
                                    cwd="..", shell=True)
         output.wait()
         logger.debug("Files: "  + str(os.listdir(".")))
