@@ -36,11 +36,11 @@ try:
 except:
     print("bjgjob.conf could not be read") 
     
-
+import socket
 try:
     fn = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", 'VERSION')
     version = open(fn).read().strip()
-    logger.info("Loading BigJob version: " + version)
+    logger.info("Loading BigJob version: " + version + " on " + socket.gethostname())
 except IOError:
     pass
 
