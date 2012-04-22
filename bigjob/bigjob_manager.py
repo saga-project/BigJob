@@ -741,7 +741,7 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
             launch_method="gsissh"
         else:
             launch_method="ssh"
-        logging.debug(" launch method used " + str(launch_method))
+        logger.debug("Use launch method: " + str(launch_method))
         return launch_method
     
     
