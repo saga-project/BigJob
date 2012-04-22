@@ -410,6 +410,9 @@ class ComputeUnit(ComputeUnit):
         if self.subjob != None:
             return self.subjob.cancel()
         return None
+    
+    def __repr__(self):
+        return self.id
 
     
     def _update_compute_unit_description(self, compute_unit_description):
