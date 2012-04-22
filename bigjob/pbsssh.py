@@ -22,6 +22,7 @@ class pbsssh:
         if launch_method == "ssh":
             self.lrms_saga_url.scheme="ssh"
         else:
+            logger.debug("Use GSISSH")
             self.lrms_saga_url.scheme="gsissh"
         self.userproxy = userproxy
         self.working_directory = ""
@@ -113,6 +114,7 @@ os.system( "qsub  " + qsub_file_name)
         self.job_id=(outstr).split(".")[0]
         logger.debug("PBS JobID: " + str(self.job_id))
         if self.job_id==None or self.job_id=="":
+            logger.error("Unable to submit to: " + str(self.lrms_saga_url))
             raise Exception("BigJob submission via pbs-ssh:// failed: %s %s" % (outstr,errstr))
 
 
