@@ -228,6 +228,7 @@ class bigjob(api.base.bigjob):
             
             
         # Determine whether target machine use gsissh or ssh to logon.
+        logger.debug("Detect launch method for: " + lrms_saga_url.host)        
         self.launch_method = self.__get_launch_method(lrms_saga_url.host,lrms_saga_url.username)
             
         ##############################################################################
@@ -723,18 +724,28 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
     def __get_launch_method(self, hostname, user=None):
         """ returns desired execution method: ssh, aprun """
         if user == None: user = self.__discover_ssh_user(hostname)
-        if user!=None: logger.debug("discovered user: " + user)
+        host = ""
+        if user!=None and user!="": 
+            logger.debug("discovered user: " + user)
+            host = user + "@" + hostname
+        else:
+            host = hostname 
         gsissh_available = False
         try:
-            gsissh_available = (subprocess.call("gsissh "+ user + "@" + hostname+" /bin/date", shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)==0)
+            cmd = "gsissh " + host + " /bin/date"
+            logger.debug("Execute: " + cmd)
+            gsissh_available = (subprocess.call(cmd, shell=True)==0)
         except:
             pass
     
         ssh_available = False
         try:
-            ssh_available = (subprocess.call("ssh "+ user + "@" + hostname+" /bin/date", shell=True, stdout=subprocess.PIPE,stderr=subprocess.PIPE)==0)
+            cmd = "ssh " + host + " /bin/date"
+            logger.debug("Execute: " + cmd)
+            ssh_available = (subprocess.call(cmd, shell=True)==0)
         except:
             pass
+        logger.debug("SSH avail: %r GSISSH avail: %r"%(ssh_available, gsissh_available))
     
         launch_method = "ssh"
         if ssh_available == False and gsissh_available == True:
