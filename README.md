@@ -19,9 +19,9 @@ bigjob-devel@googlegroups.com: https://groups.google.com/forum/?hl=de&fromgroups
 Installation
 -------------
 
-$ curl https://raw.github.com/saga-project/BigJob/master/bootstrap/bigjob-bootstrap.py -o bigjob-bootstrap.py
-$ python bigjob-bootstrap.py $HOME/.bigjob/python/
-$ . $HOME/.bigjob/python/bin/activate
+    $ curl https://raw.github.com/saga-project/BigJob/master/bootstrap/bigjob-bootstrap.py -o bigjob-bootstrap.py
+    $ python bigjob-bootstrap.py $HOME/.bigjob/python/
+    $ . $HOME/.bigjob/python/bin/activate
 
 See https://github.com/saga-project/BigJob/wiki/ for further information. The Wiki includes among many things information on how to setup BigJob on various machines, e.g. on XSEDE (Ranger, Kraken) or FutureGrid.
 
