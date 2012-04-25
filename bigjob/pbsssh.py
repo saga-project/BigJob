@@ -76,7 +76,7 @@ qsub_file.write("cd %s")
 qsub_file.write("\\n")
 qsub_file.write("python -c XX" + textwrap.dedent(\"\"%s\"\") + "XX")
 qsub_file.close()
-os.system( "qsub  " + qsub_file_name)
+os.system(". ~/.bashrc; qsub  " + qsub_file_name)
 """) % (str(ppn),str(nodes),str(nodes),str(ppn),str(queue),str(queue),str(project),str(project),str(walltime_pbs), bj_working_directory, bj_working_directory, str(self.working_directory), bootstrap_script)
         ### escaping characters
         self.bootstrap_script = self.bootstrap_script.replace("\"","\\\"")
