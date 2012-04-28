@@ -230,7 +230,7 @@ class bigjob(api.base.bigjob):
         # Determine whether target machine use gsissh or ssh to logon.
         logger.debug("Detect launch method for: " + lrms_saga_url.host)        
         self.launch_method = self.__get_launch_method(lrms_saga_url.host,lrms_saga_url.username)
-            
+        self.bigjob_working_directory_url=""
         ##############################################################################
         # File Management and Stage-In
         if lrms_saga_url.scheme.startswith("condor")==False:           
@@ -239,27 +239,27 @@ class bigjob(api.base.bigjob):
             # Fallback if working directory is not a valid URL
             if not (self.working_directory.startswith("go:") or self.working_directory.startswith("ssh://")):            
                 if lrms_saga_url.username!=None and lrms_saga_url.username!="":
-                    bigjob_working_directory_url = "ssh://" + lrms_saga_url.username + "@" + lrms_saga_url.host + self.__get_bigjob_working_dir()
+                    self.bigjob_working_directory_url = "ssh://" + lrms_saga_url.username + "@" + lrms_saga_url.host + self.__get_bigjob_working_dir()
                 else:
-                    bigjob_working_directory_url = "ssh://" + lrms_saga_url.host + self.__get_bigjob_working_dir()
+                    self.bigjob_working_directory_url = "ssh://" + lrms_saga_url.host + self.__get_bigjob_working_dir()
             else:
                 # working directory is a valid file staging URL
-                bigjob_working_directory_url=self.working_directory            
+                self.bigjob_working_directory_url=self.working_directory            
                 
             # initialize file manager that takes care of file movement and directory creation
             if self.__filemanager==None:
-                self.__initialize_pilot_data(bigjob_working_directory_url) # determines the url
+                self.__initialize_pilot_data(self.bigjob_working_directory_url) # determines the url
             
             if self.__filemanager != None and not self.working_directory.startswith("/"):
-                self.working_directory = self.__filemanager.get_path(bigjob_working_directory_url)
+                self.working_directory = self.__filemanager.get_path(self.bigjob_working_directory_url)
             
             # determine working directory of bigjob 
             # if a remote sandbox can be created via ssh => create a own dir for each bj job id
             # otherwise use specified working directory
-            logger.debug("BigJob working directory: %s"%bigjob_working_directory_url)
-            if self.__filemanager!=None and self.__filemanager.create_remote_directory(bigjob_working_directory_url)==True:
+            logger.debug("BigJob working directory: %s"%self.bigjob_working_directory_url)
+            if self.__filemanager!=None and self.__filemanager.create_remote_directory(self.bigjob_working_directory_url)==True:
                 self.working_directory = self.__get_bigjob_working_dir()
-                self.__stage_files(filetransfers, bigjob_working_directory_url)
+                self.__stage_files(filetransfers, self.bigjob_working_directory_url)
             else:        
                 logger.warn("For file staging. SSH (incl. password-less authentication or Globus Online is required.")
             
@@ -667,7 +667,9 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
     
     
     def __get_subjob_working_dir(self, sj_id):
-        return os.path.join(self.__get_bigjob_working_dir(), sj_id)
+        base_url = self.bigjob_working_directory_url 
+        url  = os.path.join(base_url, sj_id)        
+        return url
     
 
     ###########################################################################
