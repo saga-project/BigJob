@@ -177,6 +177,7 @@ class SSHFileAdaptor(object):
                 client = paramiko.SSHClient()
                 client.load_system_host_keys()
                 client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                logger.debug("Create directory at: %s"%(target_host))
                 client.connect(target_host)
                 sftp = client.open_sftp()  
                 sftp.mkdir(target_path)
