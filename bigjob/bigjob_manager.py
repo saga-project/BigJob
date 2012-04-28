@@ -228,7 +228,7 @@ class bigjob(api.base.bigjob):
             
             
         # Determine whether target machine use gsissh or ssh to logon.
-        self.launch_method = self.__get_launch_method(lrms_saga_url.host,lrms_saga_url.username)
+        self.launch_method = self.__get_launch_method(lrms_saga_url.host, lrms_saga_url.username)
             
         ##############################################################################
         # File Management and Stage-In
