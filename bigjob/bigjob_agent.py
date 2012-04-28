@@ -76,6 +76,11 @@ class bigjob_agent:
         self.CPR = default_dict["cpr"]
         self.SHELL=default_dict["shell"]
         self.MPIRUN=default_dict["mpirun"]
+        self.OUTPUT_TAR=False
+        if default_dict.has_key("create_output_tar"):
+            self.OUTPUT_TAR=eval(default_dict["create_output_tar"])
+            logger.debug("Create output tar: %r", self.OUTPUT_TAR)
+                    
         self.LAUNCH_METHOD=self.__get_launch_method(default_dict["launch_method"])
         
         logging.debug("Launch Method: " + self.LAUNCH_METHOD + " mpi: " + self.MPIRUN + " shell: " + self.SHELL)
@@ -617,12 +622,15 @@ class bigjob_agent:
     
     
     def update_output_file(self):
-        output_file_name = "output-" + self.id + ".tar.gz"        
-        logger.debug("Update output file: " + output_file_name)
-        output = subprocess.Popen('tar --exclude=*.brg --exclude=*.bmf --exclude=*tmp* --exclude=*.bif --exclude=*.fa --exclude=*.fastq --exclude=bfast --exclude=output*.tar.gz -czf ' + output_file_name + ' *',
+        if self.OUTPUT_TAR==True:
+            output_file_name = "output-" + self.id + ".tar.gz"        
+            logger.debug("Update output file: " + output_file_name)
+            output = subprocess.Popen('tar --exclude=*.brg --exclude=*.bmf --exclude=*tmp* --exclude=*.bif --exclude=*.fa --exclude=*.fastq --exclude=bfast --exclude=output*.tar.gz -czf ' + output_file_name + ' *',
                                    cwd="..", shell=True)
-        output.wait()
-        logger.debug("Files: "  + str(os.listdir(".")))
+            output.wait()
+            logger.debug("Files: "  + str(os.listdir(".")))
+        else:
+            logger.debug("Create NO output.tar. Enable output.tar file creation in bigjob_agent.conf")
         
     
     def print_job(self, job_url):
