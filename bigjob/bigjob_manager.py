@@ -685,6 +685,7 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
                 self.__filemanager = SSHFileAdaptor(service_url) 
             except:
                 logger.warn("SSH/Paramiko package not found.")            
+                self.__print_traceback()
         elif service_url.startswith("http:"):
             logger.debug("Use WebHDFS backend")
             try:
