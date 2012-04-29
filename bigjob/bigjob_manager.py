@@ -242,6 +242,8 @@ class bigjob(api.base.bigjob):
                     self.bigjob_working_directory_url = "ssh://" + lrms_saga_url.username + "@" + lrms_saga_url.host + self.__get_bigjob_working_dir()
                 else:
                     self.bigjob_working_directory_url = "ssh://" + lrms_saga_url.host + self.__get_bigjob_working_dir()
+            elif self.working_directory.startswith("go:"):
+                    self.bigjob_working_directory_url=os.path.join(self.working_directory, self.uuid)
             else:
                 # working directory is a valid file staging URL
                 self.bigjob_working_directory_url=self.working_directory            
