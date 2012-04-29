@@ -244,6 +244,8 @@ class SSHFileAdaptor(object):
         sftp_client = ssh_client.open_sftp()
         sftp_client.chdir(self.path)
         return ssh_client, sftp_client
+    
+    
         
     def __third_party_transfer_host(self, source_url, target_url):
         """
