@@ -235,7 +235,7 @@ class SSHFileAdaptor(object):
             else:
                 return False
         except:
-            logger.error("Directory not found: %s"%path)
+            logger.debug("Directory not found: %s"%path)
         sftp.close()
         client.close()
         return False
@@ -253,10 +253,14 @@ class SSHFileAdaptor(object):
         result = urlparse.urlparse(source_url)
         source_host = result.netloc
         source_path = result.path
+        if source_host==None or source_host=="":
+            source_host="localhost"
 
         result = urlparse.urlparse(target_url)
         target_host = result.netloc
         target_path = result.path
+        if target_host==None or target_host=="":
+            target_host="localhost"
 
         cmd = "scp -r %s:%s %s:%s"%(source_host, source_path, target_host, target_path)
         rc = os.system(cmd)
