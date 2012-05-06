@@ -750,14 +750,13 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
             ssh_available = (subprocess.call(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)==0)
         except:
             pass
-        logger.debug("SSH avail: %r GSISSH avail: %r"%(ssh_available, gsissh_available))
     
         launch_method = "ssh"
         if ssh_available == False and gsissh_available == True:
             launch_method="gsissh"
         else:
             launch_method="ssh"
-        logger.debug("Use launch method: " + str(launch_method))
+        logger.info("SSH: %r GSISSH: %r Use: %s"%(ssh_available, gsissh_available, launch_method))
         return launch_method
     
     
