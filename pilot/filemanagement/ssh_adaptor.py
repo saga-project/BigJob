@@ -27,10 +27,10 @@ class SSHFileAdaptor(object):
         result = urlparse.urlparse(service_url)
         self.host = result.hostname
         self.path = result.path        
-	self.user = result.username
+        self.user = result.username
         
         # initialize ssh client
-	logger.debug("SSH: connect to: %s"%self.host)
+        logger.debug("SSH: connect to: %s"%self.host)
         self.__client = paramiko.SSHClient()
         self.__client.load_system_host_keys()
         self.__client.set_missing_host_key_policy(paramiko.AutoAddPolicy())

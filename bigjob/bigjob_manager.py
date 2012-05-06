@@ -263,7 +263,7 @@ class bigjob(api.base.bigjob):
                 self.working_directory = self.__get_bigjob_working_dir()
                 self.__stage_files(filetransfers, self.bigjob_working_directory_url)
             else:        
-                logger.warn("For file staging. SSH (incl. password-less authentication or Globus Online is required.")
+                logger.warn("No file staging adaptor found.")
             
             logger.debug("BJ Working Directory: %s", self.working_directory)      
         
@@ -510,7 +510,7 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
                 self.coordination.queue_job(self.pilot_url, job_url)
                 break
             except:
-                traceback.print_exc(file=sys.stdout)
+                self.__print_traceback()
                 time.sleep(2)
                 #raise Exception("Unable to submit job")
                      
@@ -570,7 +570,7 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
             if self.url.scheme.startswith("condor")==False:
                 self.job.cancel()
             else:
-                print "Output files are being transfered to file: outpt.tar.gz. Please wait until transfer is complete."
+                logger.debug("Output files are being transfered to file: outpt.tar.gz. Please wait until transfer is complete.")
         except:
             pass
             #traceback.print_stack()
@@ -739,7 +739,7 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
         try:
             cmd = "gsissh " + host + " /bin/date"
             logger.debug("Execute: " + cmd)
-            gsissh_available = (subprocess.call(cmd, shell=True)==0)
+            gsissh_available = (subprocess.call(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)==0)
         except:
             pass
     
@@ -747,7 +747,7 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
         try:
             cmd = "ssh " + host + " /bin/date"
             logger.debug("Execute: " + cmd)
-            ssh_available = (subprocess.call(cmd, shell=True)==0)
+            ssh_available = (subprocess.call(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)==0)
         except:
             pass
         logger.debug("SSH avail: %r GSISSH avail: %r"%(ssh_available, gsissh_available))
@@ -783,9 +783,10 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
     
     def __print_traceback(self):
         exc_type, exc_value, exc_traceback = sys.exc_info()
-        print "*** print_exception:"
-        traceback.print_exception(exc_type, exc_value, exc_traceback,
-                              limit=2, file=sys.stdout)
+        logger.debug("*** print_exception:",
+                     exc_info=(exc_type, exc_value, exc_traceback))
+        #traceback.print_exception(exc_type, exc_value, exc_traceback,
+        #                      limit=2, file=sys.stdout)
         
     def __repr__(self):
         return self.pilot_url 
