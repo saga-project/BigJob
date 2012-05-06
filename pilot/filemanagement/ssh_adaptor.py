@@ -168,7 +168,7 @@ class SSHFileAdaptor(object):
     # pure file management methods
     # used by BJ file staging
     def transfer(self, source_url, target_url):
-        self.__third_party_transfer_host(source_url, target_url)    
+        self.__third_party_transfer_scp(source_url, target_url)    
     
     def create_remote_directory(self, target_url):
         result = urlparse.urlparse(target_url)
@@ -222,7 +222,7 @@ class SSHFileAdaptor(object):
         result = urlparse.urlparse(url)
         host = result.hostname
         path = result.path
-	user = result.username
+        user = result.username
         #if path.endswith("/"):
         client = paramiko.SSHClient()
         client.load_system_host_keys()
@@ -248,9 +248,21 @@ class SSHFileAdaptor(object):
         sftp_client = ssh_client.open_sftp()
         sftp_client.chdir(self.path)
         return ssh_client, sftp_client
-    
-    
-        
+
+    def __third_party_transfer_scp(self, source_url, target_url):
+        result = urlparse.urlparse(source_url)
+        source_host = result.netloc
+        source_path = result.path
+
+        result = urlparse.urlparse(target_url)
+        target_host = result.netloc
+        target_path = result.path
+
+        cmd = "scp -r %s:%s %s:%s"%(source_host, source_path, target_host, target_path)
+        rc = os.system(cmd)
+        logger.debug("Command: %s Return Code: %d"%(cmd,rc))
+
+
     def __third_party_transfer_host(self, source_url, target_url):
         """
             Transfers from source URL to machine of PS (target path)
