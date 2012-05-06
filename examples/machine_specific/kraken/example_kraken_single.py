@@ -41,7 +41,7 @@ def main():
     queue=None # if None default queue is used
     project=None # if None default allocation is used 
     walltime=600
-    processes_per_node=None
+    processes_per_node=1
     number_of_processes = 12
     workingdirectory="/lustre/scratch/aluckow/bigjob/"  # working directory for agent
     userproxy = None # userproxy (not supported yet due to context issue w/ SAGA)
@@ -59,7 +59,7 @@ def main():
     
     Please ensure that the respective SAGA adaptor is installed and working
     """
-    lrms_url = "xt5torque://localhost" # resource url to run the jobs on localhost
+    lrms_url = "pbs-ssh://kraken" # resource url to run the jobs on localhost
    
     ##########################################################################################
 
