@@ -26,7 +26,6 @@ class State(MyState):
 
 ###############################################################################
 # Compute only
-
 class PilotCompute(MyPilotCompute):
     pass
 

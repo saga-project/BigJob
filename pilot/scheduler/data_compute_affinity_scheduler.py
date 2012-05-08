@@ -3,8 +3,8 @@
 
 """
 import random
-import pdb
 import logging
+from bigjob import logger
 
 class Scheduler:
     
@@ -55,13 +55,20 @@ class Scheduler:
         candidate_pilot_jobs = []
         if work_unit_description.has_key("affinity_datacenter_label") and work_unit_description.has_key("affinity_machine_label"):
             for i in self.pilot_jobs:
-                pilot_job_description = i.pilot_compute_description
-                if pilot_job_description["affinity_datacenter_label"] == work_unit_description["affinity_datacenter_label"]\
-                and pilot_job_description["affinity_machine_label"] == work_unit_description["affinity_machine_label"]:
-                    candidate_pilot_jobs.append(i)
+                logger.debug("BJ: %r State: %s"%(i, i.get_state()))
+                if i.get_state()=="Running": # check wether pilot is active
+                    pilot_job_description = i.pilot_compute_description
+                    if pilot_job_description["affinity_datacenter_label"] == work_unit_description["affinity_datacenter_label"]\
+                        and pilot_job_description["affinity_machine_label"] == work_unit_description["affinity_machine_label"]:
+                        candidate_pilot_jobs.append(i)
         else:
-            candidate_pilot_jobs=self.pilot_jobs
-             
+            for i in self.pilot_jobs:                
+                logger.debug("BJ: %r State: %s"%(i, i.get_state()))
+                if i.get_state()=="Running":
+                    candidate_pilot_jobs.append(i)
+                    #candidate_pilot_jobs=self.pilot_jobs
+                
+        logger.debug("Candidate PJs: %r"%(candidate_pilot_jobs))   
         if len(candidate_pilot_jobs)>0:
             return random.choice(candidate_pilot_jobs)
         
