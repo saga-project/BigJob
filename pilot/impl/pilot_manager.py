@@ -232,11 +232,11 @@ class ComputeDataService(ComputeDataService):
     ###########################################################################
     # Internal Scheduling
     def __update_scheduler_resources(self):
-        logging.debug("__update_scheduler_resources")        
+        logger.debug("__update_scheduler_resources")        
         pd = [s for i in self.pilot_data_services for s in i.list_pilots()]
         self.scheduler.set_pilot_data(pd)
         pj = [p for i in self.pilot_job_services for p in i.list_pilots()]
-        logging.debug("Pilot-Jobs: " + str(pj))
+        logger.debug("Pilot-Jobs: " + str(pj))
         self.scheduler.set_pilot_jobs(pj)
     
     def _schedule_du(self, du):
@@ -246,13 +246,13 @@ class ComputeDataService(ComputeDataService):
                 1.) Add all resources managed by the contained PDS 
                 2.) Select one resource
         """ 
-        logging.debug("Schedule PD")
+        logger.debug("Schedule PD")
         self.__update_scheduler_resources()
         selected_pilot_data = self.scheduler.schedule_pilot_data(du.data_unit_description)
         return selected_pilot_data 
     
     def _schedule_cu(self, cu):
-        logging.debug("Schedule CU")
+        logger.debug("Schedule CU")
         self.__update_scheduler_resources()
         selected_pilot_job = self.scheduler.schedule_pilot_job(cu.compute_unit_description)
         return selected_pilot_job
@@ -260,15 +260,15 @@ class ComputeDataService(ComputeDataService):
     def _scheduler_thread(self):
         while True and self.stop.isSet()==False:            
             try:
-                logging.debug("Scheduler Thread: " + str(self.__class__) + " Pilot Data")
+                logger.debug("Scheduler Thread: " + str(self.__class__) + " Pilot Data")
                 du = self.du_queue.get(True, 1)  
                 # check whether this is a real du object  
                 if isinstance(du, DataUnit):
                     pd=self._schedule_du(du)                
                     if(pd!=None):                        
-                        logging.debug("Initiate Transfer to PD.")
+                        logger.debug("Initiate Transfer to PD.")
                         du.add_pilot_data(pd)
-                        logging.debug("Transfer to PD finished.")
+                        logger.debug("Transfer to PD finished.")
                         du.update_state(State.Running) 
                         self.du_queue.task_done()                   
                     else:
@@ -278,7 +278,7 @@ class ComputeDataService(ComputeDataService):
                 pass
                     
             try:    
-                logging.debug("Scheduler Thread: " + str(self.__class__) + " Pilot Job")
+                logger.debug("Scheduler Thread: " + str(self.__class__) + " Pilot Job")
                 cu = self.cu_queue.get(True, 1)                
                 if isinstance(cu, ComputeUnit):                    
                     pj=self._schedule_cu(cu) 
@@ -287,8 +287,9 @@ class ComputeDataService(ComputeDataService):
                         pj.submit_cu(cu)           
                         self.cu_queue.task_done()         
                     else:
+                        logger.debug("No resource found.")
                         self.cu_queue.task_done() 
-                        self.cu_queue.put(du)
+                        self.cu_queue.put(cu)
             except Queue.Empty:
                 pass
             except:
@@ -300,7 +301,7 @@ class ComputeDataService(ComputeDataService):
                               limit=2, file=sys.stderr)
             time.sleep(5)        
 
-        logging.debug("Re-Scheduler terminated")
+        logger.debug("Re-Scheduler terminated")
     
     
     def __expand_working_directory(self, compute_unit, pilot_job):
@@ -338,7 +339,7 @@ class ComputeDataService(ComputeDataService):
                     for du in pd.list_data_units():
                         logger.debug("DU URL:%s"%(du.url))
                         if du.url == pilot_data_url:
-                            logging.debug("Found PD %s at %s"%(du.url, pd.service_url))
+                            logger.debug("Found PD %s at %s"%(du.url, pd.service_url))
                             target_pd = pd 
                             target_du = du
                             break
@@ -350,7 +351,7 @@ class ComputeDataService(ComputeDataService):
                     components = urlparse.urlparse(pd_url)
                     compute_unit.compute_unit_description["working_directory"] = components.path
                     compute_unit._update_compute_unit_description(compute_unit.compute_unit_description)
-                    logging.debug("__expand_working_directory %s: Set working directory to %s"%(pilot_data_url, compute_unit.compute_unit_description["working_directory"]))
+                    logger.debug("__expand_working_directory %s: Set working directory to %s"%(pilot_data_url, compute_unit.compute_unit_description["working_directory"]))
                     return compute_unit
          
         return compute_unit

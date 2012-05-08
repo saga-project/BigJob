@@ -527,10 +527,11 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
         """ duck typing for get_state of saga.job.job  
             state of saga job that is used to spawn the pilot agent
         """
-        try:
-            return self.job.get_state()
-        except:
-            return self.get_state_detail()
+        return self.get_state_detail()
+        #try:
+        #    return self.job.get_state()
+        #except:
+        #    return self.get_state_detail()
             #return None
     
     def get_state_detail(self): 
