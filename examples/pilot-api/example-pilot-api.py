@@ -1,8 +1,10 @@
 import sys
 import os
 import time
+
 import logging
-logging.basicConfig(level=logging.DEBUG)
+from bigjob import logger
+logger.setLevel(logging.FATAL)
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 sys.path.insert(0, os.getcwd() + "/../")
