@@ -163,8 +163,9 @@ class PilotCompute(PilotCompute):
     
     def get_url(self):
         return self.__bigjob.pilot_url
-    
-    
+        
+    def get_free_nodes(self):
+        return self.__bigjob.get_free_nodes()
     
     def submit_cu(self, compute_unit):
         """ Submits compute unit to Bigjob """
