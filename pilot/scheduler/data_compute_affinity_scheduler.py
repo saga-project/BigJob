@@ -44,7 +44,7 @@ class Scheduler:
         return None
     
     
-    def schedule_pilot_job(self, work_unit_description=None):
+    def schedule_pilot_job(self, compute_unit_description=None):
         """ Enforces affinity description: if no PJ is available with the right
             affinity, WU can't be scheduled.
             
@@ -53,18 +53,23 @@ class Scheduler:
         """    
         logging.debug("Schedule to PJ - # Avail PJs: %d"%len(self.pilot_jobs))
         candidate_pilot_jobs = []
-        if work_unit_description.has_key("affinity_datacenter_label") and work_unit_description.has_key("affinity_machine_label"):
+        required_number_of_processes=1 
+        if compute_unit_description.has_key("number_of_processes"):
+            required_number_of_processes = int(compute_unit_description["number_of_processes"])
+        
+        if compute_unit_description.has_key("affinity_datacenter_label") and compute_unit_description.has_key("affinity_machine_label"):
             for i in self.pilot_jobs:
-                logger.debug("BJ: %r State: %s"%(i, i.get_state()))
-                if i.get_state()=="Running": # check wether pilot is active
+                free_nodes = i.get_free_nodes()
+                logger.debug("BJ: %r State: %s Free nodes: %d"%(i, i.get_state(), free_nodes))
+                if i.get_state()=="Running" and free_nodes >= required_number_of_processes: # check whether pilot is active
                     pilot_job_description = i.pilot_compute_description
-                    if pilot_job_description["affinity_datacenter_label"] == work_unit_description["affinity_datacenter_label"]\
-                        and pilot_job_description["affinity_machine_label"] == work_unit_description["affinity_machine_label"]:
+                    if pilot_job_description["affinity_datacenter_label"] == compute_unit_description["affinity_datacenter_label"]\
+                        and pilot_job_description["affinity_machine_label"] == compute_unit_description["affinity_machine_label"]:
                         candidate_pilot_jobs.append(i)
         else:
             for i in self.pilot_jobs:                
                 logger.debug("BJ: %r State: %s"%(i, i.get_state()))
-                if i.get_state()=="Running":
+                if i.get_state()=="Running" and free_nodes >= required_number_of_processes:
                     candidate_pilot_jobs.append(i)
                     #candidate_pilot_jobs=self.pilot_jobs
                 
