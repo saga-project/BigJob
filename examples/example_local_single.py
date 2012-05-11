@@ -81,10 +81,11 @@ def main():
     # Submit SubJob through BigJob
     jd = description()
     jd.executable = "/bin/date"
+    #jd.executable = "$HOME/hello.sh"
     jd.number_of_processes = "1"
     jd.spmd_variation = "single"
     jd.arguments = [""]
-    #jd.working_directory = "/tmp" 
+    #jd.working_directory = "$HOME" 
     jd.output = "stdout.txt"
     jd.error = "stderr.txt"
     sj = subjob()
