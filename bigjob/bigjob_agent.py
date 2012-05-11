@@ -16,6 +16,7 @@ import ConfigParser
 import types
 import logging
 import shutil
+from string import Template
 logging.basicConfig(level=logging.DEBUG)
 
 try:
@@ -303,10 +304,12 @@ class bigjob_agent:
                             logger.debug(envi) 
                 
                 executable = job_dict["Executable"]
+                executable = self.__expand_directory(executable)
                 
                 workingdirectory = os.path.join(os.getcwd(), job_id)  
                 if (job_dict.has_key("WorkingDirectory") == True):
                         workingdirectory =  job_dict["WorkingDirectory"]
+                        workingdirectory = self.__expand_directory(workingdirectory)
                 try:
                     os.makedirs(workingdirectory)
                 except:
@@ -679,6 +682,25 @@ class bigjob_agent:
     def stop_background_thread(self):        
         self.stop=True
         
+    
+    def __expand_directory(self, directory):
+        """ expands directory name $HOME or ~ to the working directory
+            on the respective machine 
+        """
+        try:
+            if directory.startswith("$HOME"):
+                template = Template(directory)
+                directory = template.safe_substitute(HOME="~")
+            
+            expanded_directory=os.path.expanduser(directory)
+            logger.debug("Expanded directory: %s to %s"%(directory, expanded_directory))
+            return expanded_directory
+        except:
+            pass
+        
+        return directory
+
+            
     
     def __get_launch_method(self, requested_method):
         """ returns desired execution method: ssh, aprun """
