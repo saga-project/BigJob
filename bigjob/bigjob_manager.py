@@ -28,54 +28,17 @@ import subprocess
 from bigjob import SAGA_BLISS 
 from bigjob.state import Running, New, Failed, Done, Unknown
 
-if SAGA_BLISS == False:
-    try:
-        import saga
-        logger.debug("Using SAGA C++/Python.")
-        is_bliss=False
-    except:
-        logger.warn("SAGA C++ and Python bindings not found. Using Bliss.")
-        try:
-            import bliss.saga as saga
-            is_bliss=True
-        except:
-            logger.warn("SAGA Bliss not found")
-else:
-    logger.debug("Using SAGA Bliss.")
-    try:
-        import bliss.saga as saga
-        is_bliss=True 
-    except:
-        logger.warn("SAGA Bliss not found")
-
-
 # import other BigJob packages
 # import API
 import api.base
 sys.path.append(os.path.dirname(__file__))
 
-from pbsssh import pbsssh
-from sgessh import sgessh
-
-if is_bliss:
-    from bliss.saga import Url as SAGAUrl
-    from bliss.saga.job import Description as SAGAJobDescription
-    from bliss.saga.job import Service as SAGAJobService
-    from bliss.saga import Session as SAGASession
-    from bliss.saga import Context as SAGAContext
-else:
-    from saga import url as SAGAUrl
-    from saga.job import description as SAGAJobDescription
-    from saga.job import service as SAGAJobService
-    from saga import session as SAGASession
-    from saga import context as SAGAContext
-
-#
-#try:
-#    import paramiko
-#except:
-#    logger.warn("Paramiko not found. Without Paramiko file staging is not supported!")
-
+import bliss.saga as saga
+from bliss.saga import Url as SAGAUrl
+from bliss.saga.job import Description as SAGAJobDescription
+from bliss.saga.job import Service as SAGAJobService
+from bliss.saga import Session as SAGASession
+from bliss.saga import Context as SAGAContext
 
 if sys.version_info < (2, 5):
     sys.path.append(os.path.dirname( __file__ ) + "/ext/uuid-1.30/")
@@ -115,14 +78,9 @@ class bigjob(api.base.bigjob):
     
     __APPLICATION_NAME="bigjob" 
     
-    def __init__(self, coordination_url="advert://localhost/", pilot_url=None):    
-        """ Initializes BigJob's coordination system
-            e.g.:
-            advert://localhost (SAGA/Advert SQLITE)
-            advert://advert.cct.lsu.edu:8080 (SAGA/Advert POSTGRESQL)
-            redis://localhost:6379 (Redis at localhost)
-            tcp://localhost (ZMQ)
-        """  
+    def __init__(self, coordination_url="redis://ILikeBigJob_wITH-REdIS@gw68.quarry.iu.teragrid.org:6379", pilot_url=None):    
+        """ Initializes BigJob's coordination system"""  
+        
         self.coordination_url = coordination_url
         self.coordination = self.__init_coordination(coordination_url)
         self.launch_method=""
@@ -288,32 +246,6 @@ class bigjob(api.base.bigjob):
         # Create and process BJ bootstrap script
         logger.debug("Adaptor specific modifications: "  + str(lrms_saga_url.scheme))
         bootstrap_script = self.generate_bootstrap_script(self.coordination.get_address(), self.pilot_url)
-        if lrms_saga_url.scheme == "gram":
-            bootstrap_script = self.escape_rsl(bootstrap_script)
-        elif lrms_saga_url.scheme == "pbspro" or lrms_saga_url.scheme=="xt5torque" or lrms_saga_url.scheme=="torque":                
-            bootstrap_script = self.escape_pbs(bootstrap_script)
-        elif lrms_saga_url.scheme == "ssh":
-            bootstrap_script = self.escape_ssh(bootstrap_script)
-        ############ submit pbs script which launches bigjob agent using ssh adaptors########## 
-        elif lrms_saga_url.scheme == "pbs-ssh":
-            bootstrap_script = self.escape_ssh(bootstrap_script)
-            # PBS specific BJ plugin
-            pbssshj = pbsssh(bootstrap_script, self.launch_method, queue, project,lrms_saga_url, walltime, number_nodes, 
-                             processes_per_node, userproxy, self.working_directory, self.working_directory)
-            self.job = pbssshj
-            self.job.run()
-            return
-        ############ submit sge script which launches bigjob agent using ssh adaptors########## 
-        elif lrms_saga_url.scheme == "sge-ssh":
-            bootstrap_script = self.escape_ssh(bootstrap_script)
-            # PBS specific BJ plugin
-            sgesshj = sgessh(bootstrap_script, lrms_saga_url, walltime, number_nodes, 
-                             processes_per_node, userproxy, project, queue, self.working_directory, self.working_directory)
-            self.job = sgesshj
-            self.job.run()
-            return
-        elif is_bliss:
-            bootstrap_script = self.escape_bliss(bootstrap_script)
 
         # Define Agent Executable in Job description
         # in Condor case bootstrap script is staged 
@@ -338,11 +270,7 @@ class bigjob(api.base.bigjob):
             logger.debug("Condor file transfers: " + str(bj_file_transfers))
             jd.file_transfer = bj_file_transfers
         else:
-            if is_bliss==False:
-                jd.number_of_processes = str(number_nodes)
-                jd.processes_per_host=str(processes_per_node)
-            else:
-                jd.total_cpu_count=int(number_nodes)                   
+            jd.total_cpu_count=int(number_nodes)                   
             jd.spmd_variation = "single"
             jd.arguments = ["python", "-c", bootstrap_script]
             jd.executable = "/usr/bin/env"           
@@ -350,12 +278,9 @@ class bigjob(api.base.bigjob):
         if queue != None:
             jd.queue = queue
         if project !=None:
-            jd.job_project = [project]
+            jd.project=project       
         if walltime!=None:
-            if is_bliss:
-                jd.wall_time_limit=int(walltime)
-            else:
-                jd.wall_time_limit=str(walltime)
+            jd.wall_time_limit=int(walltime)
     
         if lrms_saga_url.scheme.startswith("condor")==False:
             jd.working_directory = self.working_directory
@@ -364,10 +289,6 @@ class bigjob(api.base.bigjob):
 
         logger.debug("Working directory: " + jd.working_directory)
         
-        #if lrms_saga_url.scheme.startswith("condor"):
-        #    jd.output = "stdout-bigjob_agent.txt"
-        #    jd.error = "stderr-bigjob_agent.txt"         
-        #else:
         jd.output = os.path.join(self.working_directory, "stdout-bigjob_agent.txt")
         jd.error = os.path.join(self.working_directory, "stderr-bigjob_agent.txt")
           
@@ -395,61 +316,60 @@ class bigjob(api.base.bigjob):
         return self.pilot_url
         
     def generate_bootstrap_script(self, coordination_host, coordination_namespace):
-        script = textwrap.dedent("""import sys
+        script = """\"import sys
 import os
 import urllib
 import sys
 import time
 start_time = time.time()
-home = os.environ.get("HOME")
-#print "Home: " + home
+home = os.environ.get(\\"HOME\\")
+print \\"Home: \\" + home
 if home==None: home = os.getcwd()
-BIGJOB_AGENT_DIR= os.path.join(home, ".bigjob")
+BIGJOB_AGENT_DIR= os.path.join(home, \\".bigjob\\")
 if not os.path.exists(BIGJOB_AGENT_DIR): os.mkdir (BIGJOB_AGENT_DIR)
-BIGJOB_PYTHON_DIR=BIGJOB_AGENT_DIR+"/python/"
+BIGJOB_PYTHON_DIR=BIGJOB_AGENT_DIR+\\"/python/\\"
 if not os.path.exists(BIGJOB_PYTHON_DIR): os.mkdir(BIGJOB_PYTHON_DIR)
-BOOTSTRAP_URL="https://raw.github.com/saga-project/BigJob/master/bootstrap/bigjob-bootstrap.py"
-BOOTSTRAP_FILE=BIGJOB_AGENT_DIR+"/bigjob-bootstrap.py"
+BOOTSTRAP_URL=\\"https://raw.github.com/saga-project/BigJob/master/bootstrap/bigjob-bootstrap.py\\"
+BOOTSTRAP_FILE=BIGJOB_AGENT_DIR+\\"/bigjob-bootstrap.py\\"
 #ensure that BJ in .bigjob is upfront in sys.path
-sys.path.insert(0, os.getcwd() + "/../")
-#sys.path.insert(0, /User/luckow/.bigjob/python/lib")
-#sys.path.insert(0, os.getcwd() + "/../../")
+sys.path.insert(0, os.getcwd() + \\"/../\\")
 p = list()
 for i in sys.path:
-    if i.find(\".bigjob/python\")>1:
+    if i.find(\\\".bigjob/python\\\")>1:
           p.insert(0, i)
 for i in p: sys.path.insert(0, i)
-print "Python path: " + str(sys.path)
-print "Python version: " + str(sys.version_info)
+print \\"Python path: \\" + str(sys.path)
+print \\"Python version: \\" + str(sys.version_info)
+
 try: import saga
-except: print "SAGA and SAGA Python Bindings not found: BigJob only work w/ non-SAGA backends e.g. Redis, ZMQ.";
+except: print \\"SAGA and SAGA Python Bindings not found: BigJob only work w/ non-SAGA backends e.g. Redis, ZMQ.\\";
 try: import bigjob.bigjob_agent
 except: 
-    print "BigJob not installed. Attempt to install it."; 
+    print \\"BigJob not installed. Attempt to install it.\\"; 
     opener = urllib.FancyURLopener({}); 
     opener.retrieve(BOOTSTRAP_URL, BOOTSTRAP_FILE); 
-    print "Execute: " + "python " + BOOTSTRAP_FILE + " " + BIGJOB_PYTHON_DIR
-    os.system("/usr/bin/env")
+    print \\"Execute: \\" + \\"python \\" + BOOTSTRAP_FILE + \\" \\" + BIGJOB_PYTHON_DIR
+    os.system(\\"/usr/bin/env\\")
     try:
-        os.system("python " + BOOTSTRAP_FILE + " " + BIGJOB_PYTHON_DIR); 
-        activate_this = BIGJOB_PYTHON_DIR+'bin/activate_this.py'; 
+        os.system(\\"python \\" + BOOTSTRAP_FILE + \\" \\" + BIGJOB_PYTHON_DIR); 
+        activate_this = BIGJOB_PYTHON_DIR+\\"bin/activate_this.py\\"; 
         execfile(activate_this, dict(__file__=activate_this))
     except:
-        print "BJ installation failed. Trying system-level python (/usr/bin/python)";
-        os.system("/usr/bin/python " + BOOTSTRAP_FILE + " " + BIGJOB_PYTHON_DIR); 
-        activate_this = BIGJOB_PYTHON_DIR+'bin/activate_this.py'; 
+        print \\"BJ installation failed. Trying system-level python (/usr/bin/python)\\";
+        os.system(\\"/usr/bin/python \\" + BOOTSTRAP_FILE + \\" \\" + BIGJOB_PYTHON_DIR); 
+        activate_this = BIGJOB_PYTHON_DIR+\\"bin/activate_this.py\\"; 
         execfile(activate_this, dict(__file__=activate_this))
 #try to import BJ once again
 import bigjob.bigjob_agent
 # execute bj agent
 args = list()
-args.append("bigjob_agent.py")
-args.append(\"%s\")
-args.append(\"%s\")
-print "Bootstrap time: " + str(time.time()-start_time)
-print "Starting BigJob Agents with following args: " + str(args)
+args.append(\\"bigjob_agent.py\\")
+args.append(\\\"%s\\\")
+args.append(\\\"%s\\\")
+print \\"Bootstrap time: \\" + str(time.time()-start_time)
+print \\"Starting BigJob Agents with following args: \\" + str(args)
 bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
-""" % (coordination_host, coordination_namespace))
+\"""" % (coordination_host, coordination_namespace)
         return script
     
     def escape_rsl(self, bootstrap_script):
