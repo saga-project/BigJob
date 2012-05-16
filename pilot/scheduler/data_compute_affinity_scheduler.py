@@ -69,6 +69,7 @@ class Scheduler:
         else:
             for i in self.pilot_jobs:                
                 logger.debug("BJ: %r State: %s"%(i, i.get_state()))
+                free_nodes = i.get_free_nodes()
                 if i.get_state()=="Running" and free_nodes >= required_number_of_processes:
                     candidate_pilot_jobs.append(i)
                     #candidate_pilot_jobs=self.pilot_jobs
