@@ -205,8 +205,9 @@ class bigjob(api.base.bigjob):
             
             
         # Determine whether target machine use gsissh or ssh to logon.
+        logger.debug("Detect launch method for: " + lrms_saga_url.host)        
         self.launch_method = self.__get_launch_method(lrms_saga_url.host,lrms_saga_url.username)
-            
+        self.bigjob_working_directory_url=""
         ##############################################################################
         # File Management and Stage-In
         if lrms_saga_url.scheme.startswith("condor")==False:           
@@ -215,29 +216,31 @@ class bigjob(api.base.bigjob):
             # Fallback if working directory is not a valid URL
             if not (self.working_directory.startswith("go:") or self.working_directory.startswith("ssh://")):            
                 if lrms_saga_url.username!=None and lrms_saga_url.username!="":
-                    bigjob_working_directory_url = "ssh://" + lrms_saga_url.username + "@" + lrms_saga_url.host + self.__get_bigjob_working_dir()
+                    self.bigjob_working_directory_url = "ssh://" + lrms_saga_url.username + "@" + lrms_saga_url.host + self.__get_bigjob_working_dir()
                 else:
-                    bigjob_working_directory_url = "ssh://" + lrms_saga_url.host + self.__get_bigjob_working_dir()
+                    self.bigjob_working_directory_url = "ssh://" + lrms_saga_url.host + self.__get_bigjob_working_dir()
+            elif self.working_directory.startswith("go:"):
+                    self.bigjob_working_directory_url=os.path.join(self.working_directory, self.uuid)
             else:
                 # working directory is a valid file staging URL
-                bigjob_working_directory_url=self.working_directory            
+                self.bigjob_working_directory_url=self.working_directory            
                 
             # initialize file manager that takes care of file movement and directory creation
             if self.__filemanager==None:
-                self.__initialize_pilot_data(bigjob_working_directory_url) # determines the url
+                self.__initialize_pilot_data(self.bigjob_working_directory_url) # determines the url
             
-            if not self.working_directory.startswith("/"):
-                self.working_directory = self.__filemanager.get_path(bigjob_working_directory_url)
+            if self.__filemanager != None and not self.working_directory.startswith("/"):
+                self.working_directory = self.__filemanager.get_path(self.bigjob_working_directory_url)
             
             # determine working directory of bigjob 
             # if a remote sandbox can be created via ssh => create a own dir for each bj job id
             # otherwise use specified working directory
-            logger.debug("BigJob working directory: %s"%bigjob_working_directory_url)
-            if self.__filemanager!=None and self.__filemanager.create_remote_directory(bigjob_working_directory_url)==True:
+            logger.debug("BigJob working directory: %s"%self.bigjob_working_directory_url)
+            if self.__filemanager!=None and self.__filemanager.create_remote_directory(self.bigjob_working_directory_url)==True:
                 self.working_directory = self.__get_bigjob_working_dir()
-                self.__stage_files(filetransfers, bigjob_working_directory_url)
+                self.__stage_files(filetransfers, self.bigjob_working_directory_url)
             else:        
-                logger.warn("For file staging. SSH (incl. password-less authentication or Globus Online is required.")
+                logger.warn("No file staging adaptor found.")
             
             logger.debug("BJ Working Directory: %s", self.working_directory)      
         
@@ -251,18 +254,22 @@ class bigjob(api.base.bigjob):
         # in Condor case bootstrap script is staged 
         # (Python app cannot be passed inline in Condor job description)
         if lrms_saga_url.scheme.startswith("condor")==True:
-            logger.debug("Using Condor")
+
             condor_bootstrap_filename = os.path.join("/tmp", "bootstrap-"+str(self.uuid))
             condor_bootstrap_file = open(condor_bootstrap_filename, "w")
             condor_bootstrap_file.write(bootstrap_script)
             condor_bootstrap_file.close()
+            logger.debug("Using Condor - bootstrap file: " + condor_bootstrap_filename)
            
             jd.executable = "/usr/bin/env"
-            jd.arguments = ["python",  condor_bootstrap_filename]                
+            jd.arguments = ["python",  os.path.basename(condor_bootstrap_filename)]                
             bj_file_transfers = []
             file_transfer_spec = condor_bootstrap_filename + " > " + os.path.basename(condor_bootstrap_filename)
             bj_file_transfers.append(file_transfer_spec)
-            output_file_transfer_spec = os.path.join(self.working_directory, "output.tar.gz") +" < output.tar.gz"
+            output_file_name = "output-" + str(self.uuid) + ".tar.gz"
+            output_file_transfer_spec = os.path.join(self.working_directory, output_file_name) +" < " + output_file_name
+            #output_file_transfer_spec = os.path.join(self.working_directory, "output.tar.gz") +" < output.tar.gz"
+            logger.debug("Output transfer: " + output_file_transfer_spec)
             bj_file_transfers.append(output_file_transfer_spec)
             if filetransfers != None:
                 for t in filetransfers:
@@ -445,7 +452,7 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
                 self.coordination.queue_job(self.pilot_url, job_url)
                 break
             except:
-                traceback.print_exc(file=sys.stdout)
+                self.__print_traceback()
                 time.sleep(2)
                 #raise Exception("Unable to submit job")
                      
@@ -462,10 +469,11 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
         """ duck typing for get_state of saga.job.job  
             state of saga job that is used to spawn the pilot agent
         """
-        try:
-            return self.job.get_state()
-        except:
-            return self.get_state_detail()
+        return self.get_state_detail()
+        #try:
+        #    return self.job.get_state()
+        #except:
+        #    return self.get_state_detail()
             #return None
     
     def get_state_detail(self): 
@@ -505,7 +513,7 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
             if self.url.scheme.startswith("condor")==False:
                 self.job.cancel()
             else:
-                print "Output files are being transfered to file: outpt.tar.gz. Please wait until transfer is complete."
+                logger.debug("Output files are being transfered to file: outpt.tar.gz. Please wait until transfer is complete.")
         except:
             pass
             #traceback.print_stack()
@@ -515,9 +523,10 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
             if CLEANUP:
                 self.coordination.delete_pilot(self.pilot_url)                    
             #os.remove(os.path.join("/tmp", "bootstrap-"+str(self.uuid)))            
-        except:
+        except:            
             pass
             #traceback.print_stack()
+        logger.debug("Cancel Pilot Job finished")
 
     def wait(self):
         """ Waits for completion of all sub-jobs """        
@@ -601,7 +610,9 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
     
     
     def __get_subjob_working_dir(self, sj_id):
-        return os.path.join(self.__get_bigjob_working_dir(), sj_id)
+        base_url = self.bigjob_working_directory_url 
+        url  = os.path.join(base_url, sj_id)        
+        return url
     
 
     ###########################################################################
@@ -617,6 +628,7 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
                 self.__filemanager = SSHFileAdaptor(service_url) 
             except:
                 logger.warn("SSH/Paramiko package not found.")            
+                self.__print_traceback()
         elif service_url.startswith("http:"):
             logger.debug("Use WebHDFS backend")
             try:
@@ -658,16 +670,25 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
     def __get_launch_method(self, hostname, user=None):
         """ returns desired execution method: ssh, aprun """
         if user == None: user = self.__discover_ssh_user(hostname)
-        if user!=None: logger.debug("discovered user: " + user)
+        host = ""
+        if user!=None and user!="": 
+            logger.debug("discovered user: " + user)
+            host = user + "@" + hostname
+        else:
+            host = hostname 
         gsissh_available = False
         try:
-            gsissh_available = (subprocess.call("gsissh "+ user + "@" + hostname+" /bin/date", shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)==0)
+            cmd = "gsissh " + host + " /bin/date"
+            logger.debug("Execute: " + cmd)
+            gsissh_available = (subprocess.call(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)==0)
         except:
             pass
     
         ssh_available = False
         try:
-            ssh_available = (subprocess.call("ssh "+ user + "@" + hostname+" /bin/date", shell=True, stdout=subprocess.PIPE,stderr=subprocess.PIPE)==0)
+            cmd = "ssh " + host + " /bin/date"
+            logger.debug("Execute: " + cmd)
+            ssh_available = (subprocess.call(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)==0)
         except:
             pass
     
@@ -676,7 +697,7 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
             launch_method="gsissh"
         else:
             launch_method="ssh"
-        logging.debug(" launch method used " + str(launch_method))
+        logger.info("SSH: %r GSISSH: %r Use: %s"%(ssh_available, gsissh_available, launch_method))
         return launch_method
     
     
@@ -702,9 +723,10 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
     
     def __print_traceback(self):
         exc_type, exc_value, exc_traceback = sys.exc_info()
-        print "*** print_exception:"
-        traceback.print_exception(exc_type, exc_value, exc_traceback,
-                              limit=2, file=sys.stdout)
+        logger.debug("*** print_exception:",
+                     exc_info=(exc_type, exc_value, exc_traceback))
+        #traceback.print_exception(exc_type, exc_value, exc_traceback,
+        #                      limit=2, file=sys.stdout)
         
     def __repr__(self):
         return self.pilot_url 

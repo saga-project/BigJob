@@ -22,6 +22,7 @@ class pbsssh:
         if launch_method == "ssh":
             self.lrms_saga_url.scheme="ssh"
         else:
+            logger.debug("Use GSISSH")
             self.lrms_saga_url.scheme="gsissh"
         self.userproxy = userproxy
         self.working_directory = ""
@@ -37,7 +38,10 @@ class pbsssh:
             hrs=int(walltime)/60 
             minu=int(walltime)%60 
             walltime_pbs=""+str(hrs)+":"+str(minu)+":00"
-
+        if number_nodes==None:
+            number_nodes=1
+        if processes_per_node==None:
+            processes_per_node=1
         if int(number_nodes)%int(processes_per_node) == 0:
             nodes = int(number_nodes)/int(processes_per_node)
         else:
@@ -59,10 +63,10 @@ if ( %s == 1 ):
 else:
     qsub_file.write("#PBS -l nodes=%s:ppn=%s")
 qsub_file.write("\\n")
-if ( "%s" != None ):
+if ( "%s" != "None" ):
     qsub_file.write("#PBS -q %s")
     qsub_file.write("\\n")
-if (  "%s" != None ):
+if (  "%s" != "None" ):
     qsub_file.write("#PBS -A %s")
     qsub_file.write("\\n")    
 qsub_file.write("#PBS -l walltime=%s")
@@ -75,7 +79,11 @@ qsub_file.write("cd %s")
 qsub_file.write("\\n")
 qsub_file.write("python -c XX" + textwrap.dedent(\"\"%s\"\") + "XX")
 qsub_file.close()
-os.system( "qsub  " + qsub_file_name)
+
+cmd = "qsub  " + qsub_file_name
+if os.path.exists(os.path.expanduser("~/.bashrc")):
+    cmd = ". ~/.bashrc; " + cmd 
+os.system(cmd)
 """) % (str(ppn),str(nodes),str(nodes),str(ppn),str(queue),str(queue),str(project),str(project),str(walltime_pbs), bj_working_directory, bj_working_directory, str(self.working_directory), bootstrap_script)
         ### escaping characters
         self.bootstrap_script = self.bootstrap_script.replace("\"","\\\"")
@@ -113,6 +121,7 @@ os.system( "qsub  " + qsub_file_name)
         self.job_id=(outstr).split(".")[0]
         logger.debug("PBS JobID: " + str(self.job_id))
         if self.job_id==None or self.job_id=="":
+            logger.error("Unable to submit to: " + str(self.lrms_saga_url))
             raise Exception("BigJob submission via pbs-ssh:// failed: %s %s" % (outstr,errstr))
 
 

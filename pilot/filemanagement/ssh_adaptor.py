@@ -16,20 +16,25 @@ from pilot.api import State
 from bigjob import logger
 
 
+paramiko_logger = paramiko.util.logging.getLogger()
+paramiko_logger.setLevel(logging.WARN)
+
 class SSHFileAdaptor(object):
     """ BigData Coordination File Management for Pilot Store """
     
     def __init__(self, service_url):        
         self.service_url = service_url
         result = urlparse.urlparse(service_url)
-        self.host = result.netloc
+        self.host = result.hostname
         self.path = result.path        
+        self.user = result.username
         
         # initialize ssh client
+        logger.debug("SSH: connect to: %s"%self.host)
         self.__client = paramiko.SSHClient()
         self.__client.load_system_host_keys()
         self.__client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        self.__client.connect(self.host)
+        self.__client.connect(self.host, username=self.user)
         self.__sftp = self.__client.open_sftp()
         self.__state=State.New
                         
@@ -163,18 +168,20 @@ class SSHFileAdaptor(object):
     # pure file management methods
     # used by BJ file staging
     def transfer(self, source_url, target_url):
-        self.__third_party_transfer_host(source_url, target_url)    
+        self.__third_party_transfer_scp(source_url, target_url)    
     
     def create_remote_directory(self, target_url):
         result = urlparse.urlparse(target_url)
-        target_host = result.netloc
+        target_host = result.hostname
         target_path = result.path
+	target_user = result.username
         try:
             if not self.__is_remote_directory(target_url):
                 client = paramiko.SSHClient()
                 client.load_system_host_keys()
                 client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-                client.connect(target_host)
+                logger.debug("Create directory at: %s"%(target_host))
+                client.connect(target_host,  username=target_user)
                 sftp = client.open_sftp()  
                 sftp.mkdir(target_path)
                 sftp.close()
@@ -213,13 +220,14 @@ class SSHFileAdaptor(object):
         
     def __is_remote_directory(self, url):
         result = urlparse.urlparse(url)
-        host = result.netloc
+        host = result.hostname
         path = result.path
+        user = result.username
         #if path.endswith("/"):
         client = paramiko.SSHClient()
         client.load_system_host_keys()
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        client.connect(host)
+        client.connect(host,  username=user)
         sftp = client.open_sftp()
         try:
             if stat.S_ISDIR(sftp.stat(path).st_mode):
@@ -227,7 +235,7 @@ class SSHFileAdaptor(object):
             else:
                 return False
         except:
-            logger.error("Directory not found: %s"%path)
+            logger.debug("Directory not found: %s"%path)
         sftp.close()
         client.close()
         return False
@@ -236,11 +244,29 @@ class SSHFileAdaptor(object):
         ssh_client = paramiko.SSHClient()
         ssh_client.load_system_host_keys()
         ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh_client.connect(self.host)
+        ssh_client.connect(self.host,  username=self.user)
         sftp_client = ssh_client.open_sftp()
         sftp_client.chdir(self.path)
         return ssh_client, sftp_client
-        
+
+    def __third_party_transfer_scp(self, source_url, target_url):
+        result = urlparse.urlparse(source_url)
+        source_host = result.netloc
+        source_path = result.path
+        if source_host==None or source_host=="":
+            source_host="localhost"
+
+        result = urlparse.urlparse(target_url)
+        target_host = result.netloc
+        target_path = result.path
+        if target_host==None or target_host=="":
+            target_host="localhost"
+
+        cmd = "scp -r %s:%s %s:%s"%(source_host, source_path, target_host, target_path)
+        rc = os.system(cmd)
+        logger.debug("Command: %s Return Code: %d"%(cmd,rc))
+
+
     def __third_party_transfer_host(self, source_url, target_url):
         """
             Transfers from source URL to machine of PS (target path)

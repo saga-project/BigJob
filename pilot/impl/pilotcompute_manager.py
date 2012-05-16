@@ -15,7 +15,9 @@ from bigjob import bigjob, subjob
 from bigjob_dynamic.many_job import *
 
 from pilot.api import PilotCompute, PilotComputeService, State
-from pilot.coordination.advert import AdvertCoordinationAdaptor as CoordinationAdaptor
+from pilot.impl.pilot_manager import ComputeUnit
+#from pilot.coordination.advert import AdvertCoordinationAdaptor as CoordinationAdaptor
+from pilot.coordination.nocoord import NoCoordinationAdaptor as CoordinationAdaptor
 
 
 """ This variable defines the coordination system that is used by BigJob
@@ -120,7 +122,7 @@ class PilotComputeService(PilotComputeService):
         self.__mjs.cancel()
         
         
-    def _submit_cu(self, compute_unit):
+    def submit_cu(self, compute_unit):
         """ Submits work unit to Dynamic Bigjob (ManyJob) 
             Scheduler of Dynamic Bigjob will assign appropriate PJ to WorkUnit        
         """
@@ -161,17 +163,26 @@ class PilotCompute(PilotCompute):
     
     def get_url(self):
         return self.__bigjob.pilot_url
+        
+    def get_free_nodes(self):
+        return self.__bigjob.get_free_nodes()
     
-    
-    
-    def _submit_cu(self, compute_unit):
-        """ Submits work unit to Bigjob """
-        logging.debug("Submit sub-job to big-job")
+    def submit_cu(self, compute_unit):
+        """ Submits compute unit to Bigjob """
+        logging.debug("Submit CU to big-job")
         sj = bigjob.bigjob_manager.subjob()
         sj.submit_job(self.__bigjob.pilot_url, compute_unit.subjob_description)
         self.__subjobs.append(sj)
         compute_unit.subjob=sj
         return compute_unit
+    
+    def submit_compute_unit(self, compute_unit_description):
+        """ Submits work unit to Bigjob """
+        cu = ComputeUnit(compute_unit_description)
+        return self.submit_cu(cu)
+    
+    def __repr__(self):
+        return str(self.__bigjob)
         
         
         

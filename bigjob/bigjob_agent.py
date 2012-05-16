@@ -16,6 +16,7 @@ import ConfigParser
 import types
 import logging
 import shutil
+from string import Template
 logging.basicConfig(level=logging.DEBUG)
 
 try:
@@ -76,6 +77,11 @@ class bigjob_agent:
         self.CPR = default_dict["cpr"]
         self.SHELL=default_dict["shell"]
         self.MPIRUN=default_dict["mpirun"]
+        self.OUTPUT_TAR=False
+        if default_dict.has_key("create_output_tar"):
+            self.OUTPUT_TAR=eval(default_dict["create_output_tar"])
+            logger.debug("Create output tar: %r", self.OUTPUT_TAR)
+                    
         self.LAUNCH_METHOD=self.__get_launch_method(default_dict["launch_method"])
         
         logging.debug("Launch Method: " + self.LAUNCH_METHOD + " mpi: " + self.MPIRUN + " shell: " + self.SHELL)
@@ -245,14 +251,6 @@ class bigjob_agent:
     def execute_job(self, job_url, job_dict):
         """ obtain job attributes from c&c and execute process """
         state=str(job_dict["state"])
-       
-        #try:
-        #   state = self.coordination.get_job_state(job_url)
-        #except:
-        #    logger.error("Could not access job state... skip execution attempt and requeuing job")
-        #    result = self.coordination.queue_job(self.base_url, job_url)
-        #    if result == False:
-        #        self.coordination.set_job_state(job_url, str(saga.job.Failed))
         
         if(state==str(bigjob.state.Unknown) or
             state==str(bigjob.state.New)):
@@ -306,10 +304,12 @@ class bigjob_agent:
                             logger.debug(envi) 
                 
                 executable = job_dict["Executable"]
+                executable = self.__expand_directory(executable)
                 
                 workingdirectory = os.path.join(os.getcwd(), job_id)  
                 if (job_dict.has_key("WorkingDirectory") == True):
                         workingdirectory =  job_dict["WorkingDirectory"]
+                        workingdirectory = self.__expand_directory(workingdirectory)
                 try:
                     os.makedirs(workingdirectory)
                 except:
@@ -334,23 +334,27 @@ class bigjob_agent:
                 
                 # File Stage-In - Move pilot-level files to working directory of sub-job
                 if self.pilot_description!=None:
-                    file_list = eval(self.pilot_description["description"])
-                    if file_list != None and len(file_list)>0:
-                        logger.debug("Copy %d files to SJ work dir"%len(file_list)>0)
-                        for i in file_list:
-                            logger.debug("Process file: %s"%i)
-                            if i.find(">")>0:
-                                base_filename = os.path.basename(i[:i.index(">")].strip())
-                                if environment.has_key("_CONDOR_SCRATCH_DIR"):
-                                    source_filename = os.path.join(environment["_CONDOR_SCRATCH_DIR"], base_filename)
-                                else:
-                                    source_filename = os.path.join(self.work_dir, base_filename)
-                                target_filename = os.path.join(workingdirectory, base_filename)
-                                try:
-                                    logger.debug("Copy: %s to %s"%(source_filename, target_filename))
-                                    shutil.copyfile(source_filename, target_filename)                
-                                except:
-                                    logger.error("Error copy: %s to %s"%(source_filename, target_filename))
+                    try:
+                        if self.pilot_description.has_key("description"):
+                            file_list = eval(self.pilot_description["description"])
+                            if file_list != None and len(file_list)>0:
+                                logger.debug("Copy %d files to SJ work dir"%len(file_list)>0)
+                                for i in file_list:
+                                    logger.debug("Process file: %s"%i)
+                                    if i.find(">")>0:
+                                        base_filename = os.path.basename(i[:i.index(">")].strip())
+                                        if environment.has_key("_CONDOR_SCRATCH_DIR"):
+                                            source_filename = os.path.join(environment["_CONDOR_SCRATCH_DIR"], base_filename)
+                                        else:
+                                            source_filename = os.path.join(self.work_dir, base_filename)
+                                        target_filename = os.path.join(workingdirectory, base_filename)
+                                        try:
+                                            logger.debug("Copy: %s to %s"%(source_filename, target_filename))
+                                            shutil.copyfile(source_filename, target_filename)                
+                                        except:
+                                            logger.error("Error copy: %s to %s"%(source_filename, target_filename))
+                    except:
+                        logger.debug("Moving of stage-in files failed.")
                 
                 # create stdout/stderr file descriptors
                 output_file = os.path.abspath(output)
@@ -360,11 +364,11 @@ class bigjob_agent:
                 stderr = open(error_file, "w")
                 if self.LAUNCH_METHOD=="aprun":                    
                     if (spmdvariation.lower()=="mpi"):
-                        command = "aprun  -n " + str(numberofprocesses) + " " + executable + " "                    
+                        command = envi + "aprun  -n " + str(numberofprocesses) + " " + executable + " " + arguments                   
                     else:
-                        env_strip = envi.strip()
-                        env_command = env_strip[:(len(env_strip)-1)]
-                        command = "aprun  -n " + str(self.number_subjobs) + " -d " + numberofprocesses + " " + executable + " " + arguments
+                        #env_strip = envi.strip()
+                        #env_command = env_strip[:(len(env_strip)-1)]
+                        command = envi + "aprun  -n " + str(self.number_subjobs) + " -d " + numberofprocesses + " " + executable + " " + arguments
 
                     # MPMD Mode => all subjobs on Kraken fail because aprun returns 1 as returncode
                     #command = "aprun"
@@ -378,8 +382,7 @@ class bigjob_agent:
                 else:
                     # In particular for Condor - if executable is staged x flag is not set
                     #command ="chmod +x " + executable +";export PATH=$PATH:" + workingdirectory + ";" +command
-                    command ="chmod +x " + executable +";export PATH=$PATH:" + workingdirectory + ";" + arguments
-                    # command =  executable + " " + arguments
+                    command =  executable + " " + arguments
                 #pdb.set_trace()
                 # special setup for MPI NAMD jobs
                 machinefile = self.allocate_nodes(job_dict)
@@ -401,7 +404,9 @@ class bigjob_agent:
                 # build execution command
                 if self.LAUNCH_METHOD == "aprun":
                     command ="cd " + workingdirectory + "; " + command
-                else:
+                elif self.LAUNCH_METHOD == "local":
+                    command ="cd " + workingdirectory + "; " + command
+                else: # ssh launch is default
                     if (spmdvariation.lower( )=="mpi"):
                         command = "cd " + workingdirectory + "; " + envi +  self.MPIRUN + " -np " + numberofprocesses + " -machinefile " + machinefile + " " + command
                     elif host == "localhost":
@@ -565,14 +570,7 @@ class bigjob_agent:
         # self.threadpool.wait()   
         logger.debug("Terminating Agent - Dequeue Sub-Jobs Thread")   
        
-    #def poll_jobs(self):       
-    #    self.threadpool.wait()
-    #    new_jobs=self.redis.keys(self.base_url+":*")   
-    #    logger.debug("All jobs:" + str(new_jobs))
-    #    for i in new_jobs:            
-    #        request = WorkRequest(self.start_new_job_in_thread, [str(i)])
-    #        logger.debug("WorkRequest: " + str(request))
-    #        self.threadpool.putRequest(request)
+   
         
     def start_new_job_in_thread(self, job_url):
         """evaluates job dir, sanity checks, executes job """
@@ -627,10 +625,15 @@ class bigjob_agent:
     
     
     def update_output_file(self):
-        logger.debug("Update output file...")
-        output = subprocess.Popen('tar --exclude=output.tar.gz -cf output.tar.gz *', cwd="..", shell=True)
-        output.wait()
-        logger.debug("Files: "  + str(os.listdir(".")))
+        if self.OUTPUT_TAR==True:
+            output_file_name = "output-" + self.id + ".tar.gz"        
+            logger.debug("Update output file: " + output_file_name)
+            output = subprocess.Popen('tar --exclude=*.brg --exclude=*.bmf --exclude=*tmp* --exclude=*.bif --exclude=*.fa --exclude=*.fastq --exclude=bfast --exclude=output*.tar.gz -czf ' + output_file_name + ' *',
+                                   cwd="..", shell=True)
+            output.wait()
+            logger.debug("Files: "  + str(os.listdir(".")))
+        else:
+            logger.debug("Create NO output.tar. Enable output.tar file creation in bigjob_agent.conf")
         
     
     def print_job(self, job_url):
@@ -680,6 +683,25 @@ class bigjob_agent:
         self.stop=True
         
     
+    def __expand_directory(self, directory):
+        """ expands directory name $HOME or ~ to the working directory
+            on the respective machine 
+        """
+        try:
+            if directory.startswith("$HOME"):
+                template = Template(directory)
+                directory = template.safe_substitute(HOME="~")
+            
+            expanded_directory=os.path.expanduser(directory)
+            logger.debug("Expanded directory: %s to %s"%(directory, expanded_directory))
+            return expanded_directory
+        except:
+            pass
+        
+        return directory
+
+            
+    
     def __get_launch_method(self, requested_method):
         """ returns desired execution method: ssh, aprun """
         
@@ -695,7 +717,7 @@ class bigjob_agent:
         except:
             pass
         
-        launch_method = "ssh"
+        launch_method = "local"
         if requested_method=="aprun" and aprun_available == True:
             launch_method="aprun"
         elif requested_method=="ssh" and ssh_available == True:

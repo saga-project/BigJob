@@ -1,10 +1,8 @@
 import sys
 import os
 import time
-
 import logging
-from bigjob import logger
-logger.setLevel(logging.FATAL)
+logging.basicConfig(level=logging.DEBUG)
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 sys.path.insert(0, os.getcwd() + "/../")
@@ -39,21 +37,17 @@ if __name__ == "__main__":
             "error": "stderr.txt",   
             "affinity_datacenter_label": "eu-de-south",              
             "affinity_machine_label": "mymachine" 
-    }    
-    compute_unit = compute_data_service.submit_compute_unit(compute_unit_description)
+    }
+    
+    cus = []
+    for i in range(0,10):
+        compute_unit = compute_data_service.submit_compute_unit(compute_unit_description)
+        cus.append(compute_unit)
     
     
     logging.debug("Finished setup. Waiting for scheduling of CU")
     compute_data_service.wait()
-    
-    while compute_unit != State.Done:
-        logging.debug("Final state check...")
-        state_cu = compute_unit.get_state()
-        print "PCS State %s" % pilot_compute_service
-        print "CU: %s State: %s"%(compute_unit, state_cu)
-        if state_cu==State.Done:
-            break
-        time.sleep(2)  
+
     
     logging.debug("Terminate Pilot Compute and Compute Data Service")
     compute_data_service.cancel()    

@@ -12,16 +12,20 @@ Web Page & Mailing List
 
 Web page: https://github.com/saga-project/BigJob/wiki
 
-Mailing list:  Use https://mail.cct.lsu.edu/mailman/listinfo/bigjob-users to subscribe to bigjob-users mailing list. The mailing list archives are located at:  https://mail.cct.lsu.edu/pipermail/bigjob-users/.
+Mailing list:  
+
+bigjob-user@googlegroups.com: http://groups.google.com/group/bigjob-users
+
+bigjob-devel@googlegroups.com: http://groups.google.com/group/bigjob-devel
 
 Installation
 -------------
 
-$ curl https://svn.cct.lsu.edu/repos/saga-projects/applications/bigjob/trunk/generic/bootstrap/bigjob-bootstrap.py -o bigjob-bootstrap.py
-$ python bigjob-bootstrap.py $HOME/.bigjob/python/
-$ . $HOME/.bigjob/python/bin/activate
+    $ curl https://raw.github.com/saga-project/BigJob/master/bootstrap/bigjob-bootstrap.py -o bigjob-bootstrap.py
+    $ python bigjob-bootstrap.py $HOME/.bigjob/python/
+    $ . $HOME/.bigjob/python/bin/activate
 
-See http://faust.cct.lsu.edu/trac/bigjob for further information. The Wiki includes among many things information on how to setup BigJob on various machines, e.g. on XSEDE (Ranger, Kraken) or FutureGrid.
+See https://github.com/saga-project/BigJob/wiki/ for further information. The Wiki includes among many things information on how to setup BigJob on various machines, e.g. on XSEDE (Ranger, Kraken) or FutureGrid.
 
 
 Configuration of Coordination Backend
