@@ -15,8 +15,8 @@ import pilot
 from bigjob import logger
 from pilot.api import ComputeDataService, ComputeUnit, State
 from pilot.impl.pilotdata_manager import PilotData, DataUnit
-from pilot.coordination.advert import AdvertCoordinationAdaptor as CoordinationAdaptor
-
+#from pilot.coordination.advert import AdvertCoordinationAdaptor as CoordinationAdaptor
+from pilot.coordination.nocoord import NoCoordinationAdaptor as CoordinationAdaptor
 """ Loaded Module determines scheduler:
     
     bigdata.scheduler.data_compute_scheduler - selects random locations for PD and WUs
@@ -182,8 +182,8 @@ class ComputeDataService(ComputeDataService):
     
     
     def cancel(self):
-        """ Cancel the PDS. 
-            All associated PD objects are deleted and removed from the associated pilot stores.            
+        """ Cancel the CDS. 
+            All associated PC objects are deleted.            
             
             Keyword arguments:
             None
@@ -202,15 +202,22 @@ class ComputeDataService(ComputeDataService):
                    cu's are done
             
         """
+        logger.debug("### START WAIT ###")
         self.cu_queue.join()
+        logger.debug("CU queue empty")        
         self.du_queue.join()
-        
+        logger.debug("DU queue empty")        
+
         for i in self.data_units.values():
             i.wait()
+        logger.debug("DUs done")        
             
         for i in self.compute_units.values():
-            i.wait()        
-        
+            i.wait()     
+        logger.debug("CUs done")        
+               
+        logger.debug("### END WAIT ###")
+
         #[pc.wait() for i in self.pilot_job_services for pc in i.list_pilots()]
         #[pd.wait() for i in self.pilot_data_services for pd in i.list_pilots()]
                 
@@ -225,11 +232,11 @@ class ComputeDataService(ComputeDataService):
     ###########################################################################
     # Internal Scheduling
     def __update_scheduler_resources(self):
-        logging.debug("__update_scheduler_resources")        
+        logger.debug("__update_scheduler_resources")        
         pd = [s for i in self.pilot_data_services for s in i.list_pilots()]
         self.scheduler.set_pilot_data(pd)
         pj = [p for i in self.pilot_job_services for p in i.list_pilots()]
-        logging.debug("Pilot-Jobs: " + str(pj))
+        logger.debug("Pilot-Jobs: " + str(pj))
         self.scheduler.set_pilot_jobs(pj)
     
     def _schedule_du(self, du):
@@ -239,13 +246,13 @@ class ComputeDataService(ComputeDataService):
                 1.) Add all resources managed by the contained PDS 
                 2.) Select one resource
         """ 
-        logging.debug("Schedule PD")
+        logger.debug("Schedule PD")
         self.__update_scheduler_resources()
         selected_pilot_data = self.scheduler.schedule_pilot_data(du.data_unit_description)
         return selected_pilot_data 
     
     def _schedule_cu(self, cu):
-        logging.debug("Schedule CU")
+        logger.debug("Schedule CU")
         self.__update_scheduler_resources()
         selected_pilot_job = self.scheduler.schedule_pilot_job(cu.compute_unit_description)
         return selected_pilot_job
@@ -253,15 +260,15 @@ class ComputeDataService(ComputeDataService):
     def _scheduler_thread(self):
         while True and self.stop.isSet()==False:            
             try:
-                logging.debug("Scheduler Thread: " + str(self.__class__) + " Pilot Data")
+                logger.debug("Scheduler Thread: " + str(self.__class__) + " Pilot Data")
                 du = self.du_queue.get(True, 1)  
                 # check whether this is a real du object  
                 if isinstance(du, DataUnit):
                     pd=self._schedule_du(du)                
                     if(pd!=None):                        
-                        logging.debug("Initiate Transfer to PD.")
+                        logger.debug("Initiate Transfer to PD.")
                         du.add_pilot_data(pd)
-                        logging.debug("Transfer to PD finished.")
+                        logger.debug("Transfer to PD finished.")
                         du.update_state(State.Running) 
                         self.du_queue.task_done()                   
                     else:
@@ -271,17 +278,18 @@ class ComputeDataService(ComputeDataService):
                 pass
                     
             try:    
-                logging.debug("Scheduler Thread: " + str(self.__class__) + " Pilot Job")
+                logger.debug("Scheduler Thread: " + str(self.__class__) + " Pilot Job")
                 cu = self.cu_queue.get(True, 1)                
                 if isinstance(cu, ComputeUnit):                    
                     pj=self._schedule_cu(cu) 
                     if pj !=None:
                         cu = self.__expand_working_directory(cu, pj)                        
-                        pj._submit_cu(cu)           
+                        pj.submit_cu(cu)           
                         self.cu_queue.task_done()         
                     else:
+                        logger.debug("No resource found.")
                         self.cu_queue.task_done() 
-                        self.cu_queue.put(du)
+                        self.cu_queue.put(cu)
             except Queue.Empty:
                 pass
             except:
@@ -293,7 +301,7 @@ class ComputeDataService(ComputeDataService):
                               limit=2, file=sys.stderr)
             time.sleep(5)        
 
-        logging.debug("Re-Scheduler terminated")
+        logger.debug("Re-Scheduler terminated")
     
     
     def __expand_working_directory(self, compute_unit, pilot_job):
@@ -331,7 +339,7 @@ class ComputeDataService(ComputeDataService):
                     for du in pd.list_data_units():
                         logger.debug("DU URL:%s"%(du.url))
                         if du.url == pilot_data_url:
-                            logging.debug("Found PD %s at %s"%(du.url, pd.service_url))
+                            logger.debug("Found PD %s at %s"%(du.url, pd.service_url))
                             target_pd = pd 
                             target_du = du
                             break
@@ -343,7 +351,7 @@ class ComputeDataService(ComputeDataService):
                     components = urlparse.urlparse(pd_url)
                     compute_unit.compute_unit_description["working_directory"] = components.path
                     compute_unit._update_compute_unit_description(compute_unit.compute_unit_description)
-                    logging.debug("__expand_working_directory %s: Set working directory to %s"%(pilot_data_url, compute_unit.compute_unit_description["working_directory"]))
+                    logger.debug("__expand_working_directory %s: Set working directory to %s"%(pilot_data_url, compute_unit.compute_unit_description["working_directory"]))
                     return compute_unit
          
         return compute_unit
@@ -364,14 +372,16 @@ class ComputeUnit(ComputeUnit):
     """ ComputeUnit - Wrapper for BigJob subjob """
     CU_ID_PREFIX="cu-"  
 
-    def __init__(self, compute_unit_description, work_data_service):
+    def __init__(self, compute_unit_description, work_data_service=None):
         self.id = self.CU_ID_PREFIX + str(uuid.uuid1())
-        self.url = work_data_service.url + "/" + self.id
+        if work_data_service!=None:
+            self.url = work_data_service.url + "/" + self.id
+            logger.debug("Created CU: %s"%self.url)  
         self.state = State.New       
         self.subjob = None # reference to BigJob Subjob 
-        self.compute_unit_description = compute_unit_description # WU Description
+        self.compute_unit_description = compute_unit_description # CU Description
         self.subjob_description = self.__translate_cu_sj_description(compute_unit_description)
-        logger.debug("Created CU: %s"%self.url)     
+           
                 
     def get_id(self):
         return self.id
@@ -389,16 +399,21 @@ class ComputeUnit(ComputeUnit):
         """
         while True:
             state = self.get_state()
-            logger.debug("Compute Unit - State: %s"%self.state)            
+            logger.debug("Compute Unit - State: %s"%state)            
             if state==State.Done or state==State.Failed:
                 break
             time.sleep(2)
+            
+        #logger.debug("### END CU wait")
 
     
     def cancel(self):
         if self.subjob != None:
             return self.subjob.cancel()
         return None
+    
+    def __repr__(self):
+        return self.id
 
     
     def _update_compute_unit_description(self, compute_unit_description):
@@ -425,5 +440,7 @@ class ComputeUnit(ComputeUnit):
             jd.output =  compute_unit_description["output"]
         if compute_unit_description.has_key("error"): 
             jd.error = compute_unit_description["error"]
+        if compute_unit_description.has_key("file_transfer"):
+            jd.file_transfer=compute_unit_description["file_transfer"]            
         return jd
         

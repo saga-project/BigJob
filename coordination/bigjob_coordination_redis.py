@@ -88,8 +88,12 @@ class bigjob_coordination(object):
     #####################################################################################
     # Pilot-Job State
     def set_pilot_state(self, pilot_url, new_state, stopped=False):     
-        logger.debug("update state of pilot job to: " + str(new_state))
+        logger.debug("update state of pilot job to: " + str(new_state) 
+                     + " stopped: " + str(stopped))
         self.redis.hmset(pilot_url, {"state":str(new_state), "stopped":str(stopped)})
+        if stopped==True:
+            self.queue_job(pilot_url, "STOP")
+        
         
     def get_pilot_state(self, pilot_url):
         state = self.redis.hgetall(pilot_url)

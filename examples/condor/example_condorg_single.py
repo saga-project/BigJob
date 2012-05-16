@@ -44,7 +44,7 @@ def main():
     walltime=10
     processes_per_node=4
     number_of_processes = 8
-    workingdirectory="/this/dir/is/ignored"  # working directory for agent
+    workingdirectory=os.path.join(os.getcwd(), "agent")  # working directory for agent
     userproxy = None # userproxy (not supported yet due to context issue w/ SAGA)
 
     
@@ -84,10 +84,11 @@ def main():
     # Submit SubJob through BigJob
     jd = description()
 
-    jd.executable = "bfast"
+    jd.executable = "/bin/date"
     jd.number_of_processes = "1"
     jd.spmd_variation = "single"
-    jd.arguments = ["match -f  bgr1.fa -A 0  -r reads_1.fastq -n 4 -T /tmp/ > bfast.matches.file.bgr.1.bmf"]
+    #jd.arguments = ["match -f  bgr1.fa -A 0  -r reads_1.fastq -n 4 -T /tmp/ > bfast.matches.file.bgr.1.bmf"]
+    jd.arguments = [""]
     #jd.working_directory = "" 
     jd.output = "bfast-stdout.txt"
     jd.error = "bfast-stderr.txt"    

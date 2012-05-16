@@ -92,6 +92,10 @@ class many_job_service(object):
         working_directory = (os.getcwd()+"/agent")
         if ("working_directory" in bj_dict):
             working_directory=bj_dict["working_directory"]
+            
+        bj_filetransfer = None
+        if ("file_transfer" in bj_dict):
+            bj_filetransfer = bj_dict["file_transfer"]
 
         bj.start_pilot_job(gram_url,
                            None,
@@ -101,7 +105,8 @@ class many_job_service(object):
                            working_directory, 
                            None,
                            walltime,
-                           ppn)
+                           ppn,
+                           filetransfers=bj_filetransfer)
         bj_dict["bigjob"]=bj # store bigjob for later reference in dict
         bj_dict["free_cores"]=int(bj_dict["number_of_processes"])
         bj_dict["to_be_terminated"]=False

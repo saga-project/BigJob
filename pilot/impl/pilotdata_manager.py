@@ -32,7 +32,8 @@ except:
 
 
 
-from pilot.coordination.advert import AdvertCoordinationAdaptor as CoordinationAdaptor
+#from pilot.coordination.advert import AdvertCoordinationAdaptor as CoordinationAdaptor
+from pilot.coordination.nocoord import NoCoordinationAdaptor as CoordinationAdaptor
 
 
 # generate global application id for this instance
