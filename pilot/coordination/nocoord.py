@@ -1,10 +1,10 @@
 import logging
-import saga
 import json
 import pdb
 
 from pilot import *
 from bigjob import logger
+from bliss.saga import Url as SAGAUrl
 
 class NoCoordinationAdaptor:
     """
@@ -25,7 +25,7 @@ class NoCoordinationAdaptor:
     
     @classmethod
     def get_base_url(cls, application_id):
-        surl = saga.url(cls.BASE_URL)
+        surl = SAGAUrl(cls.BASE_URL)
         base_url = surl.scheme + "://" + surl.host + "/" + application_id + "/"
         logging.debug(base_url)
         return base_url
@@ -244,9 +244,9 @@ class NoCoordinationAdaptor:
     
     @classmethod
     def __remove_dbtype(cls, url):
-        surl = saga.url(url)
+        surl = SAGAUrl(url)
         surl.query = "" 
-        return surl.get_string()
+        return str(surl)
         
     @classmethod
     def __store_entry(cls, entry_url, content):

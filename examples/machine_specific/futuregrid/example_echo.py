@@ -5,115 +5,86 @@
 
 import os
 import time
-import pdb
 import sys
-
-sys.path.insert(0, os.getcwd() + "/../")
-
-COORDINATION_URL = "redis://ILikeBigJob_wITH-REdIS@gw68.quarry.iu.teragrid.org:6379"
-RESOURCEMGR_URL  = "pbs-ssh://localhost"
-
-from bigjob import bigjob, subjob, description
-
+import logging
+from bigjob import logger
+import pdb
+#logger.setLevel(logging.FATAL)
+from pilot import PilotComputeService, ComputeDataService, State
 
 ### This is the number of jobs you want to run
-NUMBER_JOBS=24
-
-def has_finished(state):
-        state = state.lower()
-        if state=="done" or state=="failed" or state=="canceled":
-            return True
-        else:
-            return False
-
+NUMBER_JOBS=8
 
 if __name__ == "__main__":
 
     starttime=time.time()
+    pilot_compute_service = PilotComputeService()
+    pilot_compute_description=[]
 
-    ##########################################################################################
-    # make sure you are familiar with the queue structure on lonestar, your project id
-    # and the walltime limits on each queue. change accordingly
-    # 
-    queue="normal"          # You can switch to development for very short runs
-    project=None            # since FutureGrid is an experimental infrastrucutre. 
-    walltime=60             # Time in minutes. There are limits on the time you can request. 
+    ## Run jobs on head node
+    """pilot_compute_description.append({ "service_url": "ssh://localhost",
+                                       "number_of_processes": 8,
+                                       "working_directory": "/N/u/pmantha/agent",
+                                     })
+    pilot_compute_description.append({ "service_url": "pbs://localhost",
+                                       "number_of_processes": 8,
+                                       "working_directory": "/N/u/pmantha/agent",
+                                       "queue":"batch",
+                                       "processes_per_node":8,
+				       "walltime":60
+                                     })
+    pilot_compute_description.append({ "service_url": "pbs+ssh://sierra.futuregrid.org",
+                                       "number_of_processes": 8,
+                                       "working_directory": "/N/u/pmantha/agent",
+                                       "queue":"batch",
+                                       "processes_per_node":8,
+                                       "walltime":60
+                                     })
+    pilot_compute_description.append({ "service_url": "pbs+ssh://alamo.futuregrid.org",
+                                       "number_of_processes": 8,
+                                       "working_directory": "/N/u/pmantha/agent",
+                                       "queue":"batch",
+                                       "processes_per_node":8,
+                                       "walltime":60
+                                     })"""
+    pilot_compute_description.append({ "service_url": "pbs+ssh://hotel.futuregrid.org",
+                                       "number_of_processes": 8,
+                                       "working_directory": "/N/u/pmantha/agent",
+                                       "queue":"batch",
+                                       "processes_per_node":8,
+                                       "walltime":60
+                                     })
+    """pilot_compute_description.append({ "service_url": "pbs+ssh://india.futuregrid.org",
+                                       "number_of_processes": 8,
+                                       "working_directory": "/N/u/pmantha/agent",
+                                       "queue":"batch",
+                                       "processes_per_node":8,
+                                       "walltime":60
+                                     })"""
 
-    processes_per_node=8   # if you want more memory per process you can reduce this to 6, 2  or 1
-    number_of_processes=24  # The total number of processes you want running, depends on the value above
 
-    # yye00: to keep things clean: create the directory agent where you intend to run the script
-    # you can start by doing this in SCRATCH if you run out of space. This directory
-    # will get big quickly so keep an eye out and do not put it in $HOME
+    for pcd in pilot_compute_description:
+        pdb.set_trace()
+        pj = pilot_compute_service.create_pilot(pilot_compute_description=pcd)
 
-    workingdirectory= os.path.join(os.getcwd(), "agent") # working directory for agent. 
-    ##########################################################################################
+    compute_data_service = ComputeDataService()
+    compute_data_service.add_pilot_compute_service(pilot_compute_service)
 
-    print "Start Pilot Job/BigJob at: " + RESOURCEMGR_URL
-    bj = bigjob(COORDINATION_URL)
-    bj.start_pilot_job( RESOURCEMGR_URL,
-                        None,
-                        number_of_processes,
-                        queue,
-                        project,
-                        workingdirectory,
-                        None,
-                        walltime,
-                        processes_per_node)
+    # submit work units
+    for i in range(NUMBER_JOBS):
+        compute_unit_description = {
+                "executable": "/bin/date",
+                "arguments": [""],
+                "number_of_processes": 1,            
+                "output": "stdout.txt",
+                "error": "stderr.txt"
+                }    
+        compute_unit = compute_data_service.submit_compute_unit(compute_unit_description)
 
-    print "Pilot Job/BigJob URL: " + bj.pilot_url + " State: " + str(bj.get_state())
+    logging.debug("Finished setup. Waiting for scheduling of compute units")
+    compute_data_service.wait()
 
-    ##########################################################################################
-    # Submit jobs through BigJob
-    # Here you can add any arguments to each SubJob, change the ouput and error filenames and so on
-    # change this to your heart's content, but be careful
-    jobs = []
-    job_start_times = {}
-    job_states = {}
-    for i in range(0, NUMBER_JOBS):
-        jd = description()
-        jd.executable = "/bin/date"
-        jd.number_of_processes = "1"
-        jd.spmd_variation = "single"
-        jd.arguments = [""]
-        jd.environment = ["INFRASTRUCTURE=FutureGrid"]
-        jd.output = "sj-stdout-"+str(i)+".txt"
-        jd.error = "sj-stderr-"+str(i)+".txt"
+    logging.debug("Terminate Pilot Compute and Compute Data Service")
+    compute_data_service.cancel()    
+    pilot_compute_service.cancel()
 
-        sj = subjob()
-        sj.submit_job(bj.pilot_url, jd)
-        jobs.append(sj)
-        job_start_times[sj]=time.time()
-        job_states[sj] = sj.get_state()
-
-    # busy wait for completion
-    while 1:
-        finish_counter=0
-        result_map = {}
-        for i in range(0, NUMBER_JOBS):
-            old_state = job_states[jobs[i]]
-            state = jobs[i].get_state()
-            #print "Job " + str(jobs[i]) + " state: " + state
-            if result_map.has_key(state)==False:
-                result_map[state]=1
-            else:
-                result_map[state] = result_map[state]+1
-            #pdb.set_trace()
-            if old_state != state:
-                print "Job " + str(jobs[i]) + " changed from: " + old_state + " to " + state
-            if old_state != state and has_finished(state)==True:
-                print "Job: " + str(jobs[i]) + " Runtime: " + str(time.time()-job_start_times[jobs[i]]) + " s."
-            if has_finished(state)==True:
-                finish_counter = finish_counter + 1
-            job_states[jobs[i]]=state
-
-        if finish_counter == NUMBER_JOBS:
-            break
-        time.sleep(2)
-
-    runtime = time.time()-starttime
-    print "Runtime: " + str(runtime) + " s; Runtime per Job: " + str(runtime/NUMBER_JOBS)
-
-    ##########################################################################################
-    # Cleanup - stop BigJob
-    bj.cancel()
