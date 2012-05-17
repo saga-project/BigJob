@@ -1,6 +1,5 @@
 """ Example application demonstrating how to submit a simple 
-    /bin/echo job with BigJob. 
-        
+    /bin/date with PilotJob. 
 """
 
 import os
@@ -9,20 +8,19 @@ import sys
 import logging
 from bigjob import logger
 import pdb
-#logger.setLevel(logging.FATAL)
+logger.setLevel(logging.FATAL)
 from pilot import PilotComputeService, ComputeDataService, State
 
 ### This is the number of jobs you want to run
-NUMBER_JOBS=8
+NUMBER_JOBS=128
 
 if __name__ == "__main__":
 
-    starttime=time.time()
+    start_time=time.time()
     pilot_compute_service = PilotComputeService()
     pilot_compute_description=[]
 
-    ## Run jobs on head node
-    """pilot_compute_description.append({ "service_url": "ssh://localhost",
+    pilot_compute_description.append({ "service_url": "ssh://localhost",
                                        "number_of_processes": 8,
                                        "working_directory": "/N/u/pmantha/agent",
                                      })
@@ -31,7 +29,7 @@ if __name__ == "__main__":
                                        "working_directory": "/N/u/pmantha/agent",
                                        "queue":"batch",
                                        "processes_per_node":8,
-				       "walltime":60
+                                       "walltime":60
                                      })
     pilot_compute_description.append({ "service_url": "pbs+ssh://sierra.futuregrid.org",
                                        "number_of_processes": 8,
@@ -46,7 +44,7 @@ if __name__ == "__main__":
                                        "queue":"batch",
                                        "processes_per_node":8,
                                        "walltime":60
-                                     })"""
+                                     })
     pilot_compute_description.append({ "service_url": "pbs+ssh://hotel.futuregrid.org",
                                        "number_of_processes": 8,
                                        "working_directory": "/N/u/pmantha/agent",
@@ -54,17 +52,15 @@ if __name__ == "__main__":
                                        "processes_per_node":8,
                                        "walltime":60
                                      })
-    """pilot_compute_description.append({ "service_url": "pbs+ssh://india.futuregrid.org",
+    pilot_compute_description.append({ "service_url": "pbs+ssh://india.futuregrid.org",
                                        "number_of_processes": 8,
                                        "working_directory": "/N/u/pmantha/agent",
                                        "queue":"batch",
                                        "processes_per_node":8,
                                        "walltime":60
-                                     })"""
-
+                                     })
 
     for pcd in pilot_compute_description:
-        pdb.set_trace()
         pj = pilot_compute_service.create_pilot(pilot_compute_description=pcd)
 
     compute_data_service = ComputeDataService()
@@ -87,4 +83,5 @@ if __name__ == "__main__":
     logging.debug("Terminate Pilot Compute and Compute Data Service")
     compute_data_service.cancel()    
     pilot_compute_service.cancel()
-
+    end_time=time.time()
+    print "Total time to solution-" + str(round(end_time-start_time,2))
