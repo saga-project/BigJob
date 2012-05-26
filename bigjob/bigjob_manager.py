@@ -438,7 +438,11 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
                             #logger.debug("Add attribute: " + str(i) + " Value: " + str(jd.get_vector_attribute(i)))
                             vector_attr = []
                             for j in jd.get_vector_attribute(i):
-                                vector_attr.append(j)
+                                if str(i) == "Environment":
+                                    envi=str(j)+"="+str(jd.get_vector_attribute(i)[j])
+       				    vector_attr.append(envi)
+                                else:
+                                    vector_attr.append(j)
                             job_dict[i]=vector_attr
                         else:
                             #logger.debug("Add attribute: " + str(i) + " Value: " + jd.get_attribute(i))
