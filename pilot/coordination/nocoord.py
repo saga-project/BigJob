@@ -245,7 +245,6 @@ class NoCoordinationAdaptor:
     @classmethod
     def __remove_dbtype(cls, url):
         surl = SAGAUrl(url)
-        surl.query = "" 
         return str(surl)
         
     @classmethod
