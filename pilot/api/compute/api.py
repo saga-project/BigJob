@@ -149,7 +149,7 @@ class PilotComputeService(object):
         
     """
 
-    # Class members
+    #Class members
     __slots__ = (
         'id',           # Reference to this PJS
         'state',       # Status of the PJS
