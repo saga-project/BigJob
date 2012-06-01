@@ -280,13 +280,12 @@ class bigjob(api.base.bigjob):
             bootstrap_script = self.generate_bliss_bootstrap_script(self.coordination.get_address(), self.pilot_url)
         else:
             bootstrap_script = self.generate_bootstrap_script(self.coordination.get_address(), self.pilot_url)
-
-        if lrms_saga_url.scheme == "gram":
-            bootstrap_script = self.escape_rsl(bootstrap_script)
-        elif lrms_saga_url.scheme == "pbspro" or lrms_saga_url.scheme=="xt5torque" or lrms_saga_url.scheme=="torque":                
-            bootstrap_script = self.escape_pbs(bootstrap_script)
-        elif lrms_saga_url.scheme == "ssh":
-            bootstrap_script = self.escape_ssh(bootstrap_script)
+            if lrms_saga_url.scheme == "gram":
+                bootstrap_script = self.escape_rsl(bootstrap_script)
+            elif lrms_saga_url.scheme == "pbspro" or lrms_saga_url.scheme=="xt5torque" or lrms_saga_url.scheme=="torque":                
+                bootstrap_script = self.escape_pbs(bootstrap_script)
+            elif lrms_saga_url.scheme == "ssh":
+                bootstrap_script = self.escape_ssh(bootstrap_script)
 
         # Define Agent Executable in Job description
         # in Condor case bootstrap script is staged 
