@@ -345,9 +345,8 @@ class bigjob(api.base.bigjob):
 
         logger.debug("Working directory: " + jd.working_directory)
         
-        jd.output = os.path.join(self.working_directory, "stdout-bigjob_agent.txt")
-        jd.error = os.path.join(self.working_directory, "stderr-bigjob_agent.txt")
-          
+        jd.output = os.path.join(self.working_directory, "stdout-" + self.uuid + "-agent.txt")
+        jd.error = os.path.join(self.working_directory, "stderr-" + self.uuid + "-agent.txt")
            
         # Submit job
         js = None    
