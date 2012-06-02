@@ -74,7 +74,7 @@ class bigjob_coordination(object):
         else:
             self.redis = Redis(host=server, port=server_port, password=self.password, db=0)
         #self.redis_pubsub = self.redis.pubsub() # redis pubsub client       
-        self.resource_lock = threading.RLock()
+        #self.resource_lock = threading.RLock()
         self.pipe = self.redis.pipeline()
         try:
             self.redis.ping()
