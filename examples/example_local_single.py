@@ -64,7 +64,8 @@ def main():
     ##########################################################################################
 
     print "Start Pilot Job/BigJob at: " + lrms_url
-    bj = bigjob(COORDINATION_URL)
+    #bj = bigjob(COORDINATION_URL)
+    bj = bigjob()
     bj.start_pilot_job( lrms_url,
                         None,
                         number_of_processes,
@@ -80,11 +81,12 @@ def main():
     ##########################################################################################
     # Submit SubJob through BigJob
     jd = description()
-    jd.executable = "/bin/date"
+    jd.executable = "/bin/echo"
     #jd.executable = "$HOME/hello.sh"
     jd.number_of_processes = "1"
     jd.spmd_variation = "single"
-    jd.arguments = [""]
+    jd.arguments = ["$HELLOWORLD"]
+    jd.environment = ['HELLOWORLD=hello_world']
     #jd.working_directory = "$HOME" 
     jd.output = "stdout.txt"
     jd.error = "stderr.txt"
