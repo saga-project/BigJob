@@ -70,5 +70,6 @@ class ComputeDataService(compute.api.ComputeUnitService, data.api.PilotDataServi
             Keyword arguments:
             wds_id -- Reconnect to an existing WDS (optional).
         """
-        pass   
+        raise  NotImplementedError("Abstract super class, please use ComputeDataService implementation class in pilot namespace")
+   
 

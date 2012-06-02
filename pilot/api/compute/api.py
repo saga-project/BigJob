@@ -99,6 +99,9 @@ class PilotCompute(object):
         'callback',     # Callback object
         'wall_time_left'      # Remaining wallclock time left
     )
+    
+    def __init__(self):
+        raise  NotImplementedError("Abstract super class, please use PilotCompute implementation class in pilot namespace")
 
     def cancel(self):        
         """ Remove the PilotCompute from the PilotCompute Service.
@@ -155,6 +158,8 @@ class PilotComputeService(object):
         'state',       # Status of the PJS
         'pilot_jobs'    # List of PJs under this PJS
     )
+    
+    
 
     def __init__(self, pjs_id=None):
         """ Create a PilotComputeService object.
@@ -162,7 +167,8 @@ class PilotComputeService(object):
             Keyword arguments:
             pjs_id -- Don't create a new, but connect to an existing (optional)
         """
-        pass
+        raise  NotImplementedError("Abstract super class, please use PilotComputeService implementation class in pilot namespace")
+
 
     def create_pilot(self, rm, pilotcompute_description, pj_type=None, context=None):
         """ Add a PilotCompute to the PilotComputeService
@@ -192,23 +198,20 @@ class PilotComputeService(object):
         pass
 
 
-
-
-
 #
 #  ComputeUnitService
 # 
 class ComputeUnitService(object):
-    """  WorkUnitService.
+    """  ComputeUnitService.
     
-        The WorkUnitService is the application's interface to submit 
-        WorkUnits to the Pilot-Manager in the P* Model.
+        The ComputeUnitService is the application's interface to submit 
+        ComputeUnits to the Pilot-Manager in the P* Model.
 
-        It can provide the application with a list of WorkUnits that are 
+        It can provide the application with a list of ComputeUnits that are 
         managed by the Pilot-Manager.
 
-        The WorkUnitService is linked to a PilotComputeService for the actual 
-        execution of the WorkUnits.
+        The ComputeUnitService is linked to a PilotComputeService for the actual 
+        execution of the ComputeUnits.
     """
 
     def __init__(self, wus_id=None):
@@ -217,7 +220,8 @@ class ComputeUnitService(object):
             Keyword arguments:
             wus_id -- Reconnect to an existing WUS (optional).
         """
-        pass
+        raise  NotImplementedError("Abstract super class, please use ComputeUnitService implementation class in pilot namespace")
+
 
 
     def add_pilot_job_service(self, pjs):
@@ -286,9 +290,9 @@ class ComputeUnitService(object):
 #  ComuteUnitDescription
 # 
 class ComputeUnitDescription(dict):
-    """  WorkUnitDescription.
+    """  ComputeUnitDescription.
     
-        The WorkUnitDescription is a job/task/call description based on 
+        The ComputeUnitDescription is a job/task/call description based on 
         SAGA Job Description. 
         
         It offers the application to describe a WorkUnit in an abstract 
@@ -331,6 +335,7 @@ class ComputeUnitDescription(dict):
     def __init__(self):
         pass
 
+
     def __setattr__(self, attr, value):
         self[attr]=value
         
@@ -343,15 +348,15 @@ class ComputeUnitDescription(dict):
 #  ComputeUnit(WU)
 # 
 class ComputeUnit(object):
-    """  WorkUnit.
+    """  ComputeUnit.
     
-        This is the object that is returned by the WorkUnitService when a 
-        new WorkUnit is created based on a WorkUnitDescription.
+        This is the object that is returned by the ComputeUnitService when a 
+        new ComputeUnit is created based on a ComputeUnitDescription.
 
-        The WorkUnit object can be used by the application to keep track 
-        of WorkUnits that are active.
+        The ComputeUnit object can be used by the application to keep track 
+        of ComputeUnits that are active.
 
-        A WorkUnit has state, can be queried and can be cancelled.
+        A ComputeUnit has state, can be queried and can be cancelled.
     """
 
     # Class members
@@ -364,8 +369,9 @@ class ComputeUnit(object):
 
     
     def cancel(self):
-        """ Cancel the WU. """
-        pass
+        """ Cancel the CU. """
+        raise  NotImplementedError("Abstract super class, please use ComputeUnit implementation class in pilot namespace")
+
 
     
     def set_callback(self, member, cb):
