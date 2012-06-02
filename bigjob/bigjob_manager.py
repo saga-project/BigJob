@@ -276,10 +276,10 @@ class bigjob(api.base.bigjob):
         ##############################################################################
         # Create and process BJ bootstrap script
         logger.debug("Adaptor specific modifications: "  + str(lrms_saga_url.scheme))
+        bootstrap_script = self.generate_bootstrap_script(self.coordination.get_address(), self.pilot_url)
         if is_bliss:
-            bootstrap_script = self.generate_bliss_bootstrap_script(self.coordination.get_address(), self.pilot_url)
+            bootstrap_script = self.escape_bliss(bootstrap_script)
         else:
-            bootstrap_script = self.generate_bootstrap_script(self.coordination.get_address(), self.pilot_url)
             if lrms_saga_url.scheme == "gram":
                 bootstrap_script = self.escape_rsl(bootstrap_script)
             elif lrms_saga_url.scheme == "pbspro" or lrms_saga_url.scheme=="xt5torque" or lrms_saga_url.scheme=="torque":                
@@ -425,64 +425,6 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
 """ % (coordination_host, coordination_namespace))
         return script
 
-        
-    def generate_bliss_bootstrap_script(self, coordination_host, coordination_namespace):
-        script = """\"import sys
-import os
-import urllib
-import sys
-import time
-start_time = time.time()
-home = os.environ.get(\\"HOME\\")
-print \\"Home: \\" + home
-if home==None: home = os.getcwd()
-BIGJOB_AGENT_DIR= os.path.join(home, \\".bigjob\\")
-if not os.path.exists(BIGJOB_AGENT_DIR): os.mkdir (BIGJOB_AGENT_DIR)
-BIGJOB_PYTHON_DIR=BIGJOB_AGENT_DIR+\\"/python/\\"
-if not os.path.exists(BIGJOB_PYTHON_DIR): os.mkdir(BIGJOB_PYTHON_DIR)
-BOOTSTRAP_URL=\\"https://raw.github.com/saga-project/BigJob/master/bootstrap/bigjob-bootstrap.py\\"
-BOOTSTRAP_FILE=BIGJOB_AGENT_DIR+\\"/bigjob-bootstrap.py\\"
-#ensure that BJ in .bigjob is upfront in sys.path
-sys.path.insert(0, os.getcwd() + \\"/../\\")
-p = list()
-for i in sys.path:
-    if i.find(\\\".bigjob/python\\\")>1:
-          p.insert(0, i)
-for i in p: sys.path.insert(0, i)
-print \\"Python path: \\" + str(sys.path)
-print \\"Python version: \\" + str(sys.version_info)
-
-try: import saga
-except: print \\"SAGA and SAGA Python Bindings not found: BigJob only work w/ non-SAGA backends e.g. Redis, ZMQ.\\";
-try: import bigjob.bigjob_agent
-except: 
-    print \\"BigJob not installed. Attempt to install it.\\"; 
-    opener = urllib.FancyURLopener({}); 
-    opener.retrieve(BOOTSTRAP_URL, BOOTSTRAP_FILE); 
-    print \\"Execute: \\" + \\"python \\" + BOOTSTRAP_FILE + \\" \\" + BIGJOB_PYTHON_DIR
-    os.system(\\"/usr/bin/env\\")
-    try:
-        os.system(\\"python \\" + BOOTSTRAP_FILE + \\" \\" + BIGJOB_PYTHON_DIR); 
-        activate_this = BIGJOB_PYTHON_DIR+\\"bin/activate_this.py\\"; 
-        execfile(activate_this, dict(__file__=activate_this))
-    except:
-        print \\"BJ installation failed. Trying system-level python (/usr/bin/python)\\";
-        os.system(\\"/usr/bin/python \\" + BOOTSTRAP_FILE + \\" \\" + BIGJOB_PYTHON_DIR); 
-        activate_this = BIGJOB_PYTHON_DIR+\\"bin/activate_this.py\\"; 
-        execfile(activate_this, dict(__file__=activate_this))
-#try to import BJ once again
-import bigjob.bigjob_agent
-# execute bj agent
-args = list()
-args.append(\\"bigjob_agent.py\\")
-args.append(\\\"%s\\\")
-args.append(\\\"%s\\\")
-print \\"Bootstrap time: \\" + str(time.time()-start_time)
-print \\"Starting BigJob Agents with following args: \\" + str(args)
-bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
-\"""" % (coordination_host, coordination_namespace)
-        return script
-    
     def escape_rsl(self, bootstrap_script):
         logger.debug("Escape RSL")
         bootstrap_script = bootstrap_script.replace("\"", "\"\"")        
@@ -502,9 +444,11 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
         return bootstrap_script
     
     def escape_bliss(self, bootstrap_script):
-        logger.debug("Escape fork")
-        bootstrap_script = bootstrap_script.replace("\'", "\"")
-        bootstrap_script = "\'" + bootstrap_script+ "\'"
+        logger.debug("Escape Bliss")
+        #bootstrap_script = bootstrap_script.replace("\'", "\"")
+        #bootstrap_script = "\'" + bootstrap_script+ "\'"
+        bootstrap_script = bootstrap_script.replace('"','\\"')
+        bootstrap_script = '"' + bootstrap_script+ '"'
         return bootstrap_script
      
     def list_subjobs(self):
