@@ -12,7 +12,7 @@ import bigjob
 
 from bigjob import logger
 from bigjob import bigjob, subjob
-from bigjob_dynamic.many_job import *
+#from bigjob_dynamic.many_job import *
 
 from pilot.api import PilotCompute, PilotComputeService, State
 from pilot.impl.pilot_manager import ComputeUnit
@@ -76,11 +76,13 @@ class PilotComputeService(PilotComputeService):
         
         if self.__mjs == None:
             logging.debug("Create Dynamic BigJob Service")            
-            self.__mjs = many_job_service([], self.coordination_url)
+            #self.__mjs = many_job_service([], self.coordination_url)
             
-        resource_description = self.__translate_pj_bj_description(pilot_compute_description)
-        bigjob = self.__mjs.add_resource(resource_description)
-        pj = PilotCompute(self, bigjob, pilot_compute_description)
+        bj_dict = self.__translate_pj_bj_description(pilot_compute_description)
+        bj = self.__start_bigjob(bj_dict)
+        
+        #bigjob = self.__mjs.add_resource(resource_description)
+        pj = PilotCompute(self, bj, pilot_compute_description)
         self.pilot_computes.append(pj)
         return pj
         
@@ -119,17 +121,18 @@ class PilotComputeService(PilotComputeService):
             Return value:
             Result of operation
         """
-        self.__mjs.cancel()
+        pass
+        #self.__mjs.cancel()
         
         
-    def submit_cu(self, compute_unit):
-        """ Submits work unit to Dynamic Bigjob (ManyJob) 
-            Scheduler of Dynamic Bigjob will assign appropriate PJ to WorkUnit        
-        """
-        subjob = self.__mjs.create_job(compute_unit.subjob_description)
-        subjob.run()
-        compute_unit.subjob=subjob
-        return compute_unit
+#    def submit_cu(self, compute_unit):
+#        """ Submits work unit to Dynamic Bigjob (ManyJob) 
+#            Scheduler of Dynamic Bigjob will assign appropriate PJ to WorkUnit        
+#        """
+#        subjob = self.__mjs.create_job(compute_unit.subjob_description)
+#        subjob.run()
+#        compute_unit.subjob=subjob
+#        return compute_unit
     
     
     def __repr__(self):
@@ -140,6 +143,40 @@ class PilotComputeService(PilotComputeService):
         return status_string
     
     
+    def __start_bigjob(self, bj_dict):
+        """ private method - starts a bigjob on the defined resource """
+        gram_url = bj_dict["resource_url"]
+        logging.debug("start bigjob at: " + gram_url)
+        bj = bigjob(self.coordination_url)
+        ppn="1"
+        if ("processes_per_node" in bj_dict):
+            ppn=bj_dict["processes_per_node"]
+        else:
+            bj_dict["processes_per_node"]="1"
+
+        walltime = 3600
+        if ("walltime" in bj_dict):
+            walltime=bj_dict["walltime"]
+
+        working_directory = (os.getcwd()+"/agent")
+        if ("working_directory" in bj_dict):
+            working_directory=bj_dict["working_directory"]
+            
+        bj_filetransfer = None
+        if ("file_transfer" in bj_dict):
+            bj_filetransfer = bj_dict["file_transfer"]
+
+        bj.start_pilot_job(gram_url,
+                           None,
+                           bj_dict["number_of_processes"],
+                           bj_dict["queue"],
+                           bj_dict["allocation"],
+                           working_directory, 
+                           None,
+                           walltime,
+                           ppn,
+                           filetransfers=bj_filetransfer)
+        return bj
     
 class PilotCompute(PilotCompute):
     """ Wrapper for BigJob class """
@@ -170,7 +207,7 @@ class PilotCompute(PilotCompute):
     def submit_cu(self, compute_unit):
         """ Submits compute unit to Bigjob """
         logging.debug("Submit CU to big-job")
-        sj = bigjob.bigjob_manager.subjob()
+        sj = subjob()
         sj.submit_job(self.__bigjob.pilot_url, compute_unit.subjob_description)
         self.__subjobs.append(sj)
         compute_unit.subjob=sj
