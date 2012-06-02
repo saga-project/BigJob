@@ -13,13 +13,11 @@ import traceback
 import logging
 import sys
 
-
 sys.path.insert(0, os.getcwd() + "/../")
 
 # Big Job Imports
 from bigjob import bigjob, subjob, description
 from bigjob_dynamic.many_job_affinity import *
-
 
 """ This variable defines the coordination system that is used by BigJob
     e.g. 
@@ -67,14 +65,13 @@ if __name__ == "__main__":
         for i in range(0, NUMBER_JOBS):
             # create job description
             jd = description()
-            jd.executable = "/bin/date"
+            jd.executable = "/bin/echo"
             jd.number_of_processes = "1"
             jd.spmd_variation = "single"
-            jd.arguments = [""]
-            jd.working_directory = "/Users/luckow"
-            jd.output =  os.getcwd() + "/stdout-" + str(i) + ".txt"
-            jd.error = os.getcwd() + "/stderr-" + str(i) + ".txt"
-            jd.environment = ["affinity=affinity1"]
+            jd.arguments = ["Hello","$VAR"]
+            jd.output =  "stdout-" + str(i) + ".txt"
+            jd.error =  "stderr-" + str(i) + ".txt"
+            jd.environment = ["affinity=affinity1","VAR=USER"]
             subjob = mjs.create_job(jd)
             subjob.run()
             print "Submited sub-job " + "%d"%i + "."

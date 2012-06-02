@@ -24,6 +24,7 @@ import logging
 import textwrap
 import urlparse
 import subprocess
+import types
 
 from bigjob import SAGA_BLISS 
 from bigjob.state import Running, New, Failed, Done, Unknown
@@ -486,7 +487,7 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
                             #logger.debug("Add attribute: " + str(i) + " Value: " + str(jd.get_vector_attribute(i)))
                             vector_attr = []
                             for j in jd.get_vector_attribute(i):
-                                if str(i) == "Environment":
+                                if type(jd.get_vector_attribute(i)) == types.DictType and str(i) == "Environment":
                                     envi=str(j)+"="+str(jd.get_vector_attribute(i)[j])
        				    vector_attr.append(envi)
                                 else:
