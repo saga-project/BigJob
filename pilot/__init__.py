@@ -6,38 +6,18 @@ from pilot.impl.pilotdata_manager import PilotDataService
 from pilot.impl.pilotdata_manager import DataUnit
 from pilot.impl.pilot_manager import ComputeDataService 
 from pilot.impl.pilot_manager import ComputeUnit 
+from pilot.api.api import ComputeDataDescription
 from pilot.api import State 
 
 
-#from pilot.impl.pilotcompute_manager import PilotComputeService as MyPilotComputeService
-#from pilot.impl.pilotdata_manager import PilotDataService as MyPilotDataService
-#from pilot.impl.pilotdata_manager import DataUnit as MyDataUnit
-#from pilot.impl.pilot_manager import ComputeDataService as MyComputeDataService
-#from pilot.impl.pilot_manager import ComputeUnit as MyComputeUnit
-#from pilot.api import State as MyState
-
-# define external-facing API
-
-#class PilotComputeService(MyPilotComputeService):
-#    pass
+class ComputeUnitService():
+    
+    def __init__(self):
+        raise NotImplementedError("Please use ComputeDataService.")
 
 
-#class PilotDataService(MyPilotDataService):
-#    pass
-#
-#
-#class ComputeUnit(MyComputeUnit):
-#    pass
-#
-#class DataUnit(MyDataUnit):
-#    pass
-#
-#
-#class ComputeDataService(MyComputeDataService):
-#    pass
-#
-#
-#class State(MyState):
-#    pass
-
+class DataUnitService():
+    
+    def __init__(self):
+        raise NotImplementedError("Please use ComputeDataService.")
 

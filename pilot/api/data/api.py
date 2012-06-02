@@ -39,6 +39,10 @@ class PilotData(object):
         'state',        # State of the PilotData
         'state_detail', # Adaptor specific state of the PilotData       
     )
+    
+    def __init__(self):
+        raise  NotImplementedError("Abstract super class, please use PilotData implementation class in pilot namespace")
+
 
     def cancel(self):        
         """ Cancel PilotData 
@@ -71,7 +75,8 @@ class PilotDataService(object):
             Keyword arguments:
             pss_id -- restore from pss_id
         """
-        pass
+        raise  NotImplementedError("Abstract super class, please use PilotDataService implementation class in pilot namespace")
+
 
     def create_pilot(self, pilot_data_description):
         """ Create a PilotData 
@@ -113,7 +118,8 @@ class DataUnitService(object):
             Keyword arguments:
             pds_id -- Reconnect to an existing DataUnitService 
         """
-        pass
+        raise  NotImplementedError("Abstract super class, please use DataUnitService implementation class in pilot namespace")
+
 
     def add_pilot_data_service(self, pss):
         """ Add a PilotDataService 
@@ -206,7 +212,8 @@ class DataUnit(object):
 
     def cancel(self):
         """ Cancel the PD. """
-        pass
+        raise  NotImplementedError("Abstract super class, please use DataUnit implementation class in pilot namespace")
+
     
     def add_data_unit(self, data_unit):
         pass
