@@ -35,7 +35,7 @@ class PilotComputeService(PilotComputeService):
                     
     """
 
-    PJS_ID_PREFIX="pjs-"   
+    PJS_ID_PREFIX="pcs-"   
 
     # Class members
     __slots__ = (
@@ -43,8 +43,7 @@ class PilotComputeService(PilotComputeService):
         'url',
         'state',       # Status of the PJS
         'pilot_computes',    # List of PJs under this PJS
-        'coordination_url',
-        '__mjs'
+        'coordination_url'
     )
 
     def __init__(self, coordination_url=COORDINATION_URL, pjs_url=None):
