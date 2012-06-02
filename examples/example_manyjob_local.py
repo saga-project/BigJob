@@ -37,7 +37,7 @@ from bigjob_dynamic.many_job import *
         redis://localhost:6379 (Redis at localhost)
         tcp://localhost (ZMQ)
 """
-COORDINATION_URL = "advert://localhost"
+COORDINATION_URL = "advert://localhost/?dbtype=sqlite3"
 #COORDINATION_URL = "advert://advert.cct.lsu.edu:8080"
     
 NUMBER_JOBS=8
