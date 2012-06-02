@@ -107,7 +107,12 @@ class bigjob(api.base.bigjob):
     __APPLICATION_NAME="bigjob" 
     
     def __init__(self, coordination_url="redis://ILikeBigJob_wITH-REdIS@gw68.quarry.iu.teragrid.org:6379", pilot_url=None):    
-        """ Initializes BigJob's coordination system"""  
+        """ Initializes BigJob's coordination system
+            advert://localhost (SAGA/Advert SQLITE)
+            advert://advert.cct.lsu.edu:8080 (SAGA/Advert POSTGRESQL)
+            redis://localhost:6379 (Redis at localhost)
+            tcp://localhost (ZMQ)
+        """  
         
         self.coordination_url = coordination_url
         self.coordination = self.__init_coordination(coordination_url)
