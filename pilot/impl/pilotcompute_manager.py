@@ -1,6 +1,5 @@
 import sys
 import getopt
-import saga
 import time
 import pdb
 import os
@@ -27,7 +26,8 @@ from pilot.coordination.nocoord import NoCoordinationAdaptor as CoordinationAdap
         redis://localhost:6379 (Redis at localhost)
         tcp://localhost (ZMQ)
 """
-COORDINATION_URL = "advert://localhost/?dbtype=sqlite3"
+#COORDINATION_URL = "advert://localhost/?dbtype=sqlite3"
+COORDINATION_URL = "redis://ILikeBigJob_wITH-REdIS@gw68.quarry.iu.teragrid.org:6379"
 
 
 class PilotComputeService(PilotComputeService):

@@ -36,14 +36,14 @@ if SAGA_BLISS == False:
     except:
         logger.warn("SAGA C++ and Python bindings not found. Using Bliss.")
         try:
-            import bliss.sagacompat as saga
+            import bliss.saga as saga
             is_bliss=True
         except:
             logger.warn("SAGA Bliss not found")
 else:
     logger.debug("Using SAGA Bliss.")
     try:
-        import bliss.sagacompat as saga
+        import bliss.saga as saga
         is_bliss=True 
     except:
         logger.warn("SAGA Bliss not found")
@@ -54,9 +54,19 @@ else:
 import api.base
 sys.path.append(os.path.dirname(__file__))
 
-from pbsssh import pbsssh
-from sgessh import sgessh
-
+if is_bliss:
+    import bliss.saga as saga
+    from bliss.saga import Url as SAGAUrl
+    from bliss.saga.job import Description as SAGAJobDescription
+    from bliss.saga.job import Service as SAGAJobService
+    from bliss.saga import Session as SAGASession
+    from bliss.saga import Context as SAGAContext
+else:
+    from saga import url as SAGAUrl
+    from saga.job import description as SAGAJobDescription
+    from saga.job import service as SAGAJobService
+    from saga import session as SAGASession
+    from saga import context as SAGAContext 
 
 if sys.version_info < (2, 5):
     sys.path.append(os.path.dirname( __file__ ) + "/ext/uuid-1.30/")
@@ -96,14 +106,14 @@ class bigjob(api.base.bigjob):
     
     __APPLICATION_NAME="bigjob" 
     
-    def __init__(self, coordination_url="advert://localhost/", pilot_url=None):    
+    def __init__(self, coordination_url="redis://ILikeBigJob_wITH-REdIS@gw68.quarry.iu.teragrid.org:6379", pilot_url=None):    
         """ Initializes BigJob's coordination system
-            e.g.:
             advert://localhost (SAGA/Advert SQLITE)
             advert://advert.cct.lsu.edu:8080 (SAGA/Advert POSTGRESQL)
             redis://localhost:6379 (Redis at localhost)
             tcp://localhost (ZMQ)
         """  
+        
         self.coordination_url = coordination_url
         self.coordination = self.__init_coordination(coordination_url)
         self.launch_method=""
@@ -197,7 +207,7 @@ class bigjob(api.base.bigjob):
         ##############################################################################
         # initialization of coordination and communication subsystem
         # Communication & Coordination initialization
-        lrms_saga_url = saga.url(lrms_url)
+        lrms_saga_url = SAGAUrl(lrms_url)
         self.url = lrms_saga_url
         self.pilot_url = self.app_url + ":" + lrms_saga_url.host
         pilot_url_dict[self.pilot_url]=self
@@ -211,7 +221,7 @@ class bigjob(api.base.bigjob):
         self.number_nodes=int(number_nodes)        
         
         # create job description
-        jd = saga.job.description()
+        jd = SAGAJobDescription()
         
         #  Attempt to create working directory (e.g. in local scenario)
         if working_directory != None:
@@ -272,32 +282,15 @@ class bigjob(api.base.bigjob):
         # Create and process BJ bootstrap script
         logger.debug("Adaptor specific modifications: "  + str(lrms_saga_url.scheme))
         bootstrap_script = self.generate_bootstrap_script(self.coordination.get_address(), self.pilot_url)
-        if lrms_saga_url.scheme == "gram":
-            bootstrap_script = self.escape_rsl(bootstrap_script)
-        elif lrms_saga_url.scheme == "pbspro" or lrms_saga_url.scheme=="xt5torque" or lrms_saga_url.scheme=="torque":                
-            bootstrap_script = self.escape_pbs(bootstrap_script)
-        elif lrms_saga_url.scheme == "ssh":
-            bootstrap_script = self.escape_ssh(bootstrap_script)
-        ############ submit pbs script which launches bigjob agent using ssh adaptors########## 
-        elif lrms_saga_url.scheme == "pbs-ssh":
-            bootstrap_script = self.escape_ssh(bootstrap_script)
-            # PBS specific BJ plugin
-            pbssshj = pbsssh(bootstrap_script, self.launch_method, queue, project,lrms_saga_url, walltime, number_nodes, 
-                             processes_per_node, userproxy, self.working_directory, self.working_directory)
-            self.job = pbssshj
-            self.job.run()
-            return
-        ############ submit sge script which launches bigjob agent using ssh adaptors########## 
-        elif lrms_saga_url.scheme == "sge-ssh":
-            bootstrap_script = self.escape_ssh(bootstrap_script)
-            # PBS specific BJ plugin
-            sgesshj = sgessh(bootstrap_script, lrms_saga_url, walltime, number_nodes, 
-                             processes_per_node, userproxy, project, queue, self.working_directory, self.working_directory)
-            self.job = sgesshj
-            self.job.run()
-            return
-        elif is_bliss:
+        if is_bliss:
             bootstrap_script = self.escape_bliss(bootstrap_script)
+        else:
+            if lrms_saga_url.scheme == "gram":
+                bootstrap_script = self.escape_rsl(bootstrap_script)
+            elif lrms_saga_url.scheme == "pbspro" or lrms_saga_url.scheme=="xt5torque" or lrms_saga_url.scheme=="torque":                
+                bootstrap_script = self.escape_pbs(bootstrap_script)
+            elif lrms_saga_url.scheme == "ssh":
+                bootstrap_script = self.escape_ssh(bootstrap_script)
 
         # Define Agent Executable in Job description
         # in Condor case bootstrap script is staged 
@@ -326,11 +319,11 @@ class bigjob(api.base.bigjob):
             logger.debug("Condor file transfers: " + str(bj_file_transfers))
             jd.file_transfer = bj_file_transfers
         else:
-            if is_bliss==False:
-                jd.number_of_processes = str(number_nodes)
-                jd.processes_per_host=str(processes_per_node)
+            if is_bliss:
+                jd.total_cpu_count=int(number_nodes)                   
             else:
-                jd.TotalCPUCount=str(int(number_nodes)*int(processes_per_node))                    
+                jd.number_of_processes=str(number_nodes)
+                jd.processes_per_host=str(processes_per_node)
             jd.spmd_variation = "single"
             jd.arguments = ["python", "-c", bootstrap_script]
             jd.executable = "/usr/bin/env"           
@@ -338,9 +331,12 @@ class bigjob(api.base.bigjob):
         if queue != None:
             jd.queue = queue
         if project !=None:
-            jd.job_project = [project]
+            jd.project=project       
         if walltime!=None:
-            jd.wall_time_limit=str(walltime)
+            if is_bliss:
+                jd.wall_time_limit=int(walltime)
+            else:
+                jd.wall_time_limit=str(walltime)
     
         if lrms_saga_url.scheme.startswith("condor")==False:
             jd.working_directory = self.working_directory
@@ -349,27 +345,22 @@ class bigjob(api.base.bigjob):
 
         logger.debug("Working directory: " + jd.working_directory)
         
-        #if lrms_saga_url.scheme.startswith("condor"):
-        #    jd.output = "stdout-bigjob_agent.txt"
-        #    jd.error = "stderr-bigjob_agent.txt"         
-        #else:
         jd.output = os.path.join(self.working_directory, "stdout-" + self.uuid + "-agent.txt")
         jd.error = os.path.join(self.working_directory, "stderr-" + self.uuid + "-agent.txt")
-          
            
         # Submit job
         js = None    
         if userproxy != None and userproxy != '':
-            s = saga.session()
+            s = SAGASession()
             os.environ["X509_USER_PROXY"]=userproxy
-            ctx = saga.context("x509")
+            ctx = SAGAContext("x509")
             ctx.set_attribute ("UserProxy", userproxy)
             s.add_context(ctx)
             logger.debug("use proxy: " + userproxy)
-            js = saga.job.service(s, lrms_saga_url)
+            js = SAGAJobService(s, lrms_saga_url)
         else:
             logger.debug("use standard proxy")
-            js = saga.job.service(lrms_saga_url)
+            js = SAGAJobService(lrms_saga_url)
 
         logger.debug("Creating pilot job with description: %s" % str(jd))
               
@@ -378,7 +369,8 @@ class bigjob(api.base.bigjob):
         logger.debug("Submit pilot job to: " + str(lrms_saga_url))
         self.job.run()
         return self.pilot_url
-        
+
+
     def generate_bootstrap_script(self, coordination_host, coordination_namespace):
         script = textwrap.dedent("""import sys
 import os
@@ -436,7 +428,7 @@ print "Starting BigJob Agents with following args: " + str(args)
 bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
 """ % (coordination_host, coordination_namespace))
         return script
-    
+
     def escape_rsl(self, bootstrap_script):
         logger.debug("Escape RSL")
         bootstrap_script = bootstrap_script.replace("\"", "\"\"")        
@@ -456,9 +448,11 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
         return bootstrap_script
     
     def escape_bliss(self, bootstrap_script):
-        logger.debug("Escape fork")
-        bootstrap_script = bootstrap_script.replace("\'", "\"")
-        bootstrap_script = "\'" + bootstrap_script+ "\'"
+        logger.debug("Escape Bliss")
+        #bootstrap_script = bootstrap_script.replace("\'", "\"")
+        #bootstrap_script = "\'" + bootstrap_script+ "\'"
+        bootstrap_script = bootstrap_script.replace('"','\\"')
+        bootstrap_script = '"' + bootstrap_script+ '"'
         return bootstrap_script
      
     def list_subjobs(self):
@@ -496,7 +490,11 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
                             #logger.debug("Add attribute: " + str(i) + " Value: " + str(jd.get_vector_attribute(i)))
                             vector_attr = []
                             for j in jd.get_vector_attribute(i):
-                                vector_attr.append(j)
+                                if str(i) == "Environment":
+                                    envi=str(j)+"="+str(jd.get_vector_attribute(i)[j])
+       				    vector_attr.append(envi)
+                                else:
+                                    vector_attr.append(j)
                             job_dict[i]=vector_attr
                         else:
                             #logger.debug("Add attribute: " + str(i) + " Value: " + jd.get_attribute(i))
@@ -619,9 +617,7 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
     
     def __parse_url(self, url):
         try:
-            if is_bliss==True:
-                raise BigJobError("BLISS URL broken.")
-            surl = saga.url(url)
+            surl = SAGAUrl(url)
             host = surl.host
             port = surl.port
             username = surl.username
@@ -889,8 +885,6 @@ class subjob(api.base.subjob):
         else:
             return self.job_url
         
-try:        
-    class description(saga.job.description):
-        pass
-except:
+        
+class description(SAGAJobDescription):
     pass
