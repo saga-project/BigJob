@@ -12,7 +12,6 @@ import time
 import pdb
 import Queue
 
-import saga
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 from bigjob import logger
 
@@ -34,6 +33,7 @@ except:
 
 #from pilot.coordination.advert import AdvertCoordinationAdaptor as CoordinationAdaptor
 from pilot.coordination.nocoord import NoCoordinationAdaptor as CoordinationAdaptor
+from bliss.saga import Url as SAGAUrl
 
 
 # generate global application id for this instance
@@ -486,7 +486,7 @@ class DataUnitItem(object):
     @classmethod    
     def __exists_file(cls, url):   
         """ return True if file at url exists. Otherwise False """
-        file_url = saga.url(url)
+        file_url = SAGAUrl(url)
         if file_url.host == "":
             if os.path.exists(str(file_url)):
                 return True

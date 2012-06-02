@@ -8,7 +8,6 @@ import sys
 import os
 sys.path.append(os.path.dirname( __file__ ))
 import getopt
-import saga
 import time
 import uuid
 import socket
@@ -405,7 +404,7 @@ if __name__ == "__main__":
     try:
         print "Test ManyJob"
         # create job description
-        jd = saga.job.description()
+        jd = SAGAJobDescription()
         jd.executable = "/bin/date"
         jd.number_of_processes = "1"
         jd.spmd_variation = "single"

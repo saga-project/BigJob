@@ -5,7 +5,6 @@ import threading
 import logging
 import pdb
 import Queue
-import saga
 import uuid
 import traceback
 import urlparse
@@ -17,6 +16,7 @@ from pilot.api import ComputeDataService, ComputeUnit, State
 from pilot.impl.pilotdata_manager import PilotData, DataUnit
 #from pilot.coordination.advert import AdvertCoordinationAdaptor as CoordinationAdaptor
 from pilot.coordination.nocoord import NoCoordinationAdaptor as CoordinationAdaptor
+from bliss.saga.job import Description as SAGAJobDescription
 """ Loaded Module determines scheduler:
     
     bigdata.scheduler.data_compute_scheduler - selects random locations for PD and WUs
@@ -422,18 +422,21 @@ class ComputeUnit(ComputeUnit):
         
     # INTERNAL
     def __translate_cu_sj_description(self, compute_unit_description):
-        jd = saga.job.description()
+        jd = SAGAJobDescription()
         if compute_unit_description.has_key("executable"): 
             jd.executable = compute_unit_description["executable"]
-        jd.spmd_variation = "single"
+        if compute_unit_description.has_key("spmd_variation"):
+            jd.spmd_variation = compute_unit_description["spmd_variation"]
+        else:
+            jd.spmd_variation = "single"
         if compute_unit_description.has_key("arguments"): 
             jd.arguments = compute_unit_description["arguments"]
-        
-        if compute_unit_description.has_key("number_of_processes"):
-            jd.number_of_processes=str(compute_unit_description["number_of_processes"])
+        if compute_unit_description.has_key("environment"):
+            jd.environment = compute_unit_description["environment"] 
+        if compute_unit_description.has_key("total_cpu_count"):
+            jd.number_of_processes=int(compute_unit_description["total_cpu_count"])
         else:
-            jd.number_of_processes="1"
-        
+            jd.number_of_processes=1
         if compute_unit_description.has_key("working_directory"): 
             jd.working_directory = compute_unit_description["working_directory"]
         if compute_unit_description.has_key("output"): 
