@@ -10,7 +10,7 @@ import os
 import pdb
 import pickle
 
-from pilot import PilotComputeService, State
+from pilot import PilotComputeService, PilotCompute, State
 BIGJOB_DIRECTORY="~/.bigjob/" 
   
 class BigJobCLI(object):
@@ -21,7 +21,7 @@ class BigJobCLI(object):
         self.pilots = []
         self.__restore()
         
-    def submit_pilot(self, coordination_url="redis://",
+    def submit_pilot(self, coordination_url="redis://localhost/",
                            resource_url="fork://localhost",
                            working_directory=".",
                            number_cores=1,
@@ -39,7 +39,9 @@ class BigJobCLI(object):
                             }
     
         pilot_compute = pilot_compute_service.create_pilot(pilot_compute_description=pilot_compute_description)
-        self.pilots.append(pilot_compute.get_url())
+        pilot_url = os.path.join(coordination_url, pilot_compute.get_url())
+        self.pilots.append(pilot_url)
+        print("Started Pilot: %s"%(pilot_url))
         self.__persist()
 
     def cancel_pilot(self, pilot_url):
@@ -51,7 +53,7 @@ class BigJobCLI(object):
     
 
     def submit_cu(self, pilot_url):
-        pass
+        pilot_compute = Pilot
 
     def cancel_cu(self, cu_url):
         pass
@@ -60,6 +62,8 @@ class BigJobCLI(object):
         pass
 
     
+    def clean(self):
+        os.remove(self.__get_save_filename())
     
     def __persist(self):
         pickle.dump(self.pilots, open(self.__get_save_filename(), 'wb'))
@@ -91,10 +95,8 @@ if __name__ == '__main__':
     parser.add_argument('--cancel_cu', '-cc', action="store_true", default=False)
     parser.add_argument('--list_cu', '-lc', action="store_true", default=False)
     parser.add_argument_group()
-    parser.add_argument('--clean', action="store_true")
-    
-    parsed_arguments = parser.parse_args()
-    
+    parser.add_argument('--clean', action="store_true")    
+    parsed_arguments = parser.parse_args()    
     print(str(parsed_arguments))
     
     
@@ -107,6 +109,8 @@ if __name__ == '__main__':
         app.list_pilots()
     elif parsed_arguments.submit_cu==True:
         pass
+    elif parsed_arguments.clean==True:
+        app.clean()
     
     print("Finished Processing")
     

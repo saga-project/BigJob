@@ -18,6 +18,7 @@ import textwrap
 import urlparse
 import subprocess
 import types
+import pdb
 
 from bigjob import SAGA_BLISS 
 from bigjob.state import Running, New, Failed, Done, Unknown
@@ -100,23 +101,39 @@ class bigjob(api.base.bigjob):
     
     __APPLICATION_NAME="bigjob" 
     
-    def __init__(self, coordination_url="advert://localhost/?dbtype=sqlite3", pilot_url=None):    
+    def __init__(self, 
+                 coordination_url="advert://localhost/?dbtype=sqlite3", 
+                 pilot_url=None):    
         """ Initializes BigJob's coordination system
             advert://localhost (SAGA/Advert SQLITE)
             advert://advert.cct.lsu.edu:8080 (SAGA/Advert POSTGRESQL)
             redis://localhost:6379 (Redis at localhost)
             tcp://localhost (ZMQ)
+            
+            The following formats for pilot_url are supported:
+            
+            
+            1.) Including root path at distributed coordination service:
+            redis://localhost/bigjob:bj-1c3816f0-ad5f-11e1-b326-109addae22a3:localhost
+            
+            This path is returned when call bigjob.get_url()
+            
+            2.) BigJob unique ID:
+            bigjob:bj-1c3816f0-ad5f-11e1-b326-109addae22a3:localhost
         """  
         
         self.coordination_url = coordination_url
-        self.coordination = self.__init_coordination(coordination_url)
         self.launch_method=""
         self.__filemanager=None
         
         # restore existing BJ or initialize new BJ
         if pilot_url!=None:
             logger.debug("Reconnect to BJ: %s"%pilot_url)
-            self.pilot_url=pilot_url
+            if pilot_url.startswith("bigjob:"):
+                self.pilot_url=pilot_url
+            else:
+                self.coordination, self.pilot_url = self.__parse_pilot_url(pilot_url)
+                
             self.uuid = self.__get_bj_id(pilot_url)
             self.app_url = self.__APPLICATION_NAME +":" + str(self.uuid)
             self.job = None
@@ -133,7 +150,8 @@ class bigjob(api.base.bigjob):
             self.working_directory = None
             logger.debug("initialized BigJob: " + self.app_url)
         
-       
+        self.coordination = self.__init_coordination(coordination_url)
+        
         
        
     def __get_bj_id(self, pilot_url):
@@ -533,6 +551,22 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
             return self.coordination.get_pilot_state(self.pilot_url)["state"]
         except:
             return None
+        
+    def get_url(self):
+        """ Get unique URL of BigJob. This URL can be used to reconnect to BJ later, e.g.:
+        
+            redis://localhost/bigjob:bj-1c3816f0-ad5f-11e1-b326-109addae22a3:localhost             
+        
+        """
+        url = os.path.join(self.coordination.address, 
+                            self.pilot_url)
+        
+        if self.coordination.dbtype!="" or self.coordination.dbtype!=None:
+            url = os.path.join(url, "?" + self.coordination.dbtype)
+            
+        return url
+    
+    
     
     def get_free_nodes(self):
         jobs = self.coordination.get_jobs_of_pilot(self.pilot_url)
@@ -602,6 +636,21 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
 
     ###########################################################################
     # internal methods
+    def __parse_pilot_url(self, pilot_url):
+        #pdb.set_trace()        
+        dbtype = None
+        coordination = pilot_url[:pilot_url.index("bigjob")]
+        pilot_url = pilot_url[pilot_url.find("bigjob"):]
+        if pilot_url.find("/") > 0:
+            comp = pilot_url.split("/")
+            pilot_url = comp[0]
+            if comp[1].find("dbtype")>0:
+                dbtype=comp[1][comp[1].find("dbtype"):]
+        
+        if dbtype!=None:
+            coordination = os.path.join(coordination, "?"+dbtype)
+        return coordination, pilot_url
+    
     
     def __has_finished(self, state):
         state = state.lower()

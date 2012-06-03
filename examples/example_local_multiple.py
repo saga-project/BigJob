@@ -87,7 +87,7 @@ if __name__ == "__main__":
                         walltime,
                         processes_per_node)
 
-    print "Pilot Job/BigJob URL: " + bj.pilot_url + " State: " + str(bj.get_state())
+    print "Pilot Job/BigJob URL: " + bj.get_url() + " State: " + str(bj.get_state())
 
     ##########################################################################################
     # Submit SubJob through BigJob
@@ -109,5 +109,5 @@ if __name__ == "__main__":
         job_start_times[sj]=time.time()
         job_states[sj] = sj.get_state()
 
-    print "Terminating application. You can reconnect to BJ via the following URL: %s"%bj.pilot_url
+    print "Terminating application. You can reconnect to BJ via the following URL: %s"%bj.get_url()
 

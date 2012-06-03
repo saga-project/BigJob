@@ -44,6 +44,7 @@ class bigjob_coordination(object):
         self.password = None   
         
         self.address = "%s%s:%i"%(REDIS_URL_SCHEME, server, server_port)
+        self.dbtype=""
         if server_connect_url!=None:
             self.address=server_connect_url    
             start_index = self.address.find(REDIS_URL_SCHEME)+len(REDIS_URL_SCHEME)
