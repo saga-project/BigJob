@@ -72,7 +72,8 @@ class bigjob_coordination(object):
         self.context = zmq.Context()
        
         self.server_role = False  
-        self.address = None    
+        self.address = None 
+        self.dbtype = ""   
         if server == "*":
             server = socket.gethostname()        
         logging.debug("Server: " + server)         

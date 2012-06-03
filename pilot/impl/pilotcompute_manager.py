@@ -26,9 +26,7 @@ from pilot.coordination.nocoord import NoCoordinationAdaptor as CoordinationAdap
         redis://localhost:6379 (Redis at localhost)
         tcp://localhost (ZMQ)
 """
-#COORDINATION_URL = "advert://localhost/?dbtype=sqlite3"
-COORDINATION_URL = "redis://ILikeBigJob_wITH-REdIS@gw68.quarry.iu.teragrid.org:6379"
-
+COORDINATION_URL = "advert://localhost/?dbtype=sqlite3"
 
 class PilotComputeService(PilotComputeService):
     """ PilotJobService based on BigJob.
@@ -180,25 +178,34 @@ class PilotComputeService(PilotComputeService):
 class PilotCompute(PilotCompute):
     """ Wrapper for BigJob class """
      
-    def __init__(self, pilot_compute_service, bigjob, pilot_compute_description):
-        logging.debug("Create PilotCompute for BigJob: " + str(bigjob))
-        self.pilot_compute_description=pilot_compute_description
-        self.__pilot_compute_service=pilot_compute_service
-        self.__bigjob = bigjob        
-        self.__subjobs = []
+    def __init__(self, pilot_compute_service=None, 
+                       bigjob=None, 
+                       pilot_compute_description=None,
+                       pc_id=None):
+        if pc_id==None:
+            logging.debug("Create PilotCompute for BigJob: " + str(bigjob))
+            self.pilot_compute_description=pilot_compute_description
+            self.__pilot_compute_service=pilot_compute_service
+            self.__bigjob = bigjob        
+            self.__subjobs = []
+        else:
+            logging.debug("Reconnect to an existing Pilot Compute")
+            self.__bigjob = bigjob(COORDINATION_URL, pc_id)
+            
         
     def cancel(self):
-        self.__bigjob.cancel()
+        self.__bigjob.cancel()    
     
     def get_state(self):
-        return self.__bigjob.get_state()
+        return self.__bigjob.get_state()    
     
     def wait(self):
         """ Waits for completion of CUs """
         self.__bigjob.wait()
     
     def get_url(self):
-        return self.__bigjob.pilot_url
+        #return self.__bigjob.pilot_url
+        return self.__bigjob.get_url()
         
     def get_free_nodes(self):
         return self.__bigjob.get_free_nodes()
