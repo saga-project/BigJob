@@ -17,6 +17,7 @@ import logging
 import textwrap
 import urlparse
 import subprocess
+import types
 
 from bigjob import SAGA_BLISS 
 from bigjob.state import Running, New, Failed, Done, Unknown
@@ -99,7 +100,7 @@ class bigjob(api.base.bigjob):
     
     __APPLICATION_NAME="bigjob" 
     
-    def __init__(self, coordination_url="redis://ILikeBigJob_wITH-REdIS@gw68.quarry.iu.teragrid.org:6379", pilot_url=None):    
+    def __init__(self, coordination_url="advert://localhost/?dbtype=sqlite3", pilot_url=None):    
         """ Initializes BigJob's coordination system
             advert://localhost (SAGA/Advert SQLITE)
             advert://advert.cct.lsu.edu:8080 (SAGA/Advert POSTGRESQL)
@@ -483,11 +484,12 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
                             #logger.debug("Add attribute: " + str(i) + " Value: " + str(jd.get_vector_attribute(i)))
                             vector_attr = []
                             for j in jd.get_vector_attribute(i):
-                                #if str(i) == "Environment":
-                                #    envi=str(j)+"="+str(jd.get_vector_attribute(i)[j])
-                                #    vector_attr.append(envi)
-                                #else:
-                                vector_attr.append(j)
+                                # BLISS handles environment variables different than SAGA C++/Python
+                                if type(jd.get_vector_attribute(i)) == types.DictType and str(i) == "Environment":
+                                    envi=str(j)+"="+str(jd.get_vector_attribute(i)[j])
+                                    vector_attr.append(envi)
+                                else:
+                                    vector_attr.append(j)
                             job_dict[i]=vector_attr
                         else:
                             #logger.debug("Add attribute: " + str(i) + " Value: " + jd.get_attribute(i))

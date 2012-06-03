@@ -1,6 +1,6 @@
 *.pyc
 *.svn
-
 .project
-
 .pydevproject
+
+examples/agent*
