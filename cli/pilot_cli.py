@@ -46,7 +46,8 @@ class BigJobCLI(object):
         pass
     
     def list_pilots(self):
-        pass
+        for i in self.pilots:
+            print str(i)
     
 
     def submit_cu(self, pilot_url):
@@ -102,6 +103,8 @@ if __name__ == '__main__':
                          resource_url=parsed_arguments.resource,
                          number_cores=parsed_arguments.number_cores,
                          cores_per_node=parsed_arguments.cores_per_node)    
+    elif parsed_arguments.list_pilots==True:
+        app.list_pilots()
     elif parsed_arguments.submit_cu==True:
         pass
     

@@ -2,17 +2,10 @@
 
 """Module bigjob_manager.
 
-This Module is used to launch jobs via the advert service. 
+This Module is used to launch jobs via a central distributed coordination service (e.g. an Redis or Advert instance). 
 
-It assumes that an bigjob_agent.py is available on the remote machine.
-bigjob_agent.py will poll the advert service for new jobs and run these jobs on the respective
-machine .
-
-Background: This approach avoids queueing delays since the igjob_agent_launcher.py must be just started via saga.job or saga.cpr
-once. All shortrunning task will be started using the protocol implemented by subjob() and bigjob_agent.py
-
-Installation:
-Set environment variable BIGJOB_HOME to installation directory
+Background: This approach avoids queueing delays since only the BigJob-Agent must be started via saga.job. 
+All shortrunning task will be started using the protocol implemented by subjob() and bigjob_agent.py
 """
 
 import sys
