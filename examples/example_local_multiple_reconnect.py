@@ -55,7 +55,7 @@ if __name__ == "__main__":
         sys.exit(-1)
 
     print "Reconnect to Pilot Job/BigJob at: " + reconnect_url
-    bj = bigjob(COORDINATION_URL, reconnect_url)
+    bj = bigjob(pilot_url=reconnect_url)
     
     print "Pilot Job/BigJob URL: " + bj.pilot_url + " State: " + str(bj.get_state() 
            + " Number of SJs: " + str(len(bj.list_subjobs())) )

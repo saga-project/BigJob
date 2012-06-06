@@ -181,7 +181,7 @@ class PilotCompute(PilotCompute):
     def __init__(self, pilot_compute_service=None, 
                        bigjob=None, 
                        pilot_compute_description=None,
-                       pc_id=None):
+                       pilot_url=None):
         if pc_id==None:
             logging.debug("Create PilotCompute for BigJob: " + str(bigjob))
             self.pilot_compute_description=pilot_compute_description
@@ -190,7 +190,7 @@ class PilotCompute(PilotCompute):
             self.__subjobs = []
         else:
             logging.debug("Reconnect to an existing Pilot Compute")
-            self.__bigjob = bigjob(COORDINATION_URL, pc_id)
+            self.__bigjob = bigjob(pilot_url=pilot_url)
             
         
     def cancel(self):
