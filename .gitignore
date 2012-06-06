@@ -2,5 +2,8 @@
 *.svn
 .project
 .pydevproject
-
 examples/agent*
+dist/*
+BigJob.egg-info/*
+build/*
+cli/bj-*
