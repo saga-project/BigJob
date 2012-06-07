@@ -27,7 +27,7 @@ class NoCoordinationAdaptor:
     def get_base_url(cls, application_id):
         surl = SAGAUrl(cls.BASE_URL)
         base_url = surl.scheme + "://" + surl.host + "/" + application_id + "/"
-        logging.debug(base_url)
+        logger.debug(base_url)
         return base_url
     
     ###########################################################################

@@ -2,10 +2,6 @@ import sys
 import os
 import time
 
-import logging
-#from bigjob import logger
-#logger.setLevel(logging.FATAL)
-
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 sys.path.insert(0, os.getcwd() + "/../")
 from pilot import PilotComputeService, ComputeDataService, State
@@ -20,8 +16,8 @@ from pilot import PilotComputeService, ComputeDataService, State
         tcp://* (ZMQ - listening to all interfaces)
 """
 
-COORDINATION_URL = "advert://localhost/?dbtype=sqlite3"
-#COORDINATION_URL = "redis://localhost:6379"
+#COORDINATION_URL = "advert://localhost/?dbtype=sqlite3"
+COORDINATION_URL = "redis://localhost:6379"
 
 
 if __name__ == "__main__":      
@@ -57,11 +53,11 @@ if __name__ == "__main__":
     compute_unit = compute_data_service.submit_compute_unit(compute_unit_description)
     
     
-    logging.debug("Finished setup. Waiting for scheduling of CU")
+    print("Finished setup. Waiting for scheduling of CU")
     compute_data_service.wait()
     
     while compute_unit != State.Done:
-        logging.debug("Final state check...")
+        print("Final state check...")
         state_cu = compute_unit.get_state()
         print "PCS State %s" % pilot_compute_service
         print "CU: %s State: %s"%(compute_unit, state_cu)
@@ -69,6 +65,6 @@ if __name__ == "__main__":
             break
         time.sleep(2)  
     
-    logging.debug("Terminate Pilot Compute and Compute Data Service")
+    print("Terminate Pilot Compute and Compute Data Service")
     compute_data_service.cancel()    
     pilot_compute_service.cancel()

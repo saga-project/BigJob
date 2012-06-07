@@ -47,10 +47,15 @@ try:
         
       
     #print("Set logging level: %s"%(logging_level))
-    logging.basicConfig(level=logging_level, datefmt='%m/%d/%Y %I:%M:%S %p',
+    logging.basicConfig(datefmt='%m/%d/%Y %I:%M:%S %p',
                format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     logger = logging.getLogger(name='bigjob')
+    #logger.basicConfig(datefmt='%m/%d/%Y %I:%M:%S %p',
+    #           format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     logger.setLevel(logging_level)
+    
+    paramiko_logger = logging.getLogger(name="paramiko.transport")
+    paramiko_logger.setLevel(logging.ERROR)
     #logging.basicConfig(level=logging_level)        
       
     saga = default_dict["saga"]
@@ -73,21 +78,10 @@ except IOError:
 
 
 # define external-facing API
-from bigjob.bigjob_manager import bigjob as myBigjob
-from bigjob.bigjob_manager import subjob as mySubjob
-
-
-class subjob(mySubjob):
-    pass
-
-
-class bigjob(myBigjob):
-    pass
-
-
+from bigjob.bigjob_manager import bigjob 
+from bigjob.bigjob_manager import subjob
 try:
-    from bigjob.bigjob_manager import description as myDescription
-    class description(myDescription):
-        pass
+    from bigjob.bigjob_manager import description
 except:
     pass
+

@@ -25,7 +25,7 @@ import copy
 import bigjob.bigjob_manager 
 
 # Log everything, and send it to stderr.
-logging.basicConfig(level=logging.DEBUG)
+#logging.basicConfig(level=logging.DEBUG)
 
 COORDINATION_URL="advert://advert.cct.lsu.edu:8080"
 

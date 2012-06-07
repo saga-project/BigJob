@@ -45,21 +45,20 @@ class PilotComputeService(PilotComputeService):
         'coordination_url'
     )
 
-    def __init__(self, coordination_url=COORDINATION_URL, pjs_url=None):
+    def __init__(self, coordination_url=COORDINATION_URL, pcs_url=None):
         """ Create a PilotJobService object.
 
             Keyword arguments:
-            pjs_id -- Don't create a new, but connect to an existing (optional)
+            pcs_id -- Don't create a new, but connect to an existing (optional)
         """
-        self.__mjs = None
         self.pilot_computes=[]
         self.coordination_url=coordination_url
         
-        if pjs_url==None:      # new pjs          
+        if pcs_url==None:      # new pjs          
             self.id = self.PJS_ID_PREFIX+str(uuid.uuid1())
             self.url = "pilotjob://localhost/"+self.id
         else:
-            logger.error("Reconnect to PJS currently not supported.")
+            logger.error("Reconnect to PCS currently not supported.")
             
 
     def create_pilot(self, rm=None, pilot_compute_description=None, pj_type=None, context=None):
@@ -69,17 +68,10 @@ class PilotComputeService(PilotComputeService):
             pilot_compute_description -- PilotJob Description
             
             Return value:
-            A PilotJob handle
+            A PilotCompute object
         """
-        
-        if self.__mjs == None:
-            logging.debug("Create Dynamic BigJob Service")            
-            #self.__mjs = many_job_service([], self.coordination_url)
-            
         bj_dict = self.__translate_pj_bj_description(pilot_compute_description)
         bj = self.__start_bigjob(bj_dict)
-        
-        #bigjob = self.__mjs.add_resource(resource_description)
         pj = PilotCompute(self, bj, pilot_compute_description)
         self.pilot_computes.append(pj)
         return pj
@@ -144,7 +136,7 @@ class PilotComputeService(PilotComputeService):
     def __start_bigjob(self, bj_dict):
         """ private method - starts a bigjob on the defined resource """
         gram_url = bj_dict["resource_url"]
-        logging.debug("start bigjob at: " + gram_url)
+        logger.debug("start bigjob at: " + gram_url)
         bj = bigjob(self.coordination_url)
         ppn="1"
         if ("processes_per_node" in bj_dict):
@@ -184,13 +176,13 @@ class PilotCompute(PilotCompute):
                        pilot_compute_description=None,
                        pilot_url=None):
         if pilot_url==None:
-            logging.debug("Create PilotCompute for BigJob: " + str(bigjob))
+            logger.debug("Create PilotCompute for BigJob: " + str(bigjob))
             self.pilot_compute_description=pilot_compute_description
             self.__pilot_compute_service=pilot_compute_service
             self.__bigjob = bigjob        
             self.__subjobs = []
         else:
-            logging.debug("Reconnect to an existing Pilot Compute")
+            logger.debug("Reconnect to an existing Pilot Compute")
             self.__bigjob = bigjob(pilot_url=pilot_url)
             
         
@@ -213,7 +205,7 @@ class PilotCompute(PilotCompute):
     
     def submit_cu(self, compute_unit):
         """ Submits compute unit to Bigjob """
-        logging.debug("Submit CU to big-job")
+        logger.debug("Submit CU to big-job")
         sj = subjob()
         sj.submit_job(self.__bigjob.pilot_url, compute_unit.subjob_description)
         self.__subjobs.append(sj)

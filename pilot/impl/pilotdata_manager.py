@@ -3,8 +3,6 @@
 import sys
 import os
 import logging
-logging.basicConfig(level=logging.DEBUG)
-
 import uuid
 import random
 import threading
@@ -125,7 +123,7 @@ class PilotData(PilotData):
         
         
     def put_du(self, du):
-        logging.debug("Put PD: %s to PS: %s"%(du.id,self.service_url))
+        logger.debug("Put PD: %s to PS: %s"%(du.id,self.service_url))
         self.__filemanager.create_du(du.id)
         self.__filemanager.put_du(du)
         self.data_units[du.id] = du

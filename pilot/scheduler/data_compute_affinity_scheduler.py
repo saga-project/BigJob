@@ -23,7 +23,7 @@ class Scheduler:
     
         
     def schedule_pilot_data(self, data_unit_description=None):
-        logging.debug("Schedule to PD - # Avail pilots: %d"%len(self.pilot_data))     
+        logger.debug("Schedule to PD - # Avail pilots: %d"%len(self.pilot_data))     
         candidate_pilot_data = []  
         if data_unit_description.has_key("affinity_datacenter_label") and data_unit_description.has_key("affinity_machine_label"):
             for i in self.pilot_data: 
@@ -51,7 +51,7 @@ class Scheduler:
             TODO: incorporate potential data movements to co-locate PD/WU 
         
         """    
-        logging.debug("Schedule to PJ - # Avail PJs: %d"%len(self.pilot_jobs))
+        logger.debug("Schedule to PJ - # Avail PJs: %d"%len(self.pilot_jobs))
         candidate_pilot_jobs = []
         required_number_of_processes=1 
         if compute_unit_description.has_key("number_of_processes"):
