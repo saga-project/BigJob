@@ -65,6 +65,7 @@ class ComputeDataService(ComputeDataService):
         self.du_queue = Queue.Queue()
         self.stop=threading.Event()
         self.scheduler_thread=threading.Thread(target=self._scheduler_thread)
+        self.scheduler_thread.daemon=True
         self.scheduler_thread.start()
 
     def __get_cds_id(self, cds_url):
@@ -202,24 +203,26 @@ class ComputeDataService(ComputeDataService):
                    cu's are done
             
         """
-        logger.debug("### START WAIT ###")
-        self.cu_queue.join()
-        logger.debug("CU queue empty")        
-        self.du_queue.join()
-        logger.debug("DU queue empty")        
-
-        for i in self.data_units.values():
-            i.wait()
-        logger.debug("DUs done")        
-            
-        for i in self.compute_units.values():
-            i.wait()     
-        logger.debug("CUs done")        
-               
-        logger.debug("### END WAIT ###")
-
-        #[pc.wait() for i in self.pilot_job_services for pc in i.list_pilots()]
-        #[pd.wait() for i in self.pilot_data_services for pd in i.list_pilots()]
+        try:
+            logger.debug("### START WAIT ###")
+            self.cu_queue.join()
+            logger.debug("CU queue empty")        
+            self.du_queue.join()
+            logger.debug("DU queue empty")        
+    
+            for i in self.data_units.values():
+                i.wait()
+            logger.debug("DUs done")        
+                
+            for i in self.compute_units.values():
+                i.wait()     
+            logger.debug("CUs done")        
+                   
+            logger.debug("### END WAIT ###")
+        except:
+            logger.debug("Ctrl-c detected. Terminating ComputeDataService...")
+            self.cancel()
+            raise KeyboardInterrupt
                 
         
     def get_state(self):
@@ -228,6 +231,11 @@ class ComputeDataService(ComputeDataService):
     
     def get_id(self):
         return str(self.id)
+    
+    
+    def __del__(self):
+        """ Make sure that background thread terminates"""
+        self.cancel()
    
     ###########################################################################
     # Internal Scheduling
