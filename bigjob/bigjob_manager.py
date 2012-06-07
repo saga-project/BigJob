@@ -22,6 +22,10 @@ import pdb
 
 from bigjob import SAGA_BLISS 
 from bigjob.state import Running, New, Failed, Done, Unknown
+# import other BigJob packages
+# import API
+import api.base
+sys.path.append(os.path.dirname(__file__))
 
 if SAGA_BLISS == False:
     try:
@@ -44,10 +48,6 @@ else:
         logger.warn("SAGA Bliss not found")
 
 
-# import other BigJob packages
-# import API
-import api.base
-sys.path.append(os.path.dirname(__file__))
 
 if is_bliss:
     import bliss.saga as saga

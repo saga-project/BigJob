@@ -17,7 +17,7 @@ from bigjob import logger
 
 
 paramiko_logger = paramiko.util.logging.getLogger()
-paramiko_logger.setLevel(logging.WARN)
+#paramiko_logger.setLevel(logging.ERROR)
 
 class SSHFileAdaptor(object):
     """ BigData Coordination File Management for Pilot Store """
@@ -83,20 +83,20 @@ class SSHFileAdaptor(object):
                 
                 
     def put_du_paramiko(self, du):
-        logging.debug("Copy DU using Paramiko")
+        logger.debug("Copy DU using Paramiko")
         for i in du.list_data_unit_items():     
             remote_path = os.path.join(self.path, str(du.id), os.path.basename(i.local_url))
-            logging.debug("Put file: %s to %s"%(i.local_url, remote_path))
+            logger.debug("Put file: %s to %s"%(i.local_url, remote_path))
                         
             if i.local_url.startswith("ssh://"):
                 # check if remote path is directory
                 if self.__is_remote_directory(i.local_url):
-                    logging.warning("Path %s is a directory. Ignored."%i.local_url)                
+                    logger.warning("Path %s is a directory. Ignored."%i.local_url)                
                     continue      
                 self.__third_party_transfer(i.local_url, remote_path)                
             else:
                 if stat.S_ISDIR(os.stat(i.local_url).st_mode):
-                    logging.warning("Path %s is a directory. Ignored."%i.local_url)                
+                    logger.warning("Path %s is a directory. Ignored."%i.local_url)                
                     continue            
                 #self.__sftp.put(i.local_url, remote_path, self.put_progress, True)
                 ssh_client, sftp_client = self.__create_sftp_client()
@@ -106,21 +106,21 @@ class SSHFileAdaptor(object):
 
 
     def put_du_scp(self, du):
-        logging.debug("Copy DU using SCP")
+        logger.debug("Copy DU using SCP")
         for i in du.list_data_unit_items():     
             remote_path = os.path.join(self.path, str(du.id), os.path.basename(i.local_url))
-            logging.debug("Put file: %s to %s"%(i.local_url, remote_path))                        
+            logger.debug("Put file: %s to %s"%(i.local_url, remote_path))                        
             if i.local_url.startswith("ssh://"):
                 # check if remote path is directory
                 if self.__is_remote_directory(i.local_url):
-                    logging.warning("Path %s is a directory. Ignored."%i.local_url)                
+                    logger.warning("Path %s is a directory. Ignored."%i.local_url)                
                     continue
                 
                
                 #self.__third_party_transfer(i.local_url, remote_path)                
             else:
                 if stat.S_ISDIR(os.stat(i.local_url).st_mode):
-                    logging.warning("Path %s is a directory. Ignored."%i.local_url)                
+                    logger.warning("Path %s is a directory. Ignored."%i.local_url)                
                     continue         
             result = urlparse.urlparse(i.local_url)
             source_host = result.netloc
@@ -162,7 +162,7 @@ class SSHFileAdaptor(object):
     
         
     def put_progress(self, transfered_bytes, total_bytes):
-        logging.debug("Bytes transfered %d/%d"%(transfered_bytes, total_bytes))
+        logger.debug("Bytes transfered %d/%d"%(transfered_bytes, total_bytes))
     
         
     
@@ -212,7 +212,7 @@ class SSHFileAdaptor(object):
         if self.__exists(path):
             for filename in self.__sftp.listdir(path):
                 filepath = os.path.join(path, filename)
-                logging.debug("Delete %s"%filepath)
+                logger.debug("Delete %s"%filepath)
                 if stat.S_ISDIR(self.__sftp.stat(filepath).st_mode):
                     [self.__remove_directory(filepath)]
                 else:
@@ -300,16 +300,16 @@ sftp = client.open_sftp()
 sftp.put("%s", "%s")
 """%(target_host, source_path, target_path)
 
-        logging.debug("Execute: \n%s"%python_script)
+        logger.debug("Execute: \n%s"%python_script)
         source_client = paramiko.SSHClient()
         source_client.load_system_host_keys()
         source_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         source_client.connect(source_host)
         stdin, stdout, stderr = source_client.exec_command("python -c \'%s\'"%python_script)
         stdin.close()
-        logging.debug("************************************************")
-        logging.debug("Stdout: %s\nStderr:%s", stdout.read(), stderr.read())
-        logging.debug("************************************************")
+        logger.debug("************************************************")
+        logger.debug("Stdout: %s\nStderr:%s", stdout.read(), stderr.read())
+        logger.debug("************************************************")
         
     
     def __third_party_transfer(self, source_url, target_path):
@@ -336,16 +336,16 @@ sftp.get("%s", "%s")
 
 """%(source_host, source_path, target_path)
 
-        logging.debug("Execute: \n%s"%python_script)
+        logger.debug("Execute: \n%s"%python_script)
         source_client = paramiko.SSHClient()
         source_client.load_system_host_keys()
         source_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         source_client.connect(self.host)
         stdin, stdout, stderr = source_client.exec_command("python -c \'%s\'"%python_script)
         stdin.close()
-        logging.debug("************************************************")
-        logging.debug("Stdout: %s\nStderr:%s", stdout.read(), stderr.read())
-        logging.debug("************************************************")
+        logger.debug("************************************************")
+        logger.debug("Stdout: %s\nStderr:%s", stdout.read(), stderr.read())
+        logger.debug("************************************************")
     
     def __exists(self, path):
         """Return True if the remote path exists
