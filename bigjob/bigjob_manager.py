@@ -26,7 +26,7 @@ from bigjob.state import Running, New, Failed, Done, Unknown
 if SAGA_BLISS == False:
     try:
         import saga
-        logger.debug("Using SAGA C++/Python.")
+        logger.info("Using SAGA C++/Python.")
         is_bliss=False
     except:
         logger.warn("SAGA C++ and Python bindings not found. Using Bliss.")
@@ -36,7 +36,7 @@ if SAGA_BLISS == False:
         except:
             logger.warn("SAGA Bliss not found")
 else:
-    logger.debug("Using SAGA Bliss.")
+    logger.info("Using SAGA Bliss.")
     try:
         import bliss.saga as saga
         is_bliss=True 
