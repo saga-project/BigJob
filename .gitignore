@@ -7,3 +7,4 @@ dist/*
 BigJob.egg-info/*
 build/*
 cli/bj-*
+examples/pilot-api/work/bj-*
