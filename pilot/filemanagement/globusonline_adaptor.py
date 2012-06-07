@@ -23,10 +23,6 @@ class GlobusOnlineFileAdaptor(object):
     """ BigData Coordination File Management for Pilot Data """
     
     URL_PREFIX="go://"
-    ENDPOINT_DICT={
-                  "kraken-gsi.nics.teragrid.org" : "xsede#kraken",
-                        
-                  }
     
     
     def __init__(self, service_url):        

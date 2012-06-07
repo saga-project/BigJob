@@ -14,10 +14,13 @@ from pilot import PilotComputeService, ComputeDataService, State
 ### This is the number of jobs you want to run
 NUMBER_JOBS=128
 
+COORDINATION_URL = "advert://localhost/?dbtype=sqlite3"
+# COORDINATION_URL = "redis://localhost:6379"
+
 if __name__ == "__main__":
 
     start_time=time.time()
-    pilot_compute_service = PilotComputeService()
+    pilot_compute_service = PilotComputeService(coordination_url=COORDINATION_URL)
     pilot_compute_description=[]
 
     pilot_compute_description.append({ "service_url": "ssh://localhost",
