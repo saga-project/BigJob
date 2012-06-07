@@ -72,6 +72,8 @@ class SSHFileAdaptor(object):
         logger.debug("mkdir: " + du_dir)
         try:
             self.__sftp.mkdir(du_dir)
+        except KeyboardInterrupt:
+            raise KeyboardInterrupt
         except:
             pass # dir already exists
         
@@ -174,7 +176,7 @@ class SSHFileAdaptor(object):
         result = urlparse.urlparse(target_url)
         target_host = result.hostname
         target_path = result.path
-	target_user = result.username
+        target_user = result.username
         try:
             if not self.__is_remote_directory(target_url):
                 client = paramiko.SSHClient()
@@ -187,6 +189,8 @@ class SSHFileAdaptor(object):
                 sftp.close()
                 client.close()
                 return True
+        except KeyboardInterrupt:
+            raise KeyboardInterrupt
         except:
             logger.error("Error creating directory: " + str(target_path) 
                          + " at: " + str(target_host))
@@ -234,6 +238,8 @@ class SSHFileAdaptor(object):
                 return True
             else:
                 return False
+        except KeyboardInterrupt:
+            raise KeyboardInterrupt
         except:
             logger.debug("Directory not found: %s"%path)
         sftp.close()

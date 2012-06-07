@@ -183,7 +183,7 @@ class PilotCompute(PilotCompute):
                        bigjob=None, 
                        pilot_compute_description=None,
                        pilot_url=None):
-        if pc_id==None:
+        if pilot_url==None:
             logging.debug("Create PilotCompute for BigJob: " + str(bigjob))
             self.pilot_compute_description=pilot_compute_description
             self.__pilot_compute_service=pilot_compute_service
