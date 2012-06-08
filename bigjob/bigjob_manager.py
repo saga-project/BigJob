@@ -480,45 +480,16 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
             subjobs.append(sj)
         return subjobs
 
-    def translatejd(self,jd):
-        tempjd = SAGAJobDescription()
-        if is_bliss:
-            tempjd.number_of_processes = int(jd.number_of_processes)
-            if jd.environment != None:
-                envi={}
-                for env in jd.environment:
-                    kv = env.split("=")
-                    envi[kv[0]]=kv[1]
-                if envi:
-                    tempjd.environment = envi
-        else:
-            tempjd.number_of_processes = str(jd.number_of_processes)
-            if jd.environment != None:
-                tempjd.environment = jd.environment
-
-        tempjd.executable = str(jd.executable)
-        if jd.spmd_variation != None:
-            tempjd.spmd_variation = str(jd.spmd_variation)
-        if jd.arguments!= None:
-            tempjd.arguments = jd.arguments
-        if jd.working_directory != None:
-            tempjd.working_directory = str(jd.working_directory)
-        if jd.output != None:
-            tempjd.output = str(jd.output)
-        if jd.error !=None:
-            tempjd.error = str(jd.error)
-        return tempjd
-
 
     def add_subjob(self, jd, job_url, job_id):
-        jd=self.translatejd(jd)
-     
+        #jd=self.__translate_jd(jd)     
         if jd.attribute_exists ("FileTransfer"):
             try:
                 logger.debug("Stage input files for sub-job")
                 self.__stage_files(jd.file_transfer, self.__get_subjob_working_dir(job_id))
             except:
                 logger.error("File Stagein failed. Is Paramiko installed?")
+                
         logger.debug("add subjob to queue of PJ: " + str(self.pilot_url))        
         for i in range(0,3):
             try:
@@ -534,11 +505,7 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
                             #logger.debug("Add attribute: " + str(i) + " Value: " + str(jd.get_vector_attribute(i)))
                             vector_attr = []
                             for j in jd.get_vector_attribute(i):
-                                if type(jd.get_vector_attribute(i)) == types.DictType and str(i) == "Environment":
-                                    envi=str(j)+"="+str(jd.get_vector_attribute(i)[j])
-                                    vector_attr.append(envi)
-                                else:
-                                    vector_attr.append(j)
+                                vector_attr.append(j)
                             job_dict[i]=vector_attr
                         else:
                             #logger.debug("Add attribute: " + str(i) + " Value: " + jd.get_attribute(i))
@@ -961,13 +928,30 @@ class subjob(api.base.subjob):
             return self.job_url
         
         
-class description():
-   def __init__(self):
-        self.executable=None
-        self.number_of_processes = None
-        self.spmd_variation = None
-        self.arguments = None
-        self.environment = None
-        self.working_directory = None
-        self.output = None
-        self.error = None
+class description(SAGAJobDescription):
+    
+    def number_of_processes():
+        doc = "Number of processes to launch"
+        def fget(self):
+            return self._number_of_processes
+        
+        def fset(self, val):
+            self._number_of_processes = val
+        
+        def fdel(self, val):
+            self._number_of_processes = None
+        
+        return locals()
+    number_of_processes = property(**number_of_processes())
+    
+    def environment():
+        doc = "The environment variables to set in the job's execution context."
+        def fget(self):
+            return self._environment
+        def fset(self, val):
+            self._environment = val
+        def fdel(self, val):
+            self._environment = None
+        return locals()
+    environment = property(**environment())
+    
