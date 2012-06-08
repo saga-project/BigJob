@@ -45,16 +45,20 @@ class BigJobCLI(object):
     def cancel_pilot(self, pilot_url):
         pilot_compute = PilotCompute(pilot_url=pilot_url)
         pilot_compute.cancel()
+        self.pilots.remove(pilot_url)
+        self.__persist()
         
     
     def list_pilots(self):
-        print "Pilot Compute\t\t\t\t\t\t\t\t\tState"
+        print "\nPilot Compute\t\t\t\t\t\t\t\t\tState"
         print "-----------------------------------------------------------------------------------------------------"
-       
+        if len(self.pilots)==0:
+            print "No pilot found"
         for i in self.pilots:
             pilot_compute = PilotCompute(pilot_url=i)
             print "%s\t%s"%(pilot_compute.get_url(), pilot_compute.get_state())
-    
+        print ""
+        
     
     def list_cus(self, pilot_url):
         pilot_compute = PilotCompute(pilot_url=pilot_url)
@@ -129,12 +133,16 @@ class BigJobCLI(object):
     # private and protected methods
     
     def __persist(self):
-        pickle.dump(self.pilots, open(self.__get_save_filename(), 'wb'))
+        f = open(self.__get_save_filename(), 'wb')
+        pickle.dump(self.pilots, f)
+        f.close()
     
     def __restore(self):
         if os.path.exists(self.__get_save_filename()):
             try:
-                self.pilots = pickle.load(open(self.__get_save_filename(), 'rb'))
+                f = open(self.__get_save_filename(), 'rb')
+                self.pilots = pickle.load(f)
+                f.close()
             except:
                 pass
 
@@ -185,7 +193,7 @@ def main():
     elif parsed_arguments.submit_cu!=False:
         app.submit_cu(parsed_arguments.submit_cu[0], parsed_arguments.submit_cu[1:])
     elif parsed_arguments.run_cu!=False:
-        app.submit_cu(parsed_arguments.run_cu[0], parsed_arguments.submit_cu[1:])    
+        app.run_cu(parsed_arguments.run_cu[0], parsed_arguments.submit_cu[1:])    
     elif parsed_arguments.get_cu_state!=False:
         app.get_cu_state(parsed_arguments.get_cu_state)
     elif parsed_arguments.wait_cus!=False:
