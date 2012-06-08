@@ -80,7 +80,7 @@ class BigJobCLI(object):
 
     def submit_cu(self, pilot_url, command):
         """ submits CUs (does not waits for completion) """
-        print "submit CU to %s"%(pilot_url)
+        #print "Submit CU to %s"%(pilot_url)
         pilot_compute = PilotCompute(pilot_url=pilot_url)
         args= []
         if len(command)>1:
@@ -101,7 +101,9 @@ class BigJobCLI(object):
     def run_cu(self, pilot_url, command):
         """ submits CU and waits for completion """
         compute_unit=self.submit_cu(pilot_url, command)
+        print "Waiting for termination"
         compute_unit.wait()
+        print "CU %s terminated"%compute_unit.get_url()
         return compute_unit
 
     
@@ -193,7 +195,7 @@ def main():
     elif parsed_arguments.submit_cu!=False:
         app.submit_cu(parsed_arguments.submit_cu[0], parsed_arguments.submit_cu[1:])
     elif parsed_arguments.run_cu!=False:
-        app.run_cu(parsed_arguments.run_cu[0], parsed_arguments.submit_cu[1:])    
+        app.run_cu(parsed_arguments.run_cu[0], parsed_arguments.run_cu[1:])    
     elif parsed_arguments.get_cu_state!=False:
         app.get_cu_state(parsed_arguments.get_cu_state)
     elif parsed_arguments.wait_cus!=False:
