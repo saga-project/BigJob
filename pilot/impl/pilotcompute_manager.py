@@ -8,10 +8,9 @@ import logging
 import uuid
 
 import bigjob
-
 from bigjob import logger
 from bigjob import bigjob, subjob
-#from bigjob_dynamic.many_job import *
+
 
 from pilot.api import PilotCompute, PilotComputeService, State
 from pilot.impl.pilot_manager import ComputeUnit
@@ -172,15 +171,18 @@ class PilotCompute(PilotCompute):
     """ Wrapper for BigJob class """
      
     def __init__(self, pilot_compute_service=None, 
-                       bigjob=None, 
+                       bigjob_object=None, 
                        pilot_compute_description=None,
                        pilot_url=None):
+        
+        self.__subjobs = []
+        self.__pilot_compute_service = None
+        
         if pilot_url==None:
-            logger.debug("Create PilotCompute for BigJob: " + str(bigjob))
+            logger.debug("Create PilotCompute for BigJob: " + str(bigjob_object))
             self.pilot_compute_description=pilot_compute_description
             self.__pilot_compute_service=pilot_compute_service
-            self.__bigjob = bigjob        
-            self.__subjobs = []
+            self.__bigjob = bigjob_object        
         else:
             logger.debug("Reconnect to an existing Pilot Compute")
             self.__bigjob = bigjob(pilot_url=pilot_url)

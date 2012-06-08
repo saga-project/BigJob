@@ -2,14 +2,14 @@ import sys
 import os
 import time
 import logging
-logging.basicConfig(level=logging.DEBUG)
+#logging.basicConfig(level=logging.DEBUG)
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 from pilot import PilotComputeService, PilotDataService, ComputeDataService, State
 
 COORDINATION_URL = "advert://localhost/?dbtype=sqlite3"
 #COORDINATION_URL = "advert://SAGA:SAGA_client@advert.cct.lsu.edu:8080/?dbtype=postgresql"
-#COORDINATION_URL = "redis://localhost:6379"
+COORDINATION_URL = "redis://localhost:6379"
 
 if __name__ == "__main__":      
     

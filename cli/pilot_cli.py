@@ -46,33 +46,48 @@ class BigJobCLI(object):
         self.__persist()
 
     def cancel_pilot(self, pilot_url):
-        pass
+        pilot_compute = PilotCompute(pilot_url=pilot_url)
+        pilot_compute.cancel()
     
     def list_pilots(self):
         for i in self.pilots:
             print str(i)
     
 
-    def submit_cu(self, pilot_url, command, arguments):
+    def submit_cu(self, pilot_url, command):
+        """ submits CUs (does not waits for completion) """
+        print "submit CU to %s"%(pilot_url)
         pilot_compute = PilotCompute(pilot_url=pilot_url)
+        args= []
+        if len(command)>1:
+            args = command[1:]
         compute_unit_description = {
-            "executable": "/bin/date",
-            "arguments": [""],
+            "executable": command[0],
+            "arguments": args,
             "total_core_count": 1,
             "number_of_processes": 1,            
             "output": "stdout.txt",
             "error": "stderr.txt",
         }    
         compute_unit = pilot_compute.submit_compute_unit(compute_unit_description)
+        return compute_unit
+        
+        
+    def run_cu(self, pilot_url, command):
+        """ submits CU and waits for completion """
+        compute_unit=self.submit_cu(pilot_url, command)
         compute_unit.wait()
+        return compute_unit
 
     
     def wait_cu(self, pilot_url):
         pilot_compute = PilotCompute(pilot_url=pilot_url)
         pilot_compute.wait()
         
+        
     def cancel_cu(self, cu_url):
         pass
+    
     
     def list_cus(self, pilot_url):
         pass
@@ -101,58 +116,47 @@ if __name__ == '__main__':
 
     app = BigJobCLI()
     
-    parser = argparse.ArgumentParser(description="""BigJob Command Line Utility:
-    
-    Please use:
-    
-    python pilot_cli.py pilot --help
-    python pilot_cli.py cu --help
-    
-    for details.
-    """)
+    parser = argparse.ArgumentParser(add_help=True, description="""BigJob Command Line Utility""")
     
     parser.add_argument('--coordination', '-c', default="redis://localhost")
+    parser.add_argument('--clean', action="store_true")
+    parser.add_argument('--version', action="store_true")    
     
-    subparsers = parser.add_subparsers(help='Commands for managing pilots and compute units')
-    pilot_parser = subparsers.add_parser("pilot", help='Manage pilots')
-    cu_parser = subparsers.add_parser("cu", help='Manage compute units')
+    #subparsers = parser.add_subparsers(help='Commands for managing pilots and compute units')
+    #pilot_parser = subparsers.add_parser("pilot", help='Manage pilots')
+    #cu_parser = subparsers.add_parser("cu", help='Manage compute units')
     
-    pilot_parser.add_argument('--number_cores', default="1")
-    pilot_parser.add_argument('--cores_per_node',  default="1")
-    
-    pilot_parser.add_argument('--submit', action="store", metavar="RESOURCE_URL",
-                              default="fork://localhost", 
-                              help="submit a pilot to specified resource, e.g. fork://localhost")
-    
-    pilot_parser.add_argument('--list', action="store_true", default=False, help="list all pilots")
-    pilot_parser.add_argument('--cancel', action="store", metavar="PILOT_URL", 
+    pilot_group = parser.add_argument_group('Manage pilots')
+    pilot_group.add_argument('--number_cores', default="1")
+    pilot_group.add_argument('--cores_per_node',  default="1")    
+    pilot_group.add_argument('--submit_pilot', action="store", metavar="RESOURCE_URL", 
+                              help="submit a pilot to specified resource, e.g. fork://localhost")    
+    pilot_group.add_argument('--cancel_pilot', action="store", metavar="PILOT_URL", 
                                help="Cancel pilot")
-    
+    pilot_group.add_argument('--list_pilots', action="store_true", default=False, help="list all pilots")
     
     #pilot_parser.add_argument('cancel', nargs=2, metavar="cancel <PILOT_URL>",  action="store", 
     #                          help="cancel pilot")
     
-    cu_parser.add_argument('--submit', action="store", metavar="<PILOT_URL> <COMMAND>",  default=False)
-    cu_parser.add_argument('--cancel', action="store", metavar="<CU_URL>", default=False)
-    cu_parser.add_argument('--list', action="store_true", default=False)
-    
-    parser.add_argument('--clean', action="store_true")
-    parser.add_argument('--version', action="store_true")    
+    cu_group = parser.add_argument_group('Manage compute units')
+    cu_group.add_argument('--submit_cu', action="store", nargs="+", metavar=("PILOT_URL", "COMMAND ARGS"),  default=False)
+    cu_group.add_argument('--cancel_cu', action="store", metavar="CU_URL", default=False)
+    cu_group.add_argument('--list_cus', action="store_true", default=False)
     
     
     parsed_arguments = parser.parse_args()    
     print(str(parsed_arguments))
     
     
-    if parsed_arguments.submit==True:
+    if parsed_arguments.submit_pilot!=None:
         app.submit_pilot(coordination_url=parsed_arguments.coordination,
-                         resource_url=parsed_arguments.resource,
+                         resource_url=parsed_arguments.submit_pilot,
                          number_cores=parsed_arguments.number_cores,
                          cores_per_node=parsed_arguments.cores_per_node)    
     elif parsed_arguments.list_pilots==True:
         app.list_pilots()
-    elif parsed_arguments.submit_cu==True:
-        app.submit_cu(pilot_url, command, arguments)
+    elif parsed_arguments.submit_cu!=None:
+        app.submit_cu(parsed_arguments.submit_cu[0], parsed_arguments.submit_cu[1:])
     elif parsed_arguments.clean==True:
         app.clean()
     elif parsed_arguments.version==True:
