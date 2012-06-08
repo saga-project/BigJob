@@ -25,9 +25,9 @@ try:
         pass   
      
     if BIGJOB_VERBOSE==None: # use logging level defined in config file
-        print "Read log level from bigjob.conf"
+        #print "Read log level from bigjob.conf"
         level = default_dict["logging.level"]
-        print("Logging level: %s"%level) 
+        #print("Logging level: %s"%level) 
         if level.startswith("logging."):
             logging_level = eval(level)     
     else:
