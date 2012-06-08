@@ -16,7 +16,7 @@ from pilot.api import ComputeDataService, ComputeUnit, State
 from pilot.impl.pilotdata_manager import PilotData, DataUnit
 #from pilot.coordination.advert import AdvertCoordinationAdaptor as CoordinationAdaptor
 from pilot.coordination.nocoord import NoCoordinationAdaptor as CoordinationAdaptor
-from bliss.saga.job import Description as SAGAJobDescription
+from bigjob import description
 """ Loaded Module determines scheduler:
     
     bigdata.scheduler.data_compute_scheduler - selects random locations for PD and WUs
@@ -430,7 +430,7 @@ class ComputeUnit(ComputeUnit):
         
     # INTERNAL
     def __translate_cu_sj_description(self, compute_unit_description):
-        jd = SAGAJobDescription()
+        jd = description()
         if compute_unit_description.has_key("executable"): 
             jd.executable = compute_unit_description["executable"]
         if compute_unit_description.has_key("spmd_variation"):
