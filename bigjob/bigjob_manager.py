@@ -484,15 +484,17 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
         tempjd = SAGAJobDescription()
         if is_bliss:
             tempjd.number_of_processes = int(jd.number_of_processes)
-            envi={}
-            for env in jd.environment:
-                kv = env.split("=")
-                envi[kv[0]]=kv[1]
-            if envi:
-                tempjd.environment = envi
+            if jd.environment != None:
+                envi={}
+                for env in jd.environment:
+                    kv = env.split("=")
+                    envi[kv[0]]=kv[1]
+                if envi:
+                    tempjd.environment = envi
         else:
             tempjd.number_of_processes = str(jd.number_of_processes)
-            tempjd.environment = jd.environment
+            if jd.environment != None:
+                tempjd.environment = jd.environment
 
         tempjd.executable = str(jd.executable)
         if jd.spmd_variation != None:
