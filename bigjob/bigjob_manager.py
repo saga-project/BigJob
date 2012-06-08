@@ -479,8 +479,8 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
             if url.find("/")>0:
                 url = url[url.find("bigjob"):]
                 url =  url.replace("/", ":")    
-            sj = subjob(job_url=url)
-            subjobs.append(sj)
+            sj = subjob(coordination_url=self.coordination_url, subjob_url=url)
+            subjobs.append(sj.get_url())
         return subjobs
 
 
@@ -554,18 +554,19 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
             return None
         
     def get_url(self):
-        """ Get unique URL of BigJob. This URL can be used to reconnect to BJ later, e.g.:
+        """ Get unique URL of big-job. This URL can be used to reconnect to BJ later, e.g.:
         
             redis://localhost/bigjob:bj-1c3816f0-ad5f-11e1-b326-109addae22a3:localhost             
         
         """
         url = os.path.join(self.coordination.address, 
-                            self.pilot_url)        
+                           self.pilot_url)        
         if self.coordination.dbtype!="" and self.coordination.dbtype!=None:
             url = os.path.join(url, "?" + self.coordination.dbtype)            
         return url
     
     
+     
     
     def get_free_nodes(self):
         jobs = self.coordination.get_jobs_of_pilot(self.pilot_url)
@@ -634,7 +635,20 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
 
 
     ###########################################################################
-    # internal methods
+    # internal and protected methods
+    def _get_subjob_url(self, subjob_url):
+        """ Get unique URL for a sub-job. This URL can be used to reconnect to SJ later, e.g.:
+        
+            redis://localhost/bigjob:bj-9a9ba4d8-b162-11e1-9c42-109addae22a3:localhost:jobs:sj-6f44da6e-b178-11e1-bc99-109addae22a3
+        """
+        url = subjob_url
+        if subjob_url.find("bigjob")==0:
+            url = os.path.join(self.coordination.address, 
+                               subjob_url)        
+            if self.coordination.dbtype!="" and self.coordination.dbtype!=None:
+                url = os.path.join(url, "?" + self.coordination.dbtype)            
+        return url
+  
     def __parse_pilot_url(self, pilot_url):
         #pdb.set_trace()        
         dbtype = None
@@ -842,41 +856,35 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
                     
 class subjob(api.base.subjob):
     
-    def __init__(self, coordination_url=None, job_url=None):
+    def __init__(self, coordination_url=None, subjob_url=None):
         """Constructor"""
         
         self.coordination_url = coordination_url
-        if job_url!=None:
-            self.job_url=job_url
-            self.uuid = self.__get_sj_id(job_url)
-            self.pilot_url = self.__get_pilot_url(job_url)
+        if subjob_url!=None:
+            self.job_url = subjob_url[subjob_url.index("bigjob"):]
+            if self.coordination_url==None:
+                self.coordination_url, self.job_url=self.__parse_subjob_url(subjob_url)
+            self.uuid = self.__get_sj_id(subjob_url)
+            self.pilot_url = self.__get_pilot_url(subjob_url)
+            if self.pilot_url.startswith("bigjob"):
+                self.pilot_url=os.path.join(self.coordination_url, self.pilot_url)
+            self.bj = bigjob(pilot_url=self.pilot_url)
             logger.debug("Reconnect SJ: %s Pilot %s"%(self.job_url, self.pilot_url))
         else:
             self.uuid = "sj-" + str(get_uuid())
             self.job_url = None
             self.pilot_url = None
             self.bj = None
-            
-    
-    def __get_sj_id(self, job_url):
-        start = job_url.index("sj-")        
-        return job_url[start:]
     
     
-    def __get_pilot_url(self, job_url):
-        end =job_url.index(":jobs")
-        return job_url[:end]    
-    
-                    
-    def get_job_url(self, pilot_url):
-        self.job_url = pilot_url + ":jobs:" + str(self.uuid)
-        return self.job_url
+    def get_url(self):
+        return self.bj._get_subjob_url(self.__get_subjob_url(self.pilot_url))
     
 
     def submit_job(self, pilot_url, jd):
         """ submit subjob to referenced bigjob """
         if self.job_url==None:
-            self.job_url=self.get_job_url(pilot_url)            
+            self.job_url=self.__get_subjob_url(pilot_url)            
         
         if self.pilot_url==None:
             self.pilot_url = pilot_url
@@ -900,12 +908,14 @@ class subjob(api.base.subjob):
         if str(self.bj.get_state())=="Running":
             self.bj.delete_subjob(self.job_url)        
         
+        
     def get_exe(self, pilot_url=None):
         if self.pilot_url==None:
             self.pilot_url = pilot_url
             self.bj=pilot_url_dict[pilot_url]  
         sj = self.bj.get_subjob_details(self.job_url)
         return sj["Executable"]
+   
    
     def get_arguments(self, pilot_url=None):
         if self.pilot_url==None:
@@ -917,43 +927,84 @@ class subjob(api.base.subjob):
         for  i in  sj["Arguments"]:
             arguments = arguments + " " + i
         return arguments
+    
 
     def __del__(self):
         """ Do nothing - keep subjobs alive and allow a later reconnection"""
         pass
         #self.cancel()
+        
     
     def __repr__(self):        
         if(self.job_url==None):
             return "None"
         else:
             return self.job_url
+    
+    ###########################################################################
+    # Internal and protected methods
+        
+    def __get_sj_id(self, job_url):
+        start = job_url.index("sj-")        
+        return job_url[start:]
+    
+    
+    def __get_pilot_url(self, job_url):
+        end =job_url.index(":jobs")
+        return job_url[:end]    
+    
+                    
+    def __get_subjob_url(self, pilot_url):
+        pilot_url = pilot_url[pilot_url.find("bigjob"):]
+        self.job_url = pilot_url + ":jobs:" + str(self.uuid)
+        return self.job_url
+    
+    def __parse_subjob_url(self, subjob_url):
+        #pdb.set_trace()        
+        dbtype = None
+        coordination = subjob_url[:subjob_url.index("bigjob")]
+        sj_url = subjob_url[subjob_url.find("bigjob"):]
+        if sj_url.find("/") > 0:
+            comp = sj_url.split("/")
+            sj_url = comp[0]
+            if comp[1].find("dbtype")>0:
+                dbtype=comp[1][comp[1].find("dbtype"):]
+        
+        if dbtype!=None:
+            coordination = os.path.join(coordination, "?"+dbtype)
+        logger.debug("Parsed URL - Coordination: %s Pilot: %s"%(coordination, sj_url))    
+        return coordination, sj_url
         
         
+###############################################################################
+## Properties for description class
+
+def number_of_processes():
+    doc = "Number of processes to launch"
+    def fget(self):
+        return self._number_of_processes
+    
+    def fset(self, val):
+        self._number_of_processes = val
+    
+    def fdel(self, val):
+        self._number_of_processes = None
+    
+    return locals()
+
+
+def environment():
+    doc = "The environment variables to set in the job's execution context."
+    def fget(self):
+        return self._environment
+    def fset(self, val):
+        self._environment = val
+    def fdel(self, val):
+        self._environment = None
+    return locals()
+
+     
 class description(SAGAJobDescription):
-    
-    def number_of_processes():
-        doc = "Number of processes to launch"
-        def fget(self):
-            return self._number_of_processes
-        
-        def fset(self, val):
-            self._number_of_processes = val
-        
-        def fdel(self, val):
-            self._number_of_processes = None
-        
-        return locals()
+    """ Sub-job description """
     number_of_processes = property(**number_of_processes())
-    
-    def environment():
-        doc = "The environment variables to set in the job's execution context."
-        def fget(self):
-            return self._environment
-        def fset(self, val):
-            self._environment = val
-        def fdel(self, val):
-            self._environment = None
-        return locals()
-    environment = property(**environment())
-    
+    environment = property(**environment())   

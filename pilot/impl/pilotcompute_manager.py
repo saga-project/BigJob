@@ -167,6 +167,7 @@ class PilotComputeService(PilotComputeService):
                            filetransfers=bj_filetransfer)
         return bj
     
+    
 class PilotCompute(PilotCompute):
     """ Wrapper for BigJob class """
      
@@ -191,37 +192,54 @@ class PilotCompute(PilotCompute):
     def cancel(self):
         self.__bigjob.cancel()    
     
+    
     def get_state(self):
         return self.__bigjob.get_state()    
+    
     
     def wait(self):
         """ Waits for completion of CUs """
         self.__bigjob.wait()
     
+    
+    def list_cus(self):
+        """ Returns a list of compute units managed by the pilot """
+        sj_list = self.__bigjob.list_subjobs()
+        cu_list = []
+        for i in sj_list:
+            cu_list.append(ComputeUnit(cu_url=i))
+        return cu_list
+    
+    
     def get_url(self):
-        #return self.__bigjob.pilot_url
+        """ Get unique URL referencing the Pilot Compute """
         return self.__bigjob.get_url()
-        
+    
+    
     def get_free_nodes(self):
         return self.__bigjob.get_free_nodes()
+       
     
-    def submit_cu(self, compute_unit):
+    def submit_compute_unit(self, compute_unit_description):
+        """ Submits work unit to Bigjob """
+        cu = ComputeUnit(compute_unit_description)
+        return self._submit_cu(cu)
+    
+    
+    def __repr__(self):
+        return str(self.__bigjob)
+        
+    ###########################################################################
+    # Internal methods
+        
+    def _submit_cu(self, compute_unit):
         """ Submits compute unit to Bigjob """
         logger.debug("Submit CU to big-job")
         sj = subjob()
         sj.submit_job(self.__bigjob.pilot_url, compute_unit.subjob_description)
         self.__subjobs.append(sj)
-        compute_unit.subjob=sj
+        compute_unit._update_subjob(sj)
         return compute_unit
-    
-    def submit_compute_unit(self, compute_unit_description):
-        """ Submits work unit to Bigjob """
-        cu = ComputeUnit(compute_unit_description)
-        return self.submit_cu(cu)
-    
-    def __repr__(self):
-        return str(self.__bigjob)
-        
         
         
         

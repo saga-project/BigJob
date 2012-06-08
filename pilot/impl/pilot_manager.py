@@ -16,7 +16,7 @@ from pilot.api import ComputeDataService, ComputeUnit, State
 from pilot.impl.pilotdata_manager import PilotData, DataUnit
 #from pilot.coordination.advert import AdvertCoordinationAdaptor as CoordinationAdaptor
 from pilot.coordination.nocoord import NoCoordinationAdaptor as CoordinationAdaptor
-from bigjob import description
+from bigjob import bigjob, subjob, description
 """ Loaded Module determines scheduler:
     
     bigdata.scheduler.data_compute_scheduler - selects random locations for PD and WUs
@@ -292,7 +292,7 @@ class ComputeDataService(ComputeDataService):
                     pj=self._schedule_cu(cu) 
                     if pj !=None:
                         cu = self.__expand_working_directory(cu, pj)                        
-                        pj.submit_cu(cu)           
+                        pj._submit_cu(cu)           
                         self.cu_queue.task_done()         
                     else:
                         logger.debug("No resource found.")
@@ -380,24 +380,35 @@ class ComputeUnit(ComputeUnit):
     """ ComputeUnit - Wrapper for BigJob subjob """
     CU_ID_PREFIX="cu-"  
 
-    def __init__(self, compute_unit_description, compute_data_service=None):
-        self.id = self.CU_ID_PREFIX + str(uuid.uuid1())
-        if compute_data_service!=None:
-            self.url = compute_data_service.url + "/" + self.id
-            logger.debug("Created CU: %s"%self.url)  
-        self.state = State.New       
-        self.subjob = None # reference to BigJob Subjob 
-        self.compute_unit_description = compute_unit_description # CU Description
-        self.subjob_description = self.__translate_cu_sj_description(compute_unit_description)
+    def __init__(self, compute_unit_description=None, compute_data_service=None, cu_url=None):
+        
+        if cu_url==None:
+            self.id = self.CU_ID_PREFIX + str(uuid.uuid1())
+            if compute_data_service!=None:
+                self.url = compute_data_service.url + "/" + self.id
+                logger.debug("Created CU: %s"%self.url)  
+            self.state = State.New       
+            self.__subjob = None # reference to BigJob Subjob 
+            self.compute_unit_description = compute_unit_description # CU Description
+            self.subjob_description = self.__translate_cu_sj_description(compute_unit_description)
+        else:
+            self.__subjob = subjob(subjob_url=cu_url)
            
-                
+    
     def get_id(self):
         return self.id
     
     
+    def get_url(self):   
+        if self.__subjob!=None:      
+            return self.__subjob.get_url()
+        else:
+            return self.get_id()   
+        
+    
     def get_state(self):
-        if self.subjob != None:
-            return self.subjob.get_state()
+        if self.__subjob != None:
+            self.state = self.__subjob.get_state()
         return self.state
     
     
@@ -411,13 +422,11 @@ class ComputeUnit(ComputeUnit):
             if state==State.Done or state==State.Failed:
                 break
             time.sleep(2)
-            
-        #logger.debug("### END CU wait")
 
     
     def cancel(self):
-        if self.subjob != None:
-            return self.subjob.cancel()
+        if self.__subjob != None:
+            return self.__subjob.cancel()
         return None
     
     def __repr__(self):
@@ -425,8 +434,11 @@ class ComputeUnit(ComputeUnit):
 
     
     def _update_compute_unit_description(self, compute_unit_description):
-        self.compute_unit_description = compute_unit_description # WU Description
+        self.compute_unit_description = compute_unit_description # CU Description
         self.subjob_description = self.__translate_cu_sj_description(compute_unit_description)
+
+    def _update_subjob(self, subjob):
+        self.__subjob = subjob
         
     # INTERNAL
     def __translate_cu_sj_description(self, compute_unit_description):
