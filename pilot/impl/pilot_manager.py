@@ -380,10 +380,10 @@ class ComputeUnit(ComputeUnit):
     """ ComputeUnit - Wrapper for BigJob subjob """
     CU_ID_PREFIX="cu-"  
 
-    def __init__(self, compute_unit_description, work_data_service=None):
+    def __init__(self, compute_unit_description, compute_data_service=None):
         self.id = self.CU_ID_PREFIX + str(uuid.uuid1())
-        if work_data_service!=None:
-            self.url = work_data_service.url + "/" + self.id
+        if compute_data_service!=None:
+            self.url = compute_data_service.url + "/" + self.id
             logger.debug("Created CU: %s"%self.url)  
         self.state = State.New       
         self.subjob = None # reference to BigJob Subjob 

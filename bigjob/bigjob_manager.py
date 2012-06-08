@@ -132,15 +132,18 @@ class bigjob(api.base.bigjob):
             if pilot_url.startswith("bigjob:"):
                 self.pilot_url=pilot_url
             else:
-                self.coordination, self.pilot_url = self.__parse_pilot_url(pilot_url)
+                self.coordination_url, self.pilot_url = self.__parse_pilot_url(pilot_url)
                 
             self.uuid = self.__get_bj_id(pilot_url)
             self.app_url = self.__APPLICATION_NAME +":" + str(self.uuid)
             self.job = None
             self.working_directory = None
+            # Coordination subsystem must be initialized before get_state_detail
+            self.coordination = self.__init_coordination(self.coordination_url)
             self.state=self.get_state_detail()
             pilot_url_dict[self.pilot_url]=self
         else:
+            self.coordination = self.__init_coordination(self.coordination_url)
             self.uuid = "bj-" + str(get_uuid())        
             logger.debug("init BigJob w/: " + coordination_url)
             self.app_url =self. __APPLICATION_NAME +":" + str(self.uuid) 
@@ -150,7 +153,7 @@ class bigjob(api.base.bigjob):
             self.working_directory = None
             logger.debug("initialized BigJob: " + self.app_url)
         
-        self.coordination = self.__init_coordination(coordination_url)
+        
         
         
        
@@ -557,11 +560,9 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
         
         """
         url = os.path.join(self.coordination.address, 
-                            self.pilot_url)
-        
-        if self.coordination.dbtype!="" or self.coordination.dbtype!=None:
-            url = os.path.join(url, "?" + self.coordination.dbtype)
-            
+                            self.pilot_url)        
+        if self.coordination.dbtype!="" and self.coordination.dbtype!=None:
+            url = os.path.join(url, "?" + self.coordination.dbtype)            
         return url
     
     
@@ -647,6 +648,7 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
         
         if dbtype!=None:
             coordination = os.path.join(coordination, "?"+dbtype)
+        logger.debug("Parsed URL - Coordination: %s Pilot: %s"%(coordination, pilot_url))    
         return coordination, pilot_url
     
     
