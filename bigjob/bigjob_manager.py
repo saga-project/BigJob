@@ -16,8 +16,8 @@ import traceback
 import logging
 import textwrap
 import urlparse
-import subprocess
 import types
+import subprocess
 import pdb
 
 from bigjob import SAGA_BLISS 
@@ -479,8 +479,38 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
             sj = subjob(job_url=url)
             subjobs.append(sj)
         return subjobs
-     
+
+    def translatejd(self,jd):
+        tempjd = SAGAJobDescription()
+        if is_bliss:
+            tempjd.number_of_processes = int(jd.number_of_processes)
+            envi={}
+            for env in jd.environment:
+                kv = env.split("=")
+                envi[kv[0]]=kv[1]
+            if envi:
+                tempjd.environment = envi
+        else:
+            tempjd.number_of_processes = str(jd.number_of_processes)
+            tempjd.environment = jd.environment
+
+        tempjd.executable = str(jd.executable)
+        if jd.spmd_variation != None:
+            tempjd.spmd_variation = str(jd.spmd_variation)
+        if jd.arguments!= None:
+            tempjd.arguments = jd.arguments
+        if jd.working_directory != None:
+            tempjd.working_directory = str(jd.working_directory)
+        if jd.output != None:
+            tempjd.output = str(jd.output)
+        if jd.error !=None:
+            tempjd.error = str(jd.error)
+        return tempjd
+
+
     def add_subjob(self, jd, job_url, job_id):
+        jd=self.translatejd(jd)
+     
         if jd.attribute_exists ("FileTransfer"):
             try:
                 logger.debug("Stage input files for sub-job")
@@ -502,7 +532,6 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
                             #logger.debug("Add attribute: " + str(i) + " Value: " + str(jd.get_vector_attribute(i)))
                             vector_attr = []
                             for j in jd.get_vector_attribute(i):
-                                # BLISS handles environment variables different than SAGA C++/Python
                                 if type(jd.get_vector_attribute(i)) == types.DictType and str(i) == "Environment":
                                     envi=str(j)+"="+str(jd.get_vector_attribute(i)[j])
                                     vector_attr.append(envi)
@@ -727,7 +756,7 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
                 from pilot.filemanagement.ssh_adaptor import SSHFileAdaptor
                 self.__filemanager = SSHFileAdaptor(service_url) 
             except:
-                logger.warn("SSH/Paramiko package not found.")            
+                logger.debug("SSH/Paramiko package not found.")            
                 self.__print_traceback()
         elif service_url.startswith("http:"):
             logger.debug("Use WebHDFS backend")
@@ -735,14 +764,14 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
                 from pilot.filemanagement.webhdfs_adaptor import WebHDFSFileAdaptor
                 self.__filemanager = WebHDFSFileAdaptor(service_url)
             except:
-                logger.warn("WebHDFS package not found.")        
+                logger.debug("WebHDFS package not found.")        
         elif service_url.startswith("go:"):
             logger.debug("Use Globus Online backend")
             try:
                 from pilot.filemanagement.globusonline_adaptor import GlobusOnlineFileAdaptor
                 self.__filemanager = GlobusOnlineFileAdaptor(service_url)
             except:
-                logger.warn("Globus Online package not found.") 
+                logger.debug("Globus Online package not found.") 
                 self.__print_traceback()
                 
             
@@ -930,5 +959,13 @@ class subjob(api.base.subjob):
             return self.job_url
         
         
-class description(SAGAJobDescription):
-    pass
+class description():
+   def __init__(self):
+        self.executable=None
+        self.number_of_processes = None
+        self.spmd_variation = None
+        self.arguments = None
+        self.environment = None
+        self.working_directory = None
+        self.output = None
+        self.error = None
