@@ -48,9 +48,12 @@ class BigJobCLI(object):
         
     
     def list_pilots(self):
-        print "Pilot Compute\t\tState"
+        print "Pilot Compute\t\t\t\t\t\t\t\t\tState"
+        print "-----------------------------------------------------------------------------------------------------"
+       
         for i in self.pilots:
-            print "%s\t%s"%(i.get_url(), i.get_state())
+            pilot_compute = PilotCompute(pilot_url=i)
+            print "%s\t%s"%(pilot_compute.get_url(), pilot_compute.get_state())
     
     
     def list_cus(self, pilot_url):
