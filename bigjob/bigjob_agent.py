@@ -94,6 +94,9 @@ class bigjob_agent:
         # initialization of coordination and communication subsystem
         # Redis initialization
         self.base_url = args[2]
+        self.cds_queue_url = None
+        if len(args)>3:
+            self.cds_queue_url = args[3]
         self.id = self.__get_bj_id(self.base_url)
         logger.debug("BigJob Agent arguments: " + str(args))
         logger.debug("Initialize C&C subsystem to pilot-url: " + self.base_url)
@@ -554,8 +557,13 @@ class bigjob_agent:
             job_url=self.coordination.dequeue_job(self.base_url)
             logger.debug("Dequed:%s"%str(job_url))
             if job_url==None:
-                time.sleep(3)
-                continue
+                if self.cds_queue_url!=None:
+                    logger.debug("Dequeue sub-job from: " + self.cds_queue_url)       
+                    job_url=self.coordination.dequeue_job(self.cds_queue_url)
+                    logger.debug("Dequed:%s"%str(job_url))
+                if job_url==None:
+                    time.sleep(3)
+                    continue
             if job_url=="STOP":
                 break
             

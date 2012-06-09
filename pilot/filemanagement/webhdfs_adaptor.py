@@ -4,8 +4,6 @@ import urlparse
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)) + "/../../../webhdfs-py/")
 
-
-
 from pilot.api import State
 from bigjob import logger
 logger.debug(str(sys.path))

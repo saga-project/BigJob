@@ -1,5 +1,5 @@
 """
-Implementation of the ComputeDataService
+Implementation of the ComputeDataService (decentral)
 
 A Meta-Scheduling service for pilots (both PilotCompute and PilotData)
 """
@@ -18,8 +18,9 @@ import urlparse
 import bigjob
 import pilot
 from bigjob import logger
-from pilot.api import ComputeDataService, ComputeUnit, State
+from pilot.api import ComputeUnit, State
 from pilot.impl.pilotdata_manager import PilotData, DataUnit
+from pilot.impl.pilot_manager import ComputeDataService
 #from pilot.coordination.advert import AdvertCoordinationAdaptor as CoordinationAdaptor
 from pilot.coordination.nocoord import NoCoordinationAdaptor as CoordinationAdaptor
 from bigjob import bigjob, subjob, description
@@ -32,7 +33,7 @@ from bigjob import bigjob, subjob, description
 """
 from pilot.scheduler.data_compute_affinity_scheduler import Scheduler
 
-class ComputeDataService(ComputeDataService):
+class ComputeDataServiceDecentral(ComputeDataService):
     """ ComputeDataService.
     
         The ComputeDataService is the application's interface to submit 
@@ -52,7 +53,7 @@ class ComputeDataService(ComputeDataService):
         self.data_units={}
         self.pilot_data_services=[]
         
-        # Pilot Job
+        # Pilot Compute
         self.compute_units={}
         self.pilot_job_services=[]
             
@@ -380,95 +381,4 @@ class ComputeDataService(ComputeDataService):
         pass
    
     
-    
-class ComputeUnit(ComputeUnit):
-    """ ComputeUnit - Wrapper for BigJob subjob """
-    CU_ID_PREFIX="cu-"  
-
-    def __init__(self, compute_unit_description=None, compute_data_service=None, cu_url=None):
-        
-        if cu_url==None:
-            self.id = self.CU_ID_PREFIX + str(uuid.uuid1())
-            if compute_data_service!=None:
-                self.url = compute_data_service.url + "/" + self.id
-                logger.debug("Created CU: %s"%self.url)  
-            self.state = State.New       
-            self.__subjob = None # reference to BigJob Subjob 
-            self.compute_unit_description = compute_unit_description # CU Description
-            self.subjob_description = self.__translate_cu_sj_description(compute_unit_description)
-        else:
-            self.__subjob = subjob(subjob_url=cu_url)
-           
-    
-    def get_id(self):
-        return self.id
-    
-    
-    def get_url(self):   
-        if self.__subjob!=None:      
-            return self.__subjob.get_url()
-        else:
-            return self.get_id()   
-        
-    
-    def get_state(self):
-        if self.__subjob != None:
-            self.state = self.__subjob.get_state()
-        return self.state
-    
-    
-    def wait(self):
-        """ Wait until in Done state 
-            (or Failed state)
-        """
-        while True:
-            state = self.get_state()
-            logger.debug("Compute Unit - State: %s"%state)            
-            if state==State.Done or state==State.Failed:
-                break
-            time.sleep(2)
-
-    
-    def cancel(self):
-        if self.__subjob != None:
-            return self.__subjob.cancel()
-        return None
-    
-    def __repr__(self):
-        return self.id
-
-    
-    def _update_compute_unit_description(self, compute_unit_description):
-        self.compute_unit_description = compute_unit_description # CU Description
-        self.subjob_description = self.__translate_cu_sj_description(compute_unit_description)
-
-    def _update_subjob(self, subjob):
-        self.__subjob = subjob
-        
-    # INTERNAL
-    def __translate_cu_sj_description(self, compute_unit_description):
-        jd = description()
-        if compute_unit_description.has_key("executable"): 
-            jd.executable = compute_unit_description["executable"]
-        if compute_unit_description.has_key("spmd_variation"):
-            jd.spmd_variation = compute_unit_description["spmd_variation"]
-        else:
-            jd.spmd_variation = "single"
-        if compute_unit_description.has_key("arguments"): 
-            jd.arguments = compute_unit_description["arguments"]
-        if compute_unit_description.has_key("environment"):
-            jd.environment = compute_unit_description["environment"] 
-        if compute_unit_description.has_key("total_cpu_count"):
-            jd.number_of_processes=int(compute_unit_description["total_cpu_count"])
-        else:
-            jd.number_of_processes=1
-        if compute_unit_description.has_key("working_directory"): 
-            jd.working_directory = compute_unit_description["working_directory"]
-        if compute_unit_description.has_key("output"): 
-            jd.output =  compute_unit_description["output"]
-        if compute_unit_description.has_key("error"): 
-            jd.error = compute_unit_description["error"]
-        if compute_unit_description.has_key("file_transfer"):
-            jd.file_transfer=compute_unit_description["file_transfer"]            
-        return jd
-        
+   

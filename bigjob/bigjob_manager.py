@@ -48,7 +48,12 @@ else:
         logger.warn("SAGA Bliss not found")
 
 
+"""BigJob Job Description is always derived from BLISS Job Description
+   BLISS Job Description behaves compatible to SAGA C++ job description
+"""
+import bliss.saga.job.Description
 
+"""BLISS / SAGA C++ detection """
 if is_bliss:
     import bliss.saga as saga
     from bliss.saga import Url as SAGAUrl
@@ -1004,7 +1009,7 @@ def environment():
     return locals()
 
      
-class description(SAGAJobDescription):
+class description(bliss.saga.job.Description):
     """ Sub-job description """
     number_of_processes = property(**number_of_processes())
     environment = property(**environment())   
