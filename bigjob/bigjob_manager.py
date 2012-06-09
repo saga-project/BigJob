@@ -212,14 +212,14 @@ class bigjob(api.base.bigjob):
                  userproxy=None,
                  walltime=None,
                  processes_per_node=1,
-                 filetransfers=None):
+                 filetransfers=None,
+                 external_queue=""):
         """ Start a batch job (using SAGA Job API) at resource manager. Currently, the following resource manager are supported:
             fork://localhost/ (Default Job Adaptor
             gram://qb1.loni.org/jobmanager-pbs (Globus Adaptor)
             pbspro://localhost (PBS Prop Adaptor)
         
-        """
-         
+        """         
         if self.job != None:
             raise BigJobError("One BigJob already active. Please stop BigJob first.") 
             return
@@ -301,7 +301,7 @@ class bigjob(api.base.bigjob):
         ##############################################################################
         # Create and process BJ bootstrap script
         logger.debug("Adaptor specific modifications: "  + str(lrms_saga_url.scheme))
-        bootstrap_script = self.generate_bootstrap_script(self.coordination.get_address(), self.pilot_url)
+        bootstrap_script = self.generate_bootstrap_script(self.coordination.get_address(), self.pilot_url, external_queue)
         if is_bliss:
             bootstrap_script = self.escape_bliss(bootstrap_script)
         else:
@@ -391,7 +391,7 @@ class bigjob(api.base.bigjob):
         return self.pilot_url
 
 
-    def generate_bootstrap_script(self, coordination_host, coordination_namespace):
+    def generate_bootstrap_script(self, coordination_host, coordination_namespace, coordination_external_queue):
         script = textwrap.dedent("""import sys
 import os
 import urllib
@@ -443,10 +443,11 @@ args = list()
 args.append("bigjob_agent.py")
 args.append(\"%s\")
 args.append(\"%s\")
+args.append(\"%s\")
 print "Bootstrap time: " + str(time.time()-start_time)
 print "Starting BigJob Agents with following args: " + str(args)
 bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
-""" % (coordination_host, coordination_namespace))
+""" % (coordination_host, coordination_namespace, coordination_external_queue))
         return script
 
     def escape_rsl(self, bootstrap_script):
@@ -487,6 +488,39 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
             sj = subjob(coordination_url=self.coordination_url, subjob_url=url)
             subjobs.append(sj.get_url())
         return subjobs
+
+    @classmethod
+    def add_external_subjob(self, queue_url, jd, job_url, job_id):
+        logger.debug("add subjob to queue of PJ: " + str(queue_url))        
+        for i in range(0,3):
+            try:
+                logger.debug("create dictionary for job description. Job-URL: " + job_url)
+                # put job description attributes to Coordination Service
+                job_dict = {}
+                # to accomendate current bug in bliss (Number of processes is not returned from list attributes)
+                job_dict["NumberOfProcesses"] = "1" 
+                attributes = jd.list_attributes()   
+                logger.debug("SJ Attributes: " + str(jd))             
+                for i in attributes:          
+                        if jd.attribute_is_vector(i):
+                            vector_attr = []
+                            for j in jd.get_vector_attribute(i):
+                                vector_attr.append(j)
+                            job_dict[i]=vector_attr
+                        else:
+                            #logger.debug("Add attribute: " + str(i) + " Value: " + jd.get_attribute(i))
+                            job_dict[i] = jd.get_attribute(i)
+                
+                job_dict["state"] = str(Unknown)
+                job_dict["job-id"] = str(job_id)
+                
+                #logger.debug("update job description at communication & coordination sub-system")
+                self.coordination.set_job(job_url, job_dict)                                                
+                self.coordination.queue_job(queue_url, job_url)
+                break
+            except:
+                self.__print_traceback()
+                time.sleep(2)
 
 
     def add_subjob(self, jd, job_url, job_id):

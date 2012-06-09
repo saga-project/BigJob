@@ -26,7 +26,7 @@ from bigjob import bigjob, subjob, description
 
 """ Loaded Module determines scheduler:
     
-    bigdata.scheduler.data_compute_scheduler - selects random locations for PD and WUs
+    bigdata.scheduler.data_compute_scheduler - selects random locations for PD and CUs
     bigdata.scheduler.data_compute_affinity_scheduler - considers affinity descriptions
     
 """

@@ -55,9 +55,11 @@ class PilotComputeService(PilotComputeService):
         
         if pcs_url==None:      # new pjs          
             self.id = self.PJS_ID_PREFIX+str(uuid.uuid1())
-            self.url = "pilotjob://localhost/"+self.id
+            self.url = os.path.join(self.coordination_url, "pcs", self.id)
+            logger.debug("Created Pilot Compute Service: %s"%self.url)
         else:
             logger.error("Reconnect to PCS currently not supported.")
+            
             
 
     def create_pilot(self, rm=None, pilot_compute_description=None, pj_type=None, context=None):
@@ -74,6 +76,7 @@ class PilotComputeService(PilotComputeService):
         pj = PilotCompute(self, bj, pilot_compute_description)
         self.pilot_computes.append(pj)
         return pj
+    
         
     def __translate_pj_bj_description(self, pilot_compute_description):
         resource_description={}
@@ -111,7 +114,6 @@ class PilotComputeService(PilotComputeService):
             Result of operation
         """
         pass
-        #self.__mjs.cancel()
         
         
 #    def submit_cu(self, compute_unit):
@@ -174,11 +176,10 @@ class PilotCompute(PilotCompute):
     def __init__(self, pilot_compute_service=None, 
                        bigjob_object=None, 
                        pilot_compute_description=None,
-                       pilot_url=None):
+                       pilot_url=None): # for reconnecting
         
         self.__subjobs = []
         self.__pilot_compute_service = None
-        
         if pilot_url==None:
             logger.debug("Create PilotCompute for BigJob: " + str(bigjob_object))
             self.pilot_compute_description=pilot_compute_description
@@ -187,6 +188,12 @@ class PilotCompute(PilotCompute):
         else:
             logger.debug("Reconnect to an existing Pilot Compute")
             self.__bigjob = bigjob(pilot_url=pilot_url)
+        
+        # Store the URL of pilot compute service for later reference
+        # This URL is used as central queue for a set of BJs in the
+        # ComputeDataServiceDecentral
+        if self.__pilot_compute_service!=None:
+            self.pilot_compute_service_url = pilot_compute_service.url
             
         
     def cancel(self):
