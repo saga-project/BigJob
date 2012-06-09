@@ -8,3 +8,5 @@ BigJob.egg-info/*
 build/*
 cli/bj-*
 examples/pilot-api/work/bj-*
+dump.rdb
+*.log
