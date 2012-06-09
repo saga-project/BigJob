@@ -12,7 +12,10 @@ class RedisCoordinationAdaptor:
     """
     BASE_URL="redis://localhost:6379/"    
     PILOT_PATH="pilot"
-    COMPUTE_DATA_SERVICE_PATH = PILOT_PATH + "/cds"
+    PILOT_DATA_PATH=PILOT_PATH
+    PILOT_DATA_SERVICE_PATH=PILOT_DATA_PATH+"/pds"
+    DATA_UNIT_SERVICE_PATH=PILOT_DATA_PATH+"/dus"
+    COMPUTE_DATA_SERVICE_PATH = PILOT_DATA_PATH + "/cds"
 
     
     ###########################################################################
@@ -140,13 +143,13 @@ class RedisCoordinationAdaptor:
     
     @classmethod
     def get_pds_url(cls, application_url, pds_id):
-        pds_url = application_url+NoCoordinationAdaptor.PILOT_DATA_SERVICE_PATH+"/"+pds_id        
+        pds_url = application_url+RedisCoordinationAdaptor.PILOT_DATA_SERVICE_PATH+"/"+pds_id        
         logger.debug("PDS URL: %s"%(pds_url))
         return pds_url
     
     @classmethod
     def get_cds_url(cls, application_url, cds_id):
-        cds_url = application_url+NoCoordinationAdaptor.COMPUTE_DATA_SERVICE_PATH+"/"+cds_id        
+        cds_url = application_url+RedisCoordinationAdaptor.COMPUTE_DATA_SERVICE_PATH+"/"+cds_id        
         logger.debug("CDS URL: %s"%(cds_url))
         return cds_url
     

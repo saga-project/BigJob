@@ -15,7 +15,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../.."))
 #sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from pilot.api import State
 from bigjob import logger
-
+import bliss.saga as saga
 
 class BlissFileAdaptor(object):
     """ BigData File Management for Pilot Data """
