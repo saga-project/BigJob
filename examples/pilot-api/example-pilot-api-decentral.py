@@ -49,7 +49,8 @@ if __name__ == "__main__":
             "affinity_datacenter_label": "eu-de-south",              
             "affinity_machine_label": "mymachine" 
     }    
-    compute_unit = compute_data_service.submit_compute_unit(compute_unit_description)
+    for i in range(0, 128):
+        compute_unit = compute_data_service.submit_compute_unit(compute_unit_description)
     
     
     print("Finished setup. Waiting for scheduling of CU")

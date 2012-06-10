@@ -158,49 +158,6 @@ class bigjob(api.base.bigjob):
             self.working_directory = None
             logger.debug("initialized BigJob: " + self.app_url)
         
-        
-        
-        
-       
-    def __get_bj_id(self, pilot_url):
-        start = pilot_url.index("bj-")
-        end =pilot_url.index(":", start)
-        return pilot_url[start:end]
-    
-     
-    def __init_coordination(self, coordination_url):        
-        if(coordination_url.startswith("advert://") or coordination_url.startswith("sqlasyncadvert://")):
-            try:
-                from coordination.bigjob_coordination_advert import bigjob_coordination
-                logger.debug("Utilizing ADVERT Backend")
-            except:
-                logger.error("Advert Backend could not be loaded")
-        elif (coordination_url.startswith("redis://")):
-            try:
-                from coordination.bigjob_coordination_redis import bigjob_coordination      
-                logger.debug("Utilizing Redis Backend")
-            except:
-                logger.error("Error loading pyredis.")
-        elif (coordination_url.startswith("tcp://")):
-            try:
-                from coordination.bigjob_coordination_zmq import bigjob_coordination
-                logger.debug("Utilizing ZMQ Backend")
-            except:
-                logger.error("ZMQ Backend not found. Please install ZeroMQ (http://www.zeromq.org/intro:get-the-software) and " 
-                      +"PYZMQ (http://zeromq.github.com/pyzmq/)")
-        else:
-            logger.error("No suitable coordination backend found.")
-        
-        logger.debug("Parsing URL: " + coordination_url)
-        scheme, username, password, host, port, dbtype  = self.__parse_url(coordination_url) 
-        
-        if port == -1:
-            port = None
-        coordination = bigjob_coordination(server=host, server_port=port, username=username, 
-                                           password=password, dbtype=dbtype, url_prefix=scheme)
-        return coordination
-    
-   
             
     def start_pilot_job(self, 
                  lrms_url, 
@@ -304,7 +261,7 @@ class bigjob(api.base.bigjob):
         
         ##############################################################################
         # Create and process BJ bootstrap script
-        bootstrap_script = self.generate_bootstrap_script(
+        bootstrap_script = self.__generate_bootstrap_script(
                                                           self.coordination.get_address(), 
                                                           self.pilot_url, # Queue 1 used by this BJ object 
                                                           external_queue  # Queue 2 used by Pilot Compute Service 
@@ -312,14 +269,14 @@ class bigjob(api.base.bigjob):
                                                           )
         logger.debug("Adaptor specific modifications: "  + str(lrms_saga_url.scheme))
         if is_bliss:
-            bootstrap_script = self.escape_bliss(bootstrap_script)
+            bootstrap_script = self.__escape_bliss(bootstrap_script)
         else:
             if lrms_saga_url.scheme == "gram":
-                bootstrap_script = self.escape_rsl(bootstrap_script)
+                bootstrap_script = self.__escape_rsl(bootstrap_script)
             elif lrms_saga_url.scheme == "pbspro" or lrms_saga_url.scheme=="xt5torque" or lrms_saga_url.scheme=="torque":                
-                bootstrap_script = self.escape_pbs(bootstrap_script)
+                bootstrap_script = self.__escape_pbs(bootstrap_script)
             elif lrms_saga_url.scheme == "ssh":
-                bootstrap_script = self.escape_ssh(bootstrap_script)
+                bootstrap_script = self.__escape_ssh(bootstrap_script)
         logger.debug(bootstrap_script)
         # Define Agent Executable in Job description
         # in Condor case bootstrap script is staged 
@@ -399,8 +356,175 @@ class bigjob(api.base.bigjob):
         self.job.run()
         return self.pilot_url
 
+     
+    def list_subjobs(self):
+        sj_list = self.coordination.get_jobs_of_pilot(self.pilot_url)
+        logger.debug(str(sj_list))
+        subjobs = []
+        for i in sj_list:
+            url = i 
+            if url.find("/")>0:
+                url = url[url.find("bigjob"):]
+                url =  url.replace("/", ":")    
+            sj = subjob(coordination_url=self.coordination_url, subjob_url=url)
+            subjobs.append(sj.get_url())
+        return subjobs                  
 
-    def generate_bootstrap_script(self, coordination_host, coordination_namespace, external_coordination_namespace=""):
+     
+    def get_state(self):        
+        """ duck typing for get_state of saga.job.job  
+            state of saga job that is used to spawn the pilot agent
+        """
+        return self.get_state_detail()
+        
+    
+    def get_state_detail(self): 
+        """ internal state of BigJob agent """ 
+        try:
+            return self.coordination.get_pilot_state(self.pilot_url)["state"]
+        except:
+            return None
+        
+        
+    def get_url(self):
+        """ Get unique URL of big-job. This URL can be used to reconnect to BJ later, e.g.:
+        
+            redis://localhost/bigjob:bj-1c3816f0-ad5f-11e1-b326-109addae22a3:localhost             
+        
+        """
+        url = os.path.join(self.coordination.address, 
+                           self.pilot_url)        
+        if self.coordination.dbtype!="" and self.coordination.dbtype!=None:
+            url = os.path.join(url, "?" + self.coordination.dbtype)            
+        return url    
+     
+    
+    def get_free_nodes(self):
+        jobs = self.coordination.get_jobs_of_pilot(self.pilot_url)
+        number_used_nodes=0
+        for i in jobs:
+            job_detail = self.coordination.get_job(i)            
+            if job_detail != None and job_detail.has_key("state") == True\
+                and job_detail["state"]==str(Running):
+                job_np = "1"
+                if (job_detail["NumberOfProcesses"] == True):
+                    job_np = job_detail["NumberOfProcesses"]
+                number_used_nodes=number_used_nodes + int(job_np)
+        return (self.number_nodes - number_used_nodes)
+
+    
+    def cancel(self):        
+        """ duck typing for cancel of saga.cpr.job and saga.job.job  """
+        logger.debug("Cancel Pilot Job")
+        try:
+            if self.url.scheme.startswith("condor")==False:
+                self.job.cancel()
+            else:
+                logger.debug("Output files are being transfered to file: outpt.tar.gz. Please wait until transfer is complete.")
+        except:
+            pass
+            #traceback.print_stack()
+        try:            
+            self._stop_pilot_job()
+            logger.debug("delete pilot job: " + str(self.pilot_url))                      
+            if CLEANUP:
+                self.coordination.delete_pilot(self.pilot_url)                    
+            #os.remove(os.path.join("/tmp", "bootstrap-"+str(self.uuid)))            
+        except:            
+            pass
+            #traceback.print_stack()
+        logger.debug("Cancel Pilot Job finished")
+        
+
+    def wait(self):
+        """ Waits for completion of all sub-jobs """        
+        while 1:
+            jobs = self.coordination.get_jobs_of_pilot(self.pilot_url)
+            finish_counter=0
+            result_map = {}
+            for i in jobs:
+                state = self.coordination.get_job_state(str(i))            
+                #state = job_detail["state"]                
+                if result_map.has_key(state)==False:
+                    result_map[state]=1
+                else:
+                    result_map[state] = result_map[state]+1
+                if self.__has_finished(state)==True:
+                    finish_counter = finish_counter + 1                   
+            logger.debug("Total Jobs: %s States: %s"%(len(jobs), str(result_map)))
+            if finish_counter == len(jobs):
+                break
+            time.sleep(2)
+
+
+    ###########################################################################
+    # internal and protected methods
+    def _stop_pilot_job(self):
+        """ mark in database entry of pilot-job as stopped """
+        try:
+            logger.debug("stop pilot job: " + self.pilot_url)
+            self.coordination.set_pilot_state(self.pilot_url, str(Done), True)            
+            self.job=None
+        except:
+            pass
+        
+    def _delete_subjob(self, job_url):
+        self.coordination.delete_job(job_url) 
+    
+    def _get_subjob_state(self, job_url):
+        return self.coordination.get_job_state(job_url) 
+    
+    def _get_subjob_details(self, job_url):
+        return self.coordination.get_job(job_url) 
+    
+    def _add_subjob(self, queue_url, jd, job_url, job_id):
+        logger.debug("add subjob to queue of PJ: " + str(queue_url))        
+        for i in range(0,3):
+            try:
+                logger.debug("create dictionary for job description. Job-URL: " + job_url)
+                # put job description attributes to Coordination Service
+                job_dict = {}
+                # to accomendate current bug in bliss (Number of processes is not returned from list attributes)
+                job_dict["NumberOfProcesses"] = "1" 
+                attributes = jd.list_attributes()   
+                logger.debug("SJ Attributes: " + str(jd))             
+                for i in attributes:          
+                        if jd.attribute_is_vector(i):
+                            vector_attr = []
+                            for j in jd.get_vector_attribute(i):
+                                vector_attr.append(j)
+                            job_dict[i]=vector_attr
+                        else:
+                            #logger.debug("Add attribute: " + str(i) + " Value: " + jd.get_attribute(i))
+                            job_dict[i] = jd.get_attribute(i)
+                
+                job_dict["state"] = str(Unknown)
+                job_dict["job-id"] = str(job_id)
+                
+                #logger.debug("update job description at communication & coordination sub-system")
+                self.coordination.set_job(job_url, job_dict)                                                
+                self.coordination.queue_job(queue_url, job_url)
+                break
+            except:
+                self.__print_traceback()
+                time.sleep(2)
+                
+    
+    def _get_subjob_url(self, subjob_url):
+        """ Get unique URL for a sub-job. This URL can be used to reconnect to SJ later, e.g.:
+        
+            redis://localhost/bigjob:bj-9a9ba4d8-b162-11e1-9c42-109addae22a3:localhost:jobs:sj-6f44da6e-b178-11e1-bc99-109addae22a3
+        """
+        url = subjob_url
+        if subjob_url.find("bigjob")==0:
+            url = os.path.join(self.coordination.address, 
+                               subjob_url)        
+            if self.coordination.dbtype!="" and self.coordination.dbtype!=None:
+                url = os.path.join(url, "?" + self.coordination.dbtype)            
+        return url
+
+
+    def __generate_bootstrap_script(self, coordination_host, coordination_namespace, external_coordination_namespace=""):
         script = textwrap.dedent("""import sys
 import os
 import urllib
@@ -459,244 +583,33 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
 """ % (coordination_host, coordination_namespace, external_coordination_namespace))
         return script
 
-    def escape_rsl(self, bootstrap_script):
+    def __escape_rsl(self, bootstrap_script):
         logger.debug("Escape RSL")
         bootstrap_script = bootstrap_script.replace("\"", "\"\"")        
         return bootstrap_script
+          
             
-    def escape_pbs(self, bootstrap_script):
+    def __escape_pbs(self, bootstrap_script):
         logger.debug("Escape PBS")
         bootstrap_script = "\'" + bootstrap_script+ "\'"
         return bootstrap_script
     
     
-    def escape_ssh(self, bootstrap_script):
+    def __escape_ssh(self, bootstrap_script):
         logger.debug("Escape SSH")
         bootstrap_script = bootstrap_script.replace("\"", "\\\"")
         bootstrap_script = bootstrap_script.replace("\'", "\\\"")
         bootstrap_script = "\"" + bootstrap_script+ "\""
         return bootstrap_script
     
-    def escape_bliss(self, bootstrap_script):
+    def __escape_bliss(self, bootstrap_script):
         logger.debug("Escape Bliss")
         #bootstrap_script = bootstrap_script.replace("\'", "\"")
         #bootstrap_script = "\'" + bootstrap_script+ "\'"
         bootstrap_script = bootstrap_script.replace('"','\\"')
         bootstrap_script = '"' + bootstrap_script+ '"'
         return bootstrap_script
-     
-    def list_subjobs(self):
-        sj_list = self.coordination.get_jobs_of_pilot(self.pilot_url)
-        logger.debug(str(sj_list))
-        subjobs = []
-        for i in sj_list:
-            url = i 
-            if url.find("/")>0:
-                url = url[url.find("bigjob"):]
-                url =  url.replace("/", ":")    
-            sj = subjob(coordination_url=self.coordination_url, subjob_url=url)
-            subjobs.append(sj.get_url())
-        return subjobs
-
-    
-    def add_external_subjob(self, queue_url, jd, job_url, job_id):
-        logger.debug("add subjob to queue of PJ: " + str(queue_url))        
-        for i in range(0,3):
-            try:
-                logger.debug("create dictionary for job description. Job-URL: " + job_url)
-                # put job description attributes to Coordination Service
-                job_dict = {}
-                # to accomendate current bug in bliss (Number of processes is not returned from list attributes)
-                job_dict["NumberOfProcesses"] = "1" 
-                attributes = jd.list_attributes()   
-                logger.debug("SJ Attributes: " + str(jd))             
-                for i in attributes:          
-                        if jd.attribute_is_vector(i):
-                            vector_attr = []
-                            for j in jd.get_vector_attribute(i):
-                                vector_attr.append(j)
-                            job_dict[i]=vector_attr
-                        else:
-                            #logger.debug("Add attribute: " + str(i) + " Value: " + jd.get_attribute(i))
-                            job_dict[i] = jd.get_attribute(i)
                 
-                job_dict["state"] = str(Unknown)
-                job_dict["job-id"] = str(job_id)
-                
-                #logger.debug("update job description at communication & coordination sub-system")
-                self.coordination.set_job(job_url, job_dict)                                                
-                self.coordination.queue_job(queue_url, job_url)
-                break
-            except:
-                self.__print_traceback()
-                time.sleep(2)
-
-
-    def add_subjob(self, jd, job_url, job_id):
-        #jd=self.__translate_jd(jd) 
-        self.add_external_subjob(self.pilot_url, jd, job_url, job_id)    
-#        if jd.attribute_exists ("FileTransfer"):
-#            try:
-#                logger.debug("Stage input files for sub-job")
-#                self.__stage_files(jd.file_transfer, self.__get_subjob_working_dir(job_id))
-#            except:
-#                logger.error("File Stagein failed. Is Paramiko installed?")
-#                
-#        logger.debug("add subjob to queue of PJ: " + str(self.pilot_url))        
-#        for i in range(0,3):
-#            try:
-#                logger.debug("create dictionary for job description. Job-URL: " + job_url)
-#                # put job description attributes to Redis
-#                job_dict = {}
-#                #to accomendate current bug in bliss (Number of processes is not returned from list attributes)
-#                job_dict["NumberOfProcesses"] = "1" 
-#                attributes = jd.list_attributes()   
-#                logger.debug("SJ Attributes: " + str(jd))             
-#                for i in attributes:          
-#                        if jd.attribute_is_vector(i):
-#                            #logger.debug("Add attribute: " + str(i) + " Value: " + str(jd.get_vector_attribute(i)))
-#                            vector_attr = []
-#                            for j in jd.get_vector_attribute(i):
-#                                vector_attr.append(j)
-#                            job_dict[i]=vector_attr
-#                        else:
-#                            #logger.debug("Add attribute: " + str(i) + " Value: " + jd.get_attribute(i))
-#                            job_dict[i] = jd.get_attribute(i)
-#                
-#                job_dict["state"] = str(Unknown)
-#                job_dict["job-id"] = str(job_id)
-#                
-#                #logger.debug("update job description at communication & coordination sub-system")
-#                self.coordination.set_job(job_url, job_dict)                                                
-#                self.coordination.queue_job(self.pilot_url, job_url)
-#                break
-#            except:
-#                self.__print_traceback()
-#                time.sleep(2)
-                #raise Exception("Unable to submit job")
-                     
-    def delete_subjob(self, job_url):
-        self.coordination.delete_job(job_url) 
-    
-    def get_subjob_state(self, job_url):
-        return self.coordination.get_job_state(job_url) 
-    
-    def get_subjob_details(self, job_url):
-        return self.coordination.get_job(job_url) 
-     
-    def get_state(self):        
-        """ duck typing for get_state of saga.job.job  
-            state of saga job that is used to spawn the pilot agent
-        """
-        return self.get_state_detail()
-        #try:
-        #    return self.job.get_state()
-        #except:
-        #    return self.get_state_detail()
-            #return None
-    
-    def get_state_detail(self): 
-        """ internal state of BigJob agent """ 
-        try:
-            return self.coordination.get_pilot_state(self.pilot_url)["state"]
-        except:
-            return None
-        
-    def get_url(self):
-        """ Get unique URL of big-job. This URL can be used to reconnect to BJ later, e.g.:
-        
-            redis://localhost/bigjob:bj-1c3816f0-ad5f-11e1-b326-109addae22a3:localhost             
-        
-        """
-        url = os.path.join(self.coordination.address, 
-                           self.pilot_url)        
-        if self.coordination.dbtype!="" and self.coordination.dbtype!=None:
-            url = os.path.join(url, "?" + self.coordination.dbtype)            
-        return url
-    
-    
-     
-    
-    def get_free_nodes(self):
-        jobs = self.coordination.get_jobs_of_pilot(self.pilot_url)
-        number_used_nodes=0
-        for i in jobs:
-            job_detail = self.coordination.get_job(i)            
-            if job_detail != None and job_detail.has_key("state") == True\
-                and job_detail["state"]==str(Running):
-                job_np = "1"
-                if (job_detail["NumberOfProcesses"] == True):
-                    job_np = job_detail["NumberOfProcesses"]
-                number_used_nodes=number_used_nodes + int(job_np)
-        return (self.number_nodes - number_used_nodes)
-
-    
-    def stop_pilot_job(self):
-        """ mark in advert directory of pilot-job as stopped """
-        try:
-            logger.debug("stop pilot job: " + self.pilot_url)
-            self.coordination.set_pilot_state(self.pilot_url, str(Done), True)            
-            self.job=None
-        except:
-            pass
-    
-    def cancel(self):        
-        """ duck typing for cancel of saga.cpr.job and saga.job.job  """
-        logger.debug("Cancel Pilot Job")
-        try:
-            if self.url.scheme.startswith("condor")==False:
-                self.job.cancel()
-            else:
-                logger.debug("Output files are being transfered to file: outpt.tar.gz. Please wait until transfer is complete.")
-        except:
-            pass
-            #traceback.print_stack()
-        try:            
-            self.stop_pilot_job()
-            logger.debug("delete pilot job: " + str(self.pilot_url))                      
-            if CLEANUP:
-                self.coordination.delete_pilot(self.pilot_url)                    
-            #os.remove(os.path.join("/tmp", "bootstrap-"+str(self.uuid)))            
-        except:            
-            pass
-            #traceback.print_stack()
-        logger.debug("Cancel Pilot Job finished")
-
-    def wait(self):
-        """ Waits for completion of all sub-jobs """        
-        while 1:
-            jobs = self.coordination.get_jobs_of_pilot(self.pilot_url)
-            finish_counter=0
-            result_map = {}
-            for i in jobs:
-                state = self.coordination.get_job_state(str(i))            
-                #state = job_detail["state"]                
-                if result_map.has_key(state)==False:
-                    result_map[state]=1
-                else:
-                    result_map[state] = result_map[state]+1
-                if self.__has_finished(state)==True:
-                    finish_counter = finish_counter + 1                   
-            logger.debug("Total Jobs: %s States: %s"%(len(jobs), str(result_map)))
-            if finish_counter == len(jobs):
-                break
-            time.sleep(2)
-
-
-    ###########################################################################
-    # internal and protected methods
-    def _get_subjob_url(self, subjob_url):
-        """ Get unique URL for a sub-job. This URL can be used to reconnect to SJ later, e.g.:
-        
-            redis://localhost/bigjob:bj-9a9ba4d8-b162-11e1-9c42-109addae22a3:localhost:jobs:sj-6f44da6e-b178-11e1-bc99-109addae22a3
-        """
-        url = subjob_url
-        if subjob_url.find("bigjob")==0:
-            url = os.path.join(self.coordination.address, 
-                               subjob_url)        
-            if self.coordination.dbtype!="" and self.coordination.dbtype!=None:
-                url = os.path.join(url, "?" + self.coordination.dbtype)            
-        return url
   
     def __parse_pilot_url(self, pilot_url):
         #pdb.set_trace()        
@@ -764,6 +677,44 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
         logger.debug("%s %s %s"%(scheme, host, port))
         return scheme, username, password, host, port, query     
             
+    def __get_bj_id(self, pilot_url):
+        start = pilot_url.index("bj-")
+        end =pilot_url.index(":", start)
+        return pilot_url[start:end]
+    
+     
+    def __init_coordination(self, coordination_url):        
+        if(coordination_url.startswith("advert://") or coordination_url.startswith("sqlasyncadvert://")):
+            try:
+                from coordination.bigjob_coordination_advert import bigjob_coordination
+                logger.debug("Utilizing ADVERT Backend")
+            except:
+                logger.error("Advert Backend could not be loaded")
+        elif (coordination_url.startswith("redis://")):
+            try:
+                from coordination.bigjob_coordination_redis import bigjob_coordination      
+                logger.debug("Utilizing Redis Backend")
+            except:
+                logger.error("Error loading pyredis.")
+        elif (coordination_url.startswith("tcp://")):
+            try:
+                from coordination.bigjob_coordination_zmq import bigjob_coordination
+                logger.debug("Utilizing ZMQ Backend")
+            except:
+                logger.error("ZMQ Backend not found. Please install ZeroMQ (http://www.zeromq.org/intro:get-the-software) and " 
+                      +"PYZMQ (http://zeromq.github.com/pyzmq/)")
+        else:
+            logger.error("No suitable coordination backend found.")
+        
+        logger.debug("Parsing URL: " + coordination_url)
+        scheme, username, password, host, port, dbtype  = self.__parse_url(coordination_url) 
+        
+        if port == -1:
+            port = None
+        coordination = bigjob_coordination(server=host, server_port=port, username=username, 
+                                           password=password, dbtype=dbtype, url_prefix=scheme)
+        return coordination
+    
     
     def __get_bigjob_working_dir(self):
         if self.working_directory.find(self.uuid)!=-1: # working directory already contains BJ id
@@ -938,7 +889,7 @@ class subjob(api.base.subjob):
         if self.pilot_url==None:
             self.pilot_url = pilot_url
             self.bj=pilot_url_dict[pilot_url]    
-        self.bj.add_external_subjob(pilot_url, jd, self.job_url, self.uuid)
+        self.bj._add_subjob(pilot_url, jd, self.job_url, self.uuid)
 
 
     def get_state(self, pilot_url=None):        
@@ -946,7 +897,7 @@ class subjob(api.base.subjob):
         if self.pilot_url==None:
             self.pilot_url = pilot_url
             self.bj=pilot_url_dict[pilot_url]                
-        return self.bj.get_subjob_state(self.job_url)
+        return self.bj._get_subjob_state(self.job_url)
     
     
     def cancel(self, pilot_url=None):
@@ -955,14 +906,14 @@ class subjob(api.base.subjob):
             self.pilot_url = pilot_url
             self.bj=pilot_url_dict[pilot_url]  
         if str(self.bj.get_state())=="Running":
-            self.bj.delete_subjob(self.job_url)        
+            self.bj._delete_subjob(self.job_url)        
         
         
     def get_exe(self, pilot_url=None):
         if self.pilot_url==None:
             self.pilot_url = pilot_url
             self.bj=pilot_url_dict[pilot_url]  
-        sj = self.bj.get_subjob_details(self.job_url)
+        sj = self.bj._get_subjob_details(self.job_url)
         return sj["Executable"]
    
    
