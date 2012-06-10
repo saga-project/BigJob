@@ -258,7 +258,7 @@ class bigjob(api.base.bigjob):
             
             
         # Determine whether target machine use gsissh or ssh to logon.
-        logger.debug("Detect launch method for: " + lrms_saga_url.host)        
+        #logger.debug("Detect launch method for: " + lrms_saga_url.host)        
         #self.launch_method = self.__get_launch_method(lrms_saga_url.host,lrms_saga_url.username)
         self.bigjob_working_directory_url=""
         ##############################################################################
@@ -311,7 +311,7 @@ class bigjob(api.base.bigjob):
                 bootstrap_script = self.escape_pbs(bootstrap_script)
             elif lrms_saga_url.scheme == "ssh":
                 bootstrap_script = self.escape_ssh(bootstrap_script)
-
+        logger.debug(bootstrap_script)
         # Define Agent Executable in Job description
         # in Condor case bootstrap script is staged 
         # (Python app cannot be passed inline in Condor job description)
