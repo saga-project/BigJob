@@ -174,7 +174,7 @@ class bigjob(api.base.bigjob):
         """ Start a batch job (using SAGA Job API) at resource manager. Currently, the following resource manager are supported:
             fork://localhost/ (Default Job Adaptor
             gram://qb1.loni.org/jobmanager-pbs (Globus Adaptor)
-            pbspro://localhost (PBS Prop Adaptor)
+            pbspro://localhost (PBS Pro Adaptor)
         
         """         
         if self.job != None:

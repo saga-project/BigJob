@@ -24,8 +24,7 @@ class BigJobCLI(object):
                            number_cores=1,
                            cores_per_node=1,
                      ):
-        pilot_compute_service = PilotComputeService(coordination_url=coordination_url)
-
+        
         # create pilot job service and initiate a pilot job
         pilot_compute_description = {
                              "service_url": resource_url,
@@ -34,7 +33,11 @@ class BigJobCLI(object):
                              "number_of_processes": number_cores,
                              "processes_per_node": cores_per_node                             
                             }
+        self.submit_pilot_by_description(coordination_url, pilot_compute_description)
+        
     
+    def submit_pilot_by_description(self, coordination_url="redis://localhost/", pilot_compute_description={}):
+        pilot_compute_service = PilotComputeService(coordination_url=coordination_url)
         pilot_compute = pilot_compute_service.create_pilot(pilot_compute_description=pilot_compute_description)
         pilot_url = pilot_compute.get_url()
         self.pilots.append(pilot_url)
@@ -81,7 +84,6 @@ class BigJobCLI(object):
     def submit_cu(self, pilot_url, command):
         """ submits CUs (does not waits for completion) """
         #print "Submit CU to %s"%(pilot_url)
-        pilot_compute = PilotCompute(pilot_url=pilot_url)
         args= []
         if len(command)>1:
             args = command[1:]
@@ -93,10 +95,16 @@ class BigJobCLI(object):
             "output": "stdout.txt",
             "error": "stderr.txt",
         }    
+        return self.submit_cu_by_description(pilot_url, compute_unit_description)
+    
+    
+    
+    def submit_cu_by_description(self, pilot_url, compute_unit_description={}):
+        pilot_compute = PilotCompute(pilot_url=pilot_url)
         compute_unit = pilot_compute.submit_compute_unit(compute_unit_description)
         print "Started ComputeUnit: %s"%(compute_unit.get_url())
         return compute_unit
-        
+            
         
     def run_cu(self, pilot_url, command):
         """ submits CU and waits for completion """
@@ -105,7 +113,15 @@ class BigJobCLI(object):
         compute_unit.wait()
         print "CU %s terminated"%compute_unit.get_url()
         return compute_unit
-
+    
+    
+    def run_cu_by_description(self, pilot_url, compute_unit_description={}):
+        compute_unit=self.submit_cu_by_description(pilot_url, compute_unit_description)
+        print "Waiting for termination"
+        compute_unit.wait()
+        print "CU %s terminated"%compute_unit.get_url()
+        return compute_unit
+    
     
     def wait_cu(self, pilot_url):
         pilot_compute = PilotCompute(pilot_url=pilot_url)
@@ -163,18 +179,30 @@ def main():
     pilot_group = parser.add_argument_group('Manage pilots')
     pilot_group.add_argument('--number_cores', default="1")
     pilot_group.add_argument('--cores_per_node',  default="1")    
-    pilot_group.add_argument('--submit_pilot', action="store", metavar="RESOURCE_URL", 
+    pilot_group.add_argument('--submit_pilot', action="store", nargs="?", metavar="RESOURCE_URL", 
                               help="submit a pilot to specified resource, e.g. fork://localhost",
                               default=False)    
+    pilot_group.add_argument('--pilot_description', action="store", metavar="PILOT_COMPUTE_DESCRIPTION", 
+                           help="""accepts a Pilot-API pilot compute description in JSON format: 
+                                   \"{'service_url': 'fork://localhost', 'number_of_processes': 1, 'working_directory': '/tmp'}\"""", 
+                                default=False)
+    
+    
     pilot_group.add_argument('--cancel_pilot', action="store", default=False, metavar="PILOT_URL", 
                                help="Cancel pilot")
     pilot_group.add_argument('--list_pilots', action="store_true", default=False, help="list all pilots")
     pilot_group.add_argument('--wait_cus', action="store_true", default=False, help="wait for termination of all CUs")
     pilot_group.add_argument('--list_cus', action="store",  metavar="PILOT_URL", default=False)
     
+    
     cu_group = parser.add_argument_group('Manage compute units')
     cu_group.add_argument('--submit_cu', action="store", nargs="+", metavar=("PILOT_URL", "COMMAND ARGS"), 
                            help="submit CU to pilot", default=False)
+    cu_group.add_argument('--compute_unit_description', action="store", metavar="COMPUTE_UNIT_DESCRIPTION", 
+                           help="""accepts a Pilot-API compute unit description in JSON format: 
+                           \"{'executable': '/bin/date', 'arguments': [''], 'total_core_count': 1, 'number_of_processes': 1, 'output': 'stdout.txt', 'error': 'stderr.txt'}\"""", 
+                            default=False)
+    
     cu_group.add_argument('--run_cu', action="store", nargs="+", metavar=("PILOT_URL", "COMMAND ARGS"), 
                            help="submit CU to pilot and wait for completion", default=False)
     cu_group.add_argument('--get_cu_state', action="store", metavar="CU_URL", default=False)
@@ -184,18 +212,33 @@ def main():
     #print(str(parsed_arguments))
     
     if parsed_arguments.submit_pilot!=False:
-        app.submit_pilot(coordination_url=parsed_arguments.coordination,
-                         resource_url=parsed_arguments.submit_pilot,
-                         number_cores=parsed_arguments.number_cores,
-                         cores_per_node=parsed_arguments.cores_per_node)    
+        if parsed_arguments.pilot_description!=False:
+            pilot_description = eval(parsed_arguments.pilot_description)
+            app.submit_pilot_by_description(coordination_url=parsed_arguments.coordination,
+                                            pilot_compute_description=pilot_description)            
+        else:
+            app.submit_pilot(coordination_url=parsed_arguments.coordination,
+                             resource_url=parsed_arguments.submit_pilot,
+                             number_cores=parsed_arguments.number_cores,
+                             cores_per_node=parsed_arguments.cores_per_node)    
     elif parsed_arguments.list_pilots!=False:
         app.list_pilots()
     elif parsed_arguments.cancel_pilot!=False:
         app.cancel_pilot(parsed_arguments.cancel_pilot)
     elif parsed_arguments.submit_cu!=False:
-        app.submit_cu(parsed_arguments.submit_cu[0], parsed_arguments.submit_cu[1:])
+        if parsed_arguments.compute_unit_description!=False:
+            compute_unit_description = eval(parsed_arguments.compute_unit_description)
+            app.submit_cu_by_description(parsed_arguments.submit_cu[0], 
+                                         compute_unit_description=compute_unit_description)            
+        else:
+            app.submit_cu(parsed_arguments.submit_cu[0], parsed_arguments.submit_cu[1:])
     elif parsed_arguments.run_cu!=False:
-        app.run_cu(parsed_arguments.run_cu[0], parsed_arguments.run_cu[1:])    
+        if parsed_arguments.compute_unit_description!=False:
+            compute_unit_description = eval(parsed_arguments.compute_unit_description)
+            app.run_cu_by_description(parsed_arguments.run_cu[0],
+                                            compute_unit_description=compute_unit_description)            
+        else:
+            app.run_cu(parsed_arguments.run_cu[0], parsed_arguments.run_cu[1:])    
     elif parsed_arguments.get_cu_state!=False:
         app.get_cu_state(parsed_arguments.get_cu_state)
     elif parsed_arguments.wait_cus!=False:
