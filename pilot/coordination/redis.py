@@ -158,8 +158,6 @@ class RedisCoordinationAdaptor:
     
     @classmethod
     def __get_url(cls, url):
-        """ appends advert querystring for dbtype to url """
-        url = url + NoCoordinationAdaptor.BASE_URL_QUERY_STRING
         return url
     
     @classmethod

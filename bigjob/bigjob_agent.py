@@ -95,8 +95,9 @@ class bigjob_agent:
         # Redis initialization
         self.base_url = args[2]
         self.cds_queue_url = None
-        if len(args)>3:
+        if len(args)==4:
             self.cds_queue_url = args[3]
+        logger.debug("External queue: " + str(self.cds_queue_url))
         self.id = self.__get_bj_id(self.base_url)
         logger.debug("BigJob Agent arguments: " + str(args))
         logger.debug("Initialize C&C subsystem to pilot-url: " + self.base_url)

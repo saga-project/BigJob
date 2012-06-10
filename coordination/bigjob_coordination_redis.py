@@ -167,7 +167,7 @@ class bigjob_coordination(object):
         logger.debug("Dequeue sub-job from: " + queue_name 
                       + " number queued items: " + str(self.redis.llen(queue_name)))
         self.redis.set(queue_name + ':last_out', pickle.dumps(datetime.datetime.now()))
-        job_url = self.redis.brpop(queue_name, 120)
+        job_url = self.redis.brpop(queue_name, 1)
         if job_url==None:
             return job_url
         logger.debug("Dequeued: " + str(job_url))

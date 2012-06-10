@@ -1,6 +1,12 @@
 import compute.api
 import data.api
 
+class PilotError(Exception):
+    def __init__(self, value):
+        self.value = value
+    
+    def __str__(self):
+        return repr(self.value)
 
 
 class ComputeDataDescription(compute.api.ComputeUnitDescription):

@@ -32,17 +32,8 @@ class PilotComputeService(PilotComputeService):
     """ PilotJobService based on BigJob.
                     
     """
-
     PJS_ID_PREFIX="pcs-"   
 
-    # Class members
-    __slots__ = (
-        'id',           # Reference to this PJS
-        'url',
-        'state',       # Status of the PJS
-        'pilot_computes',    # List of PJs under this PJS
-        'coordination_url'
-    )
 
     def __init__(self, coordination_url=COORDINATION_URL, pcs_url=None):
         """ Create a PilotJobService object.
@@ -52,11 +43,12 @@ class PilotComputeService(PilotComputeService):
         """
         self.pilot_computes=[]
         self.coordination_url=coordination_url
-        
+        self.coordination_queue=""
         if pcs_url==None:      # new pjs          
             self.id = self.PJS_ID_PREFIX+str(uuid.uuid1())
             self.url = os.path.join(self.coordination_url, "pcs", self.id)
-            self.coordination_queue = self.id
+            # self.coordination_queue = self.id
+            self.coordination_queue = "MyTestQueue"
             logger.debug("Created Pilot Compute Service: %s"%self.url)
         else:
             logger.error("Reconnect to PilotComputeService currently not supported.")
@@ -160,7 +152,7 @@ class PilotComputeService(PilotComputeService):
                            walltime,
                            ppn,
                            filetransfers=bj_filetransfer,
-                           external_queue=self.id)
+                           external_queue=self.coordination_queue)
         return bj
     
     
@@ -187,7 +179,7 @@ class PilotCompute(PilotCompute):
         # This URL is used as central queue for a set of BJs in the
         # ComputeDataServiceDecentral
         if self.__pilot_compute_service!=None:
-            self.pilot_compute_service_url = pilot_compute_service.url
+            self.coordination_queue = pilot_compute_service.coordination_queue
             
         
     def cancel(self):
@@ -229,6 +221,7 @@ class PilotCompute(PilotCompute):
     
     def __repr__(self):
         return str(self.__bigjob)
+        
         
     ###########################################################################
     # Internal methods
