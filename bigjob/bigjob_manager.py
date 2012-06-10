@@ -230,7 +230,10 @@ class bigjob(api.base.bigjob):
         lrms_saga_url = SAGAUrl(lrms_url)
         self.url = lrms_saga_url
         self.pilot_url = self.app_url + ":" + lrms_saga_url.host
+        
+        # Store references to BJ in global dict
         pilot_url_dict[self.pilot_url]=self
+        pilot_url_dict[external_queue]=self
         
         logger.debug("create pilot job entry on backend server: " + self.pilot_url)
         self.coordination.set_pilot_state(self.pilot_url, str(Unknown), False)
@@ -258,11 +261,12 @@ class bigjob(api.base.bigjob):
             
             
         # Determine whether target machine use gsissh or ssh to logon.
-        #logger.debug("Detect launch method for: " + lrms_saga_url.host)        
-        #self.launch_method = self.__get_launch_method(lrms_saga_url.host,lrms_saga_url.username)
-        self.bigjob_working_directory_url=""
+        # logger.debug("Detect launch method for: " + lrms_saga_url.host)        
+        # self.launch_method = self.__get_launch_method(lrms_saga_url.host,lrms_saga_url.username)
+        
         ##############################################################################
         # File Management and Stage-In
+        self.bigjob_working_directory_url=""
         if lrms_saga_url.scheme.startswith("condor")==False:           
             # build target url for working directory
             # this will also create the remote directory for the BJ
@@ -300,8 +304,13 @@ class bigjob(api.base.bigjob):
         
         ##############################################################################
         # Create and process BJ bootstrap script
+        bootstrap_script = self.generate_bootstrap_script(
+                                                          self.coordination.get_address(), 
+                                                          self.pilot_url, # Queue 1 used by this BJ object 
+                                                          external_queue  # Queue 2 used by Pilot Compute Service 
+                                                                          # or another external scheduler
+                                                          )
         logger.debug("Adaptor specific modifications: "  + str(lrms_saga_url.scheme))
-        bootstrap_script = self.generate_bootstrap_script(self.coordination.get_address(), self.pilot_url, external_queue)
         if is_bliss:
             bootstrap_script = self.escape_bliss(bootstrap_script)
         else:
@@ -391,7 +400,7 @@ class bigjob(api.base.bigjob):
         return self.pilot_url
 
 
-    def generate_bootstrap_script(self, coordination_host, coordination_namespace, coordination_external_queue):
+    def generate_bootstrap_script(self, coordination_host, coordination_namespace, external_coordination_namespace=""):
         script = textwrap.dedent("""import sys
 import os
 import urllib
@@ -447,7 +456,7 @@ args.append(\"%s\")
 print "Bootstrap time: " + str(time.time()-start_time)
 print "Starting BigJob Agents with following args: " + str(args)
 bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
-""" % (coordination_host, coordination_namespace, coordination_external_queue))
+""" % (coordination_host, coordination_namespace, external_coordination_namespace))
         return script
 
     def escape_rsl(self, bootstrap_script):
@@ -489,7 +498,7 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
             subjobs.append(sj.get_url())
         return subjobs
 
-    @classmethod
+    
     def add_external_subjob(self, queue_url, jd, job_url, job_id):
         logger.debug("add subjob to queue of PJ: " + str(queue_url))        
         for i in range(0,3):
@@ -524,45 +533,46 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
 
 
     def add_subjob(self, jd, job_url, job_id):
-        #jd=self.__translate_jd(jd)     
-        if jd.attribute_exists ("FileTransfer"):
-            try:
-                logger.debug("Stage input files for sub-job")
-                self.__stage_files(jd.file_transfer, self.__get_subjob_working_dir(job_id))
-            except:
-                logger.error("File Stagein failed. Is Paramiko installed?")
-                
-        logger.debug("add subjob to queue of PJ: " + str(self.pilot_url))        
-        for i in range(0,3):
-            try:
-                logger.debug("create dictionary for job description. Job-URL: " + job_url)
-                # put job description attributes to Redis
-                job_dict = {}
-                #to accomendate current bug in bliss (Number of processes is not returned from list attributes)
-                job_dict["NumberOfProcesses"] = "1" 
-                attributes = jd.list_attributes()   
-                logger.debug("SJ Attributes: " + str(jd))             
-                for i in attributes:          
-                        if jd.attribute_is_vector(i):
-                            #logger.debug("Add attribute: " + str(i) + " Value: " + str(jd.get_vector_attribute(i)))
-                            vector_attr = []
-                            for j in jd.get_vector_attribute(i):
-                                vector_attr.append(j)
-                            job_dict[i]=vector_attr
-                        else:
-                            #logger.debug("Add attribute: " + str(i) + " Value: " + jd.get_attribute(i))
-                            job_dict[i] = jd.get_attribute(i)
-                
-                job_dict["state"] = str(Unknown)
-                job_dict["job-id"] = str(job_id)
-                
-                #logger.debug("update job description at communication & coordination sub-system")
-                self.coordination.set_job(job_url, job_dict)                                                
-                self.coordination.queue_job(self.pilot_url, job_url)
-                break
-            except:
-                self.__print_traceback()
-                time.sleep(2)
+        #jd=self.__translate_jd(jd) 
+        self.add_external_subjob(self.pilot_url, jd, job_url, job_id)    
+#        if jd.attribute_exists ("FileTransfer"):
+#            try:
+#                logger.debug("Stage input files for sub-job")
+#                self.__stage_files(jd.file_transfer, self.__get_subjob_working_dir(job_id))
+#            except:
+#                logger.error("File Stagein failed. Is Paramiko installed?")
+#                
+#        logger.debug("add subjob to queue of PJ: " + str(self.pilot_url))        
+#        for i in range(0,3):
+#            try:
+#                logger.debug("create dictionary for job description. Job-URL: " + job_url)
+#                # put job description attributes to Redis
+#                job_dict = {}
+#                #to accomendate current bug in bliss (Number of processes is not returned from list attributes)
+#                job_dict["NumberOfProcesses"] = "1" 
+#                attributes = jd.list_attributes()   
+#                logger.debug("SJ Attributes: " + str(jd))             
+#                for i in attributes:          
+#                        if jd.attribute_is_vector(i):
+#                            #logger.debug("Add attribute: " + str(i) + " Value: " + str(jd.get_vector_attribute(i)))
+#                            vector_attr = []
+#                            for j in jd.get_vector_attribute(i):
+#                                vector_attr.append(j)
+#                            job_dict[i]=vector_attr
+#                        else:
+#                            #logger.debug("Add attribute: " + str(i) + " Value: " + jd.get_attribute(i))
+#                            job_dict[i] = jd.get_attribute(i)
+#                
+#                job_dict["state"] = str(Unknown)
+#                job_dict["job-id"] = str(job_id)
+#                
+#                #logger.debug("update job description at communication & coordination sub-system")
+#                self.coordination.set_job(job_url, job_dict)                                                
+#                self.coordination.queue_job(self.pilot_url, job_url)
+#                break
+#            except:
+#                self.__print_traceback()
+#                time.sleep(2)
                 #raise Exception("Unable to submit job")
                      
     def delete_subjob(self, job_url):
@@ -928,7 +938,7 @@ class subjob(api.base.subjob):
         if self.pilot_url==None:
             self.pilot_url = pilot_url
             self.bj=pilot_url_dict[pilot_url]    
-        self.bj.add_subjob(jd, self.job_url, self.uuid)
+        self.bj.add_external_subjob(pilot_url, jd, self.job_url, self.uuid)
 
 
     def get_state(self, pilot_url=None):        
@@ -994,7 +1004,8 @@ class subjob(api.base.subjob):
     
                     
     def __get_subjob_url(self, pilot_url):
-        pilot_url = pilot_url[pilot_url.find("bigjob"):]
+        if pilot_url.find("bigjob")>1:
+            pilot_url = pilot_url[pilot_url.find("bigjob"):]
         self.job_url = pilot_url + ":jobs:" + str(self.uuid)
         return self.job_url
     

@@ -16,14 +16,16 @@ import traceback
 import urlparse
 
 import bigjob
+from bigjob import logger, bigjob, subjob, description
+
 import pilot
-from bigjob import logger
-from pilot.api import ComputeUnit, State
+from pilot.api.api import PilotError
 from pilot.impl.pilotdata_manager import PilotData, DataUnit
-from pilot.impl.pilot_manager import ComputeDataService
+from pilot.impl.pilotcompute_manager import PilotCompute, PilotComputeService
+from pilot.impl.pilot_manager import ComputeUnit
+
 #from pilot.coordination.advert import AdvertCoordinationAdaptor as CoordinationAdaptor
 from pilot.coordination.redis import RedisCoordinationAdaptor as CoordinationAdaptor
-from bigjob import bigjob, subjob, description
 
 """ Loaded Module determines scheduler:
     
@@ -33,7 +35,7 @@ from bigjob import bigjob, subjob, description
 """
 from pilot.scheduler.data_compute_affinity_scheduler import Scheduler
 
-class ComputeDataServiceDecentral(ComputeDataService):
+class ComputeDataServiceDecentral(pilot.api.ComputeDataService):
     """ ComputeDataService.
     
         The ComputeDataService is the application's interface to submit 
@@ -66,8 +68,6 @@ class ComputeDataServiceDecentral(ComputeDataService):
             self.url = cds_url
            
         
-        
-
     def __get_cds_id(self, cds_url):
         start = cds_url.index(self.CDS_ID_PREFIX)
         end =cds_url.index("/", start)
@@ -88,6 +88,10 @@ class ComputeDataServiceDecentral(ComputeDataService):
         """
         self.pilot_job_services.append(pjs)
         CoordinationAdaptor.update_cds(self.url, self)
+        if len(self.pilot_job_services)>1:
+            logger.error("Decentral ComputeDataService only supports 1 PilotComputeService")
+            raise PilotError("Decentral ComputeDataService only supports 1 PilotComputeService")
+        
 
     def remove_pilot_compute_service(self, pjs):
         """ Remove a PilotJobService from this CDS.
@@ -104,6 +108,10 @@ class ComputeDataServiceDecentral(ComputeDataService):
         """
         self.pilot_job_services.remove(pjs)
         CoordinationAdaptor.update_cds(self.url, self)
+        if len(self.pilot_job_services)>1:
+            logger.error("Decentral ComputeDataService only supports 1 PilotComputeService")
+            raise PilotError("Decentral ComputeDataService only supports 1 PilotComputeService")
+
 
     def submit_compute_unit(self, compute_unit_description):
         """ Submit a CU to this Compute Data Service.
@@ -116,9 +124,25 @@ class ComputeDataServiceDecentral(ComputeDataService):
         """
         cu = ComputeUnit(compute_unit_description, self)
         self.compute_units[cu.id]=cu
-        self.cu_queue.put(cu)
-        CoordinationAdaptor.update_cds(self.url, self)
+        self.__submit_cu(cu)        
         return cu
+    
+    
+    ###########################################################################
+    # Compute Data Service private methods
+    
+    def __submit_cu(self, compute_unit):
+        """ Submits compute unit to Bigjob """
+                
+        if len(self.pilot_job_services)!=1:
+            raise PilotError("No PilotComputeService found. Please start a PCS before submitting ComputeUnits.")
+        
+        sj = subjob()
+        self.pcs_coordination_namespace=self.pilot_job_services[0].coordination_queue
+        logger.debug("Submit CU to big-job via external queue: %s"%self.pcs_coordination_namespace)
+        sj.submit_job(self.pcs_coordination_namespace, compute_unit.subjob_description)
+        compute_unit._update_subjob(sj)
+        return compute_unit
     
     
     ###########################################################################
@@ -182,8 +206,6 @@ class ComputeDataServiceDecentral(ComputeDataService):
             Return:
             None
         """
-        # terminate background thread
-        self.stop.set()
         CoordinationAdaptor.delete_cds(self.url)
    
    
@@ -197,11 +219,6 @@ class ComputeDataServiceDecentral(ComputeDataService):
         """
         try:
             logger.debug("### START WAIT ###")
-            self.cu_queue.join()
-            logger.debug("CU queue empty")        
-            self.du_queue.join()
-            logger.debug("DU queue empty")        
-    
             for i in self.data_units.values():
                 i.wait()
             logger.debug("DUs done")        

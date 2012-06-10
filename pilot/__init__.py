@@ -9,6 +9,7 @@ from pilot.impl.pilot_manager import ComputeDataService
 from pilot.impl.pilot_manager_decentral import ComputeDataServiceDecentral 
 from pilot.impl.pilot_manager import ComputeUnit 
 from pilot.api.api import ComputeDataDescription
+from pilot.api.api import PilotError
 from pilot.api import State 
 
 
