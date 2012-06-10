@@ -56,10 +56,11 @@ class PilotComputeService(PilotComputeService):
         if pcs_url==None:      # new pjs          
             self.id = self.PJS_ID_PREFIX+str(uuid.uuid1())
             self.url = os.path.join(self.coordination_url, "pcs", self.id)
+            self.coordination_queue = self.id
             logger.debug("Created Pilot Compute Service: %s"%self.url)
         else:
-            logger.error("Reconnect to PCS currently not supported.")
-            
+            logger.error("Reconnect to PilotComputeService currently not supported.")
+        
             
 
     def create_pilot(self, rm=None, pilot_compute_description=None, pj_type=None, context=None):
@@ -98,12 +99,13 @@ class PilotComputeService(PilotComputeService):
         
         return resource_description
     
+    
     def list_pilots(self):
         return self.pilot_computes
         
     
     def cancel(self):
-        """ Cancel the PilotJobService.
+        """ Cancel the PilotComputeService.
 
             This also cancels all the PilotJobs that were under control of this PJS.
 
@@ -113,18 +115,9 @@ class PilotComputeService(PilotComputeService):
             Return value:
             Result of operation
         """
-        pass
-        
-        
-#    def submit_cu(self, compute_unit):
-#        """ Submits work unit to Dynamic Bigjob (ManyJob) 
-#            Scheduler of Dynamic Bigjob will assign appropriate PJ to WorkUnit        
-#        """
-#        subjob = self.__mjs.create_job(compute_unit.subjob_description)
-#        subjob.run()
-#        compute_unit.subjob=subjob
-#        return compute_unit
-    
+        for i in self.pilot_computes:
+            i.cancel()
+            
     
     def __repr__(self):
         status_string = "{\n"
@@ -166,7 +159,8 @@ class PilotComputeService(PilotComputeService):
                            None,
                            walltime,
                            ppn,
-                           filetransfers=bj_filetransfer)
+                           filetransfers=bj_filetransfer,
+                           external_queue=self.id)
         return bj
     
     
