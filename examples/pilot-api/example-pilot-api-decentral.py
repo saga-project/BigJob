@@ -16,8 +16,8 @@ from pilot import PilotComputeService, ComputeDataServiceDecentral, State
         tcp://* (ZMQ - listening to all interfaces)
 """
 
-#COORDINATION_URL = "advert://localhost/?dbtype=sqlite3"
-COORDINATION_URL = "redis://localhost:6379"
+COORDINATION_URL = "advert://localhost/?dbtype=sqlite3"
+#COORDINATION_URL = "redis://localhost:6379"
 
 
 if __name__ == "__main__":      
