@@ -36,11 +36,13 @@ from pilot.coordination.redis import RedisCoordinationAdaptor as CoordinationAda
 from pilot.scheduler.data_compute_affinity_scheduler import Scheduler
 
 class ComputeDataServiceDecentral(pilot.api.ComputeDataService):
-    """ ComputeDataService.
+    """ ComputeDataServiceDecentral.
     
         The ComputeDataService is the application's interface to submit 
         ComputeUnits and PilotData/DataUnit to the Pilot-Manager 
         in the P* Model.
+        
+        The decentral ComputeDateService will only work with Redis!
     """    
     CDS_ID_PREFIX="cds-"  
 

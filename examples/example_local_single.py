@@ -86,7 +86,7 @@ def main():
     jd.spmd_variation = "single"
     jd.arguments = ["$HELLOWORLD"]
     jd.environment = ['HELLOWORLD=hello_world']
-    jd.working_directory = "/tmp" 
+    #jd.working_directory = "/tmp" 
     jd.output = "stdout.txt"
     jd.error = "stderr.txt"
     sj = subjob()

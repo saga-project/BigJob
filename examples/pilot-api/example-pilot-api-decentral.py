@@ -16,8 +16,8 @@ from pilot import PilotComputeService, ComputeDataServiceDecentral, State
         tcp://* (ZMQ - listening to all interfaces)
 """
 
-COORDINATION_URL = "advert://localhost/?dbtype=sqlite3"
-#COORDINATION_URL = "redis://localhost:6379"
+# The decentral ComputeDateService will only work with Redis
+COORDINATION_URL = "redis://localhost:6379"
 
 
 if __name__ == "__main__":      
@@ -49,8 +49,8 @@ if __name__ == "__main__":
             "affinity_datacenter_label": "eu-de-south",              
             "affinity_machine_label": "mymachine" 
     }    
-    for i in range(0, 128):
-        compute_unit = compute_data_service.submit_compute_unit(compute_unit_description)
+    
+    compute_unit = compute_data_service.submit_compute_unit(compute_unit_description)
     
     
     print("Finished setup. Waiting for scheduling of CU")

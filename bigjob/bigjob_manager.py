@@ -87,12 +87,10 @@ def get_uuid():
 
 
 """ Config parameters (will move to config file in future) """
-CLEANUP=True
+_CLEANUP=True
 
 #for legacy purposes and support for old BJ API
-pilot_url_dict={} # stores a mapping of pilot_url to bigjob
-
-
+_pilot_url_dict={} # stores a mapping of pilot_url to bigjob
 
 class BigJobError(Exception):
     def __init__(self, value):
@@ -103,6 +101,20 @@ class BigJobError(Exception):
     
 
 class bigjob(api.base.bigjob):
+    
+    ''' BigJob: Class for managing pilot jobs:
+    
+        Example:
+        
+        
+        bj = bigjob("redis://localhost")
+        
+        bj.start_pilot_job("fork://localhost")
+                        
+        ..
+        
+        bj.cancel()                        
+    '''
     
     __APPLICATION_NAME="bigjob" 
     
@@ -125,6 +137,8 @@ class bigjob(api.base.bigjob):
             
             2.) BigJob unique ID:
             bigjob:bj-1c3816f0-ad5f-11e1-b326-109addae22a3:localhost
+            
+            
         """  
         
         self.coordination_url = coordination_url
@@ -146,7 +160,7 @@ class bigjob(api.base.bigjob):
             # Coordination subsystem must be initialized before get_state_detail
             self.coordination = self.__init_coordination(self.coordination_url)
             self.state=self.get_state_detail()
-            pilot_url_dict[self.pilot_url]=self
+            _pilot_url_dict[self.pilot_url]=self
         else:
             self.coordination = self.__init_coordination(self.coordination_url)
             self.uuid = "bj-" + str(get_uuid())        
@@ -189,8 +203,8 @@ class bigjob(api.base.bigjob):
         self.pilot_url = self.app_url + ":" + lrms_saga_url.host
         
         # Store references to BJ in global dict
-        pilot_url_dict[self.pilot_url]=self
-        pilot_url_dict[external_queue]=self
+        _pilot_url_dict[self.pilot_url]=self
+        _pilot_url_dict[external_queue]=self
         
         logger.debug("create pilot job entry on backend server: " + self.pilot_url)
         self.coordination.set_pilot_state(self.pilot_url, str(Unknown), False)
@@ -427,7 +441,7 @@ class bigjob(api.base.bigjob):
         try:            
             self._stop_pilot_job()
             logger.debug("delete pilot job: " + str(self.pilot_url))                      
-            if CLEANUP:
+            if _CLEANUP:
                 self.coordination.delete_pilot(self.pilot_url)                    
             #os.remove(os.path.join("/tmp", "bootstrap-"+str(self.uuid)))            
         except:            
@@ -643,6 +657,8 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
             username = surl.username
             password = surl.password
             query = surl.query
+            if query.endswith("/"):
+                query = query[:-1]
             scheme = "%s://"%surl.scheme
         except:
             """ Fallback URL parser based on Python urlparse library """
@@ -888,7 +904,7 @@ class subjob(api.base.subjob):
         
         if self.pilot_url==None:
             self.pilot_url = pilot_url
-            self.bj=pilot_url_dict[pilot_url]    
+            self.bj=_pilot_url_dict[pilot_url]    
         self.bj._add_subjob(pilot_url, jd, self.job_url, self.uuid)
 
 
@@ -896,7 +912,7 @@ class subjob(api.base.subjob):
         """ duck typing for saga.job  """
         if self.pilot_url==None:
             self.pilot_url = pilot_url
-            self.bj=pilot_url_dict[pilot_url]                
+            self.bj=_pilot_url_dict[pilot_url]                
         return self.bj._get_subjob_state(self.job_url)
     
     
@@ -904,7 +920,7 @@ class subjob(api.base.subjob):
         logger.debug("delete job: " + self.job_url)
         if self.pilot_url==None:
             self.pilot_url = pilot_url
-            self.bj=pilot_url_dict[pilot_url]  
+            self.bj=_pilot_url_dict[pilot_url]  
         if str(self.bj.get_state())=="Running":
             self.bj._delete_subjob(self.job_url)        
         
@@ -912,7 +928,7 @@ class subjob(api.base.subjob):
     def get_exe(self, pilot_url=None):
         if self.pilot_url==None:
             self.pilot_url = pilot_url
-            self.bj=pilot_url_dict[pilot_url]  
+            self.bj=_pilot_url_dict[pilot_url]  
         sj = self.bj._get_subjob_details(self.job_url)
         return sj["Executable"]
    
@@ -920,7 +936,7 @@ class subjob(api.base.subjob):
     def get_arguments(self, pilot_url=None):
         if self.pilot_url==None:
             self.pilot_url = pilot_url
-            self.bj=pilot_url_dict[pilot_url]  
+            self.bj=_pilot_url_dict[pilot_url]  
         sj = self.bj.get_subjob_details(self.job_url)  
         #logger.debug("Subjob details: " + str(sj))              
         arguments=""
@@ -979,20 +995,7 @@ class subjob(api.base.subjob):
         
 ###############################################################################
 ## Properties for description class
-
-def number_of_processes():
-    doc = "Number of processes to launch"
-    def fget(self):
-        return self._number_of_processes
-    
-    def fset(self, val):
-        self._number_of_processes = val
-    
-    def fdel(self, val):
-        self._number_of_processes = None
-    
-    return locals()
-
+#
 
 def environment():
     doc = "The environment variables to set in the job's execution context."
@@ -1007,5 +1010,4 @@ def environment():
      
 class description(bliss.saga.job.Description):
     """ Sub-job description """
-    number_of_processes = property(**number_of_processes())
     environment = property(**environment())   
