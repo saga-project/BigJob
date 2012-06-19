@@ -17,7 +17,7 @@
 
   <!-- Tree link -->
       <th>&nbsp;&nbsp;&nbsp;<a
-        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+        href="class-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
 
   <!-- Index link -->
       <th>&nbsp;&nbsp;&nbsp;<a
@@ -31,7 +31,7 @@
       <th class="navbar" align="right" width="100%">
         <table border="0" cellpadding="0" cellspacing="0">
           <tr><th class="navbar" align="center"
-            ><a class="navbar" target="_top" href="http://faust.cct.lsu.edu/trac/bigjob/">BigJob</a></th>
+            ><a class="navbar" target="_top" href="http://saga-project.github.com/BigJob">BigJob and Pilot API documentation</a></th>
           </tr></table></th>
   </tr>
 </table>
@@ -39,17 +39,16 @@
   <tr valign="top">
     <td width="100%">
       <span class="breadcrumbs">
-        <a href="pilot-module.html">Package&nbsp;pilot</a> ::
-        <a href="pilot.impl-module.html">Package&nbsp;impl</a> ::
-        <a href="pilot.impl.pilotcompute_manager-module.html">Module&nbsp;pilotcompute_manager</a> ::
+        pilot ::
+        impl ::
+        pilotcompute_manager ::
+        PilotCompute ::
         Class&nbsp;PilotCompute
       </span>
     </td>
     <td>
       <table cellpadding="0" cellspacing="0">
         <!-- hide/show private -->
-        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
-    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
         <tr><td align="right"><span class="options"
             >[<a href="frames.html" target="_top">frames</a
             >]&nbsp;|&nbsp;<a href="pilot.impl.pilotcompute_manager.PilotCompute-class.html"
@@ -59,21 +58,34 @@
   </tr>
 </table>
 <!-- ==================== CLASS DESCRIPTION ==================== -->
-<h1 class="epydoc">Class PilotCompute</h1><p class="nomargin-top"><span class="codelink"><a href="pilot.impl.pilotcompute_manager-pysrc.html#PilotCompute">source&nbsp;code</a></span></p>
+<h1 class="epydoc">Class PilotCompute</h1><p class="nomargin-top"></p>
 <center>
-<center>  <map id="uml_class_diagram_for_pilot_im_3" name="uml_class_diagram_for_pilot_im_3">
-<area shape="rect" id="node1_7" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#__init__" title="x.__init__(...) initializes x; see help(type(x)) for signature" alt="" coords="17,217,484,236"/>
-<area shape="rect" id="node1_8" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#cancel" title="Remove the PilotJob from the PilotJob Service." alt="" coords="17,236,484,255"/>
-<area shape="rect" id="node1_9" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#get_state" title="pilot.impl.pilotcompute_manager.PilotCompute.get_state" alt="" coords="17,255,484,273"/>
-<area shape="rect" id="node1_10" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#get_url" title="pilot.impl.pilotcompute_manager.PilotCompute.get_url" alt="" coords="17,273,484,292"/>
-<area shape="rect" id="node1" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html" title="Wrapper for BigJob class" alt="" coords="5,185,496,298"/>
-<area shape="rect" id="node2" href="pilot.api.PilotCompute-class.html" title="pilot.api.PilotCompute" alt="" coords="183,121,319,165"/>
-<area shape="rect" id="node3_11" href="pilot.api.compute.api.PilotCompute-class.html#reinitialize" title="Re&#45;Initialize the PilotJob to the (new) PilotJobDescription." alt="" coords="131,39,371,57"/>
-<area shape="rect" id="node3_12" href="pilot.api.compute.api.PilotCompute-class.html#set_callback" title="Set a callback function for a member." alt="" coords="131,57,371,76"/>
-<area shape="rect" id="node3_13" href="pilot.api.compute.api.PilotCompute-class.html#unset_callback" title="Unset a callback function from a member" alt="" coords="131,76,371,95"/>
-<area shape="rect" id="node3" href="pilot.api.compute.api.PilotCompute-class.html" title="PilotCompute (PilotJob)." alt="" coords="119,6,383,101"/>
+<center>  <map id="uml_class_diagram_for_pilot_im_4" name="uml_class_diagram_for_pilot_im_4">
+<area shape="rect" id="node1_21" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#__init__" title="x.__init__(...) initializes x; see help(type(x)) for signature" alt="" coords="17,316,752,335"/>
+<area shape="rect" id="node1_22" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#__repr__" title="repr(x)" alt="" coords="17,335,752,353"/>
+<area shape="rect" id="node1_23" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#cancel" title="Remove the PilotCompute from the PilotCompute Service." alt="" coords="17,353,752,372"/>
+<area shape="rect" id="node1_24" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#get_free_nodes" title="pilot.impl.pilotcompute_manager.PilotCompute.get_free_nodes" alt="" coords="17,372,752,391"/>
+<area shape="rect" id="node1_25" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#get_state" title="pilot.impl.pilotcompute_manager.PilotCompute.get_state" alt="" coords="17,391,752,409"/>
+<area shape="rect" id="node1_26" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#get_url" title="Get unique URL referencing the Pilot Compute" alt="" coords="17,409,752,428"/>
+<area shape="rect" id="node1_27" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#list_cus" title="Returns a list of compute units managed by the pilot" alt="" coords="17,428,752,447"/>
+<area shape="rect" id="node1_28" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#submit_compute_unit" title="Submits work unit to Bigjob" alt="" coords="17,447,752,465"/>
+<area shape="rect" id="node1_29" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#wait" title="Waits for completion of CUs" alt="" coords="17,465,752,484"/>
+<area shape="rect" id="node1" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html" title="Wrapper for BigJob class" alt="" coords="5,283,763,490"/>
+<area shape="rect" id="node2_30" href="javascript:void(0);" title="pilot.api.compute.api.PilotCompute.callback" alt="" coords="265,31,505,49"/>
+<area shape="rect" id="node2_31" href="javascript:void(0);" title="pilot.api.compute.api.PilotCompute.context" alt="" coords="265,49,505,68"/>
+<area shape="rect" id="node2_32" href="javascript:void(0);" title="pilot.api.compute.api.PilotCompute.description" alt="" coords="265,68,505,87"/>
+<area shape="rect" id="node2_33" href="javascript:void(0);" title="pilot.api.compute.api.PilotCompute.id" alt="" coords="265,87,505,105"/>
+<area shape="rect" id="node2_34" href="javascript:void(0);" title="pilot.api.compute.api.PilotCompute.pj_type" alt="" coords="265,105,505,124"/>
+<area shape="rect" id="node2_35" href="javascript:void(0);" title="pilot.api.compute.api.PilotCompute.rm" alt="" coords="265,124,505,143"/>
+<area shape="rect" id="node2_36" href="javascript:void(0);" title="pilot.api.compute.api.PilotCompute.state" alt="" coords="265,143,505,161"/>
+<area shape="rect" id="node2_37" href="javascript:void(0);" title="pilot.api.compute.api.PilotCompute.state_detail" alt="" coords="265,161,505,180"/>
+<area shape="rect" id="node2_38" href="javascript:void(0);" title="pilot.api.compute.api.PilotCompute.wall_time_left" alt="" coords="265,180,505,199"/>
+<area shape="rect" id="node2_39" href="javascript:void(0);" title="Re&#45;Initialize the PilotCompute to the (new) PilotComputeDescription." alt="" coords="265,201,505,220"/>
+<area shape="rect" id="node2_40" href="javascript:void(0);" title="Set a callback function for a member." alt="" coords="265,220,505,239"/>
+<area shape="rect" id="node2_41" href="javascript:void(0);" title="Unset a callback function from a member" alt="" coords="265,239,505,257"/>
+<area shape="rect" id="node2" href="javascript:void(0);" title="PilotCompute (PilotJob)." alt="" coords="253,6,517,263"/>
 </map>
-  <img src="uml_class_diagram_for_pilot_im_3.gif" alt='' usemap="#uml_class_diagram_for_pilot_im_3" ismap="ismap" class="graph-without-title" />
+  <img src="uml_class_diagram_for_pilot_im_4.gif" alt='' usemap="#uml_class_diagram_for_pilot_im_4" ismap="ismap" class="graph-without-title" />
 </center>
 </center>
 <hr />
@@ -84,17 +96,8 @@
 <table class="summary" border="1" cellpadding="3"
        cellspacing="0" width="100%" bgcolor="white">
 <tr bgcolor="#70b0f0" class="table-header">
-  <td colspan="2" class="table-header">
-    <table border="0" cellpadding="0" cellspacing="0" width="100%">
-      <tr valign="top">
-        <td align="left"><span class="table-header">Instance Methods</span></td>
-        <td align="right" valign="top"
-         ><span class="options">[<a href="#section-InstanceMethods"
-         class="privatelink" onclick="toggle_private();"
-         >hide private</a>]</span></td>
-      </tr>
-    </table>
-  </td>
+  <td align="left" colspan="2" class="table-header">
+    <span class="table-header">Instance Methods</span></td>
 </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
@@ -103,12 +106,30 @@
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">pilot_compute_service</span>,
-        <span class="summary-sig-arg">bigjob</span>,
-        <span class="summary-sig-arg">pilot_compute_description</span>)</span><br />
+        <span class="summary-sig-arg">pilot_compute_service</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">bigjob_object</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">pilot_compute_description</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">pilot_url</span>=<span class="summary-sig-default">None</span>)</span><br />
       x.__init__(...) initializes x; see help(type(x)) for signature</td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="pilot.impl.pilotcompute_manager-pysrc.html#PilotCompute.__init__">source&nbsp;code</a></span>
+            
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#__repr__" class="summary-sig-name">__repr__</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      repr(x)</td>
+          <td align="right" valign="top">
+            
             
           </td>
         </tr>
@@ -123,9 +144,25 @@
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#cancel" class="summary-sig-name">cancel</a>(<span class="summary-sig-arg">self</span>)</span><br />
-      Remove the PilotJob from the PilotJob Service.</td>
+      Remove the PilotCompute from the PilotCompute Service.</td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="pilot.impl.pilotcompute_manager-pysrc.html#PilotCompute.cancel">source&nbsp;code</a></span>
+            
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="get_free_nodes"></a><span class="summary-sig-name">get_free_nodes</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            
             
           </td>
         </tr>
@@ -141,7 +178,7 @@
         <tr>
           <td><span class="summary-sig"><a href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#get_state" class="summary-sig-name">get_state</a>(<span class="summary-sig-arg">self</span>)</span></td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="pilot.impl.pilotcompute_manager-pysrc.html#PilotCompute.get_state">source&nbsp;code</a></span>
+            
             
           </td>
         </tr>
@@ -155,9 +192,10 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="get_url"></a><span class="summary-sig-name">get_url</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td><span class="summary-sig"><a name="get_url"></a><span class="summary-sig-name">get_url</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Get unique URL referencing the Pilot Compute</td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="pilot.impl.pilotcompute_manager-pysrc.html#PilotCompute.get_url">source&nbsp;code</a></span>
+            
             
           </td>
         </tr>
@@ -165,17 +203,51 @@
       
     </td>
   </tr>
-<tr class="private">
+<tr>
     <td width="15%" align="right" valign="top" class="summary">
       <span class="summary-type">&nbsp;</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="_submit_cu"></a><span class="summary-sig-name">_submit_cu</span>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">compute_unit</span>)</span><br />
+          <td><span class="summary-sig"><a name="list_cus"></a><span class="summary-sig-name">list_cus</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Returns a list of compute units managed by the pilot</td>
+          <td align="right" valign="top">
+            
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="submit_compute_unit"></a><span class="summary-sig-name">submit_compute_unit</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">compute_unit_description</span>)</span><br />
       Submits work unit to Bigjob</td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="pilot.impl.pilotcompute_manager-pysrc.html#PilotCompute._submit_cu">source&nbsp;code</a></span>
+            
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="wait"></a><span class="summary-sig-name">wait</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Waits for completion of CUs</td>
+          <td align="right" valign="top">
+            
             
           </td>
         </tr>
@@ -185,10 +257,10 @@
   </tr>
   <tr>
     <td colspan="2" class="summary">
-    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="pilot.api.compute.api.PilotCompute-class.html">api.compute.api.PilotCompute</a></code></b>:
-      <code><a href="pilot.api.compute.api.PilotCompute-class.html#reinitialize">reinitialize</a></code>,
-      <code><a href="pilot.api.compute.api.PilotCompute-class.html#set_callback">set_callback</a></code>,
-      <code><a href="pilot.api.compute.api.PilotCompute-class.html#unset_callback">unset_callback</a></code>
+    <p class="indent-wrapped-lines"><b>Inherited from <code>api.compute.api.PilotCompute</code></b>:
+      <code>reinitialize</code>,
+      <code>set_callback</code>,
+      <code>unset_callback</code>
       </p>
     <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
       <code>__delattr__</code>,
@@ -198,7 +270,6 @@
       <code>__new__</code>,
       <code>__reduce__</code>,
       <code>__reduce_ex__</code>,
-      <code>__repr__</code>,
       <code>__setattr__</code>,
       <code>__sizeof__</code>,
       <code>__str__</code>,
@@ -212,20 +283,22 @@
 <table class="summary" border="1" cellpadding="3"
        cellspacing="0" width="100%" bgcolor="white">
 <tr bgcolor="#70b0f0" class="table-header">
-  <td colspan="2" class="table-header">
-    <table border="0" cellpadding="0" cellspacing="0" width="100%">
-      <tr valign="top">
-        <td align="left"><span class="table-header">Properties</span></td>
-        <td align="right" valign="top"
-         ><span class="options">[<a href="#section-Properties"
-         class="privatelink" onclick="toggle_private();"
-         >hide private</a>]</span></td>
-      </tr>
-    </table>
-  </td>
+  <td align="left" colspan="2" class="table-header">
+    <span class="table-header">Properties</span></td>
 </tr>
   <tr>
     <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>api.compute.api.PilotCompute</code></b>:
+      <code>callback</code>,
+      <code>context</code>,
+      <code>description</code>,
+      <code>id</code>,
+      <code>pj_type</code>,
+      <code>rm</code>,
+      <code>state</code>,
+      <code>state_detail</code>,
+      <code>wall_time_left</code>
+      </p>
     <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
       <code>__class__</code>
       </p>
@@ -237,17 +310,8 @@
 <table class="details" border="1" cellpadding="3"
        cellspacing="0" width="100%" bgcolor="white">
 <tr bgcolor="#70b0f0" class="table-header">
-  <td colspan="2" class="table-header">
-    <table border="0" cellpadding="0" cellspacing="0" width="100%">
-      <tr valign="top">
-        <td align="left"><span class="table-header">Method Details</span></td>
-        <td align="right" valign="top"
-         ><span class="options">[<a href="#section-MethodDetails"
-         class="privatelink" onclick="toggle_private();"
-         >hide private</a>]</span></td>
-      </tr>
-    </table>
-  </td>
+  <td align="left" colspan="2" class="table-header">
+    <span class="table-header">Method Details</span></td>
 </tr>
 </table>
 <a name="__init__"></a>
@@ -258,13 +322,14 @@
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr valign="top"><td>
   <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
-        <span class="sig-arg">pilot_compute_service</span>,
-        <span class="sig-arg">bigjob</span>,
-        <span class="sig-arg">pilot_compute_description</span>)</span>
+        <span class="sig-arg">pilot_compute_service</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">bigjob_object</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">pilot_compute_description</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">pilot_url</span>=<span class="sig-default">None</span>)</span>
     <br /><em class="fname">(Constructor)</em>
   </h3>
   </td><td align="right" valign="top"
-    ><span class="codelink"><a href="pilot.impl.pilotcompute_manager-pysrc.html#PilotCompute.__init__">source&nbsp;code</a></span>&nbsp;
+    >&nbsp;
     </td>
   </tr></table>
   
@@ -272,6 +337,30 @@
   <dl class="fields">
     <dt>Overrides:
         object.__init__
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="__repr__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__repr__</span>(<span class="sig-arg">self</span>)</span>
+    <br /><em class="fname">(Representation operator)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    >&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>repr(x)</p>
+  <dl class="fields">
+    <dt>Overrides:
+        object.__repr__
         <dd><em class="note">(inherited documentation)</em></dd>
     </dt>
   </dl>
@@ -287,15 +376,15 @@
   <h3 class="epydoc"><span class="sig"><span class="sig-name">cancel</span>(<span class="sig-arg">self</span>)</span>
   </h3>
   </td><td align="right" valign="top"
-    ><span class="codelink"><a href="pilot.impl.pilotcompute_manager-pysrc.html#PilotCompute.cancel">source&nbsp;code</a></span>&nbsp;
+    >&nbsp;
     </td>
   </tr></table>
   
-  <p>Remove the PilotJob from the PilotJob Service.</p>
+  <p>Remove the PilotCompute from the PilotCompute Service.</p>
   <p>Keyword arguments: None</p>
   <dl class="fields">
     <dt>Overrides:
-        <a href="pilot.api.compute.api.PilotCompute-class.html#cancel">api.compute.api.PilotCompute.cancel</a>
+        api.compute.api.PilotCompute.cancel
         <dd><em class="note">(inherited documentation)</em></dd>
     </dt>
   </dl>
@@ -311,14 +400,14 @@
   <h3 class="epydoc"><span class="sig"><span class="sig-name">get_state</span>(<span class="sig-arg">self</span>)</span>
   </h3>
   </td><td align="right" valign="top"
-    ><span class="codelink"><a href="pilot.impl.pilotcompute_manager-pysrc.html#PilotCompute.get_state">source&nbsp;code</a></span>&nbsp;
+    >&nbsp;
     </td>
   </tr></table>
   
   
   <dl class="fields">
     <dt>Overrides:
-        <a href="pilot.api.compute.api.PilotCompute-class.html#get_state">api.compute.api.PilotCompute.get_state</a>
+        api.compute.api.PilotCompute.get_state
     </dt>
   </dl>
 </td></tr></table>
@@ -331,7 +420,7 @@
 
   <!-- Tree link -->
       <th>&nbsp;&nbsp;&nbsp;<a
-        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+        href="class-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
 
   <!-- Index link -->
       <th>&nbsp;&nbsp;&nbsp;<a
@@ -345,14 +434,14 @@
       <th class="navbar" align="right" width="100%">
         <table border="0" cellpadding="0" cellspacing="0">
           <tr><th class="navbar" align="center"
-            ><a class="navbar" target="_top" href="http://faust.cct.lsu.edu/trac/bigjob/">BigJob</a></th>
+            ><a class="navbar" target="_top" href="http://saga-project.github.com/BigJob">BigJob and Pilot API documentation</a></th>
           </tr></table></th>
   </tr>
 </table>
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Thu Feb  2 22:09:25 2012
+    Generated by Epydoc 3.0.1 on Mon Jun 18 23:17:55 2012
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"
