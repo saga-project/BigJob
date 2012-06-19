@@ -31,7 +31,7 @@
       <th class="navbar" align="right" width="100%">
         <table border="0" cellpadding="0" cellspacing="0">
           <tr><th class="navbar" align="center"
-            ><a class="navbar" target="_top" href="http://faust.cct.lsu.edu/trac/bigjob/">BigJob</a></th>
+            ><a class="navbar" target="_top" href="http://saga-project.github.com/BigJob">BigJob and Pilot API documentation</a></th>
           </tr></table></th>
   </tr>
 </table>
@@ -41,8 +41,6 @@
     <td>
       <table cellpadding="0" cellspacing="0">
         <!-- hide/show private -->
-        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
-    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
         <tr><td align="right"><span class="options"
             >[<a href="frames.html" target="_top">frames</a
             >]&nbsp;|&nbsp;<a href="class-tree.html"
@@ -51,84 +49,94 @@
     </td>
   </tr>
 </table>
-<center><b>
- [ <a href="module-tree.html">Module Hierarchy</a>
- | <a href="class-tree.html">Class Hierarchy</a> ]
-</b></center><br />
 <h1 class="epydoc">Class Hierarchy</h1>
 <ul class="nomargin-top">
-    <li> <strong class="uidlink"><i>unreachable</i></strong>
-    </li>
-    <li> <strong class="uidlink"><a href="pilot.coordination.advert.AdvertCoordinationAdaptor-class.html">pilot.coordination.advert.AdvertCoordinationAdaptor</a></strong>:
-      <em class="summary">BigData persists its data in a central data space, e.g.</em>
-    </li>
-    <li> <strong class="uidlink"><a href="pilot.impl.pilotdata_manager.DataUnitItem-class.html">pilot.impl.pilotdata_manager.DataUnitItem</a></strong>:
-      <em class="summary">DataUnitItem</em>
-    </li>
-    <li> <strong class="uidlink"><a href="pilot.scheduler.random_scheduler.Scheduler-class.html">pilot.scheduler.random_scheduler.Scheduler</a></strong>
-    </li>
-    <li> <strong class="uidlink"><a href="pilot.scheduler.data_compute_affinity_scheduler.Scheduler-class.html">pilot.scheduler.data_compute_affinity_scheduler.Scheduler</a></strong>
-    </li>
-    <li> <strong class="uidlink"><a href="pilot.scheduler.data_compute_scheduler.Scheduler-class.html">pilot.scheduler.data_compute_scheduler.Scheduler</a></strong>
-    </li>
-    <li> <strong class="uidlink"><a href="bigjob.bigjob_agent.bigjob_agent-class.html">bigjob.bigjob_agent.bigjob_agent</a></strong>:
-      <em class="summary">BigJob Agent:</em>
-    </li>
-    <li> <strong class="uidlink"><a href="bigjob.bigjob_agent_condor.bigjob_agent-class.html">bigjob.bigjob_agent_condor.bigjob_agent</a></strong>:
-      <em class="summary">BigJob Agent:</em>
-    </li>
-    <li> <strong class="uidlink">bliss.sagacompat.job.description</strong>
-    </li>
     <li> <strong class="uidlink">object</strong>:
       <em class="summary">The most base type</em>
     <ul>
-    <li> <strong class="uidlink">exceptions.BaseException</strong>:
-      <em class="summary">Common base class for all exceptions</em>
+    <li> <strong class="uidlink">pilot.api.compute.api.ComputeUnit</strong>:
+      <em class="summary">ComputeUnit.</em>
     <ul>
-    <li> <strong class="uidlink">exceptions.Exception</strong>:
-      <em class="summary">Common base class for all non-exit exceptions.</em>
+    <li> <strong class="uidlink"><a href="pilot.impl.pilot_manager.ComputeUnit-class.html">pilot.impl.pilot_manager.ComputeUnit</a></strong>:
+      <em class="summary">ComputeUnit - Wrapper for BigJob subjob</em>
+    </li>
+    </ul>
+    </li>
+    <li> <strong class="uidlink">pilot.api.compute.api.ComputeUnitService</strong>:
+      <em class="summary">ComputeUnitService.</em>
     <ul>
-    <li> <strong class="uidlink"><a href="bigjob.bigjob_manager.BigJobError-class.html">bigjob.bigjob_manager.BigJobError</a></strong>
+    <li> <strong class="uidlink">pilot.api.api.ComputeDataService</strong>:
+      <em class="summary">ComputeDataService.</em>
+    <ul>
+    <li> <strong class="uidlink"><a href="pilot.impl.pilot_manager.ComputeDataService-class.html">pilot.impl.pilot_manager.ComputeDataService</a></strong>:
+      <em class="summary">ComputeDataService.</em>
+    </li>
+    <li> <strong class="uidlink"><a href="pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral-class.html">pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral</a></strong>:
+      <em class="summary">ComputeDataServiceDecentral.</em>
     </li>
     </ul>
     </li>
     </ul>
     </li>
-    <li> <strong class="uidlink"><a href="pilot.api.compute.api.Callback-class.html">pilot.api.compute.api.Callback</a></strong>:
-      <em class="summary">Callback class.</em>
-    </li>
-    <li> <strong class="uidlink"><a href="pilot.api.compute.api.ComputeUnit-class.html">pilot.api.compute.api.ComputeUnit</a></strong>:
-      <em class="summary">WorkUnit.</em>
-    </li>
-    <li> <strong class="uidlink"><a href="pilot.api.compute.api.ComputeUnitService-class.html">pilot.api.compute.api.ComputeUnitService</a></strong>:
-      <em class="summary">WorkUnitService.</em>
-    </li>
-    <li> <strong class="uidlink"><a href="pilot.api.data.api.DataUnit-class.html">pilot.api.data.api.DataUnit</a></strong>:
+    <li> <strong class="uidlink">pilot.api.data.api.DataUnit</strong>:
       <em class="summary">DataUnit.</em>
+    <ul>
+    <li> <strong class="uidlink"><a href="pilot.impl.pilotdata_manager.DataUnit-class.html">pilot.impl.pilotdata_manager.DataUnit</a></strong>:
+      <em class="summary">Holds a set of file</em>
     </li>
-    <li> <strong class="uidlink"><a href="pilot.api.data.api.DataUnitService-class.html">pilot.api.data.api.DataUnitService</a></strong>:
-      <em class="summary">PilotDataService (PDS).</em>
+    </ul>
     </li>
-    <li> <strong class="uidlink"><a href="pilot.api.compute.api.PilotCompute-class.html">pilot.api.compute.api.PilotCompute</a></strong>:
+    <li> <strong class="uidlink">pilot.api.compute.api.PilotCompute</strong>:
       <em class="summary">PilotCompute (PilotJob).</em>
+    <ul>
+    <li> <strong class="uidlink"><a href="pilot.impl.pilotcompute_manager.PilotCompute-class.html">pilot.impl.pilotcompute_manager.PilotCompute</a></strong>:
+      <em class="summary">Wrapper for BigJob class</em>
     </li>
-    <li> <strong class="uidlink"><a href="pilot.api.compute.api.PilotComputeService-class.html">pilot.api.compute.api.PilotComputeService</a></strong>:
-      <em class="summary">PilotJobService.</em>
+    </ul>
     </li>
-    <li> <strong class="uidlink"><a href="pilot.api.data.api.PilotData-class.html">pilot.api.data.api.PilotData</a></strong>:
+    <li> <strong class="uidlink">pilot.api.compute.api.PilotComputeService</strong>:
+      <em class="summary">PilotComputeService.</em>
+    <ul>
+    <li> <strong class="uidlink"><a href="pilot.impl.pilotcompute_manager.PilotComputeService-class.html">pilot.impl.pilotcompute_manager.PilotComputeService</a></strong>:
+      <em class="summary">PilotComputeService based on BigJob.</em>
+    </li>
+    </ul>
+    </li>
+    <li> <strong class="uidlink">pilot.api.data.api.PilotData</strong>:
+      <em class="summary">PilotData.</em>
+    <ul>
+    <li> <strong class="uidlink"><a href="pilot.impl.pilotdata_manager.PilotData-class.html">pilot.impl.pilotdata_manager.PilotData</a></strong>:
       <em class="summary">PilotData.</em>
     </li>
-    <li> <strong class="uidlink"><a href="pilot.api.data.api.PilotDataService-class.html">pilot.api.data.api.PilotDataService</a></strong>:
-      <em class="summary">PilotDataService (PDS).</em>
+    </ul>
     </li>
-    <li> <strong class="uidlink"><a href="pilot.filemanagement.ssh_adaptor.SSHFileAdaptor-class.html">pilot.filemanagement.ssh_adaptor.SSHFileAdaptor</a></strong>:
-      <em class="summary">BigData Coordination File Management for Pilot Store</em>
+    <li> <strong class="uidlink">pilot.api.data.api.PilotDataService</strong>:
+      <em class="summary">PilotDataService (PDS).</em>
+    <ul>
+    <li> <strong class="uidlink">pilot.api.api.ComputeDataService</strong>:
+      <em class="summary">ComputeDataService.</em>
+    <ul>
+    <li> <strong class="uidlink"><a href="pilot.impl.pilot_manager.ComputeDataService-class.html">pilot.impl.pilot_manager.ComputeDataService</a></strong>:
+      <em class="summary">ComputeDataService.</em>
+    </li>
+    <li> <strong class="uidlink"><a href="pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral-class.html">pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral</a></strong>:
+      <em class="summary">ComputeDataServiceDecentral.</em>
+    </li>
+    </ul>
+    </li>
+    <li> <strong class="uidlink"><a href="pilot.impl.pilotdata_manager.PilotDataService-class.html">pilot.impl.pilotdata_manager.PilotDataService</a></strong>:
+      <em class="summary">PilotDataService (PSS).</em>
+    </li>
+    </ul>
     </li>
     <li> <strong class="uidlink"><a href="pilot.api.compute.api.State-class.html">pilot.api.compute.api.State</a></strong>
     </li>
-    <li> <strong class="uidlink"><a href="pilot.filemanagement.webhdfs_adaptor.WebHDFSFileAdaptor-class.html">pilot.filemanagement.webhdfs_adaptor.WebHDFSFileAdaptor</a></strong>
+    <li> <strong class="uidlink">api.base.bigjob</strong>
+    <ul>
+    <li> <strong class="uidlink"><a href="bigjob.bigjob_manager.bigjob-class.html">bigjob.bigjob_manager.bigjob</a></strong>:
+      <em class="summary">BigJob: Class for managing pilot jobs:</em>
     </li>
-    <li> <strong class="uidlink"><a href="api.base.bigjob-class.html">api.base.bigjob</a></strong>
+    </ul>
     </li>
     <li> <strong class="uidlink">dict</strong>:
       <em class="summary">dict() -&gt; new empty dictionary
@@ -140,18 +148,24 @@ dict(iterable) -&gt; new dictionary initialized as if via:
         d[k] = v
 dict(**kwargs) -&gt; new dictionary initialized with the name=value pairs
     in the keyword argument list.</em>
-    </li>
-    <li> <strong class="uidlink"><a href="bigjob_dynamic.many_job.many_job_service-class.html">bigjob_dynamic.many_job.many_job_service</a></strong>
-    </li>
-    <li> <strong class="uidlink"><a href="bigjob_dynamic.many_job.sub_job-class.html">bigjob_dynamic.many_job.sub_job</a></strong>:
-      <em class="summary">Class for controlling individual sub-jobs</em>
-    </li>
-    <li> <strong class="uidlink"><a href="api.base.subjob-class.html">api.base.subjob</a></strong>
+    <ul>
+    <li> <strong class="uidlink">pilot.api.compute.api.ComputeUnitDescription</strong>:
+      <em class="summary">ComputeUnitDescription.</em>
+    <ul>
+    <li> <strong class="uidlink"><a href="pilot.api.api.ComputeDataDescription-class.html">pilot.api.api.ComputeDataDescription</a></strong>:
+      <em class="summary">ComputeDataDescription.</em>
     </li>
     </ul>
     </li>
-    <li> <strong class="uidlink"><a href="bigjob.pbsssh.pbsssh-class.html">bigjob.pbsssh.pbsssh</a></strong>:
-      <em class="summary">Constructor</em>
+    </ul>
+    </li>
+    <li> <strong class="uidlink">api.base.subjob</strong>
+    <ul>
+    <li> <strong class="uidlink"><a href="bigjob.bigjob_manager.subjob-class.html">bigjob.bigjob_manager.subjob</a></strong>
+    </li>
+    </ul>
+    </li>
+    </ul>
     </li>
 </ul>
 <!-- ==================== NAVIGATION BAR ==================== -->
@@ -175,14 +189,14 @@ dict(**kwargs) -&gt; new dictionary initialized with the name=value pairs
       <th class="navbar" align="right" width="100%">
         <table border="0" cellpadding="0" cellspacing="0">
           <tr><th class="navbar" align="center"
-            ><a class="navbar" target="_top" href="http://faust.cct.lsu.edu/trac/bigjob/">BigJob</a></th>
+            ><a class="navbar" target="_top" href="http://saga-project.github.com/BigJob">BigJob and Pilot API documentation</a></th>
           </tr></table></th>
   </tr>
 </table>
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Thu Feb  2 22:09:20 2012
+    Generated by Epydoc 3.0.1 on Mon Jun 18 23:17:55 2012
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"
