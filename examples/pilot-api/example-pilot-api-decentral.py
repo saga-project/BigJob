@@ -43,7 +43,6 @@ if __name__ == "__main__":
     compute_unit_description = {
             "executable": "/bin/date",
             "arguments": [""],
-            "total_core_count": 1,
             "number_of_processes": 1,            
             "output": "stdout.txt",
             "error": "stderr.txt",   

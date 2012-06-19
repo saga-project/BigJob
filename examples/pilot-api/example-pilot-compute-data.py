@@ -8,7 +8,6 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 from pilot import PilotComputeService, PilotDataService, ComputeDataService, State
 
 COORDINATION_URL = "advert://localhost/?dbtype=sqlite3"
-#COORDINATION_URL = "advert://SAGA:SAGA_client@advert.cct.lsu.edu:8080/?dbtype=postgresql"
 COORDINATION_URL = "redis://localhost:6379"
 
 if __name__ == "__main__":      
@@ -64,7 +63,6 @@ if __name__ == "__main__":
     compute_unit_description = {
             "executable": "/bin/cat",
             "arguments": ["test.txt"],
-            "total_core_count": 1,
             "number_of_processes": 1,
             "working_directory": data_unit.url,
             #"working_directory": os.getcwd(),
