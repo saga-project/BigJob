@@ -43,15 +43,14 @@ if __name__ == "__main__":
     compute_unit_description = {
             "executable": "/bin/date",
             "arguments": [""],
-            "total_core_count": 1,
             "number_of_processes": 1,            
             "output": "stdout.txt",
             "error": "stderr.txt",   
             "affinity_datacenter_label": "eu-de-south",              
             "affinity_machine_label": "mymachine" 
     }   
-    for i in range(0, 128): 
-        compute_unit = compute_data_service.submit_compute_unit(compute_unit_description)
+    
+    compute_unit = compute_data_service.submit_compute_unit(compute_unit_description)
     
     
     print("Finished setup. Waiting for scheduling of CU")

@@ -66,7 +66,7 @@ class PilotDataService(object):
     __slots__ = (
         'id',           # Reference to this PJS
         'state',       # Status of the PJS
-        'pilot_stores'    # List of PJs under this PJS
+        'pilot_data'    # List of PJs under this PJS
     )
 
     def __init__(self, pss_id=None):
