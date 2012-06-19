@@ -29,7 +29,7 @@ COORDINATION_URL = "advert://localhost/?dbtype=sqlite3"
 
 
 class PilotComputeService(PilotComputeService):
-    """ PilotJobService based on BigJob.
+    """ PilotComputeService based on BigJob.
                     
     """
     PJS_ID_PREFIX="pcs-"   
