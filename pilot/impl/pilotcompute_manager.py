@@ -48,7 +48,7 @@ class PilotComputeService(PilotComputeService):
             self.id = self.PJS_ID_PREFIX+str(uuid.uuid1())
             self.url = os.path.join(self.coordination_url, "pcs", self.id)
             # self.coordination_queue = self.id
-            self.coordination_queue = "MyTestQueue"
+            self.coordination_queue = "PilotComputeServiceQueue-" + str(self.id)
             logger.debug("Created Pilot Compute Service: %s"%self.url)
         else:
             logger.error("Reconnect to PilotComputeService currently not supported.")
