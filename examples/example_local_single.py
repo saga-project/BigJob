@@ -14,18 +14,14 @@ import sys
     e.g. 
         advert://localhost (SAGA/Advert SQLITE)
         advert://advert.cct.lsu.edu:8080 (SAGA/Advert POSTGRESQL)
-        advert://advert.cct.lsu.edu:5432 (SAGA/Advert POSTGRESQL)
         redis://localhost:6379 (Redis at localhost)
         tcp://localhost (ZMQ)
         tcp://* (ZMQ - listening to all interfaces)
 """
 
 COORDINATION_URL = "advert://localhost/?dbtype=sqlite3"
-#COORDINATION_URL = "advert://SAGA:SAGA_client@advert.cct.lsu.edu:8080/?dbtype=postgresql"
 #COORDINATION_URL = "tcp://*"
 #COORDINATION_URL = "redis://localhost:6379"
-#COORDINATION_URL = "redis://gw68.quarry.iu.teragrid.org:2525"
-#COORDINATION_URL="sqlasyncadvert://gw68.quarry.iu.teragrid.org/"
 
 # for running BJ from local dir
 sys.path.insert(0, os.getcwd() + "/../")
@@ -86,6 +82,8 @@ def main():
     jd.spmd_variation = "single"
     jd.arguments = ["$HELLOWORLD"]
     jd.environment = ['HELLOWORLD=hello_world']
+    
+    # specify an optinal working directory if sub-job should be executed outside of bigjob sandbox
     #jd.working_directory = "/tmp" 
     jd.output = "stdout.txt"
     jd.error = "stderr.txt"
