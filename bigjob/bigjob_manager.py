@@ -514,6 +514,7 @@ class bigjob(api.base.bigjob):
                 
                 job_dict["state"] = str(Unknown)
                 job_dict["job-id"] = str(job_id)
+                job_dict["start-time"] = time.time()
                 
                 #logger.debug("update job description at communication & coordination sub-system")
                 self.coordination.set_job(job_url, job_dict)                                                
