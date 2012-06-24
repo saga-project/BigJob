@@ -411,6 +411,13 @@ class ComputeUnit(ComputeUnit):
             return self.get_id()   
         
     
+    def get_details(self):   
+        if self.__subjob!=None:      
+            return self.__subjob.get_details()
+        else:
+            return None      
+    
+    
     def get_state(self):
         if self.__subjob != None:
             self.state = self.__subjob.get_state()
@@ -458,10 +465,15 @@ class ComputeUnit(ComputeUnit):
             jd.arguments = compute_unit_description["arguments"]
         if compute_unit_description.has_key("environment"):
             jd.environment = compute_unit_description["environment"] 
-        if compute_unit_description.has_key("total_cpu_count"):
+        
+        # handling number of processes
+        if compute_unit_description.has_key("number_of_processes"):
+            jd.number_of_processes=int(compute_unit_description["number_of_processes"])
+        elif compute_unit_description.has_key("total_cpu_count"):
             jd.number_of_processes=int(compute_unit_description["total_cpu_count"])
         else:
             jd.number_of_processes=1
+            
         if compute_unit_description.has_key("working_directory"): 
             jd.working_directory = compute_unit_description["working_directory"]
         if compute_unit_description.has_key("output"): 

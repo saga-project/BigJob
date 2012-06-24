@@ -514,8 +514,7 @@ class bigjob(api.base.bigjob):
                 
                 job_dict["state"] = str(Unknown)
                 job_dict["job-id"] = str(job_id)
-                job_dict["start-time"] = time.time()
-                
+                logger.debug("job dict: " + str(job_dict))
                 #logger.debug("update job description at communication & coordination sub-system")
                 self.coordination.set_job(job_url, job_dict)                                                
                 self.coordination.queue_job(queue_url, job_url)
@@ -932,6 +931,14 @@ class subjob(api.base.subjob):
             self.bj=_pilot_url_dict[pilot_url]  
         sj = self.bj._get_subjob_details(self.job_url)
         return sj["Executable"]
+    
+    
+    def get_details(self, pilot_url=None):
+        if self.pilot_url==None:
+            self.pilot_url = pilot_url
+            self.bj=_pilot_url_dict[pilot_url]  
+        sj = self.bj._get_subjob_details(self.job_url)
+        return sj
    
    
     def get_arguments(self, pilot_url=None):

@@ -69,14 +69,30 @@ class BigJobCLI(object):
         counter=1
         print "\nPilot Compute: %s"%(pilot_compute.get_url())
         print "State: %s"%(pilot_compute.get_state())
-        print "#\tCompute Unit\t\t\t\t\tState"
-        print "-------------------------------------------------------------------"
+        print "#\tCompute Unit\t\t\t\t\tState\tQueue\tRuntime"
+        print "-----------------------------------------------------------------------------------------"
         if len(cus)==0:
             print "No Compute Unit found."
         for i in cus:
             url = i.get_url()
             short_url = url[url.index("sj"):]
-            print "%d\t%s\t\t%s"%(counter,short_url, i.get_state())
+            
+            queue_time = 0.0
+            run_time = 0.0
+            try:
+                pass
+                #details = i.get_details()
+                #state = details["state"]
+            except:
+                pass
+                
+            state = i.get_state()
+            
+            if details.has_key("start_time") and details.has_key("end_queue_time"):
+                queue_time = float(details["end_queue_time"]) - float(details["start_time"])
+            if details.has_key("end_time") and details.has_key("end_queue_time"):
+                run_time = float(details["end_time"]) - float(details["end_queue_time"])
+            print "%d\t%s\t\t%s\t%.1f\t%.1f"%(counter, short_url, state, queue_time, run_time)
             counter = counter + 1 
         print ""
             

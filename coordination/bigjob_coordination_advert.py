@@ -94,13 +94,18 @@ class bigjob_coordination(object):
         if not id_string.startswith("advert") and not id_string.startswith("sqlasyncadvert"): 
             path = id_string.replace(":", "/")            
             if self.dbtype!=None:
+                if self.dbtype.endswith("?"):
+                    self.dbtype = self.dbtype[:-1]
                 url_string = self.address + "/" + path + "?" + self.dbtype
             else:
                 url_string = self.address + "/" + path 
             return url_string
         
         if self.dbtype!=None:
+            if self.dbtype.endswith("?"):
+                self.dbtype = self.dbtype[:-1]
             id_string = id_string + "?" + self.dbtype
+            
              
         return id_string
         
@@ -156,9 +161,15 @@ class bigjob_coordination(object):
         logger.debug("Set state of job: " + str(job_url) + " to: " + str(new_state))
         job_dir = saga.advert.directory(saga.url(job_url), saga.advert.Create | saga.advert.CreateParents | saga.advert.ReadWrite)
         job_dir.set_attribute("state", str(new_state))
+        if new_state=="Unknown":
+            job_dir.set_attribute("start_time", str(time.time()))
+        if new_state=="Running":
+            job_dir.set_attribute("end_queue_time", str(time.time()))
+        elif new_state=="Done":
+            job_dir.set_attribute("end_time", str(time.time()))
         self.resource_lock.release()
         
-    def get_job_state(self, job_url):        
+    def get_job_state(self, job_url):   
         job_url = self.get_url(job_url)        
         job_dir = saga.advert.directory(saga.url(job_url), saga.advert.Read)
         state = job_dir.get_attribute("state")  
@@ -192,6 +203,7 @@ class bigjob_coordination(object):
                                            saga.advert.Read)
         job_dict = json.loads(job_desc_entry.retrieve_string())
         return job_dict    
+    
     
     def delete_job(self, job_url):
         job_url = self.get_url(job_url)
