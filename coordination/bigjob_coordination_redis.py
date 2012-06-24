@@ -8,6 +8,7 @@ import sys
 import os
 import pickle
 import pdb
+import time
 
 from bigjob import logger
 sys.path.insert(0, (os.path.dirname(os.path.abspath( __file__) ) + "/../ext/redis-2.4.9/"))
@@ -134,6 +135,15 @@ class bigjob_coordination(object):
         #self.resource_lock.acquire()        
         logger.debug("set job state to: " + str(new_state))
         self.redis.hset(job_url, "state", str(new_state))
+        
+        if new_state=="Unknown":
+            self.redis.hset(job_url,"start_time", str(time.time()))
+        elif new_state=="Running":
+            self.redis.hset(job_url,"end_queue_time", str(time.time()))
+        elif new_state=="Done":
+            self.redis.hset(job_url, "end_time", str(time.time()))
+       
+        
         #self.resource_lock.release()
         
     def get_job_state(self, job_url):
@@ -144,7 +154,8 @@ class bigjob_coordination(object):
     # Sub-Job Description
     def set_job(self, job_url, job_dict):
         self.redis.hmset(job_url, job_dict)
-    
+        self.set_job_state(job_url, "Unknown")
+        
     def get_job(self, job_url):
         return self.redis.hgetall(job_url)    
     

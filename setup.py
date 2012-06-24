@@ -25,8 +25,8 @@ setup(name='BigJob',
                     'Topic :: Utilities',
                     ],
       platforms = ('Unix', 'Linux', 'Mac OS'),
-      packages=['bigjob', 'bigjob_dynamic', 'coordination', 'cli', 'pilot', 'pilot.api','pilot.api.compute', 'pilot.api.data', 'pilot.coordination', 
-                'pilot.filemanagement', 'pilot.impl', 'pilot.scheduler', 'examples', 'api', 'bootstrap'],
+      packages=['bigjob', 'bigjob_dynamic', 'coordination', 'pilot', 'pilot.api','pilot.api.compute', 'pilot.api.data', 'pilot.coordination', 
+                'pilot.filemanagement', 'pilot.impl', 'pilot.scheduler', 'examples', 'api', 'bootstrap', 'cli'],
       #data_files=['bigjob_agent.conf', 
       #            'bigjob.conf', "VERSION", "README.md"],
       data_files = [( '', ['bigjob_agent.conf', 'bigjob_agent.conf']),  
@@ -44,7 +44,7 @@ setup(name='BigJob',
         'console_scripts': [
             'test-bigjob = examples.example_local_single:main',
             'test-bigjob-dynamic = examples.example_manyjob_local:main',
-            'pilot-cli = cli.pilot_cli:main',            
+            'pilot-cli = cli.pilot_cli:main'            
         ]
         }
 )

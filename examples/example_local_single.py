@@ -79,7 +79,6 @@ def main():
     jd.executable = "/bin/echo"
     #jd.executable = "$HOME/hello.sh"
     jd.number_of_processes = "1"
-    jd.spmd_variation = "single"
     jd.arguments = ["$HELLOWORLD"]
     jd.environment = ['HELLOWORLD=hello_world']
     
