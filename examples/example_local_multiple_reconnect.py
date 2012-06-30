@@ -33,7 +33,7 @@ from bigjob import bigjob, subjob, description
 
 
 ### EDIT based on the number of jobs you want to submit
-NUMBER_JOBS=8
+NUMBER_JOBS=1
 
 def has_finished(state):
         state = state.lower()

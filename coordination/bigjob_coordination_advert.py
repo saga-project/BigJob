@@ -91,6 +91,7 @@ class bigjob_coordination(object):
     
     
     def get_url(self, id_string):        
+        
         if not id_string.startswith("advert") and not id_string.startswith("sqlasyncadvert"): 
             path = id_string.replace(":", "/")            
             if self.dbtype!=None:
@@ -101,6 +102,7 @@ class bigjob_coordination(object):
                 url_string = self.address + "/" + path 
             return url_string
         
+        
         if self.dbtype!=None:
             if self.dbtype.endswith("?"):
                 self.dbtype = self.dbtype[:-1]
@@ -108,7 +110,7 @@ class bigjob_coordination(object):
             
              
         return id_string
-        
+ 
         
     #####################################################################################
     # Pilot-Job State
@@ -143,8 +145,10 @@ class bigjob_coordination(object):
         """ returns array of job_url that are associated with a pilot """
         pilot_dir = saga.advert.directory(saga.url(pilot_url), saga.advert.Create | saga.advert.CreateParents | saga.advert.ReadWrite)
         jobs = pilot_dir.list()   
-        j = [self.__remove_dbtype(pilot_url) + "/" + i.get_string() for i in jobs]
-        return j
+        job_urls = [self.__get_colon_url(self.__remove_dbtype(pilot_url) + "/" + i.get_string()) for i in jobs]
+        if self.dbtype!=None:
+            job_urls = [i + "?" + self.dbtype for i in job_urls]
+        return job_urls
     
     
     def delete_pilot(self, pilot_url):
@@ -170,7 +174,7 @@ class bigjob_coordination(object):
         self.resource_lock.release()
         
     def get_job_state(self, job_url):   
-        job_url = self.get_url(job_url)        
+        job_url = self.get_url(self.__remove_dbtype(job_url))        
         job_dir = saga.advert.directory(saga.url(job_url), saga.advert.Read)
         state = job_dir.get_attribute("state")  
         #logger.debug("Get state of job: " + str(job_url) + " state: " + str(state))
@@ -257,9 +261,18 @@ class bigjob_coordination(object):
             time.sleep(1)
             return 
             
+    ###########################################################################
+    # Private internal methods
+            
     def __remove_dbtype(self, url):
         surl = saga.url(url)
         surl.query=""
         return str(surl)  
             
-            
+         
+    def __get_colon_url(self, id_string):
+        surl = saga.url(id_string)
+        path = surl.path[1:]
+        new_path = path.replace("/", ":")
+        surl.path = "/" + new_path
+        return surl.get_string()     

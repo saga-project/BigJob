@@ -377,10 +377,11 @@ class bigjob(api.base.bigjob):
         subjobs = []
         for i in sj_list:
             url = i 
-            if url.find("/")>0:
-                url = url[url.find("bigjob"):]
-                url =  url.replace("/", ":")    
-            sj = subjob(coordination_url=self.coordination_url, subjob_url=url)
+            #if url.find("/")>0:
+            #    url = url[url.find("bigjob"):]
+            #    url =  url.replace("/", ":")    
+            #sj = subjob(coordination_url=self.coordination_url, subjob_url=url)
+            sj = subjob(subjob_url=url)
             subjobs.append(sj.get_url())
         return subjobs                  
 
@@ -457,7 +458,9 @@ class bigjob(api.base.bigjob):
             finish_counter=0
             result_map = {}
             for i in jobs:
-                state = self.coordination.get_job_state(str(i))            
+                # parse job id out of sj url
+                surl = SAGAUrl(i)
+                state = self.coordination.get_job_state(surl.path)            
                 #state = job_detail["state"]                
                 if result_map.has_key(state)==False:
                     result_map[state]=1
@@ -627,17 +630,24 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
   
     def __parse_pilot_url(self, pilot_url):
         #pdb.set_trace()        
-        dbtype = None
-        coordination = pilot_url[:pilot_url.index("bigjob")]
-        pilot_url = pilot_url[pilot_url.find("bigjob"):]
-        if pilot_url.find("/") > 0:
-            comp = pilot_url.split("/")
-            pilot_url = comp[0]
-            if comp[1].find("dbtype")>0:
-                dbtype=comp[1][comp[1].find("dbtype"):]
-        
+        pilot_saga_url = SAGAUrl(pilot_url)
+        dbtype = pilot_saga_url.query
+        coordination = pilot_url[:pilot_url.index("bigjob")]   
         if dbtype!=None:
             coordination = os.path.join(coordination, "?"+dbtype)
+        pilot_url = pilot_saga_url.path[1:]
+        
+        #dbtype = None
+        #coordination = pilot_url[:pilot_url.index("bigjob")]
+        #pilot_url = pilot_url[pilot_url.find("bigjob"):]
+        #if pilot_url.find("/") > 0:
+        #    comp = pilot_url.split("/")
+        #    pilot_url = comp[0]
+        #    if comp[1].find("dbtype")>0:
+        #        dbtype=comp[1][comp[1].find("dbtype"):]
+        
+        #if dbtype!=None:
+        #    coordination = os.path.join(coordination, "?"+dbtype)
         logger.debug("Parsed URL - Coordination: %s Pilot: %s"%(coordination, pilot_url))    
         return coordination, pilot_url
     
@@ -877,13 +887,14 @@ class subjob(api.base.subjob):
         
         self.coordination_url = coordination_url
         if subjob_url!=None:
-            self.job_url = subjob_url[subjob_url.index("bigjob"):]
+            self.job_url = subjob_url[subjob_url.index("bigjob"):]            
             if self.coordination_url==None:
                 self.coordination_url, self.job_url=self.__parse_subjob_url(subjob_url)
             self.uuid = self.__get_sj_id(subjob_url)
             self.pilot_url = self.__get_pilot_url(subjob_url)
             if self.pilot_url.startswith("bigjob"):
                 self.pilot_url=os.path.join(self.coordination_url, self.pilot_url)
+            
             self.bj = bigjob(pilot_url=self.pilot_url)
             logger.debug("Reconnect SJ: %s Pilot %s"%(self.job_url, self.pilot_url))
         else:
@@ -894,7 +905,9 @@ class subjob(api.base.subjob):
     
     
     def get_url(self):
-        return self.bj._get_subjob_url(self.__get_subjob_url(self.pilot_url))
+        if self.job_url==None:
+            self.job_url=self.__get_subjob_url(self.pilot_url)
+        return self.bj._get_subjob_url(self.job_url)
     
 
     def submit_job(self, pilot_url, jd):
@@ -975,28 +988,40 @@ class subjob(api.base.subjob):
     
     def __get_pilot_url(self, job_url):
         end =job_url.index(":jobs")
-        return job_url[:end]    
+        
+        # Make sure that DB type is appended
+        surl = SAGAUrl(job_url)
+        query = surl.query
+        pilot_url=job_url[:end]
+        if query!=None and query !="":
+            pilot_url = pilot_url + "?"+query
+        return pilot_url
     
                     
     def __get_subjob_url(self, pilot_url):
         if pilot_url.find("bigjob")>1:
             pilot_url = pilot_url[pilot_url.find("bigjob"):]
+        if pilot_url.endswith("/"):
+            pilot_url = pilot_url[:-1]
         self.job_url = pilot_url + ":jobs:" + str(self.uuid)
         return self.job_url
     
     def __parse_subjob_url(self, subjob_url):
-        #pdb.set_trace()        
-        dbtype = None
-        coordination = subjob_url[:subjob_url.index("bigjob")]
-        sj_url = subjob_url[subjob_url.find("bigjob"):]
-        if sj_url.find("/") > 0:
-            comp = sj_url.split("/")
-            sj_url = comp[0]
-            if comp[1].find("dbtype")>0:
-                dbtype=comp[1][comp[1].find("dbtype"):]
-        
+        #pdb.set_trace()    
+        subjob_saga_url = SAGAUrl(subjob_url)    
+        dbtype = subjob_saga_url.query
+        coordination = subjob_url[:subjob_url.index("bigjob")]   
         if dbtype!=None:
             coordination = os.path.join(coordination, "?"+dbtype)
+        sj_url = subjob_saga_url.path[1:]
+             
+#        sj_url = subjob_url[subjob_url.find("bigjob"):]
+#        if sj_url.find("/") > 0 or dbtype!=None or dbtype!="":
+#            comp = sj_url.split("/")
+#            sj_url = comp[0]
+#            if comp[1].find("dbtype")>0:
+#                dbtype=comp[1][comp[1].find("dbtype"):]
+        
         logger.debug("Parsed URL - Coordination: %s Pilot: %s"%(coordination, sj_url))    
         return coordination, sj_url
         

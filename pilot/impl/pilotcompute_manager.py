@@ -211,6 +211,10 @@ class PilotCompute(PilotCompute):
     
     def get_free_nodes(self):
         return self.__bigjob.get_free_nodes()
+    
+    
+    def get_details(self):
+        return self.__bigjob.get_details()
        
     
     def submit_compute_unit(self, compute_unit_description):

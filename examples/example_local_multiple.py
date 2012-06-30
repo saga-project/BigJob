@@ -25,8 +25,8 @@ sys.path.insert(0, os.getcwd() + "/../")
 """
 
 ### EDIT COORDINATION_URL to point to advert server.  
-#COORDINATION_URL = "advert://localhost/?dbtype=sqlite3"
-COORDINATION_URL = "redis://localhost"
+COORDINATION_URL = "advert://localhost/?dbtype=sqlite3"
+#COORDINATION_URL = "redis://localhost"
 
 from bigjob import bigjob, subjob, description
 
