@@ -76,7 +76,8 @@ class BigJobCLI(object):
         for i in cus:
             url = i.get_url()
             short_url = url[url.index("sj"):]
-            
+            if short_url.find("/?")!=-1:
+                short_url=short_url[:short_url.index("/?")]
             queue_time = 0.0
             run_time = 0.0
             try:
@@ -87,7 +88,7 @@ class BigJobCLI(object):
                 pass
                 
             state = i.get_state()
-            
+            details=i.get_details()
             if details.has_key("start_time") and details.has_key("end_queue_time"):
                 queue_time = float(details["end_queue_time"]) - float(details["start_time"])
             if details.has_key("end_time") and details.has_key("end_queue_time"):

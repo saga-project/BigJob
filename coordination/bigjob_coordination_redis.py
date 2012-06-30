@@ -112,7 +112,6 @@ class bigjob_coordination(object):
         description = self.redis.hgetall(pilot_url + ":description")
         return description
     
-    
     #def is_pilot_stopped(self,pilot_url):
     #    state = self.redis.hgetall(pilot_url)
     #    if state==None or not state.has_key("stopped"):
@@ -121,7 +120,10 @@ class bigjob_coordination(object):
     
     def get_jobs_of_pilot(self, pilot_url):
         """ returns array of job_url that are associated with a pilot """
-        return self.redis.keys(pilot_url+":jobs:*") 
+        jobs = self.redis.keys(pilot_url+":jobs:*")
+        jobs_fqdn = [os.path.join(self.get_address(), i)for i in jobs] 
+        return jobs_fqdn
+    
     
     def delete_pilot(self, pilot_url):
         items = self.redis.keys(pilot_url+"*")  
