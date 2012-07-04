@@ -667,7 +667,7 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
             username = surl.username
             password = surl.password
             query = surl.query
-            if query.endswith("/"):
+            if query!=None and query.endswith("/"):
                 query = query[:-1]
             scheme = "%s://"%surl.scheme
         except:
