@@ -14,10 +14,13 @@
 <table class="navbar" border="0" width="100%" cellpadding="0"
        bgcolor="#a0c0ff" cellspacing="0">
   <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="pilot-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
 
   <!-- Tree link -->
       <th>&nbsp;&nbsp;&nbsp;<a
-        href="class-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
 
   <!-- Index link -->
       <th>&nbsp;&nbsp;&nbsp;<a
@@ -31,7 +34,7 @@
       <th class="navbar" align="right" width="100%">
         <table border="0" cellpadding="0" cellspacing="0">
           <tr><th class="navbar" align="center"
-            ><a class="navbar" target="_top" href="http://saga-project.github.com/BigJob">BigJob and Pilot API documentation</a></th>
+            ><a class="navbar" target="_top" href="http://saga-project.github.com/BigJob">BigJob</a></th>
           </tr></table></th>
   </tr>
 </table>
@@ -39,49 +42,44 @@
   <tr valign="top">
     <td width="100%">
       <span class="breadcrumbs">
-        pilot ::
-        impl ::
-        pilotdata_manager ::
-        DataUnit ::
+        <a href="pilot-module.html">Package&nbsp;pilot</a> ::
+        <a href="pilot.impl-module.html">Package&nbsp;impl</a> ::
+        <a href="pilot.impl.pilotdata_manager-module.html">Module&nbsp;pilotdata_manager</a> ::
         Class&nbsp;DataUnit
       </span>
     </td>
     <td>
       <table cellpadding="0" cellspacing="0">
         <!-- hide/show private -->
-        <tr><td align="right"><span class="options"
-            >[<a href="frames.html" target="_top">frames</a
-            >]&nbsp;|&nbsp;<a href="pilot.impl.pilotdata_manager.DataUnit-class.html"
-            target="_top">no&nbsp;frames</a>]</span></td></tr>
       </table>
     </td>
   </tr>
 </table>
 <!-- ==================== CLASS DESCRIPTION ==================== -->
-<h1 class="epydoc">Class DataUnit</h1><p class="nomargin-top"></p>
+<h1 class="epydoc">Class DataUnit</h1><p class="nomargin-top"><span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#DataUnit">source&nbsp;code</a></span></p>
 <center>
 <center>  <map id="uml_class_diagram_for_pilot_im_6" name="uml_class_diagram_for_pilot_im_6">
-<area shape="rect" id="node1_19" href="pilot.impl.pilotdata_manager.DataUnit-class.html#DU_ID_PREFIX" title="pilot.impl.pilotdata_manager.DataUnit.DU_ID_PREFIX" alt="" coords="17,177,547,196"/>
-<area shape="rect" id="node1_20" href="pilot.impl.pilotdata_manager.DataUnit-class.html#__init__" title="1.) create a new Pilot Data: pilot_data_service and data_unit_description &#160;required 2.) reconnect to an existing Pilot Data: du_url required" alt="" coords="17,199,547,217"/>
-<area shape="rect" id="node1_21" href="pilot.impl.pilotdata_manager.DataUnit-class.html#__repr__" title="repr(x)" alt="" coords="17,217,547,236"/>
-<area shape="rect" id="node1_22" href="pilot.impl.pilotdata_manager.DataUnit-class.html#add_data_unit" title="pilot.impl.pilotdata_manager.DataUnit.add_data_unit" alt="" coords="17,236,547,255"/>
-<area shape="rect" id="node1_23" href="pilot.impl.pilotdata_manager.DataUnit-class.html#add_pilot_data" title="add DU to a certain pilot data data will be moved into this data" alt="" coords="17,255,547,273"/>
-<area shape="rect" id="node1_24" href="pilot.impl.pilotdata_manager.DataUnit-class.html#cancel" title="Cancel the DU." alt="" coords="17,273,547,292"/>
-<area shape="rect" id="node1_25" href="pilot.impl.pilotdata_manager.DataUnit-class.html#export" title="simple implementation of export: copies file from first pilot data to local machine" alt="" coords="17,292,547,311"/>
-<area shape="rect" id="node1_26" href="pilot.impl.pilotdata_manager.DataUnit-class.html#get_pilot_data" title="get a list of pilot data that have a copy of this PD" alt="" coords="17,311,547,329"/>
-<area shape="rect" id="node1_27" href="pilot.impl.pilotdata_manager.DataUnit-class.html#get_state" title="get current state of Pilot Data:..." alt="" coords="17,329,547,348"/>
-<area shape="rect" id="node1_28" href="pilot.impl.pilotdata_manager.DataUnit-class.html#list_data_unit_items" title="pilot.impl.pilotdata_manager.DataUnit.list_data_unit_items" alt="" coords="17,348,547,367"/>
-<area shape="rect" id="node1_29" href="pilot.impl.pilotdata_manager.DataUnit-class.html#remove_data_unit" title="pilot.impl.pilotdata_manager.DataUnit.remove_data_unit" alt="" coords="17,367,547,385"/>
-<area shape="rect" id="node1_30" href="pilot.impl.pilotdata_manager.DataUnit-class.html#to_dict" title="pilot.impl.pilotdata_manager.DataUnit.to_dict" alt="" coords="17,385,547,404"/>
-<area shape="rect" id="node1_31" href="pilot.impl.pilotdata_manager.DataUnit-class.html#update_state" title="pilot.impl.pilotdata_manager.DataUnit.update_state" alt="" coords="17,404,547,423"/>
-<area shape="rect" id="node1_32" href="pilot.impl.pilotdata_manager.DataUnit-class.html#wait" title="Wait until in running state (or failed state)" alt="" coords="17,423,547,441"/>
-<area shape="rect" id="node1" href="pilot.impl.pilotdata_manager.DataUnit-class.html" title="Holds a set of file" alt="" coords="5,153,558,447"/>
-<area shape="rect" id="node2_33" href="javascript:void(0);" title="pilot.api.data.api.DataUnit.description" alt="" coords="215,31,349,49"/>
-<area shape="rect" id="node2_34" href="javascript:void(0);" title="pilot.api.data.api.DataUnit.file_list" alt="" coords="215,49,349,68"/>
-<area shape="rect" id="node2_35" href="javascript:void(0);" title="pilot.api.data.api.DataUnit.id" alt="" coords="215,68,349,87"/>
-<area shape="rect" id="node2_36" href="javascript:void(0);" title="pilot.api.data.api.DataUnit.state" alt="" coords="215,87,349,105"/>
-<area shape="rect" id="node2_37" href="javascript:void(0);" title="pilot.api.data.api.DataUnit.list_data_units" alt="" coords="215,108,349,127"/>
-<area shape="rect" id="node2" href="javascript:void(0);" title="DataUnit." alt="" coords="202,6,361,133"/>
+<area shape="rect" id="node1_19" href="pilot.impl.pilotdata_manager.DataUnit-class.html#DU_ID_PREFIX" title="pilot.impl.pilotdata_manager.DataUnit.DU_ID_PREFIX" alt="" coords="17,177,512,196"/>
+<area shape="rect" id="node1_20" href="pilot.impl.pilotdata_manager.DataUnit-class.html#__init__" title="1.) create a new Pilot Data: pilot_data_service and data_unit_description &#160;required 2.) reconnect to an existing Pilot Data: du_url required" alt="" coords="17,199,512,217"/>
+<area shape="rect" id="node1_21" href="pilot.impl.pilotdata_manager.DataUnit-class.html#cancel" title="Cancel the DU." alt="" coords="17,217,512,236"/>
+<area shape="rect" id="node1_22" href="pilot.impl.pilotdata_manager.DataUnit-class.html#add_data_unit" title="pilot.impl.pilotdata_manager.DataUnit.add_data_unit" alt="" coords="17,236,512,255"/>
+<area shape="rect" id="node1_23" href="pilot.impl.pilotdata_manager.DataUnit-class.html#remove_data_unit" title="pilot.impl.pilotdata_manager.DataUnit.remove_data_unit" alt="" coords="17,255,512,273"/>
+<area shape="rect" id="node1_24" href="pilot.impl.pilotdata_manager.DataUnit-class.html#list_data_unit_items" title="pilot.impl.pilotdata_manager.DataUnit.list_data_unit_items" alt="" coords="17,273,512,292"/>
+<area shape="rect" id="node1_25" href="pilot.impl.pilotdata_manager.DataUnit-class.html#get_state" title="get current state of Pilot Data:..." alt="" coords="17,292,512,311"/>
+<area shape="rect" id="node1_26" href="pilot.impl.pilotdata_manager.DataUnit-class.html#wait" title="Wait until in running state (or failed state)" alt="" coords="17,311,512,329"/>
+<area shape="rect" id="node1_27" href="pilot.impl.pilotdata_manager.DataUnit-class.html#add_pilot_data" title="add DU to a certain pilot data data will be moved into this data" alt="" coords="17,329,512,348"/>
+<area shape="rect" id="node1_28" href="pilot.impl.pilotdata_manager.DataUnit-class.html#get_pilot_data" title="get a list of pilot data that have a copy of this PD" alt="" coords="17,348,512,367"/>
+<area shape="rect" id="node1_29" href="pilot.impl.pilotdata_manager.DataUnit-class.html#export" title="simple implementation of export: copies file from first pilot data to local machine" alt="" coords="17,367,512,385"/>
+<area shape="rect" id="node1_30" href="pilot.impl.pilotdata_manager.DataUnit-class.html#to_dict" title="pilot.impl.pilotdata_manager.DataUnit.to_dict" alt="" coords="17,385,512,404"/>
+<area shape="rect" id="node1_31" href="pilot.impl.pilotdata_manager.DataUnit-class.html#update_state" title="pilot.impl.pilotdata_manager.DataUnit.update_state" alt="" coords="17,404,512,423"/>
+<area shape="rect" id="node1_32" href="pilot.impl.pilotdata_manager.DataUnit-class.html#__repr__" title="repr(x)" alt="" coords="17,423,512,441"/>
+<area shape="rect" id="node1" href="pilot.impl.pilotdata_manager.DataUnit-class.html" title="Holds a set of file" alt="" coords="5,153,523,447"/>
+<area shape="rect" id="node2_33" href="pilot.api.data.api.DataUnit-class.html#description" title="pilot.api.data.api.DataUnit.description" alt="" coords="203,31,328,49"/>
+<area shape="rect" id="node2_34" href="pilot.api.data.api.DataUnit-class.html#file_list" title="pilot.api.data.api.DataUnit.file_list" alt="" coords="203,49,328,68"/>
+<area shape="rect" id="node2_35" href="pilot.api.data.api.DataUnit-class.html#id" title="pilot.api.data.api.DataUnit.id" alt="" coords="203,68,328,87"/>
+<area shape="rect" id="node2_36" href="pilot.api.data.api.DataUnit-class.html#state" title="pilot.api.data.api.DataUnit.state" alt="" coords="203,87,328,105"/>
+<area shape="rect" id="node2_37" href="pilot.api.data.api.DataUnit-class.html#list_data_units" title="pilot.api.data.api.DataUnit.list_data_units" alt="" coords="203,108,328,127"/>
+<area shape="rect" id="node2" href="pilot.api.data.api.DataUnit-class.html" title="DataUnit." alt="" coords="191,6,340,133"/>
 </map>
   <img src="uml_class_diagram_for_pilot_im_6.gif" alt='' usemap="#uml_class_diagram_for_pilot_im_6" ismap="ismap" class="graph-without-title" />
 </center>
@@ -119,7 +117,7 @@ State model:
       data_unit_description required 2.) reconnect to an existing Pilot 
       Data: du_url required</td>
           <td align="right" valign="top">
-            
+            <span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#DataUnit.__init__">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -133,10 +131,10 @@ State model:
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a href="pilot.impl.pilotdata_manager.DataUnit-class.html#__repr__" class="summary-sig-name">__repr__</a>(<span class="summary-sig-arg">self</span>)</span><br />
-      repr(x)</td>
+          <td><span class="summary-sig"><a href="pilot.impl.pilotdata_manager.DataUnit-class.html#cancel" class="summary-sig-name">cancel</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Cancel the DU.</td>
           <td align="right" valign="top">
-            
+            <span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#DataUnit.cancel">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -153,7 +151,74 @@ State model:
           <td><span class="summary-sig"><a href="pilot.impl.pilotdata_manager.DataUnit-class.html#add_data_unit" class="summary-sig-name">add_data_unit</a>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">data_unit</span>)</span></td>
           <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#DataUnit.add_data_unit">source&nbsp;code</a></span>
             
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="pilot.impl.pilotdata_manager.DataUnit-class.html#remove_data_unit" class="summary-sig-name">remove_data_unit</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">data_unit</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#DataUnit.remove_data_unit">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="list_data_unit_items"></a><span class="summary-sig-name">list_data_unit_items</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#DataUnit.list_data_unit_items">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="pilot.impl.pilotdata_manager.DataUnit-class.html#get_state" class="summary-sig-name">get_state</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      get current state of Pilot Data:...</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#DataUnit.get_state">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="pilot.impl.pilotdata_manager.DataUnit-class.html#wait" class="summary-sig-name">wait</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Wait until in running state (or failed state)</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#DataUnit.wait">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -171,7 +236,7 @@ State model:
         <span class="summary-sig-arg">pilot_data</span>)</span><br />
       add DU to a certain pilot data data will be moved into this data</td>
           <td align="right" valign="top">
-            
+            <span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#DataUnit.add_pilot_data">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -185,10 +250,10 @@ State model:
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a href="pilot.impl.pilotdata_manager.DataUnit-class.html#cancel" class="summary-sig-name">cancel</a>(<span class="summary-sig-arg">self</span>)</span><br />
-      Cancel the DU.</td>
+          <td><span class="summary-sig"><a name="get_pilot_data"></a><span class="summary-sig-name">get_pilot_data</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      get a list of pilot data that have a copy of this PD</td>
           <td align="right" valign="top">
-            
+            <span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#DataUnit.get_pilot_data">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -207,74 +272,7 @@ State model:
       simple implementation of export: copies file from first pilot data to
       local machine</td>
           <td align="right" valign="top">
-            
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a name="get_pilot_data"></a><span class="summary-sig-name">get_pilot_data</span>(<span class="summary-sig-arg">self</span>)</span><br />
-      get a list of pilot data that have a copy of this PD</td>
-          <td align="right" valign="top">
-            
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a href="pilot.impl.pilotdata_manager.DataUnit-class.html#get_state" class="summary-sig-name">get_state</a>(<span class="summary-sig-arg">self</span>)</span><br />
-      get current state of Pilot Data:...</td>
-          <td align="right" valign="top">
-            
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a name="list_data_unit_items"></a><span class="summary-sig-name">list_data_unit_items</span>(<span class="summary-sig-arg">self</span>)</span></td>
-          <td align="right" valign="top">
-            
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a href="pilot.impl.pilotdata_manager.DataUnit-class.html#remove_data_unit" class="summary-sig-name">remove_data_unit</a>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">data_unit</span>)</span></td>
-          <td align="right" valign="top">
-            
+            <span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#DataUnit.export">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -290,7 +288,7 @@ State model:
         <tr>
           <td><span class="summary-sig"><a name="to_dict"></a><span class="summary-sig-name">to_dict</span>(<span class="summary-sig-arg">self</span>)</span></td>
           <td align="right" valign="top">
-            
+            <span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#DataUnit.to_dict">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -307,7 +305,7 @@ State model:
           <td><span class="summary-sig"><a name="update_state"></a><span class="summary-sig-name">update_state</span>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">state</span>)</span></td>
           <td align="right" valign="top">
-            
+            <span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#DataUnit.update_state">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -321,10 +319,27 @@ State model:
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a href="pilot.impl.pilotdata_manager.DataUnit-class.html#wait" class="summary-sig-name">wait</a>(<span class="summary-sig-arg">self</span>)</span><br />
-      Wait until in running state (or failed state)</td>
+          <td><span class="summary-sig"><a href="pilot.impl.pilotdata_manager.DataUnit-class.html#__repr__" class="summary-sig-name">__repr__</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      repr(x)</td>
           <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#DataUnit.__repr__">source&nbsp;code</a></span>
             
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="list_data_units"></a><span class="summary-sig-name">list_data_units</span>(<span class="summary-sig-arg">self</span>)</span>
+      <em>(Inherited from <a href="pilot.api.data.api.DataUnit-class.html">pilot.api.data.api.DataUnit</a>)</em></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.api.data.api-pysrc.html#DataUnit.list_data_units">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -334,9 +349,6 @@ State model:
   </tr>
   <tr>
     <td colspan="2" class="summary">
-    <p class="indent-wrapped-lines"><b>Inherited from <code>api.data.api.DataUnit</code></b>:
-      <code>list_data_units</code>
-      </p>
     <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
       <code>__delattr__</code>,
       <code>__format__</code>,
@@ -377,14 +389,40 @@ State model:
   <td align="left" colspan="2" class="table-header">
     <span class="table-header">Properties</span></td>
 </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="description"></a><span class="summary-name">description</span>
+      <em>(Inherited from <a href="pilot.api.data.api.DataUnit-class.html">pilot.api.data.api.DataUnit</a>)</em>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="file_list"></a><span class="summary-name">file_list</span>
+      <em>(Inherited from <a href="pilot.api.data.api.DataUnit-class.html">pilot.api.data.api.DataUnit</a>)</em>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="id"></a><span class="summary-name">id</span>
+      <em>(Inherited from <a href="pilot.api.data.api.DataUnit-class.html">pilot.api.data.api.DataUnit</a>)</em>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="state"></a><span class="summary-name">state</span>
+      <em>(Inherited from <a href="pilot.api.data.api.DataUnit-class.html">pilot.api.data.api.DataUnit</a>)</em>
+    </td>
+  </tr>
   <tr>
     <td colspan="2" class="summary">
-    <p class="indent-wrapped-lines"><b>Inherited from <code>api.data.api.DataUnit</code></b>:
-      <code>description</code>,
-      <code>file_list</code>,
-      <code>id</code>,
-      <code>state</code>
-      </p>
     <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
       <code>__class__</code>
       </p>
@@ -414,7 +452,7 @@ State model:
     <br /><em class="fname">(Constructor)</em>
   </h3>
   </td><td align="right" valign="top"
-    >&nbsp;
+    ><span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#DataUnit.__init__">source&nbsp;code</a></span>&nbsp;
     </td>
   </tr></table>
   
@@ -428,26 +466,24 @@ State model:
   </dl>
 </td></tr></table>
 </div>
-<a name="__repr__"></a>
+<a name="cancel"></a>
 <div>
 <table class="details" border="1" cellpadding="3"
        cellspacing="0" width="100%" bgcolor="white">
 <tr><td>
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr valign="top"><td>
-  <h3 class="epydoc"><span class="sig"><span class="sig-name">__repr__</span>(<span class="sig-arg">self</span>)</span>
-    <br /><em class="fname">(Representation operator)</em>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">cancel</span>(<span class="sig-arg">self</span>)</span>
   </h3>
   </td><td align="right" valign="top"
-    >&nbsp;
+    ><span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#DataUnit.cancel">source&nbsp;code</a></span>&nbsp;
     </td>
   </tr></table>
   
-  <p>repr(x)</p>
+  <p>Cancel the DU.</p>
   <dl class="fields">
     <dt>Overrides:
-        object.__repr__
-        <dd><em class="note">(inherited documentation)</em></dd>
+        <a href="pilot.api.data.api.DataUnit-class.html#cancel">api.data.api.DataUnit.cancel</a>
     </dt>
   </dl>
 </td></tr></table>
@@ -463,91 +499,14 @@ State model:
         <span class="sig-arg">data_unit</span>)</span>
   </h3>
   </td><td align="right" valign="top"
-    >&nbsp;
+    ><span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#DataUnit.add_data_unit">source&nbsp;code</a></span>&nbsp;
     </td>
   </tr></table>
   
   
   <dl class="fields">
     <dt>Overrides:
-        api.data.api.DataUnit.add_data_unit
-    </dt>
-  </dl>
-</td></tr></table>
-</div>
-<a name="cancel"></a>
-<div>
-<table class="details" border="1" cellpadding="3"
-       cellspacing="0" width="100%" bgcolor="white">
-<tr><td>
-  <table width="100%" cellpadding="0" cellspacing="0" border="0">
-  <tr valign="top"><td>
-  <h3 class="epydoc"><span class="sig"><span class="sig-name">cancel</span>(<span class="sig-arg">self</span>)</span>
-  </h3>
-  </td><td align="right" valign="top"
-    >&nbsp;
-    </td>
-  </tr></table>
-  
-  <p>Cancel the DU.</p>
-  <dl class="fields">
-    <dt>Overrides:
-        api.data.api.DataUnit.cancel
-    </dt>
-  </dl>
-</td></tr></table>
-</div>
-<a name="export"></a>
-<div>
-<table class="details" border="1" cellpadding="3"
-       cellspacing="0" width="100%" bgcolor="white">
-<tr><td>
-  <table width="100%" cellpadding="0" cellspacing="0" border="0">
-  <tr valign="top"><td>
-  <h3 class="epydoc"><span class="sig"><span class="sig-name">export</span>(<span class="sig-arg">self</span>,
-        <span class="sig-arg">target_url</span>)</span>
-  </h3>
-  </td><td align="right" valign="top"
-    >&nbsp;
-    </td>
-  </tr></table>
-  
-  <p>simple implementation of export: copies file from first pilot data to 
-  local machine</p>
-  <dl class="fields">
-    <dt>Overrides:
-        api.data.api.DataUnit.export
-    </dt>
-  </dl>
-</td></tr></table>
-</div>
-<a name="get_state"></a>
-<div>
-<table class="details" border="1" cellpadding="3"
-       cellspacing="0" width="100%" bgcolor="white">
-<tr><td>
-  <table width="100%" cellpadding="0" cellspacing="0" border="0">
-  <tr valign="top"><td>
-  <h3 class="epydoc"><span class="sig"><span class="sig-name">get_state</span>(<span class="sig-arg">self</span>)</span>
-  </h3>
-  </td><td align="right" valign="top"
-    >&nbsp;
-    </td>
-  </tr></table>
-  
-  <pre class="literalblock">
-
-get current state of Pilot Data:
-    New =&gt; Initialized
-    Pending =&gt; Files are synchronized with a pilot store
-    Running =&gt; PD is in sync with all replicas
-    Done =&gt; Terminated
-
-</pre>
-  <dl class="fields">
-    <dt>Overrides:
-        api.data.api.DataUnit.get_state
-        <dd><em class="note">(inherited documentation)</em></dd>
+        <a href="pilot.api.data.api.DataUnit-class.html#add_data_unit">api.data.api.DataUnit.add_data_unit</a>
     </dt>
   </dl>
 </td></tr></table>
@@ -563,14 +522,45 @@ get current state of Pilot Data:
         <span class="sig-arg">data_unit</span>)</span>
   </h3>
   </td><td align="right" valign="top"
-    >&nbsp;
+    ><span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#DataUnit.remove_data_unit">source&nbsp;code</a></span>&nbsp;
     </td>
   </tr></table>
   
   
   <dl class="fields">
     <dt>Overrides:
-        api.data.api.DataUnit.remove_data_unit
+        <a href="pilot.api.data.api.DataUnit-class.html#remove_data_unit">api.data.api.DataUnit.remove_data_unit</a>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="get_state"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">get_state</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#DataUnit.get_state">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <pre class="literalblock">
+
+get current state of Pilot Data:
+    New =&gt; Initialized
+    Pending =&gt; Files are synchronized with a pilot store
+    Running =&gt; PD is in sync with all replicas
+    Done =&gt; Terminated
+
+</pre>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="pilot.api.data.api.DataUnit-class.html#get_state">api.data.api.DataUnit.get_state</a>
+        <dd><em class="note">(inherited documentation)</em></dd>
     </dt>
   </dl>
 </td></tr></table>
@@ -585,14 +575,62 @@ get current state of Pilot Data:
   <h3 class="epydoc"><span class="sig"><span class="sig-name">wait</span>(<span class="sig-arg">self</span>)</span>
   </h3>
   </td><td align="right" valign="top"
-    >&nbsp;
+    ><span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#DataUnit.wait">source&nbsp;code</a></span>&nbsp;
     </td>
   </tr></table>
   
   <p>Wait until in running state (or failed state)</p>
   <dl class="fields">
     <dt>Overrides:
-        api.data.api.DataUnit.wait
+        <a href="pilot.api.data.api.DataUnit-class.html#wait">api.data.api.DataUnit.wait</a>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="export"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">export</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">target_url</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#DataUnit.export">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>simple implementation of export: copies file from first pilot data to 
+  local machine</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="pilot.api.data.api.DataUnit-class.html#export">api.data.api.DataUnit.export</a>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="__repr__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__repr__</span>(<span class="sig-arg">self</span>)</span>
+    <br /><em class="fname">(Representation operator)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#DataUnit.__repr__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>repr(x)</p>
+  <dl class="fields">
+    <dt>Overrides:
+        object.__repr__
+        <dd><em class="note">(inherited documentation)</em></dd>
     </dt>
   </dl>
 </td></tr></table>
@@ -602,10 +640,13 @@ get current state of Pilot Data:
 <table class="navbar" border="0" width="100%" cellpadding="0"
        bgcolor="#a0c0ff" cellspacing="0">
   <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="pilot-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
 
   <!-- Tree link -->
       <th>&nbsp;&nbsp;&nbsp;<a
-        href="class-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
 
   <!-- Index link -->
       <th>&nbsp;&nbsp;&nbsp;<a
@@ -619,14 +660,15 @@ get current state of Pilot Data:
       <th class="navbar" align="right" width="100%">
         <table border="0" cellpadding="0" cellspacing="0">
           <tr><th class="navbar" align="center"
-            ><a class="navbar" target="_top" href="http://saga-project.github.com/BigJob">BigJob and Pilot API documentation</a></th>
+            ><a class="navbar" target="_top" href="http://saga-project.github.com/BigJob">BigJob</a></th>
           </tr></table></th>
   </tr>
 </table>
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Mon Jun 18 23:17:56 2012
+    <a href="epydoc-log.html">Generated by Epydoc
+    3.0.1 on Fri Jul  6 23:15:49 2012</a>
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"
