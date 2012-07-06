@@ -39,8 +39,7 @@ The L{ComputeDataService} represents the central entry point for the application
 workload:
 
     - L{ComputeDataService} (CDS)
-          a service which can map CDUs to a set of L{ComputePilot}s and
-          L{DataPilot}s.
+          a service which can map CUs and DUs to a set of Pilot Compute and Pilot Data.
 
 The L{ComputeDataService} (CDS) takes care of the placement of Compute and Data Units. 
 The set of L{PilotCompute}s and L{PilotData} available to the CDS can be changed during 
@@ -85,7 +84,7 @@ B{Example}::
     compute_data_service.cancel()
     
     
-    
+       
 '''
 
 

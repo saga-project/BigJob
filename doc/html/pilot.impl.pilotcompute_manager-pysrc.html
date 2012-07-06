@@ -1,0 +1,459 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>pilot.impl.pilotcompute_manager</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="pilot-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="http://saga-project.github.com/BigJob">BigJob</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="pilot-module.html">Package&nbsp;pilot</a> ::
+        <a href="pilot.impl-module.html">Package&nbsp;impl</a> ::
+        Module&nbsp;pilotcompute_manager
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="pilot.impl.pilotcompute_manager-module.html">Module pilot.impl.pilotcompute_manager</a></h1>
+<pre class="py-src">
+<a name="L1"></a><tt class="py-lineno">  1</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">sys</tt> </tt>
+<a name="L2"></a><tt class="py-lineno">  2</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">getopt</tt> </tt>
+<a name="L3"></a><tt class="py-lineno">  3</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">time</tt> </tt>
+<a name="L4"></a><tt class="py-lineno">  4</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">pdb</tt> </tt>
+<a name="L5"></a><tt class="py-lineno">  5</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">os</tt> </tt>
+<a name="L6"></a><tt class="py-lineno">  6</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">traceback</tt> </tt>
+<a name="L7"></a><tt class="py-lineno">  7</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">logging</tt> </tt>
+<a name="L8"></a><tt class="py-lineno">  8</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">uuid</tt> </tt>
+<a name="L9"></a><tt class="py-lineno">  9</tt>  <tt class="py-line"> </tt>
+<a name="L10"></a><tt class="py-lineno"> 10</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">bigjob</tt> </tt>
+<a name="L11"></a><tt class="py-lineno"> 11</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">bigjob</tt> <tt class="py-keyword">import</tt> <tt class="py-name">logger</tt> </tt>
+<a name="L12"></a><tt class="py-lineno"> 12</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">bigjob</tt> <tt class="py-keyword">import</tt> <tt class="py-name">bigjob</tt><tt class="py-op">,</tt> <tt class="py-name">subjob</tt> </tt>
+<a name="L13"></a><tt class="py-lineno"> 13</tt>  <tt class="py-line"> </tt>
+<a name="L14"></a><tt class="py-lineno"> 14</tt>  <tt class="py-line"> </tt>
+<a name="L15"></a><tt class="py-lineno"> 15</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-0" class="py-name" targets="Package pilot=pilot-module.html"><a title="pilot" class="py-name" href="#" onclick="return doclink('link-0', 'pilot', 'link-0');">pilot</a></tt><tt class="py-op">.</tt><tt id="link-1" class="py-name" targets="Package pilot.api=pilot.api-module.html,Module pilot.api.api=pilot.api.api-module.html,Module pilot.api.compute.api=pilot.api.compute.api-module.html,Module pilot.api.data.api=pilot.api.data.api-module.html"><a title="pilot.api
+pilot.api.api
+pilot.api.compute.api
+pilot.api.data.api" class="py-name" href="#" onclick="return doclink('link-1', 'api', 'link-1');">api</a></tt> <tt class="py-keyword">import</tt> <tt id="link-2" class="py-name" targets="Class pilot.api.compute.api.PilotCompute=pilot.api.compute.api.PilotCompute-class.html,Class pilot.impl.pilotcompute_manager.PilotCompute=pilot.impl.pilotcompute_manager.PilotCompute-class.html"><a title="pilot.api.compute.api.PilotCompute
+pilot.impl.pilotcompute_manager.PilotCompute" class="py-name" href="#" onclick="return doclink('link-2', 'PilotCompute', 'link-2');">PilotCompute</a></tt><tt class="py-op">,</tt> <tt id="link-3" class="py-name" targets="Class pilot.api.compute.api.PilotComputeService=pilot.api.compute.api.PilotComputeService-class.html,Class pilot.impl.pilotcompute_manager.PilotComputeService=pilot.impl.pilotcompute_manager.PilotComputeService-class.html"><a title="pilot.api.compute.api.PilotComputeService
+pilot.impl.pilotcompute_manager.PilotComputeService" class="py-name" href="#" onclick="return doclink('link-3', 'PilotComputeService', 'link-3');">PilotComputeService</a></tt><tt class="py-op">,</tt> <tt id="link-4" class="py-name" targets="Class pilot.api.compute.api.State=pilot.api.compute.api.State-class.html"><a title="pilot.api.compute.api.State" class="py-name" href="#" onclick="return doclink('link-4', 'State', 'link-4');">State</a></tt> </tt>
+<a name="L16"></a><tt class="py-lineno"> 16</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-5" class="py-name"><a title="pilot" class="py-name" href="#" onclick="return doclink('link-5', 'pilot', 'link-0');">pilot</a></tt><tt class="py-op">.</tt><tt id="link-6" class="py-name" targets="Package pilot.impl=pilot.impl-module.html"><a title="pilot.impl" class="py-name" href="#" onclick="return doclink('link-6', 'impl', 'link-6');">impl</a></tt><tt class="py-op">.</tt><tt id="link-7" class="py-name" targets="Module pilot.impl.pilot_manager=pilot.impl.pilot_manager-module.html"><a title="pilot.impl.pilot_manager" class="py-name" href="#" onclick="return doclink('link-7', 'pilot_manager', 'link-7');">pilot_manager</a></tt> <tt class="py-keyword">import</tt> <tt id="link-8" class="py-name" targets="Class pilot.api.compute.api.ComputeUnit=pilot.api.compute.api.ComputeUnit-class.html,Class pilot.impl.pilot_manager.ComputeUnit=pilot.impl.pilot_manager.ComputeUnit-class.html"><a title="pilot.api.compute.api.ComputeUnit
+pilot.impl.pilot_manager.ComputeUnit" class="py-name" href="#" onclick="return doclink('link-8', 'ComputeUnit', 'link-8');">ComputeUnit</a></tt> </tt>
+<a name="L17"></a><tt class="py-lineno"> 17</tt>  <tt class="py-line"><tt class="py-comment">#from pilot.coordination.advert import AdvertCoordinationAdaptor as CoordinationAdaptor</tt> </tt>
+<a name="L18"></a><tt class="py-lineno"> 18</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-9" class="py-name"><a title="pilot" class="py-name" href="#" onclick="return doclink('link-9', 'pilot', 'link-0');">pilot</a></tt><tt class="py-op">.</tt><tt id="link-10" class="py-name" targets="Package pilot.coordination=pilot.coordination-module.html"><a title="pilot.coordination" class="py-name" href="#" onclick="return doclink('link-10', 'coordination', 'link-10');">coordination</a></tt><tt class="py-op">.</tt><tt id="link-11" class="py-name" targets="Module pilot.coordination.nocoord=pilot.coordination.nocoord-module.html"><a title="pilot.coordination.nocoord" class="py-name" href="#" onclick="return doclink('link-11', 'nocoord', 'link-11');">nocoord</a></tt> <tt class="py-keyword">import</tt> <tt id="link-12" class="py-name" targets="Class pilot.coordination.nocoord.NoCoordinationAdaptor=pilot.coordination.nocoord.NoCoordinationAdaptor-class.html"><a title="pilot.coordination.nocoord.NoCoordinationAdaptor" class="py-name" href="#" onclick="return doclink('link-12', 'NoCoordinationAdaptor', 'link-12');">NoCoordinationAdaptor</a></tt> <tt class="py-keyword">as</tt> <tt class="py-name">CoordinationAdaptor</tt> </tt>
+<a name="L19"></a><tt class="py-lineno"> 19</tt>  <tt class="py-line"> </tt>
+<a name="L20"></a><tt class="py-lineno"> 20</tt>  <tt class="py-line"> </tt>
+<a name="L21"></a><tt class="py-lineno"> 21</tt>  <tt class="py-line"><tt class="py-string">""" This variable defines the coordination system that is used by BigJob</tt> </tt>
+<a name="L22"></a><tt class="py-lineno"> 22</tt>  <tt class="py-line"><tt class="py-string">    e.g. </tt> </tt>
+<a name="L23"></a><tt class="py-lineno"> 23</tt>  <tt class="py-line"><tt class="py-string">        advert://localhost (SAGA/Advert SQLITE)</tt> </tt>
+<a name="L24"></a><tt class="py-lineno"> 24</tt>  <tt class="py-line"><tt class="py-string">        advert://advert.cct.lsu.edu:8080 (SAGA/Advert POSTGRESQL)</tt> </tt>
+<a name="L25"></a><tt class="py-lineno"> 25</tt>  <tt class="py-line"><tt class="py-string">        redis://localhost:6379 (Redis at localhost)</tt> </tt>
+<a name="L26"></a><tt class="py-lineno"> 26</tt>  <tt class="py-line"><tt class="py-string">        tcp://localhost (ZMQ)</tt> </tt>
+<a name="L27"></a><tt class="py-lineno"> 27</tt>  <tt class="py-line"><tt class="py-string">"""</tt> </tt>
+<a name="L28"></a><tt class="py-lineno"> 28</tt>  <tt class="py-line"><tt id="link-13" class="py-name" targets="Variable pilot.impl.pilotcompute_manager.COORDINATION_URL=pilot.impl.pilotcompute_manager-module.html#COORDINATION_URL"><a title="pilot.impl.pilotcompute_manager.COORDINATION_URL" class="py-name" href="#" onclick="return doclink('link-13', 'COORDINATION_URL', 'link-13');">COORDINATION_URL</a></tt> <tt class="py-op">=</tt> <tt class="py-string">"advert://localhost/?dbtype=sqlite3"</tt> </tt>
+<a name="L29"></a><tt class="py-lineno"> 29</tt>  <tt class="py-line"> </tt>
+<a name="L30"></a><tt class="py-lineno"> 30</tt>  <tt class="py-line"> </tt>
+<a name="PilotComputeService"></a><div id="PilotComputeService-def"><a name="L31"></a><tt class="py-lineno"> 31</tt> <a class="py-toggle" href="#" id="PilotComputeService-toggle" onclick="return toggle('PilotComputeService');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="pilot.impl.pilotcompute_manager.PilotComputeService-class.html">PilotComputeService</a><tt class="py-op">(</tt><tt class="py-base-class">PilotComputeService</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="PilotComputeService-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="PilotComputeService-expanded"><a name="L32"></a><tt class="py-lineno"> 32</tt>  <tt class="py-line">    <tt class="py-docstring">""" PilotComputeService based on BigJob.</tt> </tt>
+<a name="L33"></a><tt class="py-lineno"> 33</tt>  <tt class="py-line"><tt class="py-docstring">                    </tt> </tt>
+<a name="L34"></a><tt class="py-lineno"> 34</tt>  <tt class="py-line"><tt class="py-docstring">    """</tt> </tt>
+<a name="L35"></a><tt class="py-lineno"> 35</tt>  <tt class="py-line">    <tt id="link-14" class="py-name" targets="Variable pilot.impl.pilotcompute_manager.PilotComputeService.PJS_ID_PREFIX=pilot.impl.pilotcompute_manager.PilotComputeService-class.html#PJS_ID_PREFIX"><a title="pilot.impl.pilotcompute_manager.PilotComputeService.PJS_ID_PREFIX" class="py-name" href="#" onclick="return doclink('link-14', 'PJS_ID_PREFIX', 'link-14');">PJS_ID_PREFIX</a></tt><tt class="py-op">=</tt><tt class="py-string">"pcs-"</tt>    </tt>
+<a name="L36"></a><tt class="py-lineno"> 36</tt>  <tt class="py-line"> </tt>
+<a name="L37"></a><tt class="py-lineno"> 37</tt>  <tt class="py-line"> </tt>
+<a name="PilotComputeService.__init__"></a><div id="PilotComputeService.__init__-def"><a name="L38"></a><tt class="py-lineno"> 38</tt> <a class="py-toggle" href="#" id="PilotComputeService.__init__-toggle" onclick="return toggle('PilotComputeService.__init__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="pilot.impl.pilotcompute_manager.PilotComputeService-class.html#__init__">__init__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">coordination_url</tt><tt class="py-op">=</tt><tt id="link-15" class="py-name"><a title="pilot.impl.pilotcompute_manager.COORDINATION_URL" class="py-name" href="#" onclick="return doclink('link-15', 'COORDINATION_URL', 'link-13');">COORDINATION_URL</a></tt><tt class="py-op">,</tt> <tt class="py-param">pcs_url</tt><tt class="py-op">=</tt><tt class="py-name">None</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="PilotComputeService.__init__-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="PilotComputeService.__init__-expanded"><a name="L39"></a><tt class="py-lineno"> 39</tt>  <tt class="py-line">        <tt class="py-docstring">""" Create a PilotJobService object.</tt> </tt>
+<a name="L40"></a><tt class="py-lineno"> 40</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L41"></a><tt class="py-lineno"> 41</tt>  <tt class="py-line"><tt class="py-docstring">            Keyword arguments:</tt> </tt>
+<a name="L42"></a><tt class="py-lineno"> 42</tt>  <tt class="py-line"><tt class="py-docstring">            pcs_id -- Don't create a new, but connect to an existing (optional)</tt> </tt>
+<a name="L43"></a><tt class="py-lineno"> 43</tt>  <tt class="py-line"><tt class="py-docstring">        """</tt> </tt>
+<a name="L44"></a><tt class="py-lineno"> 44</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">pilot_computes</tt><tt class="py-op">=</tt><tt class="py-op">[</tt><tt class="py-op">]</tt> </tt>
+<a name="L45"></a><tt class="py-lineno"> 45</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">coordination_url</tt><tt class="py-op">=</tt><tt class="py-name">coordination_url</tt> </tt>
+<a name="L46"></a><tt class="py-lineno"> 46</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">coordination_queue</tt><tt class="py-op">=</tt><tt class="py-string">""</tt> </tt>
+<a name="L47"></a><tt class="py-lineno"> 47</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">pcs_url</tt><tt class="py-op">==</tt><tt class="py-name">None</tt><tt class="py-op">:</tt>      <tt class="py-comment"># new pjs          </tt> </tt>
+<a name="L48"></a><tt class="py-lineno"> 48</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-16" class="py-name" targets="Variable pilot.api.compute.api.ComputeUnit.id=pilot.api.compute.api.ComputeUnit-class.html#id,Variable pilot.api.compute.api.PilotCompute.id=pilot.api.compute.api.PilotCompute-class.html#id,Variable pilot.api.compute.api.PilotComputeService.id=pilot.api.compute.api.PilotComputeService-class.html#id,Variable pilot.api.data.api.DataUnit.id=pilot.api.data.api.DataUnit-class.html#id,Variable pilot.api.data.api.PilotData.id=pilot.api.data.api.PilotData-class.html#id,Variable pilot.api.data.api.PilotDataService.id=pilot.api.data.api.PilotDataService-class.html#id,Variable pilot.impl.pilotdata_manager.PilotDataService.id=pilot.impl.pilotdata_manager.PilotDataService-class.html#id"><a title="pilot.api.compute.api.ComputeUnit.id
+pilot.api.compute.api.PilotCompute.id
+pilot.api.compute.api.PilotComputeService.id
+pilot.api.data.api.DataUnit.id
+pilot.api.data.api.PilotData.id
+pilot.api.data.api.PilotDataService.id
+pilot.impl.pilotdata_manager.PilotDataService.id" class="py-name" href="#" onclick="return doclink('link-16', 'id', 'link-16');">id</a></tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-17" class="py-name"><a title="pilot.impl.pilotcompute_manager.PilotComputeService.PJS_ID_PREFIX" class="py-name" href="#" onclick="return doclink('link-17', 'PJS_ID_PREFIX', 'link-14');">PJS_ID_PREFIX</a></tt><tt class="py-op">+</tt><tt class="py-name">str</tt><tt class="py-op">(</tt><tt class="py-name">uuid</tt><tt class="py-op">.</tt><tt class="py-name">uuid1</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L49"></a><tt class="py-lineno"> 49</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-18" class="py-name" targets="Variable pilot.impl.pilotdata_manager.PilotDataService.url=pilot.impl.pilotdata_manager.PilotDataService-class.html#url"><a title="pilot.impl.pilotdata_manager.PilotDataService.url" class="py-name" href="#" onclick="return doclink('link-18', 'url', 'link-18');">url</a></tt> <tt class="py-op">=</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">join</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">coordination_url</tt><tt class="py-op">,</tt> <tt class="py-string">"pcs"</tt><tt class="py-op">,</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-19" class="py-name"><a title="pilot.api.compute.api.ComputeUnit.id
+pilot.api.compute.api.PilotCompute.id
+pilot.api.compute.api.PilotComputeService.id
+pilot.api.data.api.DataUnit.id
+pilot.api.data.api.PilotData.id
+pilot.api.data.api.PilotDataService.id
+pilot.impl.pilotdata_manager.PilotDataService.id" class="py-name" href="#" onclick="return doclink('link-19', 'id', 'link-16');">id</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L50"></a><tt class="py-lineno"> 50</tt>  <tt class="py-line">            <tt class="py-comment"># self.coordination_queue = self.id</tt> </tt>
+<a name="L51"></a><tt class="py-lineno"> 51</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">coordination_queue</tt> <tt class="py-op">=</tt> <tt class="py-string">"PilotComputeServiceQueue-"</tt> <tt class="py-op">+</tt> <tt class="py-name">str</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-20" class="py-name"><a title="pilot.api.compute.api.ComputeUnit.id
+pilot.api.compute.api.PilotCompute.id
+pilot.api.compute.api.PilotComputeService.id
+pilot.api.data.api.DataUnit.id
+pilot.api.data.api.PilotData.id
+pilot.api.data.api.PilotDataService.id
+pilot.impl.pilotdata_manager.PilotDataService.id" class="py-name" href="#" onclick="return doclink('link-20', 'id', 'link-16');">id</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L52"></a><tt class="py-lineno"> 52</tt>  <tt class="py-line">            <tt class="py-name">logger</tt><tt class="py-op">.</tt><tt class="py-name">debug</tt><tt class="py-op">(</tt><tt class="py-string">"Created Pilot Compute Service: %s"</tt><tt class="py-op">%</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-21" class="py-name"><a title="pilot.impl.pilotdata_manager.PilotDataService.url" class="py-name" href="#" onclick="return doclink('link-21', 'url', 'link-18');">url</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L53"></a><tt class="py-lineno"> 53</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L54"></a><tt class="py-lineno"> 54</tt>  <tt class="py-line">            <tt class="py-name">logger</tt><tt class="py-op">.</tt><tt id="link-22" class="py-name" targets="Variable pilot.api.compute.api.ComputeUnitDescription.error=pilot.api.compute.api.ComputeUnitDescription-class.html#error,Variable pilot.api.compute.api.PilotComputeDescription.error=pilot.api.compute.api.PilotComputeDescription-class.html#error"><a title="pilot.api.compute.api.ComputeUnitDescription.error
+pilot.api.compute.api.PilotComputeDescription.error" class="py-name" href="#" onclick="return doclink('link-22', 'error', 'link-22');">error</a></tt><tt class="py-op">(</tt><tt class="py-string">"Reconnect to PilotComputeService currently not supported."</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L55"></a><tt class="py-lineno"> 55</tt>  <tt class="py-line">         </tt>
+<a name="L56"></a><tt class="py-lineno"> 56</tt>  <tt class="py-line">             </tt>
+<a name="L57"></a><tt class="py-lineno"> 57</tt>  <tt class="py-line"> </tt>
+<a name="PilotComputeService.create_pilot"></a><div id="PilotComputeService.create_pilot-def"><a name="L58"></a><tt class="py-lineno"> 58</tt> <a class="py-toggle" href="#" id="PilotComputeService.create_pilot-toggle" onclick="return toggle('PilotComputeService.create_pilot');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="pilot.impl.pilotcompute_manager.PilotComputeService-class.html#create_pilot">create_pilot</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">rm</tt><tt class="py-op">=</tt><tt class="py-name">None</tt><tt class="py-op">,</tt> <tt class="py-param">pilot_compute_description</tt><tt class="py-op">=</tt><tt class="py-name">None</tt><tt class="py-op">,</tt> <tt class="py-param">pj_type</tt><tt class="py-op">=</tt><tt class="py-name">None</tt><tt class="py-op">,</tt> <tt class="py-param">context</tt><tt class="py-op">=</tt><tt class="py-name">None</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="PilotComputeService.create_pilot-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="PilotComputeService.create_pilot-expanded"><a name="L59"></a><tt class="py-lineno"> 59</tt>  <tt class="py-line">        <tt class="py-docstring">""" Add a PilotJob to the PilotJobService</tt> </tt>
+<a name="L60"></a><tt class="py-lineno"> 60</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L61"></a><tt class="py-lineno"> 61</tt>  <tt class="py-line"><tt class="py-docstring">            Keyword arguments:</tt> </tt>
+<a name="L62"></a><tt class="py-lineno"> 62</tt>  <tt class="py-line"><tt class="py-docstring">            pilot_compute_description -- PilotJob Description</tt> </tt>
+<a name="L63"></a><tt class="py-lineno"> 63</tt>  <tt class="py-line"><tt class="py-docstring">            </tt> </tt>
+<a name="L64"></a><tt class="py-lineno"> 64</tt>  <tt class="py-line"><tt class="py-docstring">            Return value:</tt> </tt>
+<a name="L65"></a><tt class="py-lineno"> 65</tt>  <tt class="py-line"><tt class="py-docstring">            A PilotCompute object</tt> </tt>
+<a name="L66"></a><tt class="py-lineno"> 66</tt>  <tt class="py-line"><tt class="py-docstring">        """</tt> </tt>
+<a name="L67"></a><tt class="py-lineno"> 67</tt>  <tt class="py-line">        <tt class="py-name">bj_dict</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__translate_pj_bj_description</tt><tt class="py-op">(</tt><tt class="py-name">pilot_compute_description</tt><tt class="py-op">)</tt> </tt>
+<a name="L68"></a><tt class="py-lineno"> 68</tt>  <tt class="py-line">        <tt class="py-name">bj</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__start_bigjob</tt><tt class="py-op">(</tt><tt class="py-name">bj_dict</tt><tt class="py-op">)</tt> </tt>
+<a name="L69"></a><tt class="py-lineno"> 69</tt>  <tt class="py-line">        <tt class="py-name">pj</tt> <tt class="py-op">=</tt> <tt id="link-23" class="py-name"><a title="pilot.api.compute.api.PilotCompute
+pilot.impl.pilotcompute_manager.PilotCompute" class="py-name" href="#" onclick="return doclink('link-23', 'PilotCompute', 'link-2');">PilotCompute</a></tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">,</tt> <tt class="py-name">bj</tt><tt class="py-op">,</tt> <tt class="py-name">pilot_compute_description</tt><tt class="py-op">)</tt> </tt>
+<a name="L70"></a><tt class="py-lineno"> 70</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">pilot_computes</tt><tt class="py-op">.</tt><tt class="py-name">append</tt><tt class="py-op">(</tt><tt class="py-name">pj</tt><tt class="py-op">)</tt> </tt>
+<a name="L71"></a><tt class="py-lineno"> 71</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">pj</tt> </tt>
+</div><a name="L72"></a><tt class="py-lineno"> 72</tt>  <tt class="py-line">     </tt>
+<a name="L73"></a><tt class="py-lineno"> 73</tt>  <tt class="py-line">         </tt>
+<a name="PilotComputeService.__translate_pj_bj_description"></a><div id="PilotComputeService.__translate_pj_bj_description-def"><a name="L74"></a><tt class="py-lineno"> 74</tt> <a class="py-toggle" href="#" id="PilotComputeService.__translate_pj_bj_description-toggle" onclick="return toggle('PilotComputeService.__translate_pj_bj_description');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="pilot.impl.pilotcompute_manager.PilotComputeService-class.html#__translate_pj_bj_description">__translate_pj_bj_description</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">pilot_compute_description</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="PilotComputeService.__translate_pj_bj_description-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="PilotComputeService.__translate_pj_bj_description-expanded"><a name="L75"></a><tt class="py-lineno"> 75</tt>  <tt class="py-line">        <tt class="py-name">resource_description</tt><tt class="py-op">=</tt><tt class="py-op">{</tt><tt class="py-op">}</tt> </tt>
+<a name="L76"></a><tt class="py-lineno"> 76</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">pilot_compute_description</tt><tt class="py-op">.</tt><tt class="py-name">has_key</tt><tt class="py-op">(</tt><tt class="py-string">"service_url"</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L77"></a><tt class="py-lineno"> 77</tt>  <tt class="py-line">            <tt class="py-name">resource_description</tt><tt class="py-op">[</tt><tt class="py-string">"resource_url"</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">pilot_compute_description</tt><tt class="py-op">[</tt><tt class="py-string">"service_url"</tt><tt class="py-op">]</tt>  </tt>
+<a name="L78"></a><tt class="py-lineno"> 78</tt>  <tt class="py-line">             </tt>
+<a name="L79"></a><tt class="py-lineno"> 79</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">pilot_compute_description</tt><tt class="py-op">.</tt><tt class="py-name">has_key</tt><tt class="py-op">(</tt><tt class="py-string">"queue"</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L80"></a><tt class="py-lineno"> 80</tt>  <tt class="py-line">            <tt class="py-name">resource_description</tt><tt class="py-op">[</tt><tt class="py-string">"queue"</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">pilot_compute_description</tt><tt class="py-op">[</tt><tt class="py-string">"queue"</tt><tt class="py-op">]</tt>  </tt>
+<a name="L81"></a><tt class="py-lineno"> 81</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L82"></a><tt class="py-lineno"> 82</tt>  <tt class="py-line">            <tt class="py-name">resource_description</tt><tt class="py-op">[</tt><tt class="py-string">"queue"</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt> </tt>
+<a name="L83"></a><tt class="py-lineno"> 83</tt>  <tt class="py-line">             </tt>
+<a name="L84"></a><tt class="py-lineno"> 84</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">pilot_compute_description</tt><tt class="py-op">.</tt><tt class="py-name">has_key</tt><tt class="py-op">(</tt><tt class="py-string">"allocation"</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L85"></a><tt class="py-lineno"> 85</tt>  <tt class="py-line">            <tt class="py-name">resource_description</tt><tt class="py-op">[</tt><tt class="py-string">"allocation"</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">pilot_compute_description</tt><tt class="py-op">[</tt><tt class="py-string">"allocation"</tt><tt class="py-op">]</tt>  </tt>
+<a name="L86"></a><tt class="py-lineno"> 86</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L87"></a><tt class="py-lineno"> 87</tt>  <tt class="py-line">            <tt class="py-name">resource_description</tt><tt class="py-op">[</tt><tt class="py-string">"allocation"</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt> </tt>
+<a name="L88"></a><tt class="py-lineno"> 88</tt>  <tt class="py-line">         </tt>
+<a name="L89"></a><tt class="py-lineno"> 89</tt>  <tt class="py-line">        <tt class="py-keyword">for</tt> <tt class="py-name">i</tt> <tt class="py-keyword">in</tt> <tt class="py-name">pilot_compute_description</tt><tt class="py-op">.</tt><tt class="py-name">keys</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L90"></a><tt class="py-lineno"> 90</tt>  <tt class="py-line">            <tt class="py-name">resource_description</tt><tt class="py-op">[</tt><tt class="py-name">i</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">pilot_compute_description</tt><tt class="py-op">[</tt><tt class="py-name">i</tt><tt class="py-op">]</tt>  </tt>
+<a name="L91"></a><tt class="py-lineno"> 91</tt>  <tt class="py-line">         </tt>
+<a name="L92"></a><tt class="py-lineno"> 92</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">resource_description</tt> </tt>
+</div><a name="L93"></a><tt class="py-lineno"> 93</tt>  <tt class="py-line">     </tt>
+<a name="L94"></a><tt class="py-lineno"> 94</tt>  <tt class="py-line">     </tt>
+<a name="PilotComputeService.list_pilots"></a><div id="PilotComputeService.list_pilots-def"><a name="L95"></a><tt class="py-lineno"> 95</tt> <a class="py-toggle" href="#" id="PilotComputeService.list_pilots-toggle" onclick="return toggle('PilotComputeService.list_pilots');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="pilot.impl.pilotcompute_manager.PilotComputeService-class.html#list_pilots">list_pilots</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="PilotComputeService.list_pilots-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="PilotComputeService.list_pilots-expanded"><a name="L96"></a><tt class="py-lineno"> 96</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">pilot_computes</tt> </tt>
+</div><a name="L97"></a><tt class="py-lineno"> 97</tt>  <tt class="py-line">         </tt>
+<a name="L98"></a><tt class="py-lineno"> 98</tt>  <tt class="py-line">     </tt>
+<a name="PilotComputeService.cancel"></a><div id="PilotComputeService.cancel-def"><a name="L99"></a><tt class="py-lineno"> 99</tt> <a class="py-toggle" href="#" id="PilotComputeService.cancel-toggle" onclick="return toggle('PilotComputeService.cancel');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="pilot.impl.pilotcompute_manager.PilotComputeService-class.html#cancel">cancel</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="PilotComputeService.cancel-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="PilotComputeService.cancel-expanded"><a name="L100"></a><tt class="py-lineno">100</tt>  <tt class="py-line">        <tt class="py-docstring">""" Cancel the PilotComputeService.</tt> </tt>
+<a name="L101"></a><tt class="py-lineno">101</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L102"></a><tt class="py-lineno">102</tt>  <tt class="py-line"><tt class="py-docstring">            This also cancels all the PilotJobs that were under control of this PJS.</tt> </tt>
+<a name="L103"></a><tt class="py-lineno">103</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L104"></a><tt class="py-lineno">104</tt>  <tt class="py-line"><tt class="py-docstring">            Keyword arguments:</tt> </tt>
+<a name="L105"></a><tt class="py-lineno">105</tt>  <tt class="py-line"><tt class="py-docstring">            None</tt> </tt>
+<a name="L106"></a><tt class="py-lineno">106</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L107"></a><tt class="py-lineno">107</tt>  <tt class="py-line"><tt class="py-docstring">            Return value:</tt> </tt>
+<a name="L108"></a><tt class="py-lineno">108</tt>  <tt class="py-line"><tt class="py-docstring">            Result of operation</tt> </tt>
+<a name="L109"></a><tt class="py-lineno">109</tt>  <tt class="py-line"><tt class="py-docstring">        """</tt> </tt>
+<a name="L110"></a><tt class="py-lineno">110</tt>  <tt class="py-line">        <tt class="py-keyword">for</tt> <tt class="py-name">i</tt> <tt class="py-keyword">in</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">pilot_computes</tt><tt class="py-op">:</tt> </tt>
+<a name="L111"></a><tt class="py-lineno">111</tt>  <tt class="py-line">            <tt class="py-name">i</tt><tt class="py-op">.</tt><tt id="link-24" class="py-name" targets="Method pilot.api.compute.api.ComputeUnit.cancel()=pilot.api.compute.api.ComputeUnit-class.html#cancel,Method pilot.api.compute.api.ComputeUnitService.cancel()=pilot.api.compute.api.ComputeUnitService-class.html#cancel,Method pilot.api.compute.api.PilotCompute.cancel()=pilot.api.compute.api.PilotCompute-class.html#cancel,Method pilot.api.compute.api.PilotComputeService.cancel()=pilot.api.compute.api.PilotComputeService-class.html#cancel,Method pilot.api.data.api.DataUnit.cancel()=pilot.api.data.api.DataUnit-class.html#cancel,Method pilot.api.data.api.DataUnitService.cancel()=pilot.api.data.api.DataUnitService-class.html#cancel,Method pilot.api.data.api.PilotData.cancel()=pilot.api.data.api.PilotData-class.html#cancel,Method pilot.api.data.api.PilotDataService.cancel()=pilot.api.data.api.PilotDataService-class.html#cancel,Method pilot.impl.pilot_manager.ComputeDataService.cancel()=pilot.impl.pilot_manager.ComputeDataService-class.html#cancel,Method pilot.impl.pilot_manager.ComputeUnit.cancel()=pilot.impl.pilot_manager.ComputeUnit-class.html#cancel,Method pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral.cancel()=pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral-class.html#cancel,Method pilot.impl.pilotcompute_manager.PilotCompute.cancel()=pilot.impl.pilotcompute_manager.PilotCompute-class.html#cancel,Method pilot.impl.pilotcompute_manager.PilotComputeService.cancel()=pilot.impl.pilotcompute_manager.PilotComputeService-class.html#cancel,Method pilot.impl.pilotdata_manager.DataUnit.cancel()=pilot.impl.pilotdata_manager.DataUnit-class.html#cancel,Method pilot.impl.pilotdata_manager.PilotData.cancel()=pilot.impl.pilotdata_manager.PilotData-class.html#cancel,Method pilot.impl.pilotdata_manager.PilotDataService.cancel()=pilot.impl.pilotdata_manager.PilotDataService-class.html#cancel"><a title="pilot.api.compute.api.ComputeUnit.cancel
+pilot.api.compute.api.ComputeUnitService.cancel
+pilot.api.compute.api.PilotCompute.cancel
+pilot.api.compute.api.PilotComputeService.cancel
+pilot.api.data.api.DataUnit.cancel
+pilot.api.data.api.DataUnitService.cancel
+pilot.api.data.api.PilotData.cancel
+pilot.api.data.api.PilotDataService.cancel
+pilot.impl.pilot_manager.ComputeDataService.cancel
+pilot.impl.pilot_manager.ComputeUnit.cancel
+pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral.cancel
+pilot.impl.pilotcompute_manager.PilotCompute.cancel
+pilot.impl.pilotcompute_manager.PilotComputeService.cancel
+pilot.impl.pilotdata_manager.DataUnit.cancel
+pilot.impl.pilotdata_manager.PilotData.cancel
+pilot.impl.pilotdata_manager.PilotDataService.cancel" class="py-name" href="#" onclick="return doclink('link-24', 'cancel', 'link-24');">cancel</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L112"></a><tt class="py-lineno">112</tt>  <tt class="py-line">             </tt>
+<a name="L113"></a><tt class="py-lineno">113</tt>  <tt class="py-line">     </tt>
+<a name="PilotComputeService.__repr__"></a><div id="PilotComputeService.__repr__-def"><a name="L114"></a><tt class="py-lineno">114</tt> <a class="py-toggle" href="#" id="PilotComputeService.__repr__-toggle" onclick="return toggle('PilotComputeService.__repr__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="pilot.impl.pilotcompute_manager.PilotComputeService-class.html#__repr__">__repr__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="PilotComputeService.__repr__-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="PilotComputeService.__repr__-expanded"><a name="L115"></a><tt class="py-lineno">115</tt>  <tt class="py-line">        <tt class="py-name">status_string</tt> <tt class="py-op">=</tt> <tt class="py-string">"{\n"</tt> </tt>
+<a name="L116"></a><tt class="py-lineno">116</tt>  <tt class="py-line">        <tt class="py-keyword">for</tt> <tt class="py-name">i</tt> <tt class="py-keyword">in</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">pilot_computes</tt><tt class="py-op">:</tt> </tt>
+<a name="L117"></a><tt class="py-lineno">117</tt>  <tt class="py-line">            <tt class="py-name">status_string</tt> <tt class="py-op">=</tt> <tt class="py-name">status_string</tt> <tt class="py-op">+</tt> <tt class="py-string">" PJ: %s, State: %s;"</tt><tt class="py-op">%</tt><tt class="py-op">(</tt><tt class="py-name">i</tt><tt class="py-op">.</tt><tt id="link-25" class="py-name" targets="Method pilot.impl.pilot_manager.ComputeUnit.get_url()=pilot.impl.pilot_manager.ComputeUnit-class.html#get_url,Method pilot.impl.pilotcompute_manager.PilotCompute.get_url()=pilot.impl.pilotcompute_manager.PilotCompute-class.html#get_url"><a title="pilot.impl.pilot_manager.ComputeUnit.get_url
+pilot.impl.pilotcompute_manager.PilotCompute.get_url" class="py-name" href="#" onclick="return doclink('link-25', 'get_url', 'link-25');">get_url</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> <tt class="py-name">i</tt><tt class="py-op">.</tt><tt id="link-26" class="py-name" targets="Method pilot.api.compute.api.ComputeUnit.get_state()=pilot.api.compute.api.ComputeUnit-class.html#get_state,Method pilot.api.compute.api.ComputeUnitService.get_state()=pilot.api.compute.api.ComputeUnitService-class.html#get_state,Method pilot.api.compute.api.PilotCompute.get_state()=pilot.api.compute.api.PilotCompute-class.html#get_state,Method pilot.api.data.api.DataUnit.get_state()=pilot.api.data.api.DataUnit-class.html#get_state,Method pilot.api.data.api.DataUnitService.get_state()=pilot.api.data.api.DataUnitService-class.html#get_state,Method pilot.api.data.api.PilotData.get_state()=pilot.api.data.api.PilotData-class.html#get_state,Method pilot.filemanagement.bliss_adaptor.BlissFileAdaptor.get_state()=pilot.filemanagement.bliss_adaptor.BlissFileAdaptor-class.html#get_state,Method pilot.filemanagement.globusonline_adaptor.GlobusOnlineFileAdaptor.get_state()=pilot.filemanagement.globusonline_adaptor.GlobusOnlineFileAdaptor-class.html#get_state,Method pilot.filemanagement.ssh_adaptor.SSHFileAdaptor.get_state()=pilot.filemanagement.ssh_adaptor.SSHFileAdaptor-class.html#get_state,Method pilot.filemanagement.webhdfs_adaptor.WebHDFSFileAdaptor.get_state()=pilot.filemanagement.webhdfs_adaptor.WebHDFSFileAdaptor-class.html#get_state,Method pilot.impl.pilot_manager.ComputeDataService.get_state()=pilot.impl.pilot_manager.ComputeDataService-class.html#get_state,Method pilot.impl.pilot_manager.ComputeUnit.get_state()=pilot.impl.pilot_manager.ComputeUnit-class.html#get_state,Method pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral.get_state()=pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral-class.html#get_state,Method pilot.impl.pilotcompute_manager.PilotCompute.get_state()=pilot.impl.pilotcompute_manager.PilotCompute-class.html#get_state,Method pilot.impl.pilotdata_manager.DataUnit.get_state()=pilot.impl.pilotdata_manager.DataUnit-class.html#get_state,Method pilot.impl.pilotdata_manager.PilotData.get_state()=pilot.impl.pilotdata_manager.PilotData-class.html#get_state"><a title="pilot.api.compute.api.ComputeUnit.get_state
+pilot.api.compute.api.ComputeUnitService.get_state
+pilot.api.compute.api.PilotCompute.get_state
+pilot.api.data.api.DataUnit.get_state
+pilot.api.data.api.DataUnitService.get_state
+pilot.api.data.api.PilotData.get_state
+pilot.filemanagement.bliss_adaptor.BlissFileAdaptor.get_state
+pilot.filemanagement.globusonline_adaptor.GlobusOnlineFileAdaptor.get_state
+pilot.filemanagement.ssh_adaptor.SSHFileAdaptor.get_state
+pilot.filemanagement.webhdfs_adaptor.WebHDFSFileAdaptor.get_state
+pilot.impl.pilot_manager.ComputeDataService.get_state
+pilot.impl.pilot_manager.ComputeUnit.get_state
+pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral.get_state
+pilot.impl.pilotcompute_manager.PilotCompute.get_state
+pilot.impl.pilotdata_manager.DataUnit.get_state
+pilot.impl.pilotdata_manager.PilotData.get_state" class="py-name" href="#" onclick="return doclink('link-26', 'get_state', 'link-26');">get_state</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L118"></a><tt class="py-lineno">118</tt>  <tt class="py-line">        <tt class="py-name">status_string</tt> <tt class="py-op">=</tt> <tt class="py-name">status_string</tt> <tt class="py-op">+</tt> <tt class="py-string">"\n}"</tt> </tt>
+<a name="L119"></a><tt class="py-lineno">119</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">status_string</tt> </tt>
+</div><a name="L120"></a><tt class="py-lineno">120</tt>  <tt class="py-line">     </tt>
+<a name="L121"></a><tt class="py-lineno">121</tt>  <tt class="py-line">     </tt>
+<a name="PilotComputeService.__start_bigjob"></a><div id="PilotComputeService.__start_bigjob-def"><a name="L122"></a><tt class="py-lineno">122</tt> <a class="py-toggle" href="#" id="PilotComputeService.__start_bigjob-toggle" onclick="return toggle('PilotComputeService.__start_bigjob');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="pilot.impl.pilotcompute_manager.PilotComputeService-class.html#__start_bigjob">__start_bigjob</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">bj_dict</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="PilotComputeService.__start_bigjob-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="PilotComputeService.__start_bigjob-expanded"><a name="L123"></a><tt class="py-lineno">123</tt>  <tt class="py-line">        <tt class="py-docstring">""" private method - starts a bigjob on the defined resource """</tt> </tt>
+<a name="L124"></a><tt class="py-lineno">124</tt>  <tt class="py-line">        <tt class="py-name">gram_url</tt> <tt class="py-op">=</tt> <tt class="py-name">bj_dict</tt><tt class="py-op">[</tt><tt class="py-string">"resource_url"</tt><tt class="py-op">]</tt> </tt>
+<a name="L125"></a><tt class="py-lineno">125</tt>  <tt class="py-line">        <tt class="py-name">logger</tt><tt class="py-op">.</tt><tt class="py-name">debug</tt><tt class="py-op">(</tt><tt class="py-string">"start bigjob at: "</tt> <tt class="py-op">+</tt> <tt class="py-name">gram_url</tt><tt class="py-op">)</tt> </tt>
+<a name="L126"></a><tt class="py-lineno">126</tt>  <tt class="py-line">        <tt class="py-name">bj</tt> <tt class="py-op">=</tt> <tt class="py-name">bigjob</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">coordination_url</tt><tt class="py-op">)</tt> </tt>
+<a name="L127"></a><tt class="py-lineno">127</tt>  <tt class="py-line">        <tt class="py-name">ppn</tt><tt class="py-op">=</tt><tt class="py-string">"1"</tt> </tt>
+<a name="L128"></a><tt class="py-lineno">128</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-op">(</tt><tt class="py-string">"processes_per_node"</tt> <tt class="py-keyword">in</tt> <tt class="py-name">bj_dict</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L129"></a><tt class="py-lineno">129</tt>  <tt class="py-line">            <tt class="py-name">ppn</tt><tt class="py-op">=</tt><tt class="py-name">bj_dict</tt><tt class="py-op">[</tt><tt class="py-string">"processes_per_node"</tt><tt class="py-op">]</tt> </tt>
+<a name="L130"></a><tt class="py-lineno">130</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L131"></a><tt class="py-lineno">131</tt>  <tt class="py-line">            <tt class="py-name">bj_dict</tt><tt class="py-op">[</tt><tt class="py-string">"processes_per_node"</tt><tt class="py-op">]</tt><tt class="py-op">=</tt><tt class="py-string">"1"</tt> </tt>
+<a name="L132"></a><tt class="py-lineno">132</tt>  <tt class="py-line"> </tt>
+<a name="L133"></a><tt class="py-lineno">133</tt>  <tt class="py-line">        <tt class="py-name">walltime</tt> <tt class="py-op">=</tt> <tt class="py-number">3600</tt> </tt>
+<a name="L134"></a><tt class="py-lineno">134</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-op">(</tt><tt class="py-string">"walltime"</tt> <tt class="py-keyword">in</tt> <tt class="py-name">bj_dict</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L135"></a><tt class="py-lineno">135</tt>  <tt class="py-line">            <tt class="py-name">walltime</tt><tt class="py-op">=</tt><tt class="py-name">bj_dict</tt><tt class="py-op">[</tt><tt class="py-string">"walltime"</tt><tt class="py-op">]</tt> </tt>
+<a name="L136"></a><tt class="py-lineno">136</tt>  <tt class="py-line"> </tt>
+<a name="L137"></a><tt class="py-lineno">137</tt>  <tt class="py-line">        <tt id="link-27" class="py-name" targets="Variable pilot.api.compute.api.ComputeUnitDescription.working_directory=pilot.api.compute.api.ComputeUnitDescription-class.html#working_directory,Variable pilot.api.compute.api.PilotComputeDescription.working_directory=pilot.api.compute.api.PilotComputeDescription-class.html#working_directory"><a title="pilot.api.compute.api.ComputeUnitDescription.working_directory
+pilot.api.compute.api.PilotComputeDescription.working_directory" class="py-name" href="#" onclick="return doclink('link-27', 'working_directory', 'link-27');">working_directory</a></tt> <tt class="py-op">=</tt> <tt class="py-op">(</tt><tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">getcwd</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">+</tt><tt class="py-string">"/agent"</tt><tt class="py-op">)</tt> </tt>
+<a name="L138"></a><tt class="py-lineno">138</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-op">(</tt><tt class="py-string">"working_directory"</tt> <tt class="py-keyword">in</tt> <tt class="py-name">bj_dict</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L139"></a><tt class="py-lineno">139</tt>  <tt class="py-line">            <tt id="link-28" class="py-name"><a title="pilot.api.compute.api.ComputeUnitDescription.working_directory
+pilot.api.compute.api.PilotComputeDescription.working_directory" class="py-name" href="#" onclick="return doclink('link-28', 'working_directory', 'link-27');">working_directory</a></tt><tt class="py-op">=</tt><tt class="py-name">bj_dict</tt><tt class="py-op">[</tt><tt class="py-string">"working_directory"</tt><tt class="py-op">]</tt> </tt>
+<a name="L140"></a><tt class="py-lineno">140</tt>  <tt class="py-line">             </tt>
+<a name="L141"></a><tt class="py-lineno">141</tt>  <tt class="py-line">        <tt class="py-name">bj_filetransfer</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt> </tt>
+<a name="L142"></a><tt class="py-lineno">142</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-op">(</tt><tt class="py-string">"file_transfer"</tt> <tt class="py-keyword">in</tt> <tt class="py-name">bj_dict</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L143"></a><tt class="py-lineno">143</tt>  <tt class="py-line">            <tt class="py-name">bj_filetransfer</tt> <tt class="py-op">=</tt> <tt class="py-name">bj_dict</tt><tt class="py-op">[</tt><tt class="py-string">"file_transfer"</tt><tt class="py-op">]</tt> </tt>
+<a name="L144"></a><tt class="py-lineno">144</tt>  <tt class="py-line"> </tt>
+<a name="L145"></a><tt class="py-lineno">145</tt>  <tt class="py-line">        <tt class="py-name">bj</tt><tt class="py-op">.</tt><tt class="py-name">start_pilot_job</tt><tt class="py-op">(</tt><tt class="py-name">gram_url</tt><tt class="py-op">,</tt> </tt>
+<a name="L146"></a><tt class="py-lineno">146</tt>  <tt class="py-line">                           <tt class="py-name">None</tt><tt class="py-op">,</tt> </tt>
+<a name="L147"></a><tt class="py-lineno">147</tt>  <tt class="py-line">                           <tt class="py-name">bj_dict</tt><tt class="py-op">[</tt><tt class="py-string">"number_of_processes"</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> </tt>
+<a name="L148"></a><tt class="py-lineno">148</tt>  <tt class="py-line">                           <tt class="py-name">bj_dict</tt><tt class="py-op">[</tt><tt class="py-string">"queue"</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> </tt>
+<a name="L149"></a><tt class="py-lineno">149</tt>  <tt class="py-line">                           <tt class="py-name">bj_dict</tt><tt class="py-op">[</tt><tt class="py-string">"allocation"</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> </tt>
+<a name="L150"></a><tt class="py-lineno">150</tt>  <tt class="py-line">                           <tt id="link-29" class="py-name"><a title="pilot.api.compute.api.ComputeUnitDescription.working_directory
+pilot.api.compute.api.PilotComputeDescription.working_directory" class="py-name" href="#" onclick="return doclink('link-29', 'working_directory', 'link-27');">working_directory</a></tt><tt class="py-op">,</tt>  </tt>
+<a name="L151"></a><tt class="py-lineno">151</tt>  <tt class="py-line">                           <tt class="py-name">None</tt><tt class="py-op">,</tt> </tt>
+<a name="L152"></a><tt class="py-lineno">152</tt>  <tt class="py-line">                           <tt class="py-name">walltime</tt><tt class="py-op">,</tt> </tt>
+<a name="L153"></a><tt class="py-lineno">153</tt>  <tt class="py-line">                           <tt class="py-name">ppn</tt><tt class="py-op">,</tt> </tt>
+<a name="L154"></a><tt class="py-lineno">154</tt>  <tt class="py-line">                           <tt class="py-name">filetransfers</tt><tt class="py-op">=</tt><tt class="py-name">bj_filetransfer</tt><tt class="py-op">,</tt> </tt>
+<a name="L155"></a><tt class="py-lineno">155</tt>  <tt class="py-line">                           <tt class="py-name">external_queue</tt><tt class="py-op">=</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">coordination_queue</tt><tt class="py-op">)</tt> </tt>
+<a name="L156"></a><tt class="py-lineno">156</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">bj</tt> </tt>
+</div></div><a name="L157"></a><tt class="py-lineno">157</tt>  <tt class="py-line">     </tt>
+<a name="L158"></a><tt class="py-lineno">158</tt>  <tt class="py-line">     </tt>
+<a name="PilotCompute"></a><div id="PilotCompute-def"><a name="L159"></a><tt class="py-lineno">159</tt> <a class="py-toggle" href="#" id="PilotCompute-toggle" onclick="return toggle('PilotCompute');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html">PilotCompute</a><tt class="py-op">(</tt><tt class="py-base-class">PilotCompute</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="PilotCompute-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="PilotCompute-expanded"><a name="L160"></a><tt class="py-lineno">160</tt>  <tt class="py-line">    <tt class="py-docstring">""" Wrapper for BigJob class """</tt> </tt>
+<a name="L161"></a><tt class="py-lineno">161</tt>  <tt class="py-line">      </tt>
+<a name="PilotCompute.__init__"></a><div id="PilotCompute.__init__-def"><a name="L162"></a><tt class="py-lineno">162</tt> <a class="py-toggle" href="#" id="PilotCompute.__init__-toggle" onclick="return toggle('PilotCompute.__init__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#__init__">__init__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">pilot_compute_service</tt><tt class="py-op">=</tt><tt class="py-name">None</tt><tt class="py-op">,</tt>  </tt>
+<a name="L163"></a><tt class="py-lineno">163</tt>  <tt class="py-line">                       <tt class="py-param">bigjob_object</tt><tt class="py-op">=</tt><tt class="py-name">None</tt><tt class="py-op">,</tt>  </tt>
+<a name="L164"></a><tt class="py-lineno">164</tt>  <tt class="py-line">                       <tt class="py-param">pilot_compute_description</tt><tt class="py-op">=</tt><tt class="py-name">None</tt><tt class="py-op">,</tt> </tt>
+<a name="L165"></a><tt class="py-lineno">165</tt>  <tt class="py-line">                       <tt class="py-param">pilot_url</tt><tt class="py-op">=</tt><tt class="py-name">None</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> <tt class="py-comment"># for reconnecting</tt> </tt>
+</div><a name="L166"></a><tt class="py-lineno">166</tt>  <tt class="py-line">         </tt>
+<a name="L167"></a><tt class="py-lineno">167</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__subjobs</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-op">]</tt> </tt>
+<a name="L168"></a><tt class="py-lineno">168</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__pilot_compute_service</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt> </tt>
+<a name="L169"></a><tt class="py-lineno">169</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">pilot_url</tt><tt class="py-op">==</tt><tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L170"></a><tt class="py-lineno">170</tt>  <tt class="py-line">            <tt class="py-name">logger</tt><tt class="py-op">.</tt><tt class="py-name">debug</tt><tt class="py-op">(</tt><tt class="py-string">"Create PilotCompute for BigJob: "</tt> <tt class="py-op">+</tt> <tt class="py-name">str</tt><tt class="py-op">(</tt><tt class="py-name">bigjob_object</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L171"></a><tt class="py-lineno">171</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">pilot_compute_description</tt><tt class="py-op">=</tt><tt class="py-name">pilot_compute_description</tt> </tt>
+<a name="L172"></a><tt class="py-lineno">172</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__pilot_compute_service</tt><tt class="py-op">=</tt><tt class="py-name">pilot_compute_service</tt> </tt>
+<a name="L173"></a><tt class="py-lineno">173</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__bigjob</tt> <tt class="py-op">=</tt> <tt class="py-name">bigjob_object</tt>         </tt>
+<a name="L174"></a><tt class="py-lineno">174</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L175"></a><tt class="py-lineno">175</tt>  <tt class="py-line">            <tt class="py-name">logger</tt><tt class="py-op">.</tt><tt class="py-name">debug</tt><tt class="py-op">(</tt><tt class="py-string">"Reconnect to an existing Pilot Compute"</tt><tt class="py-op">)</tt> </tt>
+<a name="L176"></a><tt class="py-lineno">176</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__bigjob</tt> <tt class="py-op">=</tt> <tt class="py-name">bigjob</tt><tt class="py-op">(</tt><tt class="py-name">pilot_url</tt><tt class="py-op">=</tt><tt class="py-name">pilot_url</tt><tt class="py-op">)</tt> </tt>
+<a name="L177"></a><tt class="py-lineno">177</tt>  <tt class="py-line">         </tt>
+<a name="L178"></a><tt class="py-lineno">178</tt>  <tt class="py-line">        <tt class="py-comment"># Store the URL of pilot compute service for later reference</tt> </tt>
+<a name="L179"></a><tt class="py-lineno">179</tt>  <tt class="py-line">        <tt class="py-comment"># This URL is used as central queue for a set of BJs in the</tt> </tt>
+<a name="L180"></a><tt class="py-lineno">180</tt>  <tt class="py-line">        <tt class="py-comment"># ComputeDataServiceDecentral</tt> </tt>
+<a name="L181"></a><tt class="py-lineno">181</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__pilot_compute_service</tt><tt class="py-op">!=</tt><tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L182"></a><tt class="py-lineno">182</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">coordination_queue</tt> <tt class="py-op">=</tt> <tt class="py-name">pilot_compute_service</tt><tt class="py-op">.</tt><tt class="py-name">coordination_queue</tt> </tt>
+</div><a name="L183"></a><tt class="py-lineno">183</tt>  <tt class="py-line">             </tt>
+<a name="L184"></a><tt class="py-lineno">184</tt>  <tt class="py-line">         </tt>
+<a name="PilotCompute.cancel"></a><div id="PilotCompute.cancel-def"><a name="L185"></a><tt class="py-lineno">185</tt> <a class="py-toggle" href="#" id="PilotCompute.cancel-toggle" onclick="return toggle('PilotCompute.cancel');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#cancel">cancel</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="PilotCompute.cancel-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="PilotCompute.cancel-expanded"><a name="L186"></a><tt class="py-lineno">186</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__bigjob</tt><tt class="py-op">.</tt><tt id="link-30" class="py-name"><a title="pilot.api.compute.api.ComputeUnit.cancel
+pilot.api.compute.api.ComputeUnitService.cancel
+pilot.api.compute.api.PilotCompute.cancel
+pilot.api.compute.api.PilotComputeService.cancel
+pilot.api.data.api.DataUnit.cancel
+pilot.api.data.api.DataUnitService.cancel
+pilot.api.data.api.PilotData.cancel
+pilot.api.data.api.PilotDataService.cancel
+pilot.impl.pilot_manager.ComputeDataService.cancel
+pilot.impl.pilot_manager.ComputeUnit.cancel
+pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral.cancel
+pilot.impl.pilotcompute_manager.PilotCompute.cancel
+pilot.impl.pilotcompute_manager.PilotComputeService.cancel
+pilot.impl.pilotdata_manager.DataUnit.cancel
+pilot.impl.pilotdata_manager.PilotData.cancel
+pilot.impl.pilotdata_manager.PilotDataService.cancel" class="py-name" href="#" onclick="return doclink('link-30', 'cancel', 'link-24');">cancel</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt>     </tt>
+</div><a name="L187"></a><tt class="py-lineno">187</tt>  <tt class="py-line">     </tt>
+<a name="L188"></a><tt class="py-lineno">188</tt>  <tt class="py-line">     </tt>
+<a name="PilotCompute.get_state"></a><div id="PilotCompute.get_state-def"><a name="L189"></a><tt class="py-lineno">189</tt> <a class="py-toggle" href="#" id="PilotCompute.get_state-toggle" onclick="return toggle('PilotCompute.get_state');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#get_state">get_state</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="PilotCompute.get_state-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="PilotCompute.get_state-expanded"><a name="L190"></a><tt class="py-lineno">190</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__bigjob</tt><tt class="py-op">.</tt><tt id="link-31" class="py-name"><a title="pilot.api.compute.api.ComputeUnit.get_state
+pilot.api.compute.api.ComputeUnitService.get_state
+pilot.api.compute.api.PilotCompute.get_state
+pilot.api.data.api.DataUnit.get_state
+pilot.api.data.api.DataUnitService.get_state
+pilot.api.data.api.PilotData.get_state
+pilot.filemanagement.bliss_adaptor.BlissFileAdaptor.get_state
+pilot.filemanagement.globusonline_adaptor.GlobusOnlineFileAdaptor.get_state
+pilot.filemanagement.ssh_adaptor.SSHFileAdaptor.get_state
+pilot.filemanagement.webhdfs_adaptor.WebHDFSFileAdaptor.get_state
+pilot.impl.pilot_manager.ComputeDataService.get_state
+pilot.impl.pilot_manager.ComputeUnit.get_state
+pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral.get_state
+pilot.impl.pilotcompute_manager.PilotCompute.get_state
+pilot.impl.pilotdata_manager.DataUnit.get_state
+pilot.impl.pilotdata_manager.PilotData.get_state" class="py-name" href="#" onclick="return doclink('link-31', 'get_state', 'link-26');">get_state</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt>     </tt>
+</div><a name="L191"></a><tt class="py-lineno">191</tt>  <tt class="py-line">     </tt>
+<a name="L192"></a><tt class="py-lineno">192</tt>  <tt class="py-line">     </tt>
+<a name="PilotCompute.wait"></a><div id="PilotCompute.wait-def"><a name="L193"></a><tt class="py-lineno">193</tt> <a class="py-toggle" href="#" id="PilotCompute.wait-toggle" onclick="return toggle('PilotCompute.wait');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#wait">wait</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="PilotCompute.wait-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="PilotCompute.wait-expanded"><a name="L194"></a><tt class="py-lineno">194</tt>  <tt class="py-line">        <tt class="py-docstring">""" Waits for completion of CUs """</tt> </tt>
+<a name="L195"></a><tt class="py-lineno">195</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__bigjob</tt><tt class="py-op">.</tt><tt id="link-32" class="py-name" targets="Method pilot.api.compute.api.ComputeUnit.wait()=pilot.api.compute.api.ComputeUnit-class.html#wait,Method pilot.api.data.api.DataUnit.wait()=pilot.api.data.api.DataUnit-class.html#wait,Method pilot.impl.pilot_manager.ComputeDataService.wait()=pilot.impl.pilot_manager.ComputeDataService-class.html#wait,Method pilot.impl.pilot_manager.ComputeUnit.wait()=pilot.impl.pilot_manager.ComputeUnit-class.html#wait,Method pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral.wait()=pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral-class.html#wait,Method pilot.impl.pilotcompute_manager.PilotCompute.wait()=pilot.impl.pilotcompute_manager.PilotCompute-class.html#wait,Method pilot.impl.pilotdata_manager.DataUnit.wait()=pilot.impl.pilotdata_manager.DataUnit-class.html#wait,Method pilot.impl.pilotdata_manager.PilotData.wait()=pilot.impl.pilotdata_manager.PilotData-class.html#wait,Method pilot.impl.pilotdata_manager.PilotDataService.wait()=pilot.impl.pilotdata_manager.PilotDataService-class.html#wait"><a title="pilot.api.compute.api.ComputeUnit.wait
+pilot.api.data.api.DataUnit.wait
+pilot.impl.pilot_manager.ComputeDataService.wait
+pilot.impl.pilot_manager.ComputeUnit.wait
+pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral.wait
+pilot.impl.pilotcompute_manager.PilotCompute.wait
+pilot.impl.pilotdata_manager.DataUnit.wait
+pilot.impl.pilotdata_manager.PilotData.wait
+pilot.impl.pilotdata_manager.PilotDataService.wait" class="py-name" href="#" onclick="return doclink('link-32', 'wait', 'link-32');">wait</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L196"></a><tt class="py-lineno">196</tt>  <tt class="py-line">     </tt>
+<a name="L197"></a><tt class="py-lineno">197</tt>  <tt class="py-line">     </tt>
+<a name="PilotCompute.list_cus"></a><div id="PilotCompute.list_cus-def"><a name="L198"></a><tt class="py-lineno">198</tt> <a class="py-toggle" href="#" id="PilotCompute.list_cus-toggle" onclick="return toggle('PilotCompute.list_cus');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#list_cus">list_cus</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="PilotCompute.list_cus-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="PilotCompute.list_cus-expanded"><a name="L199"></a><tt class="py-lineno">199</tt>  <tt class="py-line">        <tt class="py-docstring">""" Returns a list of compute units managed by the pilot """</tt> </tt>
+<a name="L200"></a><tt class="py-lineno">200</tt>  <tt class="py-line">        <tt class="py-name">sj_list</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__bigjob</tt><tt class="py-op">.</tt><tt class="py-name">list_subjobs</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L201"></a><tt class="py-lineno">201</tt>  <tt class="py-line">        <tt class="py-name">cu_list</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-op">]</tt> </tt>
+<a name="L202"></a><tt class="py-lineno">202</tt>  <tt class="py-line">        <tt class="py-keyword">for</tt> <tt class="py-name">i</tt> <tt class="py-keyword">in</tt> <tt class="py-name">sj_list</tt><tt class="py-op">:</tt> </tt>
+<a name="L203"></a><tt class="py-lineno">203</tt>  <tt class="py-line">            <tt class="py-name">cu_list</tt><tt class="py-op">.</tt><tt class="py-name">append</tt><tt class="py-op">(</tt><tt id="link-33" class="py-name"><a title="pilot.api.compute.api.ComputeUnit
+pilot.impl.pilot_manager.ComputeUnit" class="py-name" href="#" onclick="return doclink('link-33', 'ComputeUnit', 'link-8');">ComputeUnit</a></tt><tt class="py-op">(</tt><tt class="py-name">cu_url</tt><tt class="py-op">=</tt><tt class="py-name">i</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L204"></a><tt class="py-lineno">204</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">cu_list</tt> </tt>
+</div><a name="L205"></a><tt class="py-lineno">205</tt>  <tt class="py-line">     </tt>
+<a name="L206"></a><tt class="py-lineno">206</tt>  <tt class="py-line">     </tt>
+<a name="PilotCompute.get_url"></a><div id="PilotCompute.get_url-def"><a name="L207"></a><tt class="py-lineno">207</tt> <a class="py-toggle" href="#" id="PilotCompute.get_url-toggle" onclick="return toggle('PilotCompute.get_url');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#get_url">get_url</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="PilotCompute.get_url-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="PilotCompute.get_url-expanded"><a name="L208"></a><tt class="py-lineno">208</tt>  <tt class="py-line">        <tt class="py-docstring">""" Get unique URL referencing the Pilot Compute """</tt> </tt>
+<a name="L209"></a><tt class="py-lineno">209</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__bigjob</tt><tt class="py-op">.</tt><tt id="link-34" class="py-name"><a title="pilot.impl.pilot_manager.ComputeUnit.get_url
+pilot.impl.pilotcompute_manager.PilotCompute.get_url" class="py-name" href="#" onclick="return doclink('link-34', 'get_url', 'link-25');">get_url</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L210"></a><tt class="py-lineno">210</tt>  <tt class="py-line">     </tt>
+<a name="L211"></a><tt class="py-lineno">211</tt>  <tt class="py-line">     </tt>
+<a name="PilotCompute.get_free_nodes"></a><div id="PilotCompute.get_free_nodes-def"><a name="L212"></a><tt class="py-lineno">212</tt> <a class="py-toggle" href="#" id="PilotCompute.get_free_nodes-toggle" onclick="return toggle('PilotCompute.get_free_nodes');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#get_free_nodes">get_free_nodes</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="PilotCompute.get_free_nodes-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="PilotCompute.get_free_nodes-expanded"><a name="L213"></a><tt class="py-lineno">213</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__bigjob</tt><tt class="py-op">.</tt><tt id="link-35" class="py-name" targets="Method pilot.impl.pilotcompute_manager.PilotCompute.get_free_nodes()=pilot.impl.pilotcompute_manager.PilotCompute-class.html#get_free_nodes"><a title="pilot.impl.pilotcompute_manager.PilotCompute.get_free_nodes" class="py-name" href="#" onclick="return doclink('link-35', 'get_free_nodes', 'link-35');">get_free_nodes</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L214"></a><tt class="py-lineno">214</tt>  <tt class="py-line">     </tt>
+<a name="L215"></a><tt class="py-lineno">215</tt>  <tt class="py-line">     </tt>
+<a name="PilotCompute.get_details"></a><div id="PilotCompute.get_details-def"><a name="L216"></a><tt class="py-lineno">216</tt> <a class="py-toggle" href="#" id="PilotCompute.get_details-toggle" onclick="return toggle('PilotCompute.get_details');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#get_details">get_details</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="PilotCompute.get_details-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="PilotCompute.get_details-expanded"><a name="L217"></a><tt class="py-lineno">217</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__bigjob</tt><tt class="py-op">.</tt><tt id="link-36" class="py-name" targets="Method pilot.impl.pilot_manager.ComputeUnit.get_details()=pilot.impl.pilot_manager.ComputeUnit-class.html#get_details,Method pilot.impl.pilotcompute_manager.PilotCompute.get_details()=pilot.impl.pilotcompute_manager.PilotCompute-class.html#get_details"><a title="pilot.impl.pilot_manager.ComputeUnit.get_details
+pilot.impl.pilotcompute_manager.PilotCompute.get_details" class="py-name" href="#" onclick="return doclink('link-36', 'get_details', 'link-36');">get_details</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L218"></a><tt class="py-lineno">218</tt>  <tt class="py-line">        </tt>
+<a name="L219"></a><tt class="py-lineno">219</tt>  <tt class="py-line">     </tt>
+<a name="PilotCompute.submit_compute_unit"></a><div id="PilotCompute.submit_compute_unit-def"><a name="L220"></a><tt class="py-lineno">220</tt> <a class="py-toggle" href="#" id="PilotCompute.submit_compute_unit-toggle" onclick="return toggle('PilotCompute.submit_compute_unit');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#submit_compute_unit">submit_compute_unit</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">compute_unit_description</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="PilotCompute.submit_compute_unit-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="PilotCompute.submit_compute_unit-expanded"><a name="L221"></a><tt class="py-lineno">221</tt>  <tt class="py-line">        <tt class="py-docstring">""" Submits work unit to Bigjob """</tt> </tt>
+<a name="L222"></a><tt class="py-lineno">222</tt>  <tt class="py-line">        <tt class="py-name">cu</tt> <tt class="py-op">=</tt> <tt id="link-37" class="py-name"><a title="pilot.api.compute.api.ComputeUnit
+pilot.impl.pilot_manager.ComputeUnit" class="py-name" href="#" onclick="return doclink('link-37', 'ComputeUnit', 'link-8');">ComputeUnit</a></tt><tt class="py-op">(</tt><tt class="py-name">compute_unit_description</tt><tt class="py-op">)</tt> </tt>
+<a name="L223"></a><tt class="py-lineno">223</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_submit_cu</tt><tt class="py-op">(</tt><tt class="py-name">cu</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L224"></a><tt class="py-lineno">224</tt>  <tt class="py-line">     </tt>
+<a name="L225"></a><tt class="py-lineno">225</tt>  <tt class="py-line">     </tt>
+<a name="PilotCompute.__repr__"></a><div id="PilotCompute.__repr__-def"><a name="L226"></a><tt class="py-lineno">226</tt> <a class="py-toggle" href="#" id="PilotCompute.__repr__-toggle" onclick="return toggle('PilotCompute.__repr__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#__repr__">__repr__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="PilotCompute.__repr__-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="PilotCompute.__repr__-expanded"><a name="L227"></a><tt class="py-lineno">227</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">str</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__bigjob</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L228"></a><tt class="py-lineno">228</tt>  <tt class="py-line">         </tt>
+<a name="L229"></a><tt class="py-lineno">229</tt>  <tt class="py-line">         </tt>
+<a name="L230"></a><tt class="py-lineno">230</tt>  <tt class="py-line">    <tt class="py-comment">###########################################################################</tt> </tt>
+<a name="L231"></a><tt class="py-lineno">231</tt>  <tt class="py-line">    <tt class="py-comment"># Internal methods</tt> </tt>
+<a name="L232"></a><tt class="py-lineno">232</tt>  <tt class="py-line">         </tt>
+<a name="PilotCompute._submit_cu"></a><div id="PilotCompute._submit_cu-def"><a name="L233"></a><tt class="py-lineno">233</tt> <a class="py-toggle" href="#" id="PilotCompute._submit_cu-toggle" onclick="return toggle('PilotCompute._submit_cu');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#_submit_cu">_submit_cu</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">compute_unit</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="PilotCompute._submit_cu-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="PilotCompute._submit_cu-expanded"><a name="L234"></a><tt class="py-lineno">234</tt>  <tt class="py-line">        <tt class="py-docstring">""" Submits compute unit to Bigjob """</tt> </tt>
+<a name="L235"></a><tt class="py-lineno">235</tt>  <tt class="py-line">        <tt class="py-name">logger</tt><tt class="py-op">.</tt><tt class="py-name">debug</tt><tt class="py-op">(</tt><tt class="py-string">"Submit CU to big-job"</tt><tt class="py-op">)</tt> </tt>
+<a name="L236"></a><tt class="py-lineno">236</tt>  <tt class="py-line">        <tt class="py-name">sj</tt> <tt class="py-op">=</tt> <tt class="py-name">subjob</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L237"></a><tt class="py-lineno">237</tt>  <tt class="py-line">        <tt class="py-name">sj</tt><tt class="py-op">.</tt><tt class="py-name">submit_job</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__bigjob</tt><tt class="py-op">.</tt><tt class="py-name">pilot_url</tt><tt class="py-op">,</tt> <tt class="py-name">compute_unit</tt><tt class="py-op">.</tt><tt class="py-name">subjob_description</tt><tt class="py-op">)</tt> </tt>
+<a name="L238"></a><tt class="py-lineno">238</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__subjobs</tt><tt class="py-op">.</tt><tt class="py-name">append</tt><tt class="py-op">(</tt><tt class="py-name">sj</tt><tt class="py-op">)</tt> </tt>
+<a name="L239"></a><tt class="py-lineno">239</tt>  <tt class="py-line">        <tt class="py-name">compute_unit</tt><tt class="py-op">.</tt><tt class="py-name">_update_subjob</tt><tt class="py-op">(</tt><tt class="py-name">sj</tt><tt class="py-op">)</tt> </tt>
+<a name="L240"></a><tt class="py-lineno">240</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">compute_unit</tt> </tt>
+</div></div><a name="L241"></a><tt class="py-lineno">241</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="pilot-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="http://saga-project.github.com/BigJob">BigJob</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    <a href="epydoc-log.html">Generated by Epydoc
+    3.0.1 on Fri Jul  6 23:15:50 2012</a>
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class Hierarchy</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="pilot-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th bgcolor="#70b0f0" class="navbar-select"
+          >&nbsp;&nbsp;&nbsp;Trees&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="http://saga-project.github.com/BigJob">BigJob</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">&nbsp;</td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+      </table>
+    </td>
+  </tr>
+</table>
+<center><b>
+ [ <a href="module-tree.html">Module Hierarchy</a>
+ | <a href="class-tree.html">Class Hierarchy</a> ]
+</b></center><br />
+<h1 class="epydoc">Class Hierarchy</h1>
+<ul class="nomargin-top">
+    <li> <strong class="uidlink"><a href="pilot.coordination.advert.AdvertCoordinationAdaptor-class.html">pilot.coordination.advert.AdvertCoordinationAdaptor</a></strong>:
+      <em class="summary">BigData persists its data in a central data space, e.g.</em>
+    </li>
+    <li> <strong class="uidlink"><a href="pilot.ComputeUnitService-class.html">pilot.ComputeUnitService</a></strong>
+    </li>
+    <li> <strong class="uidlink"><a href="pilot.DataUnitService-class.html">pilot.DataUnitService</a></strong>
+    </li>
+    <li> <strong class="uidlink"><a href="pilot.coordination.nocoord.NoCoordinationAdaptor-class.html">pilot.coordination.nocoord.NoCoordinationAdaptor</a></strong>:
+      <em class="summary">Dummy Adaptor - No distributed coordination done</em>
+    </li>
+    <li> <strong class="uidlink"><a href="pilot.coordination.redis.RedisCoordinationAdaptor-class.html">pilot.coordination.redis.RedisCoordinationAdaptor</a></strong>:
+      <em class="summary">Redis Adaptor</em>
+    </li>
+    <li> <strong class="uidlink"><a href="pilot.scheduler.data_compute_affinity_scheduler.Scheduler-class.html">pilot.scheduler.data_compute_affinity_scheduler.Scheduler</a></strong>
+    </li>
+    <li> <strong class="uidlink">object</strong>:
+      <em class="summary">The most base type</em>
+    <ul>
+    <li> <strong class="uidlink">exceptions.BaseException</strong>:
+      <em class="summary">Common base class for all exceptions</em>
+    <ul>
+    <li> <strong class="uidlink">exceptions.Exception</strong>:
+      <em class="summary">Common base class for all non-exit exceptions.</em>
+    <ul>
+    <li> <strong class="uidlink"><a href="pilot.api.api.PilotError-class.html">pilot.api.api.PilotError</a></strong>
+    </li>
+    </ul>
+    </li>
+    </ul>
+    </li>
+    <li> <strong class="uidlink"><a href="pilot.filemanagement.bliss_adaptor.BlissFileAdaptor-class.html">pilot.filemanagement.bliss_adaptor.BlissFileAdaptor</a></strong>:
+      <em class="summary">BigData File Management for Pilot Data</em>
+    </li>
+    <li> <strong class="uidlink"><a href="pilot.api.compute.api.Callback-class.html">pilot.api.compute.api.Callback</a></strong>:
+      <em class="summary">Callback class.</em>
+    </li>
+    <li> <strong class="uidlink"><a href="pilot.api.compute.api.ComputeUnit-class.html">pilot.api.compute.api.ComputeUnit</a></strong>:
+      <em class="summary">ComputeUnit.</em>
+    <ul>
+    <li> <strong class="uidlink"><a href="pilot.impl.pilot_manager.ComputeUnit-class.html">pilot.impl.pilot_manager.ComputeUnit</a></strong>:
+      <em class="summary">ComputeUnit - Wrapper for BigJob subjob</em>
+    </li>
+    </ul>
+    </li>
+    <li> <strong class="uidlink"><a href="pilot.api.compute.api.ComputeUnitService-class.html">pilot.api.compute.api.ComputeUnitService</a></strong>:
+      <em class="summary">ComputeUnitService.</em>
+    <ul>
+    <li> <strong class="uidlink"><a href="pilot.api.api.ComputeDataService-class.html">pilot.api.api.ComputeDataService</a></strong>:
+      <em class="summary">ComputeDataService.</em>
+    <ul>
+    <li> <strong class="uidlink"><a href="pilot.impl.pilot_manager.ComputeDataService-class.html">pilot.impl.pilot_manager.ComputeDataService</a></strong>:
+      <em class="summary">ComputeDataService.</em>
+    </li>
+    <li> <strong class="uidlink"><a href="pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral-class.html">pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral</a></strong>:
+      <em class="summary">ComputeDataServiceDecentral.</em>
+    </li>
+    </ul>
+    </li>
+    </ul>
+    </li>
+    <li> <strong class="uidlink"><a href="pilot.api.data.api.DataUnit-class.html">pilot.api.data.api.DataUnit</a></strong>:
+      <em class="summary">DataUnit.</em>
+    <ul>
+    <li> <strong class="uidlink"><a href="pilot.impl.pilotdata_manager.DataUnit-class.html">pilot.impl.pilotdata_manager.DataUnit</a></strong>:
+      <em class="summary">Holds a set of file</em>
+    </li>
+    </ul>
+    </li>
+    <li> <strong class="uidlink"><a href="pilot.impl.pilotdata_manager.DataUnitItem-class.html">pilot.impl.pilotdata_manager.DataUnitItem</a></strong>:
+      <em class="summary">DataUnitItem</em>
+    </li>
+    <li> <strong class="uidlink"><a href="pilot.api.data.api.DataUnitService-class.html">pilot.api.data.api.DataUnitService</a></strong>:
+      <em class="summary">PilotDataService (PDS).</em>
+    </li>
+    <li> <strong class="uidlink"><a href="pilot.filemanagement.globusonline_adaptor.GlobusOnlineFileAdaptor-class.html">pilot.filemanagement.globusonline_adaptor.GlobusOnlineFileAdaptor</a></strong>:
+      <em class="summary">BigData Coordination File Management for Pilot Data</em>
+    </li>
+    <li> <strong class="uidlink"><a href="pilot.api.compute.api.PilotCompute-class.html">pilot.api.compute.api.PilotCompute</a></strong>:
+      <em class="summary">PilotCompute (PilotJob).</em>
+    <ul>
+    <li> <strong class="uidlink"><a href="pilot.impl.pilotcompute_manager.PilotCompute-class.html">pilot.impl.pilotcompute_manager.PilotCompute</a></strong>:
+      <em class="summary">Wrapper for BigJob class</em>
+    </li>
+    </ul>
+    </li>
+    <li> <strong class="uidlink"><a href="pilot.api.compute.api.PilotComputeService-class.html">pilot.api.compute.api.PilotComputeService</a></strong>:
+      <em class="summary">PilotComputeService.</em>
+    <ul>
+    <li> <strong class="uidlink"><a href="pilot.impl.pilotcompute_manager.PilotComputeService-class.html">pilot.impl.pilotcompute_manager.PilotComputeService</a></strong>:
+      <em class="summary">PilotComputeService based on BigJob.</em>
+    </li>
+    </ul>
+    </li>
+    <li> <strong class="uidlink"><a href="pilot.api.data.api.PilotData-class.html">pilot.api.data.api.PilotData</a></strong>:
+      <em class="summary">PilotData.</em>
+    <ul>
+    <li> <strong class="uidlink"><a href="pilot.impl.pilotdata_manager.PilotData-class.html">pilot.impl.pilotdata_manager.PilotData</a></strong>:
+      <em class="summary">PilotData.</em>
+    </li>
+    </ul>
+    </li>
+    <li> <strong class="uidlink"><a href="pilot.api.data.api.PilotDataService-class.html">pilot.api.data.api.PilotDataService</a></strong>:
+      <em class="summary">PilotDataService (PDS).</em>
+    <ul>
+    <li> <strong class="uidlink"><a href="pilot.api.api.ComputeDataService-class.html">pilot.api.api.ComputeDataService</a></strong>:
+      <em class="summary">ComputeDataService.</em>
+    <ul>
+    <li> <strong class="uidlink"><a href="pilot.impl.pilot_manager.ComputeDataService-class.html">pilot.impl.pilot_manager.ComputeDataService</a></strong>:
+      <em class="summary">ComputeDataService.</em>
+    </li>
+    <li> <strong class="uidlink"><a href="pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral-class.html">pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral</a></strong>:
+      <em class="summary">ComputeDataServiceDecentral.</em>
+    </li>
+    </ul>
+    </li>
+    <li> <strong class="uidlink"><a href="pilot.impl.pilotdata_manager.PilotDataService-class.html">pilot.impl.pilotdata_manager.PilotDataService</a></strong>:
+      <em class="summary">PilotDataService (PSS).</em>
+    </li>
+    </ul>
+    </li>
+    <li> <strong class="uidlink"><a href="pilot.filemanagement.ssh_adaptor.SSHFileAdaptor-class.html">pilot.filemanagement.ssh_adaptor.SSHFileAdaptor</a></strong>:
+      <em class="summary">BigData Coordination File Management for Pilot Store</em>
+    </li>
+    <li> <strong class="uidlink"><a href="pilot.api.compute.api.State-class.html">pilot.api.compute.api.State</a></strong>
+    </li>
+    <li> <strong class="uidlink"><a href="pilot.filemanagement.webhdfs_adaptor.WebHDFSFileAdaptor-class.html">pilot.filemanagement.webhdfs_adaptor.WebHDFSFileAdaptor</a></strong>
+    </li>
+    <li> <strong class="uidlink">dict</strong>:
+      <em class="summary">dict() -&gt; new empty dictionary
+dict(mapping) -&gt; new dictionary initialized from a mapping object's
+    (key, value) pairs
+dict(iterable) -&gt; new dictionary initialized as if via:
+    d = {}
+    for k, v in iterable:
+        d[k] = v
+dict(**kwargs) -&gt; new dictionary initialized with the name=value pairs
+    in the keyword argument list.</em>
+    <ul>
+    <li> <strong class="uidlink"><a href="pilot.api.compute.api.ComputeUnitDescription-class.html">pilot.api.compute.api.ComputeUnitDescription</a></strong>:
+      <em class="summary">ComputeUnitDescription.</em>
+    <ul>
+    <li> <strong class="uidlink"><a href="pilot.api.api.ComputeDataDescription-class.html">pilot.api.api.ComputeDataDescription</a></strong>:
+      <em class="summary">ComputeDataDescription.</em>
+    </li>
+    </ul>
+    </li>
+    <li> <strong class="uidlink"><a href="pilot.api.data.api.DataUnitDescription-class.html">pilot.api.data.api.DataUnitDescription</a></strong>:
+      <em class="summary">DataUnitDescription.</em>
+    </li>
+    <li> <strong class="uidlink"><a href="pilot.api.compute.api.PilotComputeDescription-class.html">pilot.api.compute.api.PilotComputeDescription</a></strong>:
+      <em class="summary">PilotComputeDescription.</em>
+    </li>
+    <li> <strong class="uidlink"><a href="pilot.api.data.api.PilotDataDescription-class.html">pilot.api.data.api.PilotDataDescription</a></strong>:
+      <em class="summary">PilotDataDescription.</em>
+    </li>
+    </ul>
+    </li>
+    </ul>
+    </li>
+</ul>
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="pilot-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th bgcolor="#70b0f0" class="navbar-select"
+          >&nbsp;&nbsp;&nbsp;Trees&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="http://saga-project.github.com/BigJob">BigJob</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    <a href="epydoc-log.html">Generated by Epydoc
+    3.0.1 on Fri Jul  6 23:15:47 2012</a>
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>
