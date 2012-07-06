@@ -965,13 +965,7 @@ class subjob(api.base.subjob):
             arguments = arguments + " " + i
         return arguments
     
-
-    def __del__(self):
-        """ Do nothing - keep subjobs alive and allow a later reconnection"""
-        pass
-        #self.cancel()
-        
-    
+      
     def __repr__(self):        
         if(self.job_url==None):
             return "None"
