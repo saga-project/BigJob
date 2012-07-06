@@ -14,10 +14,13 @@
 <table class="navbar" border="0" width="100%" cellpadding="0"
        bgcolor="#a0c0ff" cellspacing="0">
   <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="pilot-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
 
   <!-- Tree link -->
       <th>&nbsp;&nbsp;&nbsp;<a
-        href="class-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
 
   <!-- Index link -->
       <th>&nbsp;&nbsp;&nbsp;<a
@@ -31,7 +34,7 @@
       <th class="navbar" align="right" width="100%">
         <table border="0" cellpadding="0" cellspacing="0">
           <tr><th class="navbar" align="center"
-            ><a class="navbar" target="_top" href="http://saga-project.github.com/BigJob">BigJob and Pilot API documentation</a></th>
+            ><a class="navbar" target="_top" href="http://saga-project.github.com/BigJob">BigJob</a></th>
           </tr></table></th>
   </tr>
 </table>
@@ -39,39 +42,34 @@
   <tr valign="top">
     <td width="100%">
       <span class="breadcrumbs">
-        pilot ::
-        api ::
-        compute ::
-        api ::
-        State ::
+        <a href="pilot-module.html">Package&nbsp;pilot</a> ::
+        <a href="pilot.api-module.html">Package&nbsp;api</a> ::
+        <a href="pilot.api.compute-module.html">Package&nbsp;compute</a> ::
+        <a href="pilot.api.compute.api-module.html">Module&nbsp;api</a> ::
         Class&nbsp;State
       </span>
     </td>
     <td>
       <table cellpadding="0" cellspacing="0">
         <!-- hide/show private -->
-        <tr><td align="right"><span class="options"
-            >[<a href="frames.html" target="_top">frames</a
-            >]&nbsp;|&nbsp;<a href="pilot.api.compute.api.State-class.html"
-            target="_top">no&nbsp;frames</a>]</span></td></tr>
       </table>
     </td>
   </tr>
 </table>
 <!-- ==================== CLASS DESCRIPTION ==================== -->
-<h1 class="epydoc">Class State</h1><p class="nomargin-top"></p>
+<h1 class="epydoc">Class State</h1><p class="nomargin-top"><span class="codelink"><a href="pilot.api.compute.api-pysrc.html#State">source&nbsp;code</a></span></p>
 <center>
-<center>  <map id="uml_class_diagram_for_pilot_ap_2" name="uml_class_diagram_for_pilot_ap_2">
-<area shape="rect" id="node1_7" href="pilot.api.compute.api.State-class.html#Canceled" title="pilot.api.compute.api.State.Canceled" alt="" coords="17,31,84,49"/>
-<area shape="rect" id="node1_8" href="pilot.api.compute.api.State-class.html#Done" title="pilot.api.compute.api.State.Done" alt="" coords="17,49,84,68"/>
-<area shape="rect" id="node1_9" href="pilot.api.compute.api.State-class.html#Failed" title="pilot.api.compute.api.State.Failed" alt="" coords="17,68,84,87"/>
-<area shape="rect" id="node1_10" href="pilot.api.compute.api.State-class.html#New" title="pilot.api.compute.api.State.New" alt="" coords="17,87,84,105"/>
-<area shape="rect" id="node1_11" href="pilot.api.compute.api.State-class.html#Pending" title="pilot.api.compute.api.State.Pending" alt="" coords="17,105,84,124"/>
-<area shape="rect" id="node1_12" href="pilot.api.compute.api.State-class.html#Running" title="pilot.api.compute.api.State.Running" alt="" coords="17,124,84,143"/>
-<area shape="rect" id="node1_13" href="pilot.api.compute.api.State-class.html#Unknown" title="pilot.api.compute.api.State.Unknown" alt="" coords="17,143,84,161"/>
-<area shape="rect" id="node1" href="pilot.api.compute.api.State-class.html" title="pilot.api.compute.api.State" alt="" coords="5,6,96,175"/>
+<center>  <map id="uml_class_diagram_for_pilot_ap_11" name="uml_class_diagram_for_pilot_ap_11">
+<area shape="rect" id="node1_7" href="pilot.api.compute.api.State-class.html#Unknown" title="pilot.api.compute.api.State.Unknown" alt="" coords="17,31,80,49"/>
+<area shape="rect" id="node1_8" href="pilot.api.compute.api.State-class.html#New" title="pilot.api.compute.api.State.New" alt="" coords="17,49,80,68"/>
+<area shape="rect" id="node1_9" href="pilot.api.compute.api.State-class.html#Running" title="pilot.api.compute.api.State.Running" alt="" coords="17,68,80,87"/>
+<area shape="rect" id="node1_10" href="pilot.api.compute.api.State-class.html#Done" title="pilot.api.compute.api.State.Done" alt="" coords="17,87,80,105"/>
+<area shape="rect" id="node1_11" href="pilot.api.compute.api.State-class.html#Canceled" title="pilot.api.compute.api.State.Canceled" alt="" coords="17,105,80,124"/>
+<area shape="rect" id="node1_12" href="pilot.api.compute.api.State-class.html#Failed" title="pilot.api.compute.api.State.Failed" alt="" coords="17,124,80,143"/>
+<area shape="rect" id="node1_13" href="pilot.api.compute.api.State-class.html#Pending" title="pilot.api.compute.api.State.Pending" alt="" coords="17,143,80,161"/>
+<area shape="rect" id="node1" href="pilot.api.compute.api.State-class.html" title="pilot.api.compute.api.State" alt="" coords="5,6,91,175"/>
 </map>
-  <img src="uml_class_diagram_for_pilot_ap_2.gif" alt='' usemap="#uml_class_diagram_for_pilot_ap_2" ismap="ismap" class="graph-without-title" />
+  <img src="uml_class_diagram_for_pilot_ap_11.gif" alt='' usemap="#uml_class_diagram_for_pilot_ap_11" ismap="ismap" class="graph-without-title" />
 </center>
 </center>
 <hr />
@@ -115,21 +113,7 @@
     <td width="15%" align="right" valign="top" class="summary">
       <span class="summary-type">&nbsp;</span>
     </td><td class="summary">
-        <a name="Canceled"></a><span class="summary-name">Canceled</span> = <code title="'Canceled'"><code class="variable-quote">'</code><code class="variable-string">Canceled</code><code class="variable-quote">'</code></code>
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-        <a name="Done"></a><span class="summary-name">Done</span> = <code title="'Done'"><code class="variable-quote">'</code><code class="variable-string">Done</code><code class="variable-quote">'</code></code>
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-        <a name="Failed"></a><span class="summary-name">Failed</span> = <code title="'Failed'"><code class="variable-quote">'</code><code class="variable-string">Failed</code><code class="variable-quote">'</code></code>
+        <a name="Unknown"></a><span class="summary-name">Unknown</span> = <code title="'Unknown'"><code class="variable-quote">'</code><code class="variable-string">Unknown</code><code class="variable-quote">'</code></code>
     </td>
   </tr>
 <tr>
@@ -143,13 +127,6 @@
     <td width="15%" align="right" valign="top" class="summary">
       <span class="summary-type">&nbsp;</span>
     </td><td class="summary">
-        <a name="Pending"></a><span class="summary-name">Pending</span> = <code title="'Pending'"><code class="variable-quote">'</code><code class="variable-string">Pending</code><code class="variable-quote">'</code></code>
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
         <a name="Running"></a><span class="summary-name">Running</span> = <code title="'Running'"><code class="variable-quote">'</code><code class="variable-string">Running</code><code class="variable-quote">'</code></code>
     </td>
   </tr>
@@ -157,7 +134,28 @@
     <td width="15%" align="right" valign="top" class="summary">
       <span class="summary-type">&nbsp;</span>
     </td><td class="summary">
-        <a name="Unknown"></a><span class="summary-name">Unknown</span> = <code title="'Unknown'"><code class="variable-quote">'</code><code class="variable-string">Unknown</code><code class="variable-quote">'</code></code>
+        <a name="Done"></a><span class="summary-name">Done</span> = <code title="'Done'"><code class="variable-quote">'</code><code class="variable-string">Done</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="Canceled"></a><span class="summary-name">Canceled</span> = <code title="'Canceled'"><code class="variable-quote">'</code><code class="variable-string">Canceled</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="Failed"></a><span class="summary-name">Failed</span> = <code title="'Failed'"><code class="variable-quote">'</code><code class="variable-string">Failed</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="Pending"></a><span class="summary-name">Pending</span> = <code title="'Pending'"><code class="variable-quote">'</code><code class="variable-string">Pending</code><code class="variable-quote">'</code></code>
     </td>
   </tr>
 </table>
@@ -181,10 +179,13 @@
 <table class="navbar" border="0" width="100%" cellpadding="0"
        bgcolor="#a0c0ff" cellspacing="0">
   <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="pilot-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
 
   <!-- Tree link -->
       <th>&nbsp;&nbsp;&nbsp;<a
-        href="class-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
 
   <!-- Index link -->
       <th>&nbsp;&nbsp;&nbsp;<a
@@ -198,14 +199,15 @@
       <th class="navbar" align="right" width="100%">
         <table border="0" cellpadding="0" cellspacing="0">
           <tr><th class="navbar" align="center"
-            ><a class="navbar" target="_top" href="http://saga-project.github.com/BigJob">BigJob and Pilot API documentation</a></th>
+            ><a class="navbar" target="_top" href="http://saga-project.github.com/BigJob">BigJob</a></th>
           </tr></table></th>
   </tr>
 </table>
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Mon Jun 18 23:17:55 2012
+    <a href="epydoc-log.html">Generated by Epydoc
+    3.0.1 on Fri Jul  6 23:15:48 2012</a>
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

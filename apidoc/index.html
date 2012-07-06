@@ -1,17 +1,335 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN"
-          "DTD/xhtml1-frameset.dtd">
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title> BigJob and Pilot API documentation </title>
+  <title>pilot</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
 </head>
-<frameset cols="20%,80%">
-  <frameset rows="30%,70%">
-    <frame src="toc.html" name="moduleListFrame"
-           id="moduleListFrame" />
-    <frame src="toc-everything.html" name="moduleFrame"
-           id="moduleFrame" />
-  </frameset>
-  <frame src="class-tree.html" name="mainFrame" id="mainFrame" />
-</frameset>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th bgcolor="#70b0f0" class="navbar-select"
+          >&nbsp;&nbsp;&nbsp;Home&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="http://saga-project.github.com/BigJob">BigJob</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        Package&nbsp;pilot
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== PACKAGE DESCRIPTION ==================== -->
+<h1 class="epydoc">Package pilot</h1><p class="nomargin-top"><span class="codelink"><a href="pilot-pysrc.html">source&nbsp;code</a></span></p>
+<p><b>BigJob Documentation</b></p>
+  <p>This is the BigJob implementation of the Pilot API. Pilot-Jobs (also 
+  referred to as Pilot Compute) decouple system level and application level
+  job management.</p>
+  <p>The main concepts and classes exposed by the Compute part of the API 
+  are:</p>
+  <ul>
+    <li>
+      <a href="pilot.impl.pilotcompute_manager.PilotCompute-class.html" 
+      class="link">PilotCompute</a> (PC): a pilot job, which can execute 
+      some compute workload (<a 
+      href="pilot.impl.pilot_manager.ComputeUnit-class.html" 
+      class="link">ComputeUnit</a>).
+    </li>
+    <li>
+      <a href="pilot.api.compute.api.PilotComputeDescription-class.html" 
+      class="link">PilotComputeDescription</a> (PCD): description for 
+      specifying the requirements of a \<a 
+      href="pilot.impl.pilotcompute_manager.PilotCompute-class.html" 
+      class="link">PilotCompute</a>.
+    </li>
+    <li>
+      <a 
+      href="pilot.impl.pilotcompute_manager.PilotComputeService-class.html"
+      class="link">PilotComputeService</a> (PCS): a factory for creating 
+      \<a href="pilot.impl.pilotcompute_manager.PilotCompute-class.html" 
+      class="link">PilotCompute</a>s.
+    </li>
+  </ul>
+  <p>The application workload is represented by so called  <a 
+  href="pilot.impl.pilot_manager.ComputeUnit-class.html" 
+  class="link">ComputeUnit</a>s and  <a 
+  href="pilot.impl.pilotdata_manager.DataUnit-class.html" 
+  class="link">DataUnit</a>s:</p>
+  <ul>
+    <li>
+      <a href="pilot.impl.pilot_manager.ComputeUnit-class.html" 
+      class="link">ComputeUnit</a> (CU): a work item executed on a <a 
+      href="pilot.impl.pilotcompute_manager.PilotCompute-class.html" 
+      class="link">PilotCompute</a>.
+    </li>
+    <li>
+      <a href="pilot.impl.pilotdata_manager.DataUnit-class.html" 
+      class="link">DataUnit</a> (DU): a data item managed by a <a 
+      href="pilot.impl.pilotdata_manager.PilotData-class.html" 
+      class="link">PilotData</a>
+    </li>
+  </ul>
+  <p>The Data side of the Pilot API looks symmetric to the compute side.  
+  The exposed classes are:</p>
+  <ul>
+    <li>
+      <a href="pilot.impl.pilotdata_manager.PilotData-class.html" 
+      class="link">PilotData</a> (PD): a pilot that manages some data 
+      workload (<a href="pilot.impl.pilotdata_manager.DataUnit-class.html" 
+      class="link">DataUnit</a>)
+    </li>
+    <li>
+      <a href="pilot.impl.pilotdata_manager.PilotDataService-class.html" 
+      class="link">PilotDataService</a> (PDS): a factory (service) which 
+      can create <a 
+      href="pilot.impl.pilotdata_manager.PilotData-class.html" 
+      class="link">PilotData</a>s according to some specification
+    </li>
+  </ul>
+  <p>The <a href="pilot.impl.pilot_manager.ComputeDataService-class.html" 
+  class="link">ComputeDataService</a> represents the central entry point 
+  for the application workload:</p>
+  <ul>
+    <li>
+      <a href="pilot.impl.pilot_manager.ComputeDataService-class.html" 
+      class="link">ComputeDataService</a> (CDS) a service which can map CUs
+      and DUs to a set of Pilot Compute and Pilot Data.
+    </li>
+  </ul>
+  <p>The <a href="pilot.impl.pilot_manager.ComputeDataService-class.html" 
+  class="link">ComputeDataService</a> (CDS) takes care of the placement of 
+  Compute and Data Units. The set of <a 
+  href="pilot.impl.pilotcompute_manager.PilotCompute-class.html" 
+  class="link">PilotCompute</a>s and <a 
+  href="pilot.impl.pilotdata_manager.PilotData-class.html" 
+  class="link">PilotData</a> available to the CDS can be changed during the
+  application's runtime.  The CDS different data-compute affinity and will 
+  handle compute/data co-locationing for the requested data-compute 
+  workload.</p>
+  <p><b>Example</b>:</p>
+<pre class="literalblock">
+   from pilot import PilotComputeService, ComputeDataService, State
+   
+   pilot_compute_service = PilotComputeService()
+
+   # create pilot job service and initiate a pilot job
+   pilot_compute_description = {
+                            &quot;service_url&quot;: 'fork://localhost',
+                            &quot;number_of_processes&quot;: 1,                             
+                            &quot;working_directory&quot;: os.path.join(os.getcwd(),&quot;work&quot;),
+                            'affinity_datacenter_label': &quot;eu-de-south&quot;,              
+                            'affinity_machine_label': &quot;mymachine&quot; 
+                           }
+   
+   pilotjob = pilot_compute_service.create_pilot(pilot_compute_description=pilot_compute_description)
+        
+   compute_data_service = ComputeDataService()
+   compute_data_service.add_pilot_compute_service(pilot_compute_service)
+   
+   # start work unit
+   compute_unit_description = {
+           &quot;executable&quot;: &quot;/bin/date&quot;,
+           &quot;arguments&quot;: [&quot;&quot;],
+           &quot;number_of_processes&quot;: 1,            
+           &quot;output&quot;: &quot;stdout.txt&quot;,
+           &quot;error&quot;: &quot;stderr.txt&quot;,   
+           &quot;affinity_datacenter_label&quot;: &quot;eu-de-south&quot;,              
+           &quot;affinity_machine_label&quot;: &quot;mymachine&quot; 
+   }   
+                                                                                                                       
+   compute_unit = compute_data_service.submit_compute_unit(compute_unit_description)
+   
+   compute_data_service.wait()
+
+   compute_data_service.cancel()
+</pre>
+
+<!-- ==================== SUBMODULES ==================== -->
+<a name="section-Submodules"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td align="left" colspan="2" class="table-header">
+    <span class="table-header">Submodules</span></td>
+</tr>
+  <tr><td class="summary">
+  <ul class="nomargin">
+    <li> <strong class="uidlink"><a href="pilot.api-module.html">pilot.api</a></strong>
+    <ul>
+    <li> <strong class="uidlink"><a href="pilot.api.api-module.html">pilot.api.api</a></strong>    </li>
+    <li> <strong class="uidlink"><a href="pilot.api.compute-module.html">pilot.api.compute</a></strong>
+    <ul>
+    <li> <strong class="uidlink"><a href="pilot.api.compute.api-module.html">pilot.api.compute.api</a></strong>: <em class="summary">This file contains the API for the PilotJob Framework.</em>    </li>
+    </ul>
+    </li>
+    <li> <strong class="uidlink"><a href="pilot.api.data-module.html">pilot.api.data</a></strong>
+    <ul>
+    <li> <strong class="uidlink"><a href="pilot.api.data.api-module.html">pilot.api.data.api</a></strong>: <em class="summary">This file contains the API for the PilotData Framework.</em>    </li>
+    </ul>
+    </li>
+    </ul>
+    </li>
+    <li> <strong class="uidlink"><a href="pilot.coordination-module.html">pilot.coordination</a></strong>
+    <ul>
+    <li> <strong class="uidlink"><a href="pilot.coordination.advert-module.html">pilot.coordination.advert</a></strong>    </li>
+    <li> <strong class="uidlink"><a href="pilot.coordination.nocoord-module.html">pilot.coordination.nocoord</a></strong>    </li>
+    <li> <strong class="uidlink"><a href="pilot.coordination.redis-module.html">pilot.coordination.redis</a></strong>    </li>
+    </ul>
+    </li>
+    <li> <strong class="uidlink"><a href="pilot.filemanagement-module.html">pilot.filemanagement</a></strong>
+    <ul>
+    <li> <strong class="uidlink"><a href="pilot.filemanagement.bliss_adaptor-module.html">pilot.filemanagement.bliss_adaptor</a></strong>: <em class="summary">Bliss based File Transfer Implementation</em>    </li>
+    <li> <strong class="uidlink"><a href="pilot.filemanagement.globusonline_adaptor-module.html">pilot.filemanagement.globusonline_adaptor</a></strong>: <em class="summary">Globus Online based File Transfer</em>    </li>
+    <li> <strong class="uidlink"><a href="pilot.filemanagement.ssh_adaptor-module.html">pilot.filemanagement.ssh_adaptor</a></strong>: <em class="summary">SSH-based coordination scheme between manager and agent</em>    </li>
+    <li> <strong class="uidlink"><a href="pilot.filemanagement.webhdfs_adaptor-module.html">pilot.filemanagement.webhdfs_adaptor</a></strong>    </li>
+    </ul>
+    </li>
+    <li> <strong class="uidlink"><a href="pilot.impl-module.html">pilot.impl</a></strong>
+    <ul>
+    <li> <strong class="uidlink"><a href="pilot.impl.pilot_manager-module.html">pilot.impl.pilot_manager</a></strong>: <em class="summary">Implementation of the ComputeDataService</em>    </li>
+    <li> <strong class="uidlink"><a href="pilot.impl.pilot_manager_decentral-module.html">pilot.impl.pilot_manager_decentral</a></strong>: <em class="summary">Implementation of the ComputeDataService (decentral)</em>    </li>
+    <li> <strong class="uidlink"><a href="pilot.impl.pilotcompute_manager-module.html">pilot.impl.pilotcompute_manager</a></strong>    </li>
+    <li> <strong class="uidlink"><a href="pilot.impl.pilotdata_manager-module.html">pilot.impl.pilotdata_manager</a></strong>: <em class="summary">PilotData</em>    </li>
+    </ul>
+    </li>
+    <li> <strong class="uidlink"><a href="pilot.scheduler-module.html">pilot.scheduler</a></strong>
+    <ul>
+    <li> <strong class="uidlink"><a href="pilot.scheduler.data_compute_affinity_scheduler-module.html">pilot.scheduler.data_compute_affinity_scheduler</a></strong>: <em class="summary">Affinity-aware scheduler that evaluates affinity labels and 
+        input/output data flow</em>    </li>
+    </ul>
+    </li>
+  </ul></td></tr>
+</table>
+
+<br />
+<!-- ==================== CLASSES ==================== -->
+<a name="section-Classes"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td align="left" colspan="2" class="table-header">
+    <span class="table-header">Classes</span></td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="pilot.ComputeUnitService-class.html" class="summary-name">ComputeUnitService</a>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="pilot.DataUnitService-class.html" class="summary-name">DataUnitService</a>
+    </td>
+  </tr>
+</table>
+<!-- ==================== VARIABLES ==================== -->
+<a name="section-Variables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td align="left" colspan="2" class="table-header">
+    <span class="table-header">Variables</span></td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="application_id"></a><span class="summary-name">application_id</span> = <code title="'bigjob'"><code class="variable-quote">'</code><code class="variable-string">bigjob</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="__package__"></a><span class="summary-name">__package__</span> = <code title="'pilot'"><code class="variable-quote">'</code><code class="variable-string">pilot</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+</table>
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th bgcolor="#70b0f0" class="navbar-select"
+          >&nbsp;&nbsp;&nbsp;Home&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="http://saga-project.github.com/BigJob">BigJob</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    <a href="epydoc-log.html">Generated by Epydoc
+    3.0.1 on Fri Jul  6 23:15:47 2012</a>
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
 </html>
