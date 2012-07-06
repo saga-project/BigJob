@@ -1,0 +1,470 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>pilot.filemanagement.globusonline_adaptor.GlobusOnlineFileAdaptor</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="pilot-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="http://saga-project.github.com/BigJob">BigJob</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="pilot-module.html">Package&nbsp;pilot</a> ::
+        <a href="pilot.filemanagement-module.html">Package&nbsp;filemanagement</a> ::
+        <a href="pilot.filemanagement.globusonline_adaptor-module.html">Module&nbsp;globusonline_adaptor</a> ::
+        Class&nbsp;GlobusOnlineFileAdaptor
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS DESCRIPTION ==================== -->
+<h1 class="epydoc">Class GlobusOnlineFileAdaptor</h1><p class="nomargin-top"><span class="codelink"><a href="pilot.filemanagement.globusonline_adaptor-pysrc.html#GlobusOnlineFileAdaptor">source&nbsp;code</a></span></p>
+<center>
+<center>  <map id="uml_class_diagram_for_pilot_fi_2" name="uml_class_diagram_for_pilot_fi_2">
+<area shape="rect" id="node1_15" href="pilot.filemanagement.globusonline_adaptor.GlobusOnlineFileAdaptor-class.html#URL_PREFIX" title="pilot.filemanagement.globusonline_adaptor.GlobusOnlineFileAdaptor.URL_PREFIX" alt="" coords="17,31,295,49"/>
+<area shape="rect" id="node1_16" href="pilot.filemanagement.globusonline_adaptor.GlobusOnlineFileAdaptor-class.html#__init__" title="x.__init__(...) initializes x; see help(type(x)) for signature" alt="" coords="17,52,295,71"/>
+<area shape="rect" id="node1_17" href="pilot.filemanagement.globusonline_adaptor.GlobusOnlineFileAdaptor-class.html#initialize_pilotdata" title="pilot.filemanagement.globusonline_adaptor.GlobusOnlineFileAdaptor.initialize_pilotdata" alt="" coords="17,71,295,89"/>
+<area shape="rect" id="node1_18" href="pilot.filemanagement.globusonline_adaptor.GlobusOnlineFileAdaptor-class.html#get_pilotdata_size" title="pilot.filemanagement.globusonline_adaptor.GlobusOnlineFileAdaptor.get_pilotdata_size" alt="" coords="17,89,295,108"/>
+<area shape="rect" id="node1_19" href="pilot.filemanagement.globusonline_adaptor.GlobusOnlineFileAdaptor-class.html#delete_pilotdata" title="pilot.filemanagement.globusonline_adaptor.GlobusOnlineFileAdaptor.delete_pilotdata" alt="" coords="17,108,295,127"/>
+<area shape="rect" id="node1_20" href="pilot.filemanagement.globusonline_adaptor.GlobusOnlineFileAdaptor-class.html#get_state" title="pilot.filemanagement.globusonline_adaptor.GlobusOnlineFileAdaptor.get_state" alt="" coords="17,127,295,145"/>
+<area shape="rect" id="node1_21" href="pilot.filemanagement.globusonline_adaptor.GlobusOnlineFileAdaptor-class.html#create_du" title="pilot.filemanagement.globusonline_adaptor.GlobusOnlineFileAdaptor.create_du" alt="" coords="17,145,295,164"/>
+<area shape="rect" id="node1_22" href="pilot.filemanagement.globusonline_adaptor.GlobusOnlineFileAdaptor-class.html#put_du" title="pilot.filemanagement.globusonline_adaptor.GlobusOnlineFileAdaptor.put_du" alt="" coords="17,164,295,183"/>
+<area shape="rect" id="node1_23" href="pilot.filemanagement.globusonline_adaptor.GlobusOnlineFileAdaptor-class.html#copy_du_to_url" title="pilot.filemanagement.globusonline_adaptor.GlobusOnlineFileAdaptor.copy_du_to_url" alt="" coords="17,183,295,201"/>
+<area shape="rect" id="node1_24" href="pilot.filemanagement.globusonline_adaptor.GlobusOnlineFileAdaptor-class.html#copy_du" title="pilot.filemanagement.globusonline_adaptor.GlobusOnlineFileAdaptor.copy_du" alt="" coords="17,201,295,220"/>
+<area shape="rect" id="node1_25" href="pilot.filemanagement.globusonline_adaptor.GlobusOnlineFileAdaptor-class.html#get_du" title="pilot.filemanagement.globusonline_adaptor.GlobusOnlineFileAdaptor.get_du" alt="" coords="17,220,295,239"/>
+<area shape="rect" id="node1_26" href="pilot.filemanagement.globusonline_adaptor.GlobusOnlineFileAdaptor-class.html#remove_du" title="pilot.filemanagement.globusonline_adaptor.GlobusOnlineFileAdaptor.remove_du" alt="" coords="17,239,295,257"/>
+<area shape="rect" id="node1_27" href="pilot.filemanagement.globusonline_adaptor.GlobusOnlineFileAdaptor-class.html#transfer" title="pilot.filemanagement.globusonline_adaptor.GlobusOnlineFileAdaptor.transfer" alt="" coords="17,257,295,276"/>
+<area shape="rect" id="node1_28" href="pilot.filemanagement.globusonline_adaptor.GlobusOnlineFileAdaptor-class.html#create_remote_directory" title="pilot.filemanagement.globusonline_adaptor.GlobusOnlineFileAdaptor.create_remote_directory" alt="" coords="17,276,295,295"/>
+<area shape="rect" id="node1_29" href="pilot.filemanagement.globusonline_adaptor.GlobusOnlineFileAdaptor-class.html#get_path" title="pilot.filemanagement.globusonline_adaptor.GlobusOnlineFileAdaptor.get_path" alt="" coords="17,295,295,313"/>
+<area shape="rect" id="node1" href="pilot.filemanagement.globusonline_adaptor.GlobusOnlineFileAdaptor-class.html" title="BigData Coordination File Management for Pilot Data" alt="" coords="5,6,307,319"/>
+</map>
+  <img src="uml_class_diagram_for_pilot_fi_2.gif" alt='' usemap="#uml_class_diagram_for_pilot_fi_2" ismap="ismap" class="graph-without-title" />
+</center>
+</center>
+<hr />
+<p>BigData Coordination File Management for Pilot Data</p>
+
+<!-- ==================== INSTANCE METHODS ==================== -->
+<a name="section-InstanceMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td align="left" colspan="2" class="table-header">
+    <span class="table-header">Instance Methods</span></td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="pilot.filemanagement.globusonline_adaptor.GlobusOnlineFileAdaptor-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">service_url</span>)</span><br />
+      x.__init__(...) initializes x; see help(type(x)) for signature</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.filemanagement.globusonline_adaptor-pysrc.html#GlobusOnlineFileAdaptor.__init__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="initialize_pilotdata"></a><span class="summary-sig-name">initialize_pilotdata</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.filemanagement.globusonline_adaptor-pysrc.html#GlobusOnlineFileAdaptor.initialize_pilotdata">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="get_pilotdata_size"></a><span class="summary-sig-name">get_pilotdata_size</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.filemanagement.globusonline_adaptor-pysrc.html#GlobusOnlineFileAdaptor.get_pilotdata_size">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="delete_pilotdata"></a><span class="summary-sig-name">delete_pilotdata</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.filemanagement.globusonline_adaptor-pysrc.html#GlobusOnlineFileAdaptor.delete_pilotdata">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="get_state"></a><span class="summary-sig-name">get_state</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.filemanagement.globusonline_adaptor-pysrc.html#GlobusOnlineFileAdaptor.get_state">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="create_du"></a><span class="summary-sig-name">create_du</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">du_id</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.filemanagement.globusonline_adaptor-pysrc.html#GlobusOnlineFileAdaptor.create_du">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="put_du"></a><span class="summary-sig-name">put_du</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">du</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.filemanagement.globusonline_adaptor-pysrc.html#GlobusOnlineFileAdaptor.put_du">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="copy_du_to_url"></a><span class="summary-sig-name">copy_du_to_url</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">du</span>,
+        <span class="summary-sig-arg">local_url</span>,
+        <span class="summary-sig-arg">remote_url</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.filemanagement.globusonline_adaptor-pysrc.html#GlobusOnlineFileAdaptor.copy_du_to_url">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="copy_du"></a><span class="summary-sig-name">copy_du</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">du</span>,
+        <span class="summary-sig-arg">pd_new</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.filemanagement.globusonline_adaptor-pysrc.html#GlobusOnlineFileAdaptor.copy_du">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="get_du"></a><span class="summary-sig-name">get_du</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">du</span>,
+        <span class="summary-sig-arg">target_url</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.filemanagement.globusonline_adaptor-pysrc.html#GlobusOnlineFileAdaptor.get_du">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="remove_du"></a><span class="summary-sig-name">remove_du</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">du</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.filemanagement.globusonline_adaptor-pysrc.html#GlobusOnlineFileAdaptor.remove_du">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="transfer"></a><span class="summary-sig-name">transfer</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">source_url</span>,
+        <span class="summary-sig-arg">target_url</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.filemanagement.globusonline_adaptor-pysrc.html#GlobusOnlineFileAdaptor.transfer">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="create_remote_directory"></a><span class="summary-sig-name">create_remote_directory</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">target_url</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.filemanagement.globusonline_adaptor-pysrc.html#GlobusOnlineFileAdaptor.create_remote_directory">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="get_path"></a><span class="summary-sig-name">get_path</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">target_url</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.filemanagement.globusonline_adaptor-pysrc.html#GlobusOnlineFileAdaptor.get_path">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__delattr__</code>,
+      <code>__format__</code>,
+      <code>__getattribute__</code>,
+      <code>__hash__</code>,
+      <code>__new__</code>,
+      <code>__reduce__</code>,
+      <code>__reduce_ex__</code>,
+      <code>__repr__</code>,
+      <code>__setattr__</code>,
+      <code>__sizeof__</code>,
+      <code>__str__</code>,
+      <code>__subclasshook__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS VARIABLES ==================== -->
+<a name="section-ClassVariables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td align="left" colspan="2" class="table-header">
+    <span class="table-header">Class Variables</span></td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="URL_PREFIX"></a><span class="summary-name">URL_PREFIX</span> = <code title="&quot;go://&quot;">&quot;go://&quot;</code>
+    </td>
+  </tr>
+</table>
+<!-- ==================== PROPERTIES ==================== -->
+<a name="section-Properties"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td align="left" colspan="2" class="table-header">
+    <span class="table-header">Properties</span></td>
+</tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__class__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td align="left" colspan="2" class="table-header">
+    <span class="table-header">Method Details</span></td>
+</tr>
+</table>
+<a name="__init__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">service_url</span>)</span>
+    <br /><em class="fname">(Constructor)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="pilot.filemanagement.globusonline_adaptor-pysrc.html#GlobusOnlineFileAdaptor.__init__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>x.__init__(...) initializes x; see help(type(x)) for signature</p>
+  <dl class="fields">
+    <dt>Overrides:
+        object.__init__
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="pilot-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="http://saga-project.github.com/BigJob">BigJob</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    <a href="epydoc-log.html">Generated by Epydoc
+    3.0.1 on Fri Jul  6 23:15:48 2012</a>
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>
