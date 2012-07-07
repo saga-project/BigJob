@@ -4,12 +4,21 @@ import logging
 import traceback
 version = "latest"
 
+#from pkg_resources import Requirement, resource_filename
+
 #READ config
+
 SAGA_BLISS=False
 try:
     import ConfigParser
     _CONFIG_FILE="bigjob.conf"
     _conf_file = os.path.dirname(os.path.abspath( __file__ )) + "/../" + _CONFIG_FILE
+    if not os.path.exists(_conf_file):
+        _conf_file = os.path.join(sys.prefix, _CONFIG_FILE)
+    
+    
+    print "using conf file: " + str(_conf_file)
+
     _config = ConfigParser.ConfigParser()
     _config.read(_conf_file)
     default_dict = _config.defaults()

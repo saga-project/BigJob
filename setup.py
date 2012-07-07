@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+#from distribute_setup import use_setuptools
+#use_setuptools()
+
 #from distutils.core import setup
 import os
 from setuptools import setup
@@ -27,18 +30,15 @@ setup(name='BigJob',
       platforms = ('Unix', 'Linux', 'Mac OS'),
       packages=['bigjob', 'bigjob_dynamic', 'coordination', 'pilot', 'pilot.api','pilot.api.compute', 'pilot.api.data', 'pilot.coordination', 
                 'pilot.filemanagement', 'pilot.impl', 'pilot.scheduler', 'examples', 'api', 'bootstrap', 'cli'],
-      #data_files=['bigjob_agent.conf', 
-      #            'bigjob.conf', "VERSION", "README.md"],
-      data_files = [( '', ['bigjob_agent.conf', 'bigjob_agent.conf']),  
+      include_package_data=True,
+      # data files for easy_install
+      data_files = [('', ['bigjob_agent.conf', 'bigjob_agent.conf']),  
                     ('', ['bigjob.conf', 'bigjob.conf']), 
                     ('', ['README.md', 'README.md']), 
                     ('', ['VERSION', 'VERSION'])],
-#      package_data = {
-#        '': ['bigjob_agent.conf', 'bigjob_agent.conf'],
-#        '': ['bigjob.conf', 'bigjob.conf'],
-#        '': ['README', 'README'],
-#        '': ['VERSION', 'VERSION']
-#      },
+      
+      # data files for pip
+      package_data = {'': ['*.conf']},
       install_requires=['paramiko-on-pypi', 'uuid', 'threadpool', 'virtualenv', 'redis==2.2.4', 'bliss'],
       entry_points = {
         'console_scripts': [
