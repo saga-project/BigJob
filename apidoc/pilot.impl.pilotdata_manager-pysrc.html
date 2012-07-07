@@ -56,7 +56,7 @@
 </table>
 <h1 class="epydoc">Source Code for <a href="pilot.impl.pilotdata_manager-module.html">Module pilot.impl.pilotdata_manager</a></h1>
 <pre class="py-src">
-<a name="L1"></a><tt class="py-lineno">  1</tt>  <tt class="py-line"><tt class="py-docstring">""" B{PilotData} Module: Implementation of L{PilotData}, L{PilotDataService} and L{DataUnit}</tt> </tt>
+<a name="L1"></a><tt class="py-lineno">  1</tt>  <tt class="py-line"><tt class="py-docstring">""" B{PilotData Module}: Implementation of L{PilotData}, L{PilotDataService} and L{DataUnit}</tt> </tt>
 <a name="L2"></a><tt class="py-lineno">  2</tt>  <tt class="py-line"><tt class="py-docstring">"""</tt>  </tt>
 <a name="L3"></a><tt class="py-lineno">  3</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">sys</tt> </tt>
 <a name="L4"></a><tt class="py-lineno">  4</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">os</tt> </tt>
@@ -97,9 +97,7 @@ pilot.impl.pilotdata_manager.PilotDataService" class="py-name" href="#" onclick=
 <a name="L33"></a><tt class="py-lineno"> 33</tt>  <tt class="py-line"> </tt>
 <a name="L34"></a><tt class="py-lineno"> 34</tt>  <tt class="py-line"> </tt>
 <a name="L35"></a><tt class="py-lineno"> 35</tt>  <tt class="py-line"><tt class="py-comment"># generate global application id for this instance</tt> </tt>
-<a name="L36"></a><tt class="py-lineno"> 36</tt>  <tt class="py-line"><tt id="link-22" class="py-name" targets="Variable pilot.application_id=pilot-module.html#application_id,Variable pilot.coordination.nocoord.application_id=pilot.coordination.nocoord-module.html#application_id,Variable pilot.coordination.redis.application_id=pilot.coordination.redis-module.html#application_id,Variable pilot.impl.pilotdata_manager.application_id=pilot.impl.pilotdata_manager-module.html#application_id"><a title="pilot.application_id
-pilot.coordination.nocoord.application_id
-pilot.coordination.redis.application_id
+<a name="L36"></a><tt class="py-lineno"> 36</tt>  <tt class="py-line"><tt id="link-22" class="py-name" targets="Variable pilot.application_id=pilot-module.html#application_id,Variable pilot.impl.pilotdata_manager.application_id=pilot.impl.pilotdata_manager-module.html#application_id"><a title="pilot.application_id
 pilot.impl.pilotdata_manager.application_id" class="py-name" href="#" onclick="return doclink('link-22', 'application_id', 'link-22');">application_id</a></tt> <tt class="py-op">=</tt> <tt class="py-string">"bigdata"</tt> </tt>
 <a name="PilotData"></a><div id="PilotData-def"><a name="L37"></a><tt class="py-lineno"> 37</tt>  <tt class="py-line"> </tt>
 <a name="L38"></a><tt class="py-lineno"> 38</tt>  <tt class="py-line"> </tt>
@@ -157,8 +155,6 @@ pilot.coordination.nocoord.NoCoordinationAdaptor.add_pd
 pilot.coordination.redis.RedisCoordinationAdaptor.add_pd" class="py-name" href="#" onclick="return doclink('link-29', 'add_pd', 'link-29');">add_pd</a></tt><tt class="py-op">(</tt><tt class="py-name">CoordinationAdaptor</tt><tt class="py-op">.</tt><tt id="link-30" class="py-name" targets="Class Method pilot.coordination.advert.AdvertCoordinationAdaptor.get_base_url()=pilot.coordination.advert.AdvertCoordinationAdaptor-class.html#get_base_url,Class Method pilot.coordination.nocoord.NoCoordinationAdaptor.get_base_url()=pilot.coordination.nocoord.NoCoordinationAdaptor-class.html#get_base_url,Class Method pilot.coordination.redis.RedisCoordinationAdaptor.get_base_url()=pilot.coordination.redis.RedisCoordinationAdaptor-class.html#get_base_url"><a title="pilot.coordination.advert.AdvertCoordinationAdaptor.get_base_url
 pilot.coordination.nocoord.NoCoordinationAdaptor.get_base_url
 pilot.coordination.redis.RedisCoordinationAdaptor.get_base_url" class="py-name" href="#" onclick="return doclink('link-30', 'get_base_url', 'link-30');">get_base_url</a></tt><tt class="py-op">(</tt><tt id="link-31" class="py-name"><a title="pilot.application_id
-pilot.coordination.nocoord.application_id
-pilot.coordination.redis.application_id
 pilot.impl.pilotdata_manager.application_id" class="py-name" href="#" onclick="return doclink('link-31', 'application_id', 'link-22');">application_id</a></tt><tt class="py-op">)</tt><tt class="py-op">+</tt><tt class="py-string">"/"</tt><tt class="py-op">+</tt><tt class="py-name">pilot_data_service</tt><tt class="py-op">.</tt><tt id="link-32" class="py-name"><a title="pilot.api.compute.api.ComputeUnit.id
 pilot.api.compute.api.PilotCompute.id
 pilot.api.compute.api.PilotComputeService.id
@@ -547,8 +543,6 @@ pilot.impl.pilotdata_manager.PilotDataService.id" class="py-name" href="#" oncli
 <a name="L248"></a><tt class="py-lineno">248</tt>  <tt class="py-line">            <tt class="py-name">application_url</tt> <tt class="py-op">=</tt> <tt class="py-name">CoordinationAdaptor</tt><tt class="py-op">.</tt><tt id="link-82" class="py-name"><a title="pilot.coordination.advert.AdvertCoordinationAdaptor.get_base_url
 pilot.coordination.nocoord.NoCoordinationAdaptor.get_base_url
 pilot.coordination.redis.RedisCoordinationAdaptor.get_base_url" class="py-name" href="#" onclick="return doclink('link-82', 'get_base_url', 'link-30');">get_base_url</a></tt><tt class="py-op">(</tt><tt id="link-83" class="py-name"><a title="pilot.application_id
-pilot.coordination.nocoord.application_id
-pilot.coordination.redis.application_id
 pilot.impl.pilotdata_manager.application_id" class="py-name" href="#" onclick="return doclink('link-83', 'application_id', 'link-22');">application_id</a></tt><tt class="py-op">)</tt> </tt>
 <a name="L249"></a><tt class="py-lineno">249</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-84" class="py-name"><a title="pilot.impl.pilotdata_manager.PilotDataService.url" class="py-name" href="#" onclick="return doclink('link-84', 'url', 'link-25');">url</a></tt> <tt class="py-op">=</tt> <tt class="py-name">CoordinationAdaptor</tt><tt class="py-op">.</tt><tt id="link-85" class="py-name" targets="Class Method pilot.coordination.advert.AdvertCoordinationAdaptor.add_pds()=pilot.coordination.advert.AdvertCoordinationAdaptor-class.html#add_pds,Class Method pilot.coordination.nocoord.NoCoordinationAdaptor.add_pds()=pilot.coordination.nocoord.NoCoordinationAdaptor-class.html#add_pds,Class Method pilot.coordination.redis.RedisCoordinationAdaptor.add_pds()=pilot.coordination.redis.RedisCoordinationAdaptor-class.html#add_pds"><a title="pilot.coordination.advert.AdvertCoordinationAdaptor.add_pds
 pilot.coordination.nocoord.NoCoordinationAdaptor.add_pds
@@ -1085,7 +1079,7 @@ expandto(location.href);
   <tr>
     <td align="left" class="footer">
     <a href="epydoc-log.html">Generated by Epydoc
-    3.0.1 on Sat Jul  7 20:43:35 2012</a>
+    3.0.1 on Sat Jul  7 21:24:48 2012</a>
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"
