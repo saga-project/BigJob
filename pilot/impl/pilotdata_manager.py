@@ -346,9 +346,9 @@ class DataUnit(DataUnit):
         
     
         State model:
-            New: PD object created
-            Pending: PD object is currently updated  
-            Running: At least 1 replica of PD is persistent in a pilot data            
+            - New: PD object created
+            - Pending: PD object is currently updated  
+            - Running: At least 1 replica of PD is persistent in a pilot data            
     """
     
     DU_ID_PREFIX="du-"  

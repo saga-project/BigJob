@@ -111,7 +111,7 @@ class ComputeDataServiceDecentral(pilot.api.ComputeDataService):
 
     def submit_compute_unit(self, compute_unit_description):
         """ Submit a CU to this Compute Data Service.
-            @param cud:  The L{ComputeUnitDescription} from the application
+            @param compute_unit_description:  The L{ComputeUnitDescription} from the application
             @return: L{ComputeUnit} object
         """
         cu = ComputeUnit(compute_unit_description, self)

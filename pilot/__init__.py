@@ -14,8 +14,18 @@ The main concepts and classes exposed by the Compute part of the API are:
     - L{PilotComputeService} (PCS): 
           a factory for creating \L{PilotCompute}s.  
 
+The Data side of the Pilot API is symmetric to the compute side.  The exposed
+classes for managing Pilot Data are:
 
-The application workload is represented by so called  L{ComputeUnit}s and  L{DataUnit}s: 
+    - L{PilotData} (PD): 
+          a pilot that manages some data workload (L{DataUnit})
+
+    - L{PilotDataService} (PDS): 
+          a factory (service) which can create L{PilotData}s according to some
+          specification
+
+
+The application workload is represented by so called L{ComputeUnit}s and  L{DataUnit}s: 
    
     - L{ComputeUnit} (CU): 
           a work item executed on a L{PilotCompute}.
@@ -24,16 +34,14 @@ The application workload is represented by so called  L{ComputeUnit}s and  L{Dat
     - L{DataUnit} (DU): 
           a data item managed by a L{PilotData}
 
+Both Compute and Data Units are specified using an abstract description object:
 
-The Data side of the Pilot API looks symmetric to the compute side.  The exposed
-classes are:
+    - L{ComputeUnitDescription}:
+            abstract description of a L{ComputeUnit}.
+    
+    - L{DataUnitDescription}:
+            abstract description of a L{DataUnit}.
 
-    - L{PilotData} (PD): 
-          a pilot that manages some data workload (L{DataUnit})
-
-    - L{PilotDataService} (PDS): 
-          a factory (service) which can create L{PilotData}s according to some
-          specification
 
 The L{ComputeDataService} represents the central entry point for the application
 workload:
@@ -48,7 +56,7 @@ compute/data co-locationing for the requested data-compute workload.
 
 Pilots, Compute and Data Units are associated with a L{State}.
 
-    - L{State}: State enumeration
+    - L{State<pilot.api.compute.api.State>}: State enumeration
 
 
 B{Example}::
@@ -106,7 +114,6 @@ from pilot.impl.pilotdata_manager import PilotData
 from pilot.impl.pilotdata_manager import DataUnit
 from pilot.impl.pilot_manager import ComputeDataService, ComputeUnitService, DataUnitService
 from pilot.impl.pilot_manager_decentral import ComputeDataServiceDecentral 
-from pilot.api.api import ComputeDataDescription
 from pilot.api.api import PilotError
 from pilot.api import State 
 

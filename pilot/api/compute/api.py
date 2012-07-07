@@ -1,7 +1,10 @@
 """ Pilot Compute related entities."""
 
 class State(object):
-    """ State enumeration """
+    """ B{State}.
+    
+        States used for L{PilotCompute}, L{PilotData}, L{ComputeUnit}, L{DataUnit} and L{ComputeDataService}
+    """
     Unknown = "Unknown"
     New = "New"
     Running = "Running"
@@ -288,48 +291,62 @@ class ComputeUnitService(object):
 #  ComuteUnitDescription
 # 
 class ComputeUnitDescription(dict):
-    """  ComputeUnitDescription.
+    """ B{ComputeUnitDescription.}
     
-        The ComputeUnitDescription is a job/task/call description based on 
+        The ComputeUnitDescription is a task description based on 
         SAGA Job Description. 
         
-        It offers the application to describe a WorkUnit in an abstract 
-        way that is dealt with by the Pilot-Manager.
+        It offers the application to describe a L{ComputeUnit} in an abstract 
+        way that is dealt with by the Pilot-Manager. It can contain
+        references to depended L{DataUnit}s. ComputeUnitDescription are submitted
+        to the L{ComputeDataService}.
+        
+        Example::
+        
+            compute_unit_description =            
+                {
+                    'executable': <path to executable>,  
+                    'arguments': <arguments>,           # Arguments 
+                    'environment': <environment>,          # environment variables 
+                    
+                    # Working directory
+                    # A pilot data url will be translated to the local pilot store url, e.g.
+                    #     pilotdata://localhost/c2fafeae-03a9-11e1-9934-109addae22a3' 
+                    #     =>           
+                    #     ssh://localhost/tmp/pilotdata/c2fafeae-03a9-11e1-9934-109addae22a3
+                    #
+                    #     i.e. job is executed in /tmp/pilotdata/c2fafeae-03a9-11e1-9934-109addae22a3
+                    #     where file can be accessed using relative paths
+                    'working_directory': <working directory>,  
+                    
+                    # I/O
+                    'input': <stdin>,
+                    'error': <sterr>,
+                    'output': <stdout>,
+                                
+                    # Parallelism
+                    'number_of_processes': <Total number of processes to start>,
+                    'processes_per_host':  <Nr of processes per host>,
+                    'threads_per_process': <Nr of threads to start per process>,
+                    'total_core_count':    <Total number of cores requested>,
+                    'spmd_variation':      <Type and startup mechanism>,
+                    
+                    # Requirements
+                    'candidate_hosts': [<url>, ...],
+                    'cpu_architecture': <architecture, e.g. x86_64>,
+                    'total_physical_memory': <memory, e.g. 2000>,
+                    'operating_system_type': <os, e.g. Linux>,
+                    'total_cpu_time': <cpu time>,
+                    'wall_time_limit': <walltime in sec, e.g. 600 (sec)>,            
+                    
+                    # Data - input/output data flow for ComputeUnit
+                    'input_data': [<data unit url>, ... ],      
+                    'output_data': [<data unit url>, ... ]
+                }
+            
+        ComputeUnitDescription objects are loosely typed. A dictionary containing the respective keys
+        can be passed instead to the L{ComputeDataService}.
     """
-
-    # Class members
-    __slots__ = (
-        # Action description
-        'executable',           # The "action" to execute
-        'arguments',            # Arguments to the "action"
-        'cleanup',
-        'environment',          # "environment" settings for the "action"
-        'interactive', 
-        'contact',
-        'project',
-        'start_time',
-        'working_directory',
-        # I/O
-        'input',
-        'error',
-        'output',
-        'file_transfer',
-        # Parallelism
-        'number_of_processes',  # Total number of processes to start
-        'processes_per_host',   # Nr of processes per host
-        'threads_per_process',  # Nr of threads to start per process
-        'total_core_count',     # Total number of cores requested
-        'spmd_variation',       # Type and startup mechanism
-        # Requirements
-          'candidate_hosts',
-        'cpu_architecture',
-        'total_physical_memory',
-        'operating_system_type',
-        'total_cpu_time',
-        'wall_time_limit',
-        'queue'
-    )
-
     def __init__(self):
         pass
 

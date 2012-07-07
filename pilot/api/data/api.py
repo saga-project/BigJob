@@ -177,7 +177,9 @@ class DataUnitService(object):
 # DataUnitDescription
 # 
 class DataUnitDescription(dict):
-    """ DataUnitDescription.
+    """ B{DataUnitDescription.}
+    
+        Description object for the creation of L{DataUnit}s
         {
             'file_urls': [file1, file2, file3]        
         } 
