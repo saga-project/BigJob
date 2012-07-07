@@ -18,10 +18,8 @@ pilot.coordination	pilot.coordination-module.html
 pilot.coordination.__package__	pilot.coordination-module.html#__package__
 pilot.coordination.advert	pilot.coordination.advert-module.html
 pilot.coordination.nocoord	pilot.coordination.nocoord-module.html
-pilot.coordination.nocoord.application_id	pilot.coordination.nocoord-module.html#application_id
 pilot.coordination.nocoord.__package__	pilot.coordination.nocoord-module.html#__package__
 pilot.coordination.redis	pilot.coordination.redis-module.html
-pilot.coordination.redis.application_id	pilot.coordination.redis-module.html#application_id
 pilot.coordination.redis.__package__	pilot.coordination.redis-module.html#__package__
 pilot.filemanagement	pilot.filemanagement-module.html
 pilot.filemanagement.__package__	pilot.filemanagement-module.html#__package__
