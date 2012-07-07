@@ -66,13 +66,13 @@
 <area shape="rect" id="node1_18" href="pilot.impl.pilotdata_manager.PilotDataService-class.html#url" title="pilot.impl.pilotdata_manager.PilotDataService.url" alt="" coords="17,183,259,201"/>
 <area shape="rect" id="node1_19" href="pilot.impl.pilotdata_manager.PilotDataService-class.html#__init__" title="Create a PilotDataService" alt="" coords="17,204,259,223"/>
 <area shape="rect" id="node1_20" href="pilot.impl.pilotdata_manager.PilotDataService-class.html#create_pilot" title="Create a PilotData" alt="" coords="17,223,259,241"/>
-<area shape="rect" id="node1_21" href="pilot.impl.pilotdata_manager.PilotDataService-class.html#get_pilot" title="pilot.impl.pilotdata_manager.PilotDataService.get_pilot" alt="" coords="17,241,259,260"/>
-<area shape="rect" id="node1_22" href="pilot.impl.pilotdata_manager.PilotDataService-class.html#list_pilots" title="List all PSs of PSS" alt="" coords="17,260,259,279"/>
+<area shape="rect" id="node1_21" href="pilot.impl.pilotdata_manager.PilotDataService-class.html#get_pilot" title="Reconnect to an existing pilot." alt="" coords="17,241,259,260"/>
+<area shape="rect" id="node1_22" href="pilot.impl.pilotdata_manager.PilotDataService-class.html#list_pilots" title="List all PDs of PDS" alt="" coords="17,260,259,279"/>
 <area shape="rect" id="node1_23" href="pilot.impl.pilotdata_manager.PilotDataService-class.html#cancel" title="Cancel the PilotDataService." alt="" coords="17,279,259,297"/>
-<area shape="rect" id="node1_24" href="pilot.impl.pilotdata_manager.PilotDataService-class.html#wait" title="pilot.impl.pilotdata_manager.PilotDataService.wait" alt="" coords="17,297,259,316"/>
-<area shape="rect" id="node1_25" href="pilot.impl.pilotdata_manager.PilotDataService-class.html#to_dict" title="pilot.impl.pilotdata_manager.PilotDataService.to_dict" alt="" coords="17,316,259,335"/>
+<area shape="rect" id="node1_24" href="pilot.impl.pilotdata_manager.PilotDataService-class.html#wait" title="Wait until all managed PD (of this Pilot Data Service) enter a final state" alt="" coords="17,297,259,316"/>
+<area shape="rect" id="node1_25" href="pilot.impl.pilotdata_manager.PilotDataService-class.html#to_dict" title="Return a Python dictionary containing the representation of the PDS &#160;(internal method not part of Pilot API)" alt="" coords="17,316,259,335"/>
 <area shape="rect" id="node1_26" href="pilot.impl.pilotdata_manager.PilotDataService-class.html#__del__" title="pilot.impl.pilotdata_manager.PilotDataService.__del__" alt="" coords="17,335,259,353"/>
-<area shape="rect" id="node1" href="pilot.impl.pilotdata_manager.PilotDataService-class.html" title="PilotDataService (PSS)." alt="" coords="5,83,270,359"/>
+<area shape="rect" id="node1" href="pilot.impl.pilotdata_manager.PilotDataService-class.html" title="PilotDataService (PDS)" alt="" coords="5,83,270,359"/>
 <area shape="rect" id="node2_27" href="pilot.api.data.api.PilotDataService-class.html#pilot_data" title="pilot.api.data.api.PilotDataService.pilot_data" alt="" coords="52,31,224,49"/>
 <area shape="rect" id="node2" href="pilot.api.data.api.PilotDataService-class.html" title="PilotDataService (PDS)." alt="" coords="39,6,235,63"/>
 </map>
@@ -80,7 +80,8 @@
 </center>
 </center>
 <hr />
-<p>PilotDataService (PSS).</p>
+<p><b>PilotDataService</b> (PDS)</p>
+  <p>Factory for creating pilot data</p>
 
 <!-- ==================== INSTANCE METHODS ==================== -->
 <a name="section-InstanceMethods"></a>
@@ -133,7 +134,8 @@
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a name="get_pilot"></a><span class="summary-sig-name">get_pilot</span>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">pd_id</span>)</span></td>
+        <span class="summary-sig-arg">pd_id</span>)</span><br />
+      Reconnect to an existing pilot.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#PilotDataService.get_pilot">source&nbsp;code</a></span>
             
@@ -150,7 +152,7 @@
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a href="pilot.impl.pilotdata_manager.PilotDataService-class.html#list_pilots" class="summary-sig-name">list_pilots</a>(<span class="summary-sig-arg">self</span>)</span><br />
-      List all PSs of PSS</td>
+      List all PDs of PDS</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#PilotDataService.list_pilots">source&nbsp;code</a></span>
             
@@ -183,7 +185,9 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="wait"></a><span class="summary-sig-name">wait</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td><span class="summary-sig"><a name="wait"></a><span class="summary-sig-name">wait</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Wait until all managed PD (of this Pilot Data Service) enter a final 
+      state</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#PilotDataService.wait">source&nbsp;code</a></span>
             
@@ -199,7 +203,9 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="to_dict"></a><span class="summary-sig-name">to_dict</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td><span class="summary-sig"><a name="to_dict"></a><span class="summary-sig-name">to_dict</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return a Python dictionary containing the representation of the PDS 
+      (internal method not part of Pilot API)</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#PilotDataService.to_dict">source&nbsp;code</a></span>
             
@@ -361,19 +367,16 @@
     </td>
   </tr></table>
   
-  <pre class="literalblock">
-Create a PilotData 
-
-Keyword arguments:
-pilot_data_description -- PilotData Description    
-{
-    'service_url': &quot;ssh://&lt;hostname&gt;/base-url/&quot;                
-    'size': &quot;1000&quot;
-}
-Return value:
-A PilotData handle
-
+  <p>Create a PilotData</p>
+  <p>Keyword arguments: pilot_data_description -- PilotData 
+  Description:</p>
+<pre class="literalblock">
+   {
+       'service_url': &quot;ssh://&lt;hostname&gt;/base-url/&quot;,               
+       'size': &quot;1000&quot;
+   }
 </pre>
+  <p>Return value: A PilotData object</p>
   <dl class="fields">
     <dt>Overrides:
         <a href="pilot.api.data.api.PilotDataService-class.html#create_pilot">api.data.api.PilotDataService.create_pilot</a>
@@ -395,7 +398,7 @@ A PilotData handle
     </td>
   </tr></table>
   
-  <p>List all PSs of PSS</p>
+  <p>List all PDs of PDS</p>
   <dl class="fields">
     <dt>Overrides:
         <a href="pilot.api.data.api.PilotDataService-class.html#list_pilots">api.data.api.PilotDataService.list_pilots</a>
@@ -460,7 +463,7 @@ A PilotData handle
   <tr>
     <td align="left" class="footer">
     <a href="epydoc-log.html">Generated by Epydoc
-    3.0.1 on Fri Jul  6 23:15:49 2012</a>
+    3.0.1 on Sat Jul  7 20:43:35 2012</a>
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"
