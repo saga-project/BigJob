@@ -65,7 +65,7 @@ class BigJobCLI(object):
     
     def list_cus(self, pilot_url):
         pilot_compute = PilotCompute(pilot_url=pilot_url)
-        cus = pilot_compute.list_cus()
+        cus = pilot_compute.list_compute_units()
         counter=1
         print "\nPilot Compute: %s"%(pilot_compute.get_url())
         print "State: %s"%(pilot_compute.get_state())

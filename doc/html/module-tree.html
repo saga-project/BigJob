@@ -56,12 +56,14 @@
 <ul class="nomargin-top">
     <li> <strong class="uidlink"><a href="pilot-module.html">pilot</a></strong>: <em class="summary"><b>BigJob Documentation</b></em>
     <ul>
-    <li> <strong class="uidlink"><a href="pilot.api-module.html">pilot.api</a></strong>
+    <li> <strong class="uidlink"><a href="pilot.api-module.html">pilot.api</a></strong>: <em class="summary">Abstract API Definition of the <b>Pilot-API</b>; This is not the 
+        implementation! Please see <a href="pilot.impl-module.html" 
+        class="link">pilot.impl</a></em>
     <ul>
     <li> <strong class="uidlink"><a href="pilot.api.api-module.html">pilot.api.api</a></strong>    </li>
     <li> <strong class="uidlink"><a href="pilot.api.compute-module.html">pilot.api.compute</a></strong>
     <ul>
-    <li> <strong class="uidlink"><a href="pilot.api.compute.api-module.html">pilot.api.compute.api</a></strong>: <em class="summary">This file contains the API for the PilotJob Framework.</em>    </li>
+    <li> <strong class="uidlink"><a href="pilot.api.compute.api-module.html">pilot.api.compute.api</a></strong>: <em class="summary">Pilot Compute related entities.</em>    </li>
     </ul>
     </li>
     <li> <strong class="uidlink"><a href="pilot.api.data-module.html">pilot.api.data</a></strong>
@@ -71,14 +73,14 @@
     </li>
     </ul>
     </li>
-    <li> <strong class="uidlink"><a href="pilot.coordination-module.html">pilot.coordination</a></strong>
+    <li> <strong class="uidlink"><a href="pilot.coordination-module.html">pilot.coordination</a></strong>: <em class="summary"><b>Private:</b> Implementation of the coordination subsystem.</em>
     <ul>
     <li> <strong class="uidlink"><a href="pilot.coordination.advert-module.html">pilot.coordination.advert</a></strong>    </li>
     <li> <strong class="uidlink"><a href="pilot.coordination.nocoord-module.html">pilot.coordination.nocoord</a></strong>    </li>
     <li> <strong class="uidlink"><a href="pilot.coordination.redis-module.html">pilot.coordination.redis</a></strong>    </li>
     </ul>
     </li>
-    <li> <strong class="uidlink"><a href="pilot.filemanagement-module.html">pilot.filemanagement</a></strong>
+    <li> <strong class="uidlink"><a href="pilot.filemanagement-module.html">pilot.filemanagement</a></strong>: <em class="summary"><b>Private:</b> Implementation of the filemanagement subsystem.</em>
     <ul>
     <li> <strong class="uidlink"><a href="pilot.filemanagement.bliss_adaptor-module.html">pilot.filemanagement.bliss_adaptor</a></strong>: <em class="summary">Bliss based File Transfer Implementation</em>    </li>
     <li> <strong class="uidlink"><a href="pilot.filemanagement.globusonline_adaptor-module.html">pilot.filemanagement.globusonline_adaptor</a></strong>: <em class="summary">Globus Online based File Transfer</em>    </li>
@@ -86,12 +88,29 @@
     <li> <strong class="uidlink"><a href="pilot.filemanagement.webhdfs_adaptor-module.html">pilot.filemanagement.webhdfs_adaptor</a></strong>    </li>
     </ul>
     </li>
-    <li> <strong class="uidlink"><a href="pilot.impl-module.html">pilot.impl</a></strong>
+    <li> <strong class="uidlink"><a href="pilot.impl-module.html">pilot.impl</a></strong>: <em class="summary"><b>BigJob-based Implementation of Pilot-API</b></em>
     <ul>
-    <li> <strong class="uidlink"><a href="pilot.impl.pilot_manager-module.html">pilot.impl.pilot_manager</a></strong>: <em class="summary">Implementation of the ComputeDataService</em>    </li>
-    <li> <strong class="uidlink"><a href="pilot.impl.pilot_manager_decentral-module.html">pilot.impl.pilot_manager_decentral</a></strong>: <em class="summary">Implementation of the ComputeDataService (decentral)</em>    </li>
-    <li> <strong class="uidlink"><a href="pilot.impl.pilotcompute_manager-module.html">pilot.impl.pilotcompute_manager</a></strong>    </li>
-    <li> <strong class="uidlink"><a href="pilot.impl.pilotdata_manager-module.html">pilot.impl.pilotdata_manager</a></strong>: <em class="summary">PilotData</em>    </li>
+    <li> <strong class="uidlink"><a href="pilot.impl.pilot_manager-module.html">pilot.impl.pilot_manager</a></strong>: <em class="summary"><b>ComputeDataService</b> Module: A central implementation of the 
+        <a href="pilot.impl.pilot_manager.ComputeDataService-class.html" 
+        class="link">ComputeDataService</a></em>    </li>
+    <li> <strong class="uidlink"><a href="pilot.impl.pilot_manager_decentral-module.html">pilot.impl.pilot_manager_decentral</a></strong>: <em class="summary"><b>ComputeDataServiceDecentral</b> Module: A decentral 
+        implementation of a ComputeDataService (see <a 
+        href="pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral-class.html"
+        class="link">ComputeDataServiceDecentral</a>).</em>    </li>
+    <li> <strong class="uidlink"><a href="pilot.impl.pilotcompute_manager-module.html">pilot.impl.pilotcompute_manager</a></strong>: <em class="summary"><b>PilotCompute</b> Module: Implementation of <a 
+        href="pilot.impl.pilotcompute_manager.PilotComputeService-class.html"
+        class="link">PilotComputeService</a>, <a 
+        href="pilot.impl.pilotcompute_manager.PilotCompute-class.html" 
+        class="link">PilotCompute</a>, <a 
+        href="pilot.impl.pilotcompute_manager.ComputeUnit-class.html" 
+        class="link">ComputeUnit</a>.</em>    </li>
+    <li> <strong class="uidlink"><a href="pilot.impl.pilotdata_manager-module.html">pilot.impl.pilotdata_manager</a></strong>: <em class="summary"><b>PilotData</b> Module: Implementation of <a 
+        href="pilot.impl.pilotdata_manager.PilotData-class.html" 
+        class="link">PilotData</a>, <a 
+        href="pilot.impl.pilotdata_manager.PilotDataService-class.html" 
+        class="link">PilotDataService</a> and <a 
+        href="pilot.impl.pilotdata_manager.DataUnit-class.html" 
+        class="link">DataUnit</a></em>    </li>
     </ul>
     </li>
     <li> <strong class="uidlink"><a href="pilot.scheduler-module.html">pilot.scheduler</a></strong>
@@ -135,7 +154,7 @@
   <tr>
     <td align="left" class="footer">
     <a href="epydoc-log.html">Generated by Epydoc
-    3.0.1 on Fri Jul  6 23:15:47 2012</a>
+    3.0.1 on Sat Jul  7 14:40:31 2012</a>
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

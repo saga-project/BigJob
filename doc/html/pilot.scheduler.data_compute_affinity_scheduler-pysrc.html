@@ -118,7 +118,7 @@
 <a name="L60"></a><tt class="py-lineno">60</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">compute_unit_description</tt><tt class="py-op">.</tt><tt class="py-name">has_key</tt><tt class="py-op">(</tt><tt class="py-string">"affinity_datacenter_label"</tt><tt class="py-op">)</tt> <tt class="py-keyword">and</tt> <tt class="py-name">compute_unit_description</tt><tt class="py-op">.</tt><tt class="py-name">has_key</tt><tt class="py-op">(</tt><tt class="py-string">"affinity_machine_label"</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
 <a name="L61"></a><tt class="py-lineno">61</tt>  <tt class="py-line">            <tt class="py-keyword">for</tt> <tt class="py-name">i</tt> <tt class="py-keyword">in</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-10" class="py-name"><a title="pilot.api.compute.api.PilotComputeService.pilot_jobs" class="py-name" href="#" onclick="return doclink('link-10', 'pilot_jobs', 'link-1');">pilot_jobs</a></tt><tt class="py-op">:</tt> </tt>
 <a name="L62"></a><tt class="py-lineno">62</tt>  <tt class="py-line">                <tt class="py-name">free_nodes</tt> <tt class="py-op">=</tt> <tt class="py-name">i</tt><tt class="py-op">.</tt><tt id="link-11" class="py-name" targets="Method pilot.impl.pilotcompute_manager.PilotCompute.get_free_nodes()=pilot.impl.pilotcompute_manager.PilotCompute-class.html#get_free_nodes"><a title="pilot.impl.pilotcompute_manager.PilotCompute.get_free_nodes" class="py-name" href="#" onclick="return doclink('link-11', 'get_free_nodes', 'link-11');">get_free_nodes</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
-<a name="L63"></a><tt class="py-lineno">63</tt>  <tt class="py-line">                <tt class="py-name">logger</tt><tt class="py-op">.</tt><tt class="py-name">debug</tt><tt class="py-op">(</tt><tt class="py-string">"BJ: %r State: %s Free nodes: %d"</tt><tt class="py-op">%</tt><tt class="py-op">(</tt><tt class="py-name">i</tt><tt class="py-op">,</tt> <tt class="py-name">i</tt><tt class="py-op">.</tt><tt id="link-12" class="py-name" targets="Method pilot.api.compute.api.ComputeUnit.get_state()=pilot.api.compute.api.ComputeUnit-class.html#get_state,Method pilot.api.compute.api.ComputeUnitService.get_state()=pilot.api.compute.api.ComputeUnitService-class.html#get_state,Method pilot.api.compute.api.PilotCompute.get_state()=pilot.api.compute.api.PilotCompute-class.html#get_state,Method pilot.api.data.api.DataUnit.get_state()=pilot.api.data.api.DataUnit-class.html#get_state,Method pilot.api.data.api.DataUnitService.get_state()=pilot.api.data.api.DataUnitService-class.html#get_state,Method pilot.api.data.api.PilotData.get_state()=pilot.api.data.api.PilotData-class.html#get_state,Method pilot.filemanagement.bliss_adaptor.BlissFileAdaptor.get_state()=pilot.filemanagement.bliss_adaptor.BlissFileAdaptor-class.html#get_state,Method pilot.filemanagement.globusonline_adaptor.GlobusOnlineFileAdaptor.get_state()=pilot.filemanagement.globusonline_adaptor.GlobusOnlineFileAdaptor-class.html#get_state,Method pilot.filemanagement.ssh_adaptor.SSHFileAdaptor.get_state()=pilot.filemanagement.ssh_adaptor.SSHFileAdaptor-class.html#get_state,Method pilot.filemanagement.webhdfs_adaptor.WebHDFSFileAdaptor.get_state()=pilot.filemanagement.webhdfs_adaptor.WebHDFSFileAdaptor-class.html#get_state,Method pilot.impl.pilot_manager.ComputeDataService.get_state()=pilot.impl.pilot_manager.ComputeDataService-class.html#get_state,Method pilot.impl.pilot_manager.ComputeUnit.get_state()=pilot.impl.pilot_manager.ComputeUnit-class.html#get_state,Method pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral.get_state()=pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral-class.html#get_state,Method pilot.impl.pilotcompute_manager.PilotCompute.get_state()=pilot.impl.pilotcompute_manager.PilotCompute-class.html#get_state,Method pilot.impl.pilotdata_manager.DataUnit.get_state()=pilot.impl.pilotdata_manager.DataUnit-class.html#get_state,Method pilot.impl.pilotdata_manager.PilotData.get_state()=pilot.impl.pilotdata_manager.PilotData-class.html#get_state"><a title="pilot.api.compute.api.ComputeUnit.get_state
+<a name="L63"></a><tt class="py-lineno">63</tt>  <tt class="py-line">                <tt class="py-name">logger</tt><tt class="py-op">.</tt><tt class="py-name">debug</tt><tt class="py-op">(</tt><tt class="py-string">"BJ: %r State: %s Free nodes: %d"</tt><tt class="py-op">%</tt><tt class="py-op">(</tt><tt class="py-name">i</tt><tt class="py-op">,</tt> <tt class="py-name">i</tt><tt class="py-op">.</tt><tt id="link-12" class="py-name" targets="Method pilot.api.compute.api.ComputeUnit.get_state()=pilot.api.compute.api.ComputeUnit-class.html#get_state,Method pilot.api.compute.api.ComputeUnitService.get_state()=pilot.api.compute.api.ComputeUnitService-class.html#get_state,Method pilot.api.compute.api.PilotCompute.get_state()=pilot.api.compute.api.PilotCompute-class.html#get_state,Method pilot.api.data.api.DataUnit.get_state()=pilot.api.data.api.DataUnit-class.html#get_state,Method pilot.api.data.api.DataUnitService.get_state()=pilot.api.data.api.DataUnitService-class.html#get_state,Method pilot.api.data.api.PilotData.get_state()=pilot.api.data.api.PilotData-class.html#get_state,Method pilot.filemanagement.bliss_adaptor.BlissFileAdaptor.get_state()=pilot.filemanagement.bliss_adaptor.BlissFileAdaptor-class.html#get_state,Method pilot.filemanagement.globusonline_adaptor.GlobusOnlineFileAdaptor.get_state()=pilot.filemanagement.globusonline_adaptor.GlobusOnlineFileAdaptor-class.html#get_state,Method pilot.filemanagement.ssh_adaptor.SSHFileAdaptor.get_state()=pilot.filemanagement.ssh_adaptor.SSHFileAdaptor-class.html#get_state,Method pilot.filemanagement.webhdfs_adaptor.WebHDFSFileAdaptor.get_state()=pilot.filemanagement.webhdfs_adaptor.WebHDFSFileAdaptor-class.html#get_state,Method pilot.impl.pilot_manager.ComputeDataService.get_state()=pilot.impl.pilot_manager.ComputeDataService-class.html#get_state,Method pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral.get_state()=pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral-class.html#get_state,Method pilot.impl.pilotcompute_manager.ComputeUnit.get_state()=pilot.impl.pilotcompute_manager.ComputeUnit-class.html#get_state,Method pilot.impl.pilotcompute_manager.PilotCompute.get_state()=pilot.impl.pilotcompute_manager.PilotCompute-class.html#get_state,Method pilot.impl.pilotdata_manager.DataUnit.get_state()=pilot.impl.pilotdata_manager.DataUnit-class.html#get_state,Method pilot.impl.pilotdata_manager.PilotData.get_state()=pilot.impl.pilotdata_manager.PilotData-class.html#get_state"><a title="pilot.api.compute.api.ComputeUnit.get_state
 pilot.api.compute.api.ComputeUnitService.get_state
 pilot.api.compute.api.PilotCompute.get_state
 pilot.api.data.api.DataUnit.get_state
@@ -129,8 +129,8 @@ pilot.filemanagement.globusonline_adaptor.GlobusOnlineFileAdaptor.get_state
 pilot.filemanagement.ssh_adaptor.SSHFileAdaptor.get_state
 pilot.filemanagement.webhdfs_adaptor.WebHDFSFileAdaptor.get_state
 pilot.impl.pilot_manager.ComputeDataService.get_state
-pilot.impl.pilot_manager.ComputeUnit.get_state
 pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral.get_state
+pilot.impl.pilotcompute_manager.ComputeUnit.get_state
 pilot.impl.pilotcompute_manager.PilotCompute.get_state
 pilot.impl.pilotdata_manager.DataUnit.get_state
 pilot.impl.pilotdata_manager.PilotData.get_state" class="py-name" href="#" onclick="return doclink('link-12', 'get_state', 'link-12');">get_state</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> <tt class="py-name">free_nodes</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
@@ -145,8 +145,8 @@ pilot.filemanagement.globusonline_adaptor.GlobusOnlineFileAdaptor.get_state
 pilot.filemanagement.ssh_adaptor.SSHFileAdaptor.get_state
 pilot.filemanagement.webhdfs_adaptor.WebHDFSFileAdaptor.get_state
 pilot.impl.pilot_manager.ComputeDataService.get_state
-pilot.impl.pilot_manager.ComputeUnit.get_state
 pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral.get_state
+pilot.impl.pilotcompute_manager.ComputeUnit.get_state
 pilot.impl.pilotcompute_manager.PilotCompute.get_state
 pilot.impl.pilotdata_manager.DataUnit.get_state
 pilot.impl.pilotdata_manager.PilotData.get_state" class="py-name" href="#" onclick="return doclink('link-13', 'get_state', 'link-12');">get_state</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">==</tt><tt class="py-string">"Running"</tt> <tt class="py-keyword">and</tt> <tt class="py-name">free_nodes</tt> <tt class="py-op">&gt;=</tt> <tt class="py-name">required_number_of_processes</tt><tt class="py-op">:</tt> <tt class="py-comment"># check whether pilot is active</tt> </tt>
@@ -167,8 +167,8 @@ pilot.filemanagement.globusonline_adaptor.GlobusOnlineFileAdaptor.get_state
 pilot.filemanagement.ssh_adaptor.SSHFileAdaptor.get_state
 pilot.filemanagement.webhdfs_adaptor.WebHDFSFileAdaptor.get_state
 pilot.impl.pilot_manager.ComputeDataService.get_state
-pilot.impl.pilot_manager.ComputeUnit.get_state
 pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral.get_state
+pilot.impl.pilotcompute_manager.ComputeUnit.get_state
 pilot.impl.pilotcompute_manager.PilotCompute.get_state
 pilot.impl.pilotdata_manager.DataUnit.get_state
 pilot.impl.pilotdata_manager.PilotData.get_state" class="py-name" href="#" onclick="return doclink('link-15', 'get_state', 'link-12');">get_state</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
@@ -184,8 +184,8 @@ pilot.filemanagement.globusonline_adaptor.GlobusOnlineFileAdaptor.get_state
 pilot.filemanagement.ssh_adaptor.SSHFileAdaptor.get_state
 pilot.filemanagement.webhdfs_adaptor.WebHDFSFileAdaptor.get_state
 pilot.impl.pilot_manager.ComputeDataService.get_state
-pilot.impl.pilot_manager.ComputeUnit.get_state
 pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral.get_state
+pilot.impl.pilotcompute_manager.ComputeUnit.get_state
 pilot.impl.pilotcompute_manager.PilotCompute.get_state
 pilot.impl.pilotdata_manager.DataUnit.get_state
 pilot.impl.pilotdata_manager.PilotData.get_state" class="py-name" href="#" onclick="return doclink('link-17', 'get_state', 'link-12');">get_state</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">==</tt><tt class="py-string">"Running"</tt> <tt class="py-keyword">and</tt> <tt class="py-name">free_nodes</tt> <tt class="py-op">&gt;=</tt> <tt class="py-name">required_number_of_processes</tt><tt class="py-op">:</tt> </tt>
@@ -243,7 +243,7 @@ expandto(location.href);
   <tr>
     <td align="left" class="footer">
     <a href="epydoc-log.html">Generated by Epydoc
-    3.0.1 on Fri Jul  6 23:15:49 2012</a>
+    3.0.1 on Sat Jul  7 14:40:34 2012</a>
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

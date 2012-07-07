@@ -1,7 +1,8 @@
 """
-Implementation of the ComputeDataService
+B{ComputeDataService} Module: A central implementation of the L{ComputeDataService}
 
 A Meta-Scheduling service for pilots (both PilotCompute and PilotData)
+
 """
 
 import sys
@@ -16,13 +17,18 @@ import traceback
 import urlparse
 
 import bigjob
-import pilot
 from bigjob import logger
-from pilot.api import ComputeDataService, ComputeUnit, State
+
+import pilot
+
+from pilot.api import ComputeDataService, State
 from pilot.impl.pilotdata_manager import PilotData, DataUnit
+from pilot.impl.pilotcompute_manager import PilotCompute, ComputeUnit
+
+
 #from pilot.coordination.advert import AdvertCoordinationAdaptor as CoordinationAdaptor
 from pilot.coordination.nocoord import NoCoordinationAdaptor as CoordinationAdaptor
-from bigjob import bigjob, subjob, description
+
 
 """ Loaded Module determines scheduler:
     
@@ -33,7 +39,7 @@ from bigjob import bigjob, subjob, description
 from pilot.scheduler.data_compute_affinity_scheduler import Scheduler
 
 class ComputeDataService(ComputeDataService):
-    """ ComputeDataService.
+    """ B{ComputeDataService}
     
         The ComputeDataService is the application's interface to submit 
         ComputeUnits and PilotData/DataUnit to the Pilot-Manager 
@@ -82,43 +88,34 @@ class ComputeDataService(ComputeDataService):
 
     ###########################################################################
     # Pilot Compute    
-    def add_pilot_compute_service(self, pjs):
-        """ Add a PilotJobService to this CDS.
+    def add_pilot_compute_service(self, pcs):
+        """ Add a PilotComputeService to this CDS.
 
-            Keyword arguments:
-            pilotjob_services -- The PilotJob Service(s) to which this 
-                                 Work Unit Service will connect.
+            @param pcs: The PilotComputeService to which this ComputeDataService will connect.
 
-            Return:
-            Result
         """
-        self.pilot_job_services.append(pjs)
+        self.pilot_job_services.append(pcs)
         CoordinationAdaptor.update_cds(self.url, self)
+        
 
-    def remove_pilot_compute_service(self, pjs):
+    def remove_pilot_compute_service(self, pcs):
         """ Remove a PilotJobService from this CDS.
 
-            Note that it won't cancel the PilotJobService, it will just no
-            longer be connected to this WUS.
+            Note that it won't cancel the PilotComputeService, it will just no
+            longer be connected to this CDS.
 
             Keyword arguments:
-            pilotjob_services -- The PilotJob Service(s) to remove from this
-                                 Work Unit Service. 
-
-            Return:
-            Result
+            @param pcs: The PilotComputeService to remove from this ComputeDataService. 
         """
-        self.pilot_job_services.remove(pjs)
+        self.pilot_job_services.remove(pcs)
         CoordinationAdaptor.update_cds(self.url, self)
+
 
     def submit_compute_unit(self, compute_unit_description):
         """ Submit a CU to this Compute Data Service.
 
-            Keyword argument:
-            cud -- The ComputeUnitDescription from the application
-
-            Return:
-            ComputeUnit object
+            @param compute_unit_description: The ComputeUnitDescription from the application
+            @return: ComputeUnit object
         """
         cu = ComputeUnit(compute_unit_description, self)
         self.compute_units[cu.id]=cu
@@ -132,24 +129,14 @@ class ComputeDataService(ComputeDataService):
     def add_pilot_data_service(self, pds):
         """ Add a PilotDataService 
 
-            Keyword arguments:
-            pds -- The PilotDataService to add.
-
-            Return:
-            None
+            @param pds: The PilotDataService to add.
         """
         self.pilot_data_services.append(pds)
         CoordinationAdaptor.update_cds(self.url, self)
     
     def remove_pilot_data_service(self, pds):
-
         """ Remove a PilotDataService 
-            
-            Keyword arguments:
-            pds -- The PilotDataService to remove 
-            
-            Return:
-            None
+            @param pds: The PilotDataService to remove 
         """
         self.pilot_data_services.remove(pds)
         CoordinationAdaptor.update_cds(self.url, self)
@@ -189,24 +176,16 @@ class ComputeDataService(ComputeDataService):
     
     def cancel(self):
         """ Cancel the CDS. 
-            All associated PC objects are deleted.            
-            
-            Keyword arguments:
-            None
-
-            Return:
-            None
+            All associated PD and PC objects are canceled.            
         """
         # terminate background thread
         self.stop.set()
         CoordinationAdaptor.delete_cds(self.url)
    
     def wait(self):
-        """ Waits for CUs and DUs
-            Return if all du's are running 
-                   AND
-                   cu's are done
-            
+        """ Waits for CUs and DUs. Return after all DU's have been placed (i.e. in state Running)
+            and all CU's have been completed (i.e. in state Done) or if a fault has occurred or
+            the user has cancelled a CU or DU.            
         """
         try:
             logger.debug("### START WAIT ###")
@@ -231,10 +210,12 @@ class ComputeDataService(ComputeDataService):
                 
         
     def get_state(self):
+        "@return: State of the ComputeDataService"
         return self.state
     
     
     def get_id(self):
+        "@return: id of ComputeDataService"
         return str(self.id)
     
     
@@ -379,108 +360,17 @@ class ComputeDataService(ComputeDataService):
     def __find_pd_at_pj_resource(self, pilotjob):
         pass
    
-    
-    
-class ComputeUnit(ComputeUnit):
-    """ ComputeUnit - Wrapper for BigJob subjob """
-    CU_ID_PREFIX="cu-"  
 
-    def __init__(self, compute_unit_description=None, compute_data_service=None, cu_url=None):
-        
-        if cu_url==None:
-            self.id = self.CU_ID_PREFIX + str(uuid.uuid1())
-            if compute_data_service!=None:
-                self.url = compute_data_service.url + "/" + self.id
-                logger.debug("Created CU: %s"%self.url)  
-            self.state = State.New       
-            self.__subjob = None # reference to BigJob Subjob 
-            self.compute_unit_description = compute_unit_description # CU Description
-            self.subjob_description = self.__translate_cu_sj_description(compute_unit_description)
-        else:
-            self.__subjob = subjob(subjob_url=cu_url)
-           
-    
-    def get_id(self):
-        return self.id
-    
-    
-    def get_url(self):   
-        if self.__subjob!=None:      
-            return self.__subjob.get_url()
-        else:
-            return self.get_id()   
-        
-    
-    def get_details(self):   
-        if self.__subjob!=None:      
-            return self.__subjob.get_details()
-        else:
-            return None      
-    
-    
-    def get_state(self):
-        if self.__subjob != None:
-            self.state = self.__subjob.get_state()
-        return self.state
-    
-    
-    def wait(self):
-        """ Wait until in Done state 
-            (or Failed state)
-        """
-        while True:
-            state = self.get_state()
-            logger.debug("Compute Unit: %s, State: %s"%(self.id, state))            
-            if state==State.Done or state==State.Failed:
-                break
-            time.sleep(2)
+###############################################################################
+# Unimplemented entities
 
-    
-    def cancel(self):
-        if self.__subjob != None:
-            return self.__subjob.cancel()
-        return None
-    
-    def __repr__(self):
-        return self.id
+class ComputeUnitService():
+    def __init__(self):
+        raise NotImplementedError("Please use ComputeDataService.")
 
-    
-    def _update_compute_unit_description(self, compute_unit_description):
-        self.compute_unit_description = compute_unit_description # CU Description
-        self.subjob_description = self.__translate_cu_sj_description(compute_unit_description)
 
-    def _update_subjob(self, subjob):
-        self.__subjob = subjob
-        
-    # INTERNAL
-    def __translate_cu_sj_description(self, compute_unit_description):
-        jd = description()
-        if compute_unit_description.has_key("executable"): 
-            jd.executable = compute_unit_description["executable"]
-        if compute_unit_description.has_key("spmd_variation"):
-            jd.spmd_variation = compute_unit_description["spmd_variation"]
-        else:
-            jd.spmd_variation = "single"
-        if compute_unit_description.has_key("arguments"): 
-            jd.arguments = compute_unit_description["arguments"]
-        if compute_unit_description.has_key("environment"):
-            jd.environment = compute_unit_description["environment"] 
-        
-        # handling number of processes
-        if compute_unit_description.has_key("number_of_processes"):
-            jd.number_of_processes=int(compute_unit_description["number_of_processes"])
-        elif compute_unit_description.has_key("total_cpu_count"):
-            jd.number_of_processes=int(compute_unit_description["total_cpu_count"])
-        else:
-            jd.number_of_processes=1
-            
-        if compute_unit_description.has_key("working_directory"): 
-            jd.working_directory = compute_unit_description["working_directory"]
-        if compute_unit_description.has_key("output"): 
-            jd.output =  compute_unit_description["output"]
-        if compute_unit_description.has_key("error"): 
-            jd.error = compute_unit_description["error"]
-        if compute_unit_description.has_key("file_transfer"):
-            jd.file_transfer=compute_unit_description["file_transfer"]            
-        return jd
-        
+class DataUnitService():
+    def __init__(self):
+        raise NotImplementedError("Please use ComputeDataService.")
+    
+

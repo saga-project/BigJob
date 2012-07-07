@@ -1,9 +1,7 @@
-""" 
-This file contains the API for the PilotJob Framework.
-It is not supposed to be used directly by applications. 
-"""
+""" Pilot Compute related entities."""
 
 class State(object):
+    """ State enumeration """
     Unknown = "Unknown"
     New = "New"
     Running = "Running"
