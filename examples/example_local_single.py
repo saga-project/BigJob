@@ -21,7 +21,7 @@ import sys
 
 COORDINATION_URL = "advert://localhost/?dbtype=sqlite3"
 #COORDINATION_URL = "tcp://*"
-#COORDINATION_URL = "redis://localhost:6379"
+COORDINATION_URL = "redis://localhost:6379"
 
 # for running BJ from local dir
 sys.path.insert(0, os.getcwd() + "/../")

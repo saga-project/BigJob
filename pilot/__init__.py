@@ -36,10 +36,10 @@ The application workload is represented by so called L{ComputeUnit}s and  L{Data
 
 Both Compute and Data Units are specified using an abstract description object:
 
-    - L{ComputeUnitDescription}:
+    - L{ComputeUnitDescription} (CUD):
             abstract description of a L{ComputeUnit}.
     
-    - L{DataUnitDescription}:
+    - L{DataUnitDescription} (DUD):
             abstract description of a L{DataUnit}.
 
 
@@ -117,6 +117,9 @@ from pilot.impl.pilot_manager_decentral import ComputeDataServiceDecentral
 from pilot.api.api import PilotError
 from pilot.api import State 
 
+import bigjob
 
+""" Version of Pilot-API/BigJob """
+version = bigjob.version
 
 

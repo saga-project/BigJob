@@ -15,6 +15,5 @@ from pilot.api.data.api import DataUnitService
 from pilot.api.data.api import DataUnit
 from pilot.api.data.api import DataUnitDescription
 
-from pilot.api.api import ComputeDataDescription
 from pilot.api.api import ComputeDataService
 from pilot.api.api import PilotError

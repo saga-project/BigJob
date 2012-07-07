@@ -1,4 +1,4 @@
-    #!python
+#!python
 """Bootstrap distribute installation
 
 If you want to use setuptools in your package's setup.py, just include this
