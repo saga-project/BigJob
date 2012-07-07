@@ -1,4 +1,4 @@
-""" B{PilotCompute} Module: Implementation of L{PilotComputeService}, L{PilotCompute}, L{ComputeUnit}.
+""" B{PilotCompute Module}: Implementation of L{PilotComputeService}, L{PilotCompute}, L{ComputeUnit}.
 """
 
 import sys

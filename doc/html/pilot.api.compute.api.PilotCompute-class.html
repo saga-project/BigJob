@@ -60,13 +60,23 @@
 <h1 class="epydoc">Class PilotCompute</h1><p class="nomargin-top"><span class="codelink"><a href="pilot.api.compute.api-pysrc.html#PilotCompute">source&nbsp;code</a></span></p>
 <center>
 <center>  <map id="uml_class_diagram_for_pilot_ap_7" name="uml_class_diagram_for_pilot_ap_7">
-<area shape="rect" id="node1_6" href="pilot.api.compute.api.PilotCompute-class.html#__init__" title="x.__init__(...) initializes x; see help(type(x)) for signature" alt="" coords="17,39,233,57"/>
-<area shape="rect" id="node1_7" href="pilot.api.compute.api.PilotCompute-class.html#cancel" title="Remove the PilotCompute from the PilotCompute Service." alt="" coords="17,57,233,76"/>
-<area shape="rect" id="node1_8" href="pilot.api.compute.api.PilotCompute-class.html#reinitialize" title="Re&#45;Initialize the PilotCompute to the (new) PilotComputeDescription." alt="" coords="17,76,233,95"/>
-<area shape="rect" id="node1_9" href="pilot.api.compute.api.PilotCompute-class.html#set_callback" title="Set a callback function for a member." alt="" coords="17,95,233,113"/>
-<area shape="rect" id="node1_10" href="pilot.api.compute.api.PilotCompute-class.html#unset_callback" title="Unset a callback function from a member" alt="" coords="17,113,233,132"/>
-<area shape="rect" id="node1_11" href="pilot.api.compute.api.PilotCompute-class.html#get_state" title="pilot.api.compute.api.PilotCompute.get_state" alt="" coords="17,132,233,151"/>
-<area shape="rect" id="node1" href="pilot.api.compute.api.PilotCompute-class.html" title="PilotCompute (PilotJob)." alt="" coords="5,6,245,157"/>
+<area shape="rect" id="node1_15" href="pilot.api.compute.api.PilotCompute-class.html#callback" title="pilot.api.compute.api.PilotCompute.callback" alt="" coords="39,31,255,49"/>
+<area shape="rect" id="node1_16" href="pilot.api.compute.api.PilotCompute-class.html#context" title="pilot.api.compute.api.PilotCompute.context" alt="" coords="39,49,255,68"/>
+<area shape="rect" id="node1_17" href="pilot.api.compute.api.PilotCompute-class.html#description" title="pilot.api.compute.api.PilotCompute.description" alt="" coords="39,68,255,87"/>
+<area shape="rect" id="node1_18" href="pilot.api.compute.api.PilotCompute-class.html#id" title="pilot.api.compute.api.PilotCompute.id" alt="" coords="39,87,255,105"/>
+<area shape="rect" id="node1_19" href="pilot.api.compute.api.PilotCompute-class.html#pj_type" title="pilot.api.compute.api.PilotCompute.pj_type" alt="" coords="39,105,255,124"/>
+<area shape="rect" id="node1_20" href="pilot.api.compute.api.PilotCompute-class.html#rm" title="pilot.api.compute.api.PilotCompute.rm" alt="" coords="39,124,255,143"/>
+<area shape="rect" id="node1_21" href="pilot.api.compute.api.PilotCompute-class.html#state" title="pilot.api.compute.api.PilotCompute.state" alt="" coords="39,143,255,161"/>
+<area shape="rect" id="node1_22" href="pilot.api.compute.api.PilotCompute-class.html#state_detail" title="pilot.api.compute.api.PilotCompute.state_detail" alt="" coords="39,161,255,180"/>
+<area shape="rect" id="node1_23" href="pilot.api.compute.api.PilotCompute-class.html#wall_time_left" title="pilot.api.compute.api.PilotCompute.wall_time_left" alt="" coords="39,180,255,199"/>
+<area shape="rect" id="node1_24" href="pilot.api.compute.api.PilotCompute-class.html#__init__" title="x.__init__(...) initializes x; see help(type(x)) for signature" alt="" coords="39,201,255,220"/>
+<area shape="rect" id="node1_25" href="pilot.api.compute.api.PilotCompute-class.html#cancel" title="Remove the PilotCompute from the PilotCompute Service." alt="" coords="39,220,255,239"/>
+<area shape="rect" id="node1_26" href="pilot.api.compute.api.PilotCompute-class.html#get_state" title="pilot.api.compute.api.PilotCompute.get_state" alt="" coords="39,239,255,257"/>
+<area shape="rect" id="node1_27" href="pilot.api.compute.api.PilotCompute-class.html#reinitialize" title="Re&#45;Initialize the PilotCompute to the (new) PilotComputeDescription." alt="" coords="39,257,255,276"/>
+<area shape="rect" id="node1_28" href="pilot.api.compute.api.PilotCompute-class.html#set_callback" title="Set a callback function for a member." alt="" coords="39,276,255,295"/>
+<area shape="rect" id="node1_29" href="pilot.api.compute.api.PilotCompute-class.html#unset_callback" title="Unset a callback function from a member" alt="" coords="39,295,255,313"/>
+<area shape="rect" id="node1" href="pilot.api.compute.api.PilotCompute-class.html" title="PilotCompute (PilotJob)." alt="" coords="27,6,267,319"/>
+<area shape="rect" id="node2" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html" title="Pilot Compute (PC)" alt="" coords="5,339,288,378"/>
 </map>
   <img src="uml_class_diagram_for_pilot_ap_7.gif" alt='' usemap="#uml_class_diagram_for_pilot_ap_7" ismap="ismap" class="graph-without-title" />
 </center>
@@ -115,6 +125,22 @@
       Remove the PilotCompute from the PilotCompute Service.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="pilot.api.compute.api-pysrc.html#PilotCompute.cancel">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="get_state"></a><span class="summary-sig-name">get_state</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.api.compute.api-pysrc.html#PilotCompute.get_state">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -177,22 +203,6 @@
       
     </td>
   </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a name="get_state"></a><span class="summary-sig-name">get_state</span>(<span class="summary-sig-arg">self</span>)</span></td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="pilot.api.compute.api-pysrc.html#PilotCompute.get_state">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
   <tr>
     <td colspan="2" class="summary">
     <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
@@ -220,6 +230,69 @@
   <td align="left" colspan="2" class="table-header">
     <span class="table-header">Properties</span></td>
 </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="callback"></a><span class="summary-name">callback</span>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="context"></a><span class="summary-name">context</span>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="description"></a><span class="summary-name">description</span>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="id"></a><span class="summary-name">id</span>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="pj_type"></a><span class="summary-name">pj_type</span>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="rm"></a><span class="summary-name">rm</span>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="state"></a><span class="summary-name">state</span>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="state_detail"></a><span class="summary-name">state_detail</span>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="wall_time_left"></a><span class="summary-name">wall_time_left</span>
+    </td>
+  </tr>
   <tr>
     <td colspan="2" class="summary">
     <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
@@ -382,7 +455,7 @@
   <tr>
     <td align="left" class="footer">
     <a href="epydoc-log.html">Generated by Epydoc
-    3.0.1 on Sat Jul  7 15:45:19 2012</a>
+    3.0.1 on Sat Jul  7 21:24:46 2012</a>
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"
