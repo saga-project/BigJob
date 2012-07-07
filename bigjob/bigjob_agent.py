@@ -67,11 +67,9 @@ class bigjob_agent:
         self.restarted = {}
 
         # read config file
-        # conf_file = os.path.dirname(args[0]) + "/" + CONFIG_FILE
-        # conf_file = os.path.dirname(os.path.abspath( __file__ )) + "/" + CONFIG_FILE
         conf_file = os.path.dirname(os.path.abspath( __file__ )) + "/../" + CONFIG_FILE
         if not os.path.exists(conf_file):
-            _conf_file = os.path.join(sys.prefix, CONFIG_FILE)
+            conf_file = os.path.join(sys.prefix, CONFIG_FILE)
         
         config = ConfigParser.ConfigParser()
         logging.debug ("read configfile: " + conf_file)

@@ -17,7 +17,7 @@ try:
         _conf_file = os.path.join(sys.prefix, _CONFIG_FILE)
     
     
-    print "using conf file: " + str(_conf_file)
+    #print "using conf file: " + str(_conf_file)
 
     _config = ConfigParser.ConfigParser()
     _config.read(_conf_file)
@@ -80,6 +80,9 @@ except:
 import socket
 try:
     fn = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", 'VERSION')
+    if not os.path.exists(fn):
+        fn = os.path.join(sys.prefix, 'VERSION')
+    #print "Open Version file: " + str(fn)
     version = open(fn).read().strip()
     logger.info("Loading BigJob version: " + version + " on " + socket.gethostname())
 except IOError:
