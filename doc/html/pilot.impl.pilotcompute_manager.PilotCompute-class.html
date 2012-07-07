@@ -59,17 +59,17 @@
 <h1 class="epydoc">Class PilotCompute</h1><p class="nomargin-top"><span class="codelink"><a href="pilot.impl.pilotcompute_manager-pysrc.html#PilotCompute">source&nbsp;code</a></span></p>
 <center>
 <center>  <map id="uml_class_diagram_for_pilot_im_4" name="uml_class_diagram_for_pilot_im_4">
-<area shape="rect" id="node1_22" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#__init__" title="x.__init__(...) initializes x; see help(type(x)) for signature" alt="" coords="17,316,701,335"/>
-<area shape="rect" id="node1_23" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#cancel" title="Remove the PilotCompute from the PilotCompute Service." alt="" coords="17,335,701,353"/>
-<area shape="rect" id="node1_24" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#get_state" title="pilot.impl.pilotcompute_manager.PilotCompute.get_state" alt="" coords="17,353,701,372"/>
-<area shape="rect" id="node1_25" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#wait" title="Waits for completion of CUs" alt="" coords="17,372,701,391"/>
-<area shape="rect" id="node1_26" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#list_cus" title="Returns a list of compute units managed by the pilot" alt="" coords="17,391,701,409"/>
-<area shape="rect" id="node1_27" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#get_url" title="Get unique URL referencing the Pilot Compute" alt="" coords="17,409,701,428"/>
-<area shape="rect" id="node1_28" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#get_free_nodes" title="pilot.impl.pilotcompute_manager.PilotCompute.get_free_nodes" alt="" coords="17,428,701,447"/>
-<area shape="rect" id="node1_29" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#get_details" title="pilot.impl.pilotcompute_manager.PilotCompute.get_details" alt="" coords="17,447,701,465"/>
-<area shape="rect" id="node1_30" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#submit_compute_unit" title="Submits work unit to Bigjob" alt="" coords="17,465,701,484"/>
+<area shape="rect" id="node1_22" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#__init__" title="Create/reconnect to a Pilot Compute." alt="" coords="17,316,701,335"/>
+<area shape="rect" id="node1_23" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#cancel" title="Terminates the pilot" alt="" coords="17,335,701,353"/>
+<area shape="rect" id="node1_24" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#get_state" title="Returns the state of the pilot" alt="" coords="17,353,701,372"/>
+<area shape="rect" id="node1_25" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#wait" title="Wait until Pilot Compute to enter a final state (Done, Cancel or Failed)" alt="" coords="17,372,701,391"/>
+<area shape="rect" id="node1_26" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#list_compute_units" title="list managed ComputeUnits." alt="" coords="17,391,701,409"/>
+<area shape="rect" id="node1_27" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#get_url" title="Get unique URL referencing the Pilot Compute This URL can be used to &#160;reconnect to the Pilot Compute" alt="" coords="17,409,701,428"/>
+<area shape="rect" id="node1_28" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#get_free_nodes" title="Returns the number of free slots available within the pilot" alt="" coords="17,428,701,447"/>
+<area shape="rect" id="node1_29" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#get_details" title="returns a dict that contains the details of the Pilot Compute," alt="" coords="17,447,701,465"/>
+<area shape="rect" id="node1_30" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#submit_compute_unit" title="Submit a CU to this pilot." alt="" coords="17,465,701,484"/>
 <area shape="rect" id="node1_31" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#__repr__" title="repr(x)" alt="" coords="17,484,701,503"/>
-<area shape="rect" id="node1" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html" title="Wrapper for BigJob class" alt="" coords="5,283,713,509"/>
+<area shape="rect" id="node1" href="pilot.impl.pilotcompute_manager.PilotCompute-class.html" title="Pilot Compute (PC)" alt="" coords="5,283,713,509"/>
 <area shape="rect" id="node2_32" href="pilot.api.compute.api.PilotCompute-class.html#callback" title="pilot.api.compute.api.PilotCompute.callback" alt="" coords="252,31,468,49"/>
 <area shape="rect" id="node2_33" href="pilot.api.compute.api.PilotCompute-class.html#context" title="pilot.api.compute.api.PilotCompute.context" alt="" coords="252,49,468,68"/>
 <area shape="rect" id="node2_34" href="pilot.api.compute.api.PilotCompute-class.html#description" title="pilot.api.compute.api.PilotCompute.description" alt="" coords="252,68,468,87"/>
@@ -88,7 +88,28 @@
 </center>
 </center>
 <hr />
-<p>Wrapper for BigJob class</p>
+<p><b>Pilot Compute</b> (PC)</p>
+  <p>This is the object that is returned by the PilotComputeService when a 
+  new PilotCompute is created based on a PilotComputeDescription.</p>
+  <p>The PilotCompute object can be used by the application to keep track 
+  of active pilots.</p>
+  <p>A ComputePilot has state, can be queried and cancelled.</p>
+  <p>Properties:</p>
+  <ul>
+    <li>
+      state: The state of the pilot.
+    </li>
+    <li>
+      id: The id may be 'None' if the Pilot is not yet in Running state. 
+      The returned ID can be used to connect to the CP instance later on, 
+      for example from within a different application instance. type: 
+      string (url)
+    </li>
+    <li>
+      pilot_compute_description: The PilotComputeDescription used to create
+      this pilot.
+    </li>
+  </ul>
 
 <!-- ==================== INSTANCE METHODS ==================== -->
 <a name="section-InstanceMethods"></a>
@@ -109,7 +130,7 @@
         <span class="summary-sig-arg">bigjob_object</span>=<span class="summary-sig-default">None</span>,
         <span class="summary-sig-arg">pilot_compute_description</span>=<span class="summary-sig-default">None</span>,
         <span class="summary-sig-arg">pilot_url</span>=<span class="summary-sig-default">None</span>)</span><br />
-      x.__init__(...) initializes x; see help(type(x)) for signature</td>
+      Create/reconnect to a Pilot Compute.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="pilot.impl.pilotcompute_manager-pysrc.html#PilotCompute.__init__">source&nbsp;code</a></span>
             
@@ -126,7 +147,7 @@
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#cancel" class="summary-sig-name">cancel</a>(<span class="summary-sig-arg">self</span>)</span><br />
-      Remove the PilotCompute from the PilotCompute Service.</td>
+      Terminates the pilot</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="pilot.impl.pilotcompute_manager-pysrc.html#PilotCompute.cancel">source&nbsp;code</a></span>
             
@@ -142,7 +163,8 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#get_state" class="summary-sig-name">get_state</a>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td><span class="summary-sig"><a href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#get_state" class="summary-sig-name">get_state</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Returns the state of the pilot</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="pilot.impl.pilotcompute_manager-pysrc.html#PilotCompute.get_state">source&nbsp;code</a></span>
             
@@ -158,8 +180,9 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="wait"></a><span class="summary-sig-name">wait</span>(<span class="summary-sig-arg">self</span>)</span><br />
-      Waits for completion of CUs</td>
+          <td><span class="summary-sig"><a href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#wait" class="summary-sig-name">wait</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Wait until Pilot Compute to enter a final state (Done, Cancel or 
+      Failed)</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="pilot.impl.pilotcompute_manager-pysrc.html#PilotCompute.wait">source&nbsp;code</a></span>
             
@@ -175,10 +198,12 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="list_cus"></a><span class="summary-sig-name">list_cus</span>(<span class="summary-sig-arg">self</span>)</span><br />
-      Returns a list of compute units managed by the pilot</td>
+          <td><span class="summary-sig"><a href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#list_compute_units" class="summary-sig-name">list_compute_units</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      list managed <a 
+      href="pilot.impl.pilotcompute_manager.ComputeUnit-class.html" 
+      class="link">ComputeUnit</a>s.</td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="pilot.impl.pilotcompute_manager-pysrc.html#PilotCompute.list_cus">source&nbsp;code</a></span>
+            <span class="codelink"><a href="pilot.impl.pilotcompute_manager-pysrc.html#PilotCompute.list_compute_units">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -193,7 +218,8 @@
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a name="get_url"></a><span class="summary-sig-name">get_url</span>(<span class="summary-sig-arg">self</span>)</span><br />
-      Get unique URL referencing the Pilot Compute</td>
+      Get unique URL referencing the Pilot Compute This URL can be used to 
+      reconnect to the Pilot Compute</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="pilot.impl.pilotcompute_manager-pysrc.html#PilotCompute.get_url">source&nbsp;code</a></span>
             
@@ -209,7 +235,8 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="get_free_nodes"></a><span class="summary-sig-name">get_free_nodes</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td><span class="summary-sig"><a name="get_free_nodes"></a><span class="summary-sig-name">get_free_nodes</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Returns the number of free slots available within the pilot</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="pilot.impl.pilotcompute_manager-pysrc.html#PilotCompute.get_free_nodes">source&nbsp;code</a></span>
             
@@ -225,7 +252,8 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="get_details"></a><span class="summary-sig-name">get_details</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td><span class="summary-sig"><a href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#get_details" class="summary-sig-name">get_details</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      returns a dict that contains the details of the Pilot Compute,</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="pilot.impl.pilotcompute_manager-pysrc.html#PilotCompute.get_details">source&nbsp;code</a></span>
             
@@ -241,9 +269,9 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="submit_compute_unit"></a><span class="summary-sig-name">submit_compute_unit</span>(<span class="summary-sig-arg">self</span>,
+          <td><span class="summary-sig"><a href="pilot.impl.pilotcompute_manager.PilotCompute-class.html#submit_compute_unit" class="summary-sig-name">submit_compute_unit</a>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">compute_unit_description</span>)</span><br />
-      Submits work unit to Bigjob</td>
+      Submit a CU to this pilot.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="pilot.impl.pilotcompute_manager-pysrc.html#PilotCompute.submit_compute_unit">source&nbsp;code</a></span>
             
@@ -462,11 +490,13 @@
     </td>
   </tr></table>
   
-  <p>x.__init__(...) initializes x; see help(type(x)) for signature</p>
+  <p>Create/reconnect to a Pilot Compute.</p>
+  <p>Keyword arguments: pilot_url   -- restore from cp_id</p>
+  <p>The implementation will attempt to reconnect to the PC instance 
+  referenced by the pilot_url.</p>
   <dl class="fields">
     <dt>Overrides:
         object.__init__
-        <dd><em class="note">(inherited documentation)</em></dd>
     </dt>
   </dl>
 </td></tr></table>
@@ -485,12 +515,10 @@
     </td>
   </tr></table>
   
-  <p>Remove the PilotCompute from the PilotCompute Service.</p>
-  <p>Keyword arguments: None</p>
+  <p>Terminates the pilot</p>
   <dl class="fields">
     <dt>Overrides:
         <a href="pilot.api.compute.api.PilotCompute-class.html#cancel">api.compute.api.PilotCompute.cancel</a>
-        <dd><em class="note">(inherited documentation)</em></dd>
     </dt>
   </dl>
 </td></tr></table>
@@ -509,11 +537,128 @@
     </td>
   </tr></table>
   
-  
+  <p>Returns the state of the pilot</p>
   <dl class="fields">
     <dt>Overrides:
         <a href="pilot.api.compute.api.PilotCompute-class.html#get_state">api.compute.api.PilotCompute.get_state</a>
     </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="wait"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">wait</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="pilot.impl.pilotcompute_manager-pysrc.html#PilotCompute.wait">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Wait until Pilot Compute to enter a final state (Done, Cancel or 
+  Failed)</p>
+  <p>It is not an error to call wait() in a final state -- the call simply 
+  returns immediately.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="list_compute_units"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">list_compute_units</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="pilot.impl.pilotcompute_manager-pysrc.html#PilotCompute.list_compute_units">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>list managed <a 
+  href="pilot.impl.pilotcompute_manager.ComputeUnit-class.html" 
+  class="link">ComputeUnit</a>s.</p>
+  <p>Return value: A list of <a 
+  href="pilot.impl.pilotcompute_manager.ComputeUnit-class.html" 
+  class="link">ComputeUnit</a> IDs</p>
+  <p>The returned list can include units which have been submitted to this 
+  pilot.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="get_details"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">get_details</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="pilot.impl.pilotcompute_manager-pysrc.html#PilotCompute.get_details">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>returns a dict that contains the details of the Pilot Compute,</p>
+  <ul>
+    <li>
+      job state
+    </li>
+    <li>
+      description
+    </li>
+    <li>
+      ...
+    </li>
+  </ul>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="submit_compute_unit"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">submit_compute_unit</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">compute_unit_description</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="pilot.impl.pilotcompute_manager-pysrc.html#PilotCompute.submit_compute_unit">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Submit a CU to this pilot.</p>
+  <p>Keyword argument: cud -- The <a 
+  href="pilot.api.compute.api.ComputeUnitDescription-class.html" 
+  class="link">ComputeUnitDescription</a> from the application</p>
+  <p>Return: <a 
+  href="pilot.impl.pilotcompute_manager.ComputeUnit-class.html" 
+  class="link">ComputeUnit</a> object</p>
+  <p>The CUD is (possibly translated and) passed on to the CPS backend, 
+  which will attempt to instantiate the described workload process on the 
+  ComputePilot.  If the pilot's resource is not suitable to run the 
+  requested CU, a <code class="link">Error.BadParameter</code> exception is
+  raised.  Not raising this exception is not a guarantee that the CU will 
+  in fact be (able to be) executed -- in that case, the returned CU will 
+  later be moved to Failed state.</p>
+  <p>On success, the returned CU is in Pending state (or moved into any 
+  state downstream from Pending).</p>
+  <p>The call will will honor all attributes set on the cud.  Attributes 
+  which are not explicitly set are interpreted as having default values 
+  (see documentation of CUD), or, where default values are not specified, 
+  are ignored.</p>
+  <dl class="fields">
   </dl>
 </td></tr></table>
 </div>
@@ -574,7 +719,7 @@
   <tr>
     <td align="left" class="footer">
     <a href="epydoc-log.html">Generated by Epydoc
-    3.0.1 on Fri Jul  6 23:15:49 2012</a>
+    3.0.1 on Sat Jul  7 14:40:33 2012</a>
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

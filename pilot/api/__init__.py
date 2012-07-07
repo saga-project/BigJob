@@ -1,4 +1,4 @@
-
+""" Abstract API Definition of the B{Pilot-API}; This is not the implementation! Please see L{pilot.impl}"""
 
 from pilot.api.compute.api import PilotCompute
 from pilot.api.compute.api import PilotComputeService

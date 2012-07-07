@@ -1,5 +1,4 @@
-"""
-Implementation of the ComputeDataService (decentral)
+""" B{ComputeDataServiceDecentral} Module: A decentral implementation of a ComputeDataService (see L{ComputeDataServiceDecentral}).
 
 A Meta-Scheduling service for pilots (both PilotCompute and PilotData)
 """
@@ -50,8 +49,7 @@ class ComputeDataServiceDecentral(pilot.api.ComputeDataService):
     def __init__(self, cds_url=None):
         """ Create a ComputeDataService object.
 
-            Keyword arguments:
-            cds_url -- Reconnect to an existing CDS (optional).
+            @param cds_url: Reconnect to an existing CDS (optional).
         """
         # Pilot Data
         self.data_units={}
@@ -78,24 +76,20 @@ class ComputeDataServiceDecentral(pilot.api.ComputeDataService):
 
     ###########################################################################
     # Pilot Compute    
-    def add_pilot_compute_service(self, pjs):
-        """ Add a PilotJobService to this CDS.
+    def add_pilot_compute_service(self, pcs):
+        """ Add a PilotComputeService to this CDS.
 
-            Keyword arguments:
-            pilotjob_services -- The PilotJob Service(s) to which this 
-                                 Work Unit Service will connect.
+            @param pcs: The PilotComputeService to which this ComputeDataService will connect.
 
-            Return:
-            Result
         """
-        self.pilot_job_services.append(pjs)
+        self.pilot_job_services.append(pcs)
         CoordinationAdaptor.update_cds(self.url, self)
         if len(self.pilot_job_services)>1:
             logger.error("Decentral ComputeDataService only supports 1 PilotComputeService")
             raise PilotError("Decentral ComputeDataService only supports 1 PilotComputeService")
         
 
-    def remove_pilot_compute_service(self, pjs):
+    def remove_pilot_compute_service(self, pcs):
         """ Remove a PilotJobService from this CDS.
 
             Note that it won't cancel the PilotJobService, it will just no
@@ -108,7 +102,7 @@ class ComputeDataServiceDecentral(pilot.api.ComputeDataService):
             Return:
             Result
         """
-        self.pilot_job_services.remove(pjs)
+        self.pilot_job_services.remove(pcs)
         CoordinationAdaptor.update_cds(self.url, self)
         if len(self.pilot_job_services)>1:
             logger.error("Decentral ComputeDataService only supports 1 PilotComputeService")
@@ -117,12 +111,8 @@ class ComputeDataServiceDecentral(pilot.api.ComputeDataService):
 
     def submit_compute_unit(self, compute_unit_description):
         """ Submit a CU to this Compute Data Service.
-
-            Keyword argument:
-            cud -- The ComputeUnitDescription from the application
-
-            Return:
-            ComputeUnit object
+            @param cud:  The L{ComputeUnitDescription} from the application
+            @return: L{ComputeUnit} object
         """
         cu = ComputeUnit(compute_unit_description, self)
         self.compute_units[cu.id]=cu
@@ -150,27 +140,12 @@ class ComputeDataServiceDecentral(pilot.api.ComputeDataService):
     ###########################################################################
     # Pilot Data     
     def add_pilot_data_service(self, pds):
-        """ Add a PilotDataService 
-
-            Keyword arguments:
-            pds -- The PilotDataService to add.
-
-            Return:
-            None
-        """
+        """ Not implemented yet"""
         raise NotImplementedError("Not implemented")
     
     
     def remove_pilot_data_service(self, pds):
-
-        """ Remove a PilotDataService 
-            
-            Keyword arguments:
-            pds -- The PilotDataService to remove 
-            
-            Return:
-            None
-        """
+        """ Not implemented yet"""        
         raise NotImplementedError("Not implemented")
         
     
@@ -180,44 +155,37 @@ class ComputeDataServiceDecentral(pilot.api.ComputeDataService):
     
     
     def list_pilot_data(self):
-        """ List all pilot data of CDS """
+        """ Not implemented yet""" 
         raise NotImplementedError("Not implemented")
     
     
     def list_data_units(self):
-        """ List all DUs of CDS """
+        """ Not implemented yet"""
         raise NotImplementedError("Not implemented")
     
     
     def get_data_unit(self, du_id):
+        """ Not implemented yet"""
         raise NotImplementedError("Not implemented")
     
     
     def submit_data_unit(self, data_unit_description):
-        """ creates a data unit object and binds it to a physical resource (a pilotdata) """
+        """ Not implemented yet"""
         raise NotImplementedError("Not implemented")
     
     
     def cancel(self):
         """ Cancel the CDS. 
-            All associated PC objects are deleted.            
-            
-            Keyword arguments:
-            None
-
-            Return:
-            None
+            All associated PD and PC objects are canceled.            
         """
         CoordinationAdaptor.delete_cds(self.url)
    
    
    
     def wait(self):
-        """ Waits for CUs and DUs
-            Return if all du's are running 
-                   AND
-                   cu's are done
-            
+        """ Waits for CUs and DUs. Return after all DU's have been placed (i.e. in state Running)
+            and all CU's have been completed (i.e. in state Done) or if a fault has occurred or
+            the user has cancelled a CU or DU.            
         """
         try:
             logger.debug("### START WAIT ###")

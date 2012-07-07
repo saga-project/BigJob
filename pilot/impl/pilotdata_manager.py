@@ -1,4 +1,4 @@
-""" PilotData 
+""" B{PilotData} Module: Implementation of L{PilotData}, L{PilotDataService} and L{DataUnit}
 """ 
 import sys
 import os
@@ -12,11 +12,10 @@ import Queue
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 from bigjob import logger
-
-from pilot.api import PilotData, DataUnit, PilotDataService
-from pilot.api import State
+from pilot.api import PilotData, DataUnit, PilotDataService, State
 
 
+""" Load file management adaptors """
 from pilot.filemanagement.ssh_adaptor import SSHFileAdaptor 
 try:
     from pilot.filemanagement.webhdfs_adaptor import WebHDFSFileAdaptor
@@ -28,20 +27,26 @@ except:
     logger.warn("Globus Online package not found.") 
 
 
-
 #from pilot.coordination.advert import AdvertCoordinationAdaptor as CoordinationAdaptor
 from pilot.coordination.nocoord import NoCoordinationAdaptor as CoordinationAdaptor
 from bliss.saga import Url as SAGAUrl
 
 
 # generate global application id for this instance
-#application_id = str(uuid.uuid1())
 application_id = "bigdata"
 
+
 class PilotData(PilotData):
-    """ PilotData. 
-    
-        Reserves a space of physical storage on the resource specified in the pilot_data_description
+    """ B{PilotData} 
+                
+        This is the object that is returned by the PilotDataService when a 
+        new PilotData is created based on a PilotDataDescription. A PilotData represents
+        a finite amount of physical space on a certain resource. It can be populated
+        with L{DataUnit}s.
+
+        The PilotData object can be used by the application to keep track 
+        of a pilot. A PilotData has state, can be queried, can be cancelled.
+        
     """   
     
     PD_ID_PREFIX="pd-"   
@@ -49,13 +54,13 @@ class PilotData(PilotData):
         
     def __init__(self, pilot_data_service=None, pilot_data_description=None, pd_url=None):    
         """ 
-            Initialize PilotData at given service url:
+            Initialize PilotData at given service url::
             
-            ssh://<hostname>
-            gsissh://<hostname>
+                ssh://<hostname>
+                gsissh://<hostname>
+                go://<hostname>
             
-            Currently only ssh schemes are supported. In the future all 
-            SAGA URL schemes/adaptors should be supported.        
+            In the future more SAGA/Bliss URL schemes/adaptors are supported.        
         """ 
         self.id = None
         self.url = None
@@ -76,10 +81,11 @@ class PilotData(PilotData):
             for i in pd_dict:
                 self.__setattr__(i, pd_dict[i])
                         
-        self.initialize_pilot_data()
+        self.__initialize_pilot_data()
         
             
-    def initialize_pilot_data(self):
+    def __initialize_pilot_data(self):
+        
         if self.pilot_data_description!=None:
             self.service_url=self.pilot_data_description["service_url"]
             self.size = self.pilot_data_description["size"]
@@ -103,11 +109,7 @@ class PilotData(PilotData):
     
 
     def cancel(self):        
-        """ Cancel PilotData 
-
-            Keyword arguments:
-            None
-        """
+        """ Cancel PilotData  """
         #self.__filemanager.delete_pilotdata()
         pass
         
@@ -148,15 +150,17 @@ class PilotData(PilotData):
         
     
     def list_data_units(self):
+        """ List all data units of PD """
         return self.data_units.values()           
-        #return self.data_units.values()
     
     
     def get_state(self):
+        """ Return current state of PD """
         return self.__filemanager.get_state()
     
     
     def wait(self):
+        """ Wait until PD enters a final state (Done, Canceled or Failed).""" 
         while 1:
             finish_counter=0
             result_map = {}
@@ -206,13 +210,19 @@ class PilotData(PilotData):
         pd = PilotData()
         for i in pd_dict.keys():
             pd.__setattr__(i, pd_dict[i])
-        pd.initialize_pilot_data()
+        pd.__initialize_pilot_data()
         logger.debug("created pd " + str(pd))
         return pd
+   
     
+###############################################################################
 
 class PilotDataService(PilotDataService):
-    """ PilotDataService (PSS)."""
+    """ B{PilotDataService} (PDS)
+    
+        Factory for creating pilot data
+    
+    """
     
     PDS_ID_PREFIX="pds-"
 
@@ -245,23 +255,27 @@ class PilotDataService(PilotDataService):
         start = pds_url.index(self.PDS_ID_PREFIX)
         end =pds_url.index("/", start)
         return pds_url[start:end]
+
     
     def __restore_pd(self, pds_url):
         pd_list=CoordinationAdaptor.list_pd(pds_url) 
         for i in pd_list:
             pass
 
+
     def create_pilot(self, pilot_data_description):
         """ Create a PilotData 
 
             Keyword arguments:
-            pilot_data_description -- PilotData Description    
-            {
-                'service_url': "ssh://<hostname>/base-url/"                
-                'size': "1000"
-            }
+            pilot_data_description -- PilotData Description:: 
+            
+                {
+                    'service_url': "ssh://<hostname>/base-url/",               
+                    'size': "1000"
+                }
+            
             Return value:
-            A PilotData handle
+            A PilotData object
         """
         pd = PilotData(pilot_data_service=self, 
                         pilot_data_description=pilot_data_description)
@@ -273,13 +287,14 @@ class PilotDataService(PilotDataService):
     
     
     def get_pilot(self, pd_id):
+        """ Reconnect to an existing pilot. """
         if self.pilot_data.has_key(pd_id):
             return self.pilot_data[pd_id]
         return None
 
 
     def list_pilots(self):
-        """ List all PSs of PSS """
+        """ List all PDs of PDS """
         return self.pilot_data.values()
     
 
@@ -297,11 +312,16 @@ class PilotDataService(PilotDataService):
  
  
     def wait(self):
+        """ Wait until all managed PD (of this Pilot Data Service) enter a final state""" 
+
         for i in self.pilot_data.values():
             i.wait()
  
     
     def to_dict(self):
+        """ Return a Python dictionary containing the representation of the PDS 
+            (internal method not part of Pilot API)        
+        """
         pds_dict = self.__dict__
         pds_dict["id"]=self.id
         return pds_dict
@@ -313,7 +333,17 @@ class PilotDataService(PilotDataService):
     
 
 class DataUnit(DataUnit):
-    """ Holds a set of file
+    """ B{DataUnit}
+    
+        This is the object that is returned by the ComputeDataService when a 
+        new DataUnit is created based on a DataUnitDescription.
+
+        The DataUnit object can be used by the application to keep track 
+        of a DataUnit.
+
+        A DataUnit has state, can be queried and can be cancelled.
+    
+        
     
         State model:
             New: PD object created

@@ -46,6 +46,11 @@ The set of L{PilotCompute}s and L{PilotData} available to the CDS can be changed
 the application's runtime.  The CDS different data-compute affinity and will handle
 compute/data co-locationing for the requested data-compute workload.
 
+Pilots, Compute and Data Units are associated with a L{State}.
+
+    - L{State}: State enumeration
+
+
 B{Example}::
 
     from pilot import PilotComputeService, ComputeDataService, State
@@ -83,34 +88,28 @@ B{Example}::
 
     compute_data_service.cancel()
     
-    
+
+All API objects that should be utilized by the application reside in the L{pilot} namespace. The implementation resides in L{pilot.impl}.
        
+Please, refer to U{https://github.com/saga-project/BigJob/tree/master/examples/pilot-api} for an extensive set of examples.
 '''
 
 
 application_id = "bigjob"
 
+
 from pilot.impl.pilotcompute_manager import PilotComputeService
 from pilot.impl.pilotcompute_manager import PilotCompute
+from pilot.impl.pilotcompute_manager import ComputeUnit
 from pilot.impl.pilotdata_manager import PilotDataService
 from pilot.impl.pilotdata_manager import PilotData
 from pilot.impl.pilotdata_manager import DataUnit
-from pilot.impl.pilot_manager import ComputeDataService
+from pilot.impl.pilot_manager import ComputeDataService, ComputeUnitService, DataUnitService
 from pilot.impl.pilot_manager_decentral import ComputeDataServiceDecentral 
-from pilot.impl.pilot_manager import ComputeUnit 
 from pilot.api.api import ComputeDataDescription
 from pilot.api.api import PilotError
 from pilot.api import State 
 
 
-class ComputeUnitService():
-    
-    def __init__(self):
-        raise NotImplementedError("Please use ComputeDataService.")
 
-
-class DataUnitService():
-    
-    def __init__(self):
-        raise NotImplementedError("Please use ComputeDataService.")
 
