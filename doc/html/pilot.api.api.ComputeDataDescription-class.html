@@ -61,7 +61,7 @@
 <center>  <map id="uml_class_diagram_for_pilot_ap" name="uml_class_diagram_for_pilot_ap">
 <area shape="rect" id="node1_32" href="pilot.api.api.ComputeDataDescription-class.html#__setattr__" title="x.__setattr__(&#39;name&#39;, value) &lt;==&gt; x.name = value" alt="" coords="44,743,212,761"/>
 <area shape="rect" id="node1_33" href="pilot.api.api.ComputeDataDescription-class.html#__getattr__" title="pilot.api.api.ComputeDataDescription.__getattr__" alt="" coords="44,761,212,780"/>
-<area shape="rect" id="node1" href="pilot.api.api.ComputeDataDescription-class.html" title="ComputeDataDescription." alt="" coords="32,710,224,786"/>
+<area shape="rect" id="node1" href="pilot.api.api.ComputeDataDescription-class.html" title="ComputeDataDescription" alt="" coords="32,710,224,786"/>
 <area shape="rect" id="node2_34" href="pilot.api.compute.api.ComputeUnitDescription-class.html#arguments" title="pilot.api.compute.api.ComputeUnitDescription.arguments" alt="" coords="17,383,239,401"/>
 <area shape="rect" id="node2_35" href="pilot.api.compute.api.ComputeUnitDescription-class.html#candidate_hosts" title="pilot.api.compute.api.ComputeUnitDescription.candidate_hosts" alt="" coords="17,401,239,420"/>
 <area shape="rect" id="node2_36" href="pilot.api.compute.api.ComputeUnitDescription-class.html#cleanup" title="pilot.api.compute.api.ComputeUnitDescription.cleanup" alt="" coords="17,420,239,439"/>
@@ -99,48 +99,50 @@
 </center>
 </center>
 <hr />
+<p><b>ComputeDataDescription</b></p>
+  <p>Description for describing a ComputeUnit and their dependencies 
+  (DataUnit)</p>
+  <p>Example:</p>
 <pre class="literalblock">
-ComputeDataDescription.
-{
-    'executable': &lt;path to executable&gt;,  
-    'arguments': &lt;arguments&gt;,           # Arguments 
-    'environment': &lt;environment&gt;,          # environment variables 
-    
-    # Working directory
-    # A pilot data url will be translated to the local pilot store url, e.g.
-    #     pilotdata://localhost/c2fafeae-03a9-11e1-9934-109addae22a3' 
-    #     =&gt;           
-    #     ssh://localhost/tmp/pilotdata/c2fafeae-03a9-11e1-9934-109addae22a3
-    #
-    #     i.e. job is executed in /tmp/pilotdata/c2fafeae-03a9-11e1-9934-109addae22a3
-    #     where file can be accessed using relative paths
-    'working_directory': &lt;working directory&gt;,  
-    
-    # I/O
-    'input': &lt;stdin&gt;,
-    'error': &lt;sterr&gt;,
-    'output': &lt;stdout&gt;,
-                
-    # Parallelism
-    'number_of_processes': &lt;Total number of processes to start&gt;,
-    'processes_per_host':  &lt;Nr of processes per host&gt;,
-    'threads_per_process': &lt;Nr of threads to start per process&gt;,
-    'total_core_count':    &lt;Total number of cores requested&gt;,
-    'spmd_variation':      &lt;Type and startup mechanism&gt;,
-    
-    # Requirements
-    'candidate_hosts': [&lt;url&gt;, ...],
-    'cpu_architecture': &lt;architecture, e.g. x86_64&gt;,
-    'total_physical_memory': &lt;memory, e.g. 2000&gt;,
-    'operating_system_type': &lt;os, e.g. Linux&gt;,
-    'total_cpu_time': &lt;cpu time&gt;,
-    'wall_time_limit': &lt;walltime in sec, e.g. 600 (sec)&gt;,            
-    
-    # Data - input/output data flow for ComputeUnit
-    'input_data': [&lt;data unit url&gt;, ... ],      
-    'output_data': [&lt;data unit url&gt;, ... ]
-}
-
+   {
+       'executable': &lt;path to executable&gt;,  
+       'arguments': &lt;arguments&gt;,           # Arguments 
+       'environment': &lt;environment&gt;,          # environment variables 
+       
+       # Working directory
+       # A pilot data url will be translated to the local pilot store url, e.g.
+       #     pilotdata://localhost/c2fafeae-03a9-11e1-9934-109addae22a3' 
+       #     =&gt;           
+       #     ssh://localhost/tmp/pilotdata/c2fafeae-03a9-11e1-9934-109addae22a3
+       #
+       #     i.e. job is executed in /tmp/pilotdata/c2fafeae-03a9-11e1-9934-109addae22a3
+       #     where file can be accessed using relative paths
+       'working_directory': &lt;working directory&gt;,  
+       
+       # I/O
+       'input': &lt;stdin&gt;,
+       'error': &lt;sterr&gt;,
+       'output': &lt;stdout&gt;,
+                   
+       # Parallelism
+       'number_of_processes': &lt;Total number of processes to start&gt;,
+       'processes_per_host':  &lt;Nr of processes per host&gt;,
+       'threads_per_process': &lt;Nr of threads to start per process&gt;,
+       'total_core_count':    &lt;Total number of cores requested&gt;,
+       'spmd_variation':      &lt;Type and startup mechanism&gt;,
+       
+       # Requirements
+       'candidate_hosts': [&lt;url&gt;, ...],
+       'cpu_architecture': &lt;architecture, e.g. x86_64&gt;,
+       'total_physical_memory': &lt;memory, e.g. 2000&gt;,
+       'operating_system_type': &lt;os, e.g. Linux&gt;,
+       'total_cpu_time': &lt;cpu time&gt;,
+       'wall_time_limit': &lt;walltime in sec, e.g. 600 (sec)&gt;,            
+       
+       # Data - input/output data flow for ComputeUnit
+       'input_data': [&lt;data unit url&gt;, ... ],      
+       'output_data': [&lt;data unit url&gt;, ... ]
+   }
 </pre>
 
 <!-- ==================== INSTANCE METHODS ==================== -->
@@ -581,7 +583,7 @@ new empty dictionary
   <tr>
     <td align="left" class="footer">
     <a href="epydoc-log.html">Generated by Epydoc
-    3.0.1 on Sat Jul  7 14:40:31 2012</a>
+    3.0.1 on Sat Jul  7 14:53:41 2012</a>
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

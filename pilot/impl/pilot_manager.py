@@ -16,14 +16,10 @@ import uuid
 import traceback
 import urlparse
 
-import bigjob
 from bigjob import logger
-
-import pilot
-
 from pilot.api import ComputeDataService, State
-from pilot.impl.pilotdata_manager import PilotData, DataUnit
-from pilot.impl.pilotcompute_manager import PilotCompute, ComputeUnit
+from pilot.impl.pilotdata_manager import DataUnit
+from pilot.impl.pilotcompute_manager import ComputeUnit
 
 
 #from pilot.coordination.advert import AdvertCoordinationAdaptor as CoordinationAdaptor

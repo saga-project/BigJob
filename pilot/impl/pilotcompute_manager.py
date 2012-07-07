@@ -289,24 +289,19 @@ class PilotCompute(PilotCompute):
         """
             Submit a CU to this pilot.
 
-            Keyword argument:
-            cud -- The L{ComputeUnitDescription} from the application
+            @param compute_unit_description: The L{ComputeUnitDescription} or dictionary describing
+                                             the compute task
 
-            Return:
-            L{ComputeUnit} object
+            @return: L{ComputeUnit} object
 
-            The CUD is (possibly translated and) passed on to the CPS backend,
+            The CUD is (possibly translated and) passed on to the PDS scheduler,
             which will attempt to instantiate the described workload process on
-            the ComputePilot.  If the pilot's resource is not suitable to run
-            the requested CU, a L{Error.BadParameter} exception is raised.  Not
-            raising this exception is not a guarantee that the CU will in fact
-            be (able to be) executed -- in that case, the returned CU will later
-            be moved to Failed state.
+            the managed set of Pilot Computes.  
             
             On success, the returned CU is in Pending state (or moved into any
             state downstream from Pending).
 
-            The call will will honor all attributes set on the cud.  Attributes which
+            The call will will honor all attributes set on the CUD.  Attributes which
             are not explicitly set are interpreted as having default values (see
             documentation of CUD), or, where default values are not specified,
             are ignored.
