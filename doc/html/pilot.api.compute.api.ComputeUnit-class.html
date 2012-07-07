@@ -60,12 +60,17 @@
 <h1 class="epydoc">Class ComputeUnit</h1><p class="nomargin-top"><span class="codelink"><a href="pilot.api.compute.api-pysrc.html#ComputeUnit">source&nbsp;code</a></span></p>
 <center>
 <center>  <map id="uml_class_diagram_for_pilot_ap_4" name="uml_class_diagram_for_pilot_ap_4">
-<area shape="rect" id="node1_5" href="pilot.api.compute.api.ComputeUnit-class.html#cancel" title="Cancel the CU." alt="" coords="17,39,204,57"/>
-<area shape="rect" id="node1_6" href="pilot.api.compute.api.ComputeUnit-class.html#set_callback" title="Set a callback function for a member." alt="" coords="17,57,204,76"/>
-<area shape="rect" id="node1_7" href="pilot.api.compute.api.ComputeUnit-class.html#unset_callback" title="Unset a callback function from a member" alt="" coords="17,76,204,95"/>
-<area shape="rect" id="node1_8" href="pilot.api.compute.api.ComputeUnit-class.html#get_state" title="pilot.api.compute.api.ComputeUnit.get_state" alt="" coords="17,95,204,113"/>
-<area shape="rect" id="node1_9" href="pilot.api.compute.api.ComputeUnit-class.html#wait" title="Wait until in Done state (or Failed state)" alt="" coords="17,113,204,132"/>
-<area shape="rect" id="node1" href="pilot.api.compute.api.ComputeUnit-class.html" title="ComputeUnit." alt="" coords="5,6,216,138"/>
+<area shape="rect" id="node1_9" href="pilot.api.compute.api.ComputeUnit-class.html#callback" title="pilot.api.compute.api.ComputeUnit.callback" alt="" coords="52,31,239,49"/>
+<area shape="rect" id="node1_10" href="pilot.api.compute.api.ComputeUnit-class.html#description" title="pilot.api.compute.api.ComputeUnit.description" alt="" coords="52,49,239,68"/>
+<area shape="rect" id="node1_11" href="pilot.api.compute.api.ComputeUnit-class.html#id" title="pilot.api.compute.api.ComputeUnit.id" alt="" coords="52,68,239,87"/>
+<area shape="rect" id="node1_12" href="pilot.api.compute.api.ComputeUnit-class.html#state_detail" title="pilot.api.compute.api.ComputeUnit.state_detail" alt="" coords="52,87,239,105"/>
+<area shape="rect" id="node1_13" href="pilot.api.compute.api.ComputeUnit-class.html#cancel" title="Cancel the CU." alt="" coords="52,108,239,127"/>
+<area shape="rect" id="node1_14" href="pilot.api.compute.api.ComputeUnit-class.html#get_state" title="pilot.api.compute.api.ComputeUnit.get_state" alt="" coords="52,127,239,145"/>
+<area shape="rect" id="node1_15" href="pilot.api.compute.api.ComputeUnit-class.html#set_callback" title="Set a callback function for a member." alt="" coords="52,145,239,164"/>
+<area shape="rect" id="node1_16" href="pilot.api.compute.api.ComputeUnit-class.html#unset_callback" title="Unset a callback function from a member" alt="" coords="52,164,239,183"/>
+<area shape="rect" id="node1_17" href="pilot.api.compute.api.ComputeUnit-class.html#wait" title="Wait until in Done state (or Failed state)" alt="" coords="52,183,239,201"/>
+<area shape="rect" id="node1" href="pilot.api.compute.api.ComputeUnit-class.html" title="ComputeUnit." alt="" coords="40,6,251,207"/>
+<area shape="rect" id="node2" href="pilot.impl.pilotcompute_manager.ComputeUnit-class.html" title="ComputeUnit" alt="" coords="5,227,285,266"/>
 </map>
   <img src="uml_class_diagram_for_pilot_ap_4.gif" alt='' usemap="#uml_class_diagram_for_pilot_ap_4" ismap="ismap" class="graph-without-title" />
 </center>
@@ -109,6 +114,22 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
+          <td><span class="summary-sig"><a name="get_state"></a><span class="summary-sig-name">get_state</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="pilot.api.compute.api-pysrc.html#ComputeUnit.get_state">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
           <td><span class="summary-sig"><a href="pilot.api.compute.api.ComputeUnit-class.html#set_callback" class="summary-sig-name">set_callback</a>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">member</span>,
         <span class="summary-sig-arg">cb</span>)</span><br />
@@ -133,22 +154,6 @@
       Unset a callback function from a member</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="pilot.api.compute.api-pysrc.html#ComputeUnit.unset_callback">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a name="get_state"></a><span class="summary-sig-name">get_state</span>(<span class="summary-sig-arg">self</span>)</span></td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="pilot.api.compute.api-pysrc.html#ComputeUnit.get_state">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -201,6 +206,34 @@
   <td align="left" colspan="2" class="table-header">
     <span class="table-header">Properties</span></td>
 </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="callback"></a><span class="summary-name">callback</span>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="description"></a><span class="summary-name">description</span>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="id"></a><span class="summary-name">id</span>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="state_detail"></a><span class="summary-name">state_detail</span>
+    </td>
+  </tr>
   <tr>
     <td colspan="2" class="summary">
     <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
@@ -296,7 +329,7 @@
   <tr>
     <td align="left" class="footer">
     <a href="epydoc-log.html">Generated by Epydoc
-    3.0.1 on Sat Jul  7 15:45:19 2012</a>
+    3.0.1 on Sat Jul  7 21:24:46 2012</a>
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

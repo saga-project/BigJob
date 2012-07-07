@@ -1,5 +1,5 @@
 """
-B{ComputeDataService} Module: A central implementation of the L{ComputeDataService}
+B{ComputeDataService Module}: A central implementation of the L{ComputeDataService}
 
 A Meta-Scheduling service for pilots (both PilotCompute and PilotData)
 
@@ -17,6 +17,8 @@ import traceback
 import urlparse
 
 from bigjob import logger
+
+import pilot
 from pilot.api import ComputeDataService, State
 from pilot.impl.pilotdata_manager import DataUnit
 from pilot.impl.pilotcompute_manager import ComputeUnit

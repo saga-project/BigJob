@@ -59,13 +59,17 @@
 <h1 class="epydoc">Class PilotComputeService</h1><p class="nomargin-top"><span class="codelink"><a href="pilot.impl.pilotcompute_manager-pysrc.html#PilotComputeService">source&nbsp;code</a></span></p>
 <center>
 <center>  <map id="uml_class_diagram_for_pilot_im_5" name="uml_class_diagram_for_pilot_im_5">
-<area shape="rect" id="node1_6" href="pilot.impl.pilotcompute_manager.PilotComputeService-class.html#PJS_ID_PREFIX" title="pilot.impl.pilotcompute_manager.PilotComputeService.PJS_ID_PREFIX" alt="" coords="17,31,567,49"/>
-<area shape="rect" id="node1_7" href="pilot.impl.pilotcompute_manager.PilotComputeService-class.html#__init__" title="Create a PilotJobService object." alt="" coords="17,52,567,71"/>
-<area shape="rect" id="node1_8" href="pilot.impl.pilotcompute_manager.PilotComputeService-class.html#create_pilot" title="Add a PilotJob to the PilotJobService" alt="" coords="17,71,567,89"/>
-<area shape="rect" id="node1_9" href="pilot.impl.pilotcompute_manager.PilotComputeService-class.html#list_pilots" title="List managed PilotComputes." alt="" coords="17,89,567,108"/>
-<area shape="rect" id="node1_10" href="pilot.impl.pilotcompute_manager.PilotComputeService-class.html#cancel" title="Cancel the PilotComputeService." alt="" coords="17,108,567,127"/>
-<area shape="rect" id="node1_11" href="pilot.impl.pilotcompute_manager.PilotComputeService-class.html#__repr__" title="pilot.impl.pilotcompute_manager.PilotComputeService.__repr__" alt="" coords="17,127,567,145"/>
-<area shape="rect" id="node1" href="pilot.impl.pilotcompute_manager.PilotComputeService-class.html" title="PilotComputeService" alt="" coords="5,6,579,151"/>
+<area shape="rect" id="node1_9" href="pilot.impl.pilotcompute_manager.PilotComputeService-class.html#PJS_ID_PREFIX" title="pilot.impl.pilotcompute_manager.PilotComputeService.PJS_ID_PREFIX" alt="" coords="17,145,567,164"/>
+<area shape="rect" id="node1_10" href="pilot.impl.pilotcompute_manager.PilotComputeService-class.html#__init__" title="Create a PilotJobService object." alt="" coords="17,167,567,185"/>
+<area shape="rect" id="node1_11" href="pilot.impl.pilotcompute_manager.PilotComputeService-class.html#create_pilot" title="Add a PilotJob to the PilotJobService" alt="" coords="17,185,567,204"/>
+<area shape="rect" id="node1_12" href="pilot.impl.pilotcompute_manager.PilotComputeService-class.html#list_pilots" title="List managed PilotComputes." alt="" coords="17,204,567,223"/>
+<area shape="rect" id="node1_13" href="pilot.impl.pilotcompute_manager.PilotComputeService-class.html#cancel" title="Cancel the PilotComputeService." alt="" coords="17,223,567,241"/>
+<area shape="rect" id="node1_14" href="pilot.impl.pilotcompute_manager.PilotComputeService-class.html#__repr__" title="repr(x)" alt="" coords="17,241,567,260"/>
+<area shape="rect" id="node1" href="pilot.impl.pilotcompute_manager.PilotComputeService-class.html" title="PilotComputeService" alt="" coords="5,121,579,266"/>
+<area shape="rect" id="node2_15" href="pilot.api.compute.api.PilotComputeService-class.html#id" title="pilot.api.compute.api.PilotComputeService.id" alt="" coords="180,31,403,49"/>
+<area shape="rect" id="node2_16" href="pilot.api.compute.api.PilotComputeService-class.html#pilot_jobs" title="pilot.api.compute.api.PilotComputeService.pilot_jobs" alt="" coords="180,49,403,68"/>
+<area shape="rect" id="node2_17" href="pilot.api.compute.api.PilotComputeService-class.html#state" title="pilot.api.compute.api.PilotComputeService.state" alt="" coords="180,68,403,87"/>
+<area shape="rect" id="node2" href="pilot.api.compute.api.PilotComputeService-class.html" title="PilotComputeService." alt="" coords="167,6,414,101"/>
 </map>
   <img src="uml_class_diagram_for_pilot_im_5.gif" alt='' usemap="#uml_class_diagram_for_pilot_im_5" ismap="ismap" class="graph-without-title" />
 </center>
@@ -91,7 +95,7 @@
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a href="pilot.impl.pilotcompute_manager.PilotComputeService-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">coordination_url</span>=<span class="summary-sig-default">COORDINATION_URL</span>,
+        <span class="summary-sig-arg">coordination_url</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">advert://localhost/?dbtype=sqlite3</code><code class="variable-quote">'</code></span>,
         <span class="summary-sig-arg">pcs_url</span>=<span class="summary-sig-default">None</span>)</span><br />
       Create a PilotJobService object.</td>
           <td align="right" valign="top">
@@ -166,7 +170,8 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="__repr__"></a><span class="summary-sig-name">__repr__</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td><span class="summary-sig"><a href="pilot.impl.pilotcompute_manager.PilotComputeService-class.html#__repr__" class="summary-sig-name">__repr__</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      repr(x)</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="pilot.impl.pilotcompute_manager-pysrc.html#PilotComputeService.__repr__">source&nbsp;code</a></span>
             
@@ -174,6 +179,23 @@
         </tr>
       </table>
       
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__delattr__</code>,
+      <code>__format__</code>,
+      <code>__getattribute__</code>,
+      <code>__hash__</code>,
+      <code>__new__</code>,
+      <code>__reduce__</code>,
+      <code>__reduce_ex__</code>,
+      <code>__setattr__</code>,
+      <code>__sizeof__</code>,
+      <code>__str__</code>,
+      <code>__subclasshook__</code>
+      </p>
     </td>
   </tr>
 </table>
@@ -189,7 +211,47 @@
     <td width="15%" align="right" valign="top" class="summary">
       <span class="summary-type">&nbsp;</span>
     </td><td class="summary">
-        <a name="PJS_ID_PREFIX"></a><span class="summary-name">PJS_ID_PREFIX</span> = <code title="&quot;pcs-&quot;">&quot;pcs-&quot;</code>
+        <a name="PJS_ID_PREFIX"></a><span class="summary-name">PJS_ID_PREFIX</span> = <code title="'pcs-'"><code class="variable-quote">'</code><code class="variable-string">pcs-</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+</table>
+<!-- ==================== PROPERTIES ==================== -->
+<a name="section-Properties"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td align="left" colspan="2" class="table-header">
+    <span class="table-header">Properties</span></td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="id"></a><span class="summary-name">id</span>
+      <em>(Inherited from <a href="pilot.api.compute.api.PilotComputeService-class.html">pilot.api.compute.api.PilotComputeService</a>)</em>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="pilot_jobs"></a><span class="summary-name">pilot_jobs</span>
+      <em>(Inherited from <a href="pilot.api.compute.api.PilotComputeService-class.html">pilot.api.compute.api.PilotComputeService</a>)</em>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="state"></a><span class="summary-name">state</span>
+      <em>(Inherited from <a href="pilot.api.compute.api.PilotComputeService-class.html">pilot.api.compute.api.PilotComputeService</a>)</em>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__class__</code>
+      </p>
     </td>
   </tr>
 </table>
@@ -210,7 +272,7 @@
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr valign="top"><td>
   <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
-        <span class="sig-arg">coordination_url</span>=<span class="sig-default">COORDINATION_URL</span>,
+        <span class="sig-arg">coordination_url</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string">advert://localhost/?dbtype=sqlite3</code><code class="variable-quote">'</code></span>,
         <span class="sig-arg">pcs_url</span>=<span class="sig-default">None</span>)</span>
     <br /><em class="fname">(Constructor)</em>
   </h3>
@@ -223,6 +285,9 @@
   <p>Keyword arguments: pcs_id -- Don't create a new, but connect to an 
   existing (optional)</p>
   <dl class="fields">
+    <dt>Overrides:
+        object.__init__
+    </dt>
   </dl>
 </td></tr></table>
 </div>
@@ -249,6 +314,9 @@
   Description</p>
   <p>Return value: A PilotCompute object</p>
   <dl class="fields">
+    <dt>Overrides:
+        <a href="pilot.api.compute.api.PilotComputeService-class.html#create_pilot">api.compute.api.PilotComputeService.create_pilot</a>
+    </dt>
   </dl>
 </td></tr></table>
 </div>
@@ -296,6 +364,33 @@
   <p>Keyword arguments: None</p>
   <p>Return value: Result of operation</p>
   <dl class="fields">
+    <dt>Overrides:
+        <a href="pilot.api.compute.api.PilotComputeService-class.html#cancel">api.compute.api.PilotComputeService.cancel</a>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="__repr__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__repr__</span>(<span class="sig-arg">self</span>)</span>
+    <br /><em class="fname">(Representation operator)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="pilot.impl.pilotcompute_manager-pysrc.html#PilotComputeService.__repr__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>repr(x)</p>
+  <dl class="fields">
+    <dt>Overrides:
+        object.__repr__
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
   </dl>
 </td></tr></table>
 </div>
@@ -332,7 +427,7 @@
   <tr>
     <td align="left" class="footer">
     <a href="epydoc-log.html">Generated by Epydoc
-    3.0.1 on Sat Jul  7 15:45:20 2012</a>
+    3.0.1 on Sat Jul  7 21:24:47 2012</a>
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

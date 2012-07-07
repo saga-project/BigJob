@@ -1,4 +1,4 @@
-""" B{PilotData} Module: Implementation of L{PilotData}, L{PilotDataService} and L{DataUnit}
+""" B{PilotData Module}: Implementation of L{PilotData}, L{PilotDataService} and L{DataUnit}
 """ 
 import sys
 import os

@@ -14,11 +14,14 @@ The main concepts and classes exposed by the Compute part of the API are:
     - L{PilotComputeService} (PCS): 
           a factory for creating \L{PilotCompute}s.  
 
-The Data side of the Pilot API is symmetric to the compute side.  The exposed
+The data side of the Pilot API is symmetric to the compute side.  The exposed
 classes for managing Pilot Data are:
 
     - L{PilotData} (PD): 
           a pilot that manages some data workload (L{DataUnit})
+    
+    - L{PilotDataDescription} (PDD):
+          a abstract description of the requirements of the PD
 
     - L{PilotDataService} (PDS): 
           a factory (service) which can create L{PilotData}s according to some

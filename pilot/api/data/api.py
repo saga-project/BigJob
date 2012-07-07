@@ -3,15 +3,22 @@ This file contains the API for the PilotData Framework.
 """
     
 class PilotDataDescription(dict):
-    """ PilotDataDescription.
-        {
+    """ B{PilotDataDescription}
+    
+        Dictionary based description of a pilot for data
+        
+        Example::
+            
+            {
             'service_url': "ssh://localhost/tmp/pilotstore/",
             'size':100,
-            
+                
             # Affinity
             'affinity_datacenter_label',    # pilot stores sharing the same label are located in the same data center          
             'affinity_machine_label',       # pilot stores sharing the same label are located on the same machine                           
-        }    
+            }
+            
+        Alternatively, a regular Python dictionary can be used.
     """
     
     def __init__(self):
@@ -177,12 +184,12 @@ class DataUnitService(object):
 # DataUnitDescription
 # 
 class DataUnitDescription(dict):
-    """ B{DataUnitDescription.}
+    """ B{DataUnitDescription}::
     
-        Description object for the creation of L{DataUnit}s
-        {
-            'file_urls': [file1, file2, file3]        
-        } 
+            Description object for the creation of L{DataUnit}s
+            {
+                'file_urls': [file1, file2, file3]        
+            } 
         
         Currently, no directories supported
     """

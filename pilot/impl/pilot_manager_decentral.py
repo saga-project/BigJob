@@ -1,4 +1,4 @@
-""" B{ComputeDataServiceDecentral} Module: A decentral implementation of a ComputeDataService (see L{ComputeDataServiceDecentral}).
+""" B{ComputeDataServiceDecentral Module}: A decentral implementation of a ComputeDataService (see L{ComputeDataServiceDecentral}).
 
 A Meta-Scheduling service for pilots (both PilotCompute and PilotData)
 """
