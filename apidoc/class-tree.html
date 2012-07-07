@@ -57,9 +57,9 @@
     <li> <strong class="uidlink"><a href="pilot.coordination.advert.AdvertCoordinationAdaptor-class.html">pilot.coordination.advert.AdvertCoordinationAdaptor</a></strong>:
       <em class="summary">BigData persists its data in a central data space, e.g.</em>
     </li>
-    <li> <strong class="uidlink"><a href="pilot.ComputeUnitService-class.html">pilot.ComputeUnitService</a></strong>
+    <li> <strong class="uidlink"><a href="pilot.impl.pilot_manager.ComputeUnitService-class.html">pilot.impl.pilot_manager.ComputeUnitService</a></strong>
     </li>
-    <li> <strong class="uidlink"><a href="pilot.DataUnitService-class.html">pilot.DataUnitService</a></strong>
+    <li> <strong class="uidlink"><a href="pilot.impl.pilot_manager.DataUnitService-class.html">pilot.impl.pilot_manager.DataUnitService</a></strong>
     </li>
     <li> <strong class="uidlink"><a href="pilot.coordination.nocoord.NoCoordinationAdaptor-class.html">pilot.coordination.nocoord.NoCoordinationAdaptor</a></strong>:
       <em class="summary">Dummy Adaptor - No distributed coordination done</em>
@@ -93,8 +93,8 @@
     <li> <strong class="uidlink"><a href="pilot.api.compute.api.ComputeUnit-class.html">pilot.api.compute.api.ComputeUnit</a></strong>:
       <em class="summary">ComputeUnit.</em>
     <ul>
-    <li> <strong class="uidlink"><a href="pilot.impl.pilot_manager.ComputeUnit-class.html">pilot.impl.pilot_manager.ComputeUnit</a></strong>:
-      <em class="summary">ComputeUnit - Wrapper for BigJob subjob</em>
+    <li> <strong class="uidlink"><a href="pilot.impl.pilotcompute_manager.ComputeUnit-class.html">pilot.impl.pilotcompute_manager.ComputeUnit</a></strong>:
+      <em class="summary">ComputeUnit</em>
     </li>
     </ul>
     </li>
@@ -102,10 +102,10 @@
       <em class="summary">ComputeUnitService.</em>
     <ul>
     <li> <strong class="uidlink"><a href="pilot.api.api.ComputeDataService-class.html">pilot.api.api.ComputeDataService</a></strong>:
-      <em class="summary">ComputeDataService.</em>
+      <em class="summary"><b>ComputeDataService.</b></em>
     <ul>
     <li> <strong class="uidlink"><a href="pilot.impl.pilot_manager.ComputeDataService-class.html">pilot.impl.pilot_manager.ComputeDataService</a></strong>:
-      <em class="summary">ComputeDataService.</em>
+      <em class="summary"><b>ComputeDataService</b></em>
     </li>
     <li> <strong class="uidlink"><a href="pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral-class.html">pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral</a></strong>:
       <em class="summary">ComputeDataServiceDecentral.</em>
@@ -118,7 +118,7 @@
       <em class="summary">DataUnit.</em>
     <ul>
     <li> <strong class="uidlink"><a href="pilot.impl.pilotdata_manager.DataUnit-class.html">pilot.impl.pilotdata_manager.DataUnit</a></strong>:
-      <em class="summary">Holds a set of file</em>
+      <em class="summary"><b>DataUnit</b></em>
     </li>
     </ul>
     </li>
@@ -135,7 +135,7 @@
       <em class="summary">PilotCompute (PilotJob).</em>
     <ul>
     <li> <strong class="uidlink"><a href="pilot.impl.pilotcompute_manager.PilotCompute-class.html">pilot.impl.pilotcompute_manager.PilotCompute</a></strong>:
-      <em class="summary">Wrapper for BigJob class</em>
+      <em class="summary"><b>Pilot Compute</b> (PC)</em>
     </li>
     </ul>
     </li>
@@ -143,7 +143,7 @@
       <em class="summary">PilotComputeService.</em>
     <ul>
     <li> <strong class="uidlink"><a href="pilot.impl.pilotcompute_manager.PilotComputeService-class.html">pilot.impl.pilotcompute_manager.PilotComputeService</a></strong>:
-      <em class="summary">PilotComputeService based on BigJob.</em>
+      <em class="summary"><b>PilotComputeService</b></em>
     </li>
     </ul>
     </li>
@@ -151,7 +151,7 @@
       <em class="summary">PilotData.</em>
     <ul>
     <li> <strong class="uidlink"><a href="pilot.impl.pilotdata_manager.PilotData-class.html">pilot.impl.pilotdata_manager.PilotData</a></strong>:
-      <em class="summary">PilotData.</em>
+      <em class="summary"><b>PilotData</b></em>
     </li>
     </ul>
     </li>
@@ -159,10 +159,10 @@
       <em class="summary">PilotDataService (PDS).</em>
     <ul>
     <li> <strong class="uidlink"><a href="pilot.api.api.ComputeDataService-class.html">pilot.api.api.ComputeDataService</a></strong>:
-      <em class="summary">ComputeDataService.</em>
+      <em class="summary"><b>ComputeDataService.</b></em>
     <ul>
     <li> <strong class="uidlink"><a href="pilot.impl.pilot_manager.ComputeDataService-class.html">pilot.impl.pilot_manager.ComputeDataService</a></strong>:
-      <em class="summary">ComputeDataService.</em>
+      <em class="summary"><b>ComputeDataService</b></em>
     </li>
     <li> <strong class="uidlink"><a href="pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral-class.html">pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral</a></strong>:
       <em class="summary">ComputeDataServiceDecentral.</em>
@@ -170,14 +170,15 @@
     </ul>
     </li>
     <li> <strong class="uidlink"><a href="pilot.impl.pilotdata_manager.PilotDataService-class.html">pilot.impl.pilotdata_manager.PilotDataService</a></strong>:
-      <em class="summary">PilotDataService (PSS).</em>
+      <em class="summary"><b>PilotDataService</b> (PDS)</em>
     </li>
     </ul>
     </li>
     <li> <strong class="uidlink"><a href="pilot.filemanagement.ssh_adaptor.SSHFileAdaptor-class.html">pilot.filemanagement.ssh_adaptor.SSHFileAdaptor</a></strong>:
       <em class="summary">BigData Coordination File Management for Pilot Store</em>
     </li>
-    <li> <strong class="uidlink"><a href="pilot.api.compute.api.State-class.html">pilot.api.compute.api.State</a></strong>
+    <li> <strong class="uidlink"><a href="pilot.api.compute.api.State-class.html">pilot.api.compute.api.State</a></strong>:
+      <em class="summary"><b>State</b>.</em>
     </li>
     <li> <strong class="uidlink"><a href="pilot.filemanagement.webhdfs_adaptor.WebHDFSFileAdaptor-class.html">pilot.filemanagement.webhdfs_adaptor.WebHDFSFileAdaptor</a></strong>
     </li>
@@ -193,15 +194,10 @@ dict(**kwargs) -&gt; new dictionary initialized with the name=value pairs
     in the keyword argument list.</em>
     <ul>
     <li> <strong class="uidlink"><a href="pilot.api.compute.api.ComputeUnitDescription-class.html">pilot.api.compute.api.ComputeUnitDescription</a></strong>:
-      <em class="summary">ComputeUnitDescription.</em>
-    <ul>
-    <li> <strong class="uidlink"><a href="pilot.api.api.ComputeDataDescription-class.html">pilot.api.api.ComputeDataDescription</a></strong>:
-      <em class="summary">ComputeDataDescription.</em>
-    </li>
-    </ul>
+      <em class="summary"><b>ComputeUnitDescription.</b></em>
     </li>
     <li> <strong class="uidlink"><a href="pilot.api.data.api.DataUnitDescription-class.html">pilot.api.data.api.DataUnitDescription</a></strong>:
-      <em class="summary">DataUnitDescription.</em>
+      <em class="summary">B{DataUnitDescription.}</em>
     </li>
     <li> <strong class="uidlink"><a href="pilot.api.compute.api.PilotComputeDescription-class.html">pilot.api.compute.api.PilotComputeDescription</a></strong>:
       <em class="summary">PilotComputeDescription.</em>
@@ -246,7 +242,7 @@ dict(**kwargs) -&gt; new dictionary initialized with the name=value pairs
   <tr>
     <td align="left" class="footer">
     <a href="epydoc-log.html">Generated by Epydoc
-    3.0.1 on Fri Jul  6 23:15:47 2012</a>
+    3.0.1 on Sat Jul  7 20:43:33 2012</a>
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

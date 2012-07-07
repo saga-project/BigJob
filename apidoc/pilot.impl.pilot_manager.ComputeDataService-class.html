@@ -61,7 +61,7 @@
 <center>  <map id="uml_class_diagram_for_pilot_im" name="uml_class_diagram_for_pilot_im">
 <area shape="rect" id="node1_22" href="pilot.impl.pilot_manager.ComputeDataService-class.html#CDS_ID_PREFIX" title="pilot.impl.pilot_manager.ComputeDataService.CDS_ID_PREFIX" alt="" coords="119,241,440,260"/>
 <area shape="rect" id="node1_23" href="pilot.impl.pilot_manager.ComputeDataService-class.html#__init__" title="Create a ComputeDataService object." alt="" coords="119,263,440,281"/>
-<area shape="rect" id="node1_24" href="pilot.impl.pilot_manager.ComputeDataService-class.html#add_pilot_compute_service" title="Add a PilotJobService to this CDS." alt="" coords="119,281,440,300"/>
+<area shape="rect" id="node1_24" href="pilot.impl.pilot_manager.ComputeDataService-class.html#add_pilot_compute_service" title="Add a PilotComputeService to this CDS." alt="" coords="119,281,440,300"/>
 <area shape="rect" id="node1_25" href="pilot.impl.pilot_manager.ComputeDataService-class.html#remove_pilot_compute_service" title="Remove a PilotJobService from this CDS." alt="" coords="119,300,440,319"/>
 <area shape="rect" id="node1_26" href="pilot.impl.pilot_manager.ComputeDataService-class.html#submit_compute_unit" title="Submit a CU to this Compute Data Service." alt="" coords="119,319,440,337"/>
 <area shape="rect" id="node1_27" href="pilot.impl.pilot_manager.ComputeDataService-class.html#add_pilot_data_service" title="Add a PilotDataService" alt="" coords="119,337,440,356"/>
@@ -72,9 +72,9 @@
 <area shape="rect" id="node1_32" href="pilot.impl.pilot_manager.ComputeDataService-class.html#get_data_unit" title="pilot.impl.pilot_manager.ComputeDataService.get_data_unit" alt="" coords="119,431,440,449"/>
 <area shape="rect" id="node1_33" href="pilot.impl.pilot_manager.ComputeDataService-class.html#submit_data_unit" title="creates a data unit object and binds it to a physical resource (a &#160;pilotdata)" alt="" coords="119,449,440,468"/>
 <area shape="rect" id="node1_34" href="pilot.impl.pilot_manager.ComputeDataService-class.html#cancel" title="Cancel the CDS." alt="" coords="119,468,440,487"/>
-<area shape="rect" id="node1_35" href="pilot.impl.pilot_manager.ComputeDataService-class.html#wait" title="Waits for CUs and DUs..." alt="" coords="119,487,440,505"/>
+<area shape="rect" id="node1_35" href="pilot.impl.pilot_manager.ComputeDataService-class.html#wait" title="Waits for CUs and DUs." alt="" coords="119,487,440,505"/>
 <area shape="rect" id="node1_36" href="pilot.impl.pilot_manager.ComputeDataService-class.html#__del__" title="Make sure that background thread terminates" alt="" coords="119,524,440,543"/>
-<area shape="rect" id="node1" href="pilot.impl.pilot_manager.ComputeDataService-class.html" title="ComputeDataService." alt="" coords="106,217,451,549"/>
+<area shape="rect" id="node1" href="pilot.impl.pilot_manager.ComputeDataService-class.html" title="ComputeDataService" alt="" coords="106,217,451,549"/>
 <area shape="rect" id="node2" href="pilot.api.api.ComputeDataService-class.html" title="ComputeDataService." alt="" coords="183,153,377,197"/>
 <area shape="rect" id="node3_37" href="pilot.api.data.api.PilotDataService-class.html#id" title="pilot.api.data.api.PilotDataService.id" alt="" coords="17,31,259,49"/>
 <area shape="rect" id="node3_38" href="pilot.api.data.api.PilotDataService-class.html#pilot_data" title="pilot.api.data.api.PilotDataService.pilot_data" alt="" coords="17,49,259,68"/>
@@ -90,7 +90,7 @@
 </center>
 </center>
 <hr />
-<p>ComputeDataService.</p>
+<p><b>ComputeDataService</b></p>
   <p>The ComputeDataService is the application's interface to submit 
   ComputeUnits and PilotData/DataUnit to the Pilot-Manager in the P* 
   Model.</p>
@@ -128,8 +128,8 @@
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a href="pilot.impl.pilot_manager.ComputeDataService-class.html#add_pilot_compute_service" class="summary-sig-name">add_pilot_compute_service</a>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">pjs</span>)</span><br />
-      Add a PilotJobService to this CDS.</td>
+        <span class="summary-sig-arg">pcs</span>)</span><br />
+      Add a PilotComputeService to this CDS.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="pilot.impl.pilot_manager-pysrc.html#ComputeDataService.add_pilot_compute_service">source&nbsp;code</a></span>
             
@@ -146,7 +146,7 @@
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a href="pilot.impl.pilot_manager.ComputeDataService-class.html#remove_pilot_compute_service" class="summary-sig-name">remove_pilot_compute_service</a>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">pjs</span>)</span><br />
+        <span class="summary-sig-arg">pcs</span>)</span><br />
       Remove a PilotJobService from this CDS.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="pilot.impl.pilot_manager-pysrc.html#ComputeDataService.remove_pilot_compute_service">source&nbsp;code</a></span>
@@ -322,7 +322,7 @@
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a href="pilot.impl.pilot_manager.ComputeDataService-class.html#wait" class="summary-sig-name">wait</a>(<span class="summary-sig-arg">self</span>)</span><br />
-      Waits for CUs and DUs...</td>
+      Waits for CUs and DUs.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="pilot.impl.pilot_manager-pysrc.html#ComputeDataService.wait">source&nbsp;code</a></span>
             
@@ -338,7 +338,9 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a href="pilot.impl.pilot_manager.ComputeDataService-class.html#get_state" class="summary-sig-name">get_state</a>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td><span class="summary-sig"><a href="pilot.impl.pilot_manager.ComputeDataService-class.html#get_state" class="summary-sig-name">get_state</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Returns:
+      State of the ComputeDataService</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="pilot.impl.pilot_manager-pysrc.html#ComputeDataService.get_state">source&nbsp;code</a></span>
             
@@ -354,7 +356,9 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a href="pilot.impl.pilot_manager.ComputeDataService-class.html#get_id" class="summary-sig-name">get_id</a>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td><span class="summary-sig"><a href="pilot.impl.pilot_manager.ComputeDataService-class.html#get_id" class="summary-sig-name">get_id</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Returns:
+      id of ComputeDataService</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="pilot.impl.pilot_manager-pysrc.html#ComputeDataService.get_id">source&nbsp;code</a></span>
             
@@ -574,25 +578,20 @@
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr valign="top"><td>
   <h3 class="epydoc"><span class="sig"><span class="sig-name">add_pilot_compute_service</span>(<span class="sig-arg">self</span>,
-        <span class="sig-arg">pjs</span>)</span>
+        <span class="sig-arg">pcs</span>)</span>
   </h3>
   </td><td align="right" valign="top"
     ><span class="codelink"><a href="pilot.impl.pilot_manager-pysrc.html#ComputeDataService.add_pilot_compute_service">source&nbsp;code</a></span>&nbsp;
     </td>
   </tr></table>
   
-  <pre class="literalblock">
-Add a PilotJobService to this CDS.
-
-Keyword arguments:
-pilotjob_services -- The PilotJob Service(s) to which this 
-                     Work Unit Service will connect.
-
-Return:
-Result
-
-</pre>
+  <p>Add a PilotComputeService to this CDS.</p>
   <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>pcs</code></strong> - The PilotComputeService to which this ComputeDataService will 
+          connect.</li>
+    </ul></dd>
   </dl>
 </td></tr></table>
 </div>
@@ -604,28 +603,22 @@ Result
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr valign="top"><td>
   <h3 class="epydoc"><span class="sig"><span class="sig-name">remove_pilot_compute_service</span>(<span class="sig-arg">self</span>,
-        <span class="sig-arg">pjs</span>)</span>
+        <span class="sig-arg">pcs</span>)</span>
   </h3>
   </td><td align="right" valign="top"
     ><span class="codelink"><a href="pilot.impl.pilot_manager-pysrc.html#ComputeDataService.remove_pilot_compute_service">source&nbsp;code</a></span>&nbsp;
     </td>
   </tr></table>
   
-  <pre class="literalblock">
-Remove a PilotJobService from this CDS.
-
-Note that it won't cancel the PilotJobService, it will just no
-longer be connected to this WUS.
-
-Keyword arguments:
-pilotjob_services -- The PilotJob Service(s) to remove from this
-                     Work Unit Service. 
-
-Return:
-Result
-
-</pre>
+  <p>Remove a PilotJobService from this CDS.</p>
+  <p>Note that it won't cancel the PilotComputeService, it will just no 
+  longer be connected to this CDS.</p>
+  <p>Keyword arguments:</p>
   <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>pcs</code></strong> - The PilotComputeService to remove from this ComputeDataService.</li>
+    </ul></dd>
   </dl>
 </td></tr></table>
 </div>
@@ -645,10 +638,13 @@ Result
   </tr></table>
   
   <p>Submit a CU to this Compute Data Service.</p>
-  <p>Keyword argument: cud -- The ComputeUnitDescription from the 
-  application</p>
-  <p>Return: ComputeUnit object</p>
   <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>compute_unit_description</code></strong> - The ComputeUnitDescription from the application</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>ComputeUnit object</dd>
     <dt>Overrides:
         <a href="pilot.api.compute.api.ComputeUnitService-class.html#submit_compute_unit">api.compute.api.ComputeUnitService.submit_compute_unit</a>
     </dt>
@@ -671,9 +667,11 @@ Result
   </tr></table>
   
   <p>Add a PilotDataService</p>
-  <p>Keyword arguments: pds -- The PilotDataService to add.</p>
-  <p>Return: None</p>
   <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>pds</code></strong> - The PilotDataService to add.</li>
+    </ul></dd>
   </dl>
 </td></tr></table>
 </div>
@@ -693,9 +691,11 @@ Result
   </tr></table>
   
   <p>Remove a PilotDataService</p>
-  <p>Keyword arguments: pds -- The PilotDataService to remove</p>
-  <p>Return: None</p>
   <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>pds</code></strong> - The PilotDataService to remove</li>
+    </ul></dd>
   </dl>
 </td></tr></table>
 </div>
@@ -713,9 +713,7 @@ Result
     </td>
   </tr></table>
   
-  <p>Cancel the CDS. All associated PC objects are deleted.</p>
-  <p>Keyword arguments: None</p>
-  <p>Return: None</p>
+  <p>Cancel the CDS. All associated PD and PC objects are canceled.</p>
   <dl class="fields">
     <dt>Overrides:
         <a href="pilot.api.data.api.PilotDataService-class.html#cancel">api.data.api.PilotDataService.cancel</a>
@@ -737,13 +735,9 @@ Result
     </td>
   </tr></table>
   
-  <pre class="literalblock">
-Waits for CUs and DUs
-Return if all du's are running 
-       AND
-       cu's are done
-
-</pre>
+  <p>Waits for CUs and DUs. Return after all DU's have been placed (i.e. in
+  state Running) and all CU's have been completed (i.e. in state Done) or 
+  if a fault has occurred or the user has cancelled a CU or DU.</p>
   <dl class="fields">
   </dl>
 </td></tr></table>
@@ -764,6 +758,8 @@ Return if all du's are running
   
   
   <dl class="fields">
+    <dt>Returns:</dt>
+        <dd>State of the ComputeDataService</dd>
     <dt>Overrides:
         <a href="pilot.api.compute.api.ComputeUnitService-class.html#get_state">api.compute.api.ComputeUnitService.get_state</a>
     </dt>
@@ -786,6 +782,8 @@ Return if all du's are running
   
   
   <dl class="fields">
+    <dt>Returns:</dt>
+        <dd>id of ComputeDataService</dd>
     <dt>Overrides:
         <a href="pilot.api.compute.api.ComputeUnitService-class.html#get_id">api.compute.api.ComputeUnitService.get_id</a>
     </dt>
@@ -825,7 +823,7 @@ Return if all du's are running
   <tr>
     <td align="left" class="footer">
     <a href="epydoc-log.html">Generated by Epydoc
-    3.0.1 on Fri Jul  6 23:15:49 2012</a>
+    3.0.1 on Sat Jul  7 20:43:34 2012</a>
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"
