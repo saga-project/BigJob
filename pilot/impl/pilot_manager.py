@@ -362,12 +362,12 @@ class ComputeDataService(ComputeDataService):
 ###############################################################################
 # Unimplemented entities
 
-class ComputeUnitService():
+class ComputeUnitService(object):
     def __init__(self):
         raise NotImplementedError("Please use ComputeDataService.")
 
 
-class DataUnitService():
+class DataUnitService(object):
     def __init__(self):
         raise NotImplementedError("Please use ComputeDataService.")
     
