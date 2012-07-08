@@ -16,7 +16,7 @@ class State(object):
 
 
 class PilotComputeDescription(dict):
-    """  PilotComputeDescription.
+    """ B{PilotComputeDescription.}
         
         A PilotComputeDescription is a based on the SAGA Job Description.
 
