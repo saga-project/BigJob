@@ -382,13 +382,14 @@ class bigjob_agent:
                     #    # + " 1 > "+ str(i)+ "-out.txt " + " 2 > "+ str(i)+ "-err.txt"
                     #    if i != self.number_subjobs-1:
                     #        command = command + " : "
-                elif (spmdvariation.lower()!="mpi"):
-                    command =  envi + executable + " " + arguments
+                
+                #elif (spmdvariation.lower()!="mpi"):
+                #    command =  envi + executable + " " + arguments
                 else:
                     # In particular for Condor - if executable is staged x flag is not set
                     #command ="chmod +x " + executable +";export PATH=$PATH:" + workingdirectory + ";" +command
-                    command =  executable + " " + arguments
-                #pdb.set_trace()
+                    command =  envi + executable + " " + arguments
+                
                 # special setup for MPI NAMD jobs
                 machinefile = self.allocate_nodes(job_dict)
                 host = "localhost"
@@ -417,7 +418,7 @@ class bigjob_agent:
                     elif host == "localhost":
                         command ="cd " + workingdirectory + "; " + command
                     else:    
-                        command ="ssh  " + host + " \"cd " + workingdirectory + "; " + command +"\""
+                        command ="ssh  " + host + " \'cd " + workingdirectory + "; " + command +"\'"
                         
                 
                 # start application process                    
