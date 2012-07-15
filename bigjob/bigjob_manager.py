@@ -518,6 +518,13 @@ class bigjob(api.base.bigjob):
                 job_dict["state"] = str(Unknown)
                 job_dict["job-id"] = str(job_id)
                 logger.debug("job dict: " + str(job_dict))
+                
+                
+                if job_dict.has_key("FileTransfer"):
+                    files = job_dict["FileTransfer"]
+                    sj_work_dir = self.__get_subjob_working_dir(job_id)
+                    self.__stage_files(files, sj_work_dir)
+                
                 #logger.debug("update job description at communication & coordination sub-system")
                 self.coordination.set_job(job_url, job_dict)                                                
                 self.coordination.queue_job(queue_url, job_url)

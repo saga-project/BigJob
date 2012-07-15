@@ -70,20 +70,27 @@ class bigjob_agent:
         conf_file = os.path.dirname(os.path.abspath( __file__ )) + "/../" + CONFIG_FILE
         if not os.path.exists(conf_file):
             conf_file = os.path.join(sys.prefix, CONFIG_FILE)
-        
-        config = ConfigParser.ConfigParser()
         logging.debug ("read configfile: " + conf_file)
+        config = ConfigParser.ConfigParser()
         config.read(conf_file)
         default_dict = config.defaults()        
-        self.CPR = default_dict["cpr"]
-        self.SHELL=default_dict["shell"]
-        self.MPIRUN=default_dict["mpirun"]
+        self.CPR=False
+        if default_dict.has_key("cpr"):
+            self.CPR = default_dict["cpr"]
+        self.SHELL="/bin/bash"
+        if default_dict.has_key("shell"):
+            self.SHELL=default_dict["shell"]
+        self.MPIRUN="mpirun"
+        if default_dict.has_key("mpirun"):
+            self.MPIRUN=default_dict["mpirun"]
         self.OUTPUT_TAR=False
         if default_dict.has_key("create_output_tar"):
             self.OUTPUT_TAR=eval(default_dict["create_output_tar"])
             logger.debug("Create output tar: %r", self.OUTPUT_TAR)
-                    
-        self.LAUNCH_METHOD=self.__get_launch_method(default_dict["launch_method"])
+        
+        self.LAUNCH_METHOD="ssh"                    
+        if default_dict.has_key("launch_method"):
+            self.LAUNCH_METHOD=self.__get_launch_method(default_dict["launch_method"])
         
         logging.debug("Launch Method: " + self.LAUNCH_METHOD + " mpi: " + self.MPIRUN + " shell: " + self.SHELL)
         
