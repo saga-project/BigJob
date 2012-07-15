@@ -10,7 +10,7 @@ from setuptools import setup
 try:
     import saga
 except:
-    print "SAGA and SAGA Python Bindings not found: Please install SAGA first (http://saga.cct.lsu.edu)."
+    print "SAGA C++ and SAGA Python Bindings not found. Using Bliss/SAGA."
     #sys.exit(1)
     
 fn = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'VERSION')
