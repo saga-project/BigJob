@@ -389,13 +389,12 @@ class bigjob_agent:
                     #    # + " 1 > "+ str(i)+ "-out.txt " + " 2 > "+ str(i)+ "-err.txt"
                     #    if i != self.number_subjobs-1:
                     #        command = command + " : "
-                
-                #elif (spmdvariation.lower()!="mpi"):
-                #    command =  envi + executable + " " + arguments
-                else:
-                    # In particular for Condor - if executable is staged x flag is not set
-                    #command ="chmod +x " + executable +";export PATH=$PATH:" + workingdirectory + ";" +command
+                elif (spmdvariation.lower()!="mpi"):
                     command =  envi + executable + " " + arguments
+                    # In particular for Condor - if executable is staged x flag is not set
+                    #command ="chmod +x " + executable +";export PATH=$PATH:" + workingdirectory + ";" +command                    
+                else:
+                    command =  executable + " " + arguments
                 
                 # special setup for MPI NAMD jobs
                 machinefile = self.allocate_nodes(job_dict)
