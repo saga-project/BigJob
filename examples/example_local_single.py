@@ -56,6 +56,7 @@ def main():
     Please ensure that the respective SAGA adaptor is installed and working
     """
     lrms_url = "fork://localhost" # resource url to run the jobs on localhost
+    #lrms_url = "ssh://localhost" # resource url to run the jobs on localhost
    
     ##########################################################################################
 

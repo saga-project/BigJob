@@ -394,6 +394,7 @@ class bigjob_agent:
                     # In particular for Condor - if executable is staged x flag is not set
                     #command ="chmod +x " + executable +";export PATH=$PATH:" + workingdirectory + ";" +command                    
                 else:
+                    # Environment variables need to be handled later!
                     command =  executable + " " + arguments
                 
                 # special setup for MPI NAMD jobs
