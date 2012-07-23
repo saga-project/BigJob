@@ -22,6 +22,13 @@ import pdb
 
 from bigjob import SAGA_BLISS 
 from bigjob.state import Running, New, Failed, Done, Unknown
+
+# Optional Job Plugins
+try:
+    import job_plugin.gcessh
+except:
+    pass 
+
 # import other BigJob packages
 # import API
 import api.base
@@ -292,6 +299,8 @@ class bigjob(api.base.bigjob):
             elif lrms_saga_url.scheme == "ssh":
                 bootstrap_script = self.__escape_ssh(bootstrap_script)
         logger.debug(bootstrap_script)
+        
+        
         # Define Agent Executable in Job description
         # in Condor case bootstrap script is staged 
         # (Python app cannot be passed inline in Condor job description)
@@ -348,24 +357,17 @@ class bigjob(api.base.bigjob):
         jd.output = os.path.join(self.working_directory, "stdout-" + self.uuid + "-agent.txt")
         jd.error = os.path.join(self.working_directory, "stderr-" + self.uuid + "-agent.txt")
            
-        # Submit job
-        js = None    
-        if userproxy != None and userproxy != '':
-            s = SAGASession()
-            os.environ["X509_USER_PROXY"]=userproxy
-            ctx = SAGAContext("x509")
-            ctx.set_attribute ("UserProxy", userproxy)
-            s.add_context(ctx)
-            logger.debug("use proxy: " + userproxy)
-            js = SAGAJobService(s, lrms_saga_url)
+        # Submit job to Job Service (Default: SAGA Job Service, alternative Job Services supported)
+        self.js =None
+        if lrms_saga_url.scheme=="gce+ssh":
+            self.js = job_plugin.gcessh.Service(lrms_saga_url)
         else:
-            logger.debug("use standard proxy")
-            js = SAGAJobService(lrms_saga_url)
+            self.js = SAGAJobService(lrms_saga_url)
 
         logger.debug("Creating pilot job with description: %s" % str(jd))
               
 
-        self.job = js.create_job(jd)
+        self.job = self.js.create_job(jd)
         logger.debug("Submit pilot job to: " + str(lrms_saga_url))
         self.job.run()
         return self.pilot_url
