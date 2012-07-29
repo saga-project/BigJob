@@ -25,6 +25,11 @@ try:
     from pilot.filemanagement.globusonline_adaptor import GlobusOnlineFileAdaptor
 except:
     logger.warn("Globus Online package not found.") 
+    
+try:
+    from pilot.filemanagement.gs_adaptor import GSFileAdaptor
+except:
+    logger.warn("Globus Online package not found.") 
 
 
 #from pilot.coordination.advert import AdvertCoordinationAdaptor as CoordinationAdaptor
@@ -59,6 +64,7 @@ class PilotData(PilotData):
                 ssh://<hostname>
                 gsissh://<hostname>
                 go://<hostname>
+                gs://google.com
             
             In the future more SAGA/Bliss URL schemes/adaptors are supported.        
         """ 
@@ -97,6 +103,12 @@ class PilotData(PilotData):
             elif self.service_url.startswith("http:"):
                 logger.debug("Use WebHDFS backend")
                 self.__filemanager = WebHDFSFileAdaptor(self.service_url)
+            elif self.service_url.startswith("go:"):
+                logger.debug("Use Globus Online backend")
+                self.__filemanager = GSFileAdaptor(self.service_url)
+            elif self.service_url.startswith("gs:"):
+                logger.debug("Use Google Cloud Storage backend")
+                self.__filemanager = GSFileAdaptor(self.service_url)
                 
             self.__filemanager.initialize_pilotdata()
             self.__filemanager.get_pilotdata_size()

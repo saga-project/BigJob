@@ -71,19 +71,11 @@ if __name__ == "__main__":
             "affinity_datacenter_label": "eu-de-south",              
             "affinity_machine_label": "mymachine-1" 
     }    
+    
     compute_unit = compute_data_service.submit_compute_unit(compute_unit_description)
     logging.debug("Finished setup of PSS and PDS. Waiting for scheduling of PD")
     compute_data_service.wait()
-    #while data_unit.get_state() != State.Done and compute_unit != State.Done:
-    #    logging.debug("Check state")
-    #    state_data_unit = data_unit.get_state()
-    #    state_compute_unit = compute_unit.get_state()
-    #    print "PJS State %s" % pilot_compute_service
-    #    print "DU: %s State: %s"%(data_unit, state_data_unit)
-    #    print "CU: %s State: %s"%(compute_unit, state_compute_unit)
-    #    if state_compute_unit==State.Done and state_data_unit==State.Running:
-    #        break
-    #    time.sleep(2)  
+    
     
     logging.debug("Terminate Pilot Compute/Data Service")
     compute_data_service.cancel()
