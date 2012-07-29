@@ -29,6 +29,12 @@ try:
 except:
     pass 
 
+try:
+    import job_plugin.ec2ssh
+except:
+    pass 
+
+
 # import other BigJob packages
 # import API
 import api.base
@@ -245,7 +251,11 @@ class bigjob(api.base.bigjob):
         ##############################################################################
         # File Management and Stage-In
         self.bigjob_working_directory_url=""
-        if lrms_saga_url.scheme.startswith("condor")==False:           
+        if lrms_saga_url.scheme.startswith("gce") or lrms_saga_url.scheme.startswith("ec2"):
+            logger.debug("File Staging for Cloud Instances currently not supported.")
+        elif lrms_saga_url.scheme.startswith("condor") == True:
+            logger.debug("Using Condor file staging")
+        else:           
             # build target url for working directory
             # this will also create the remote directory for the BJ
             # Fallback if working directory is not a valid URL
@@ -361,6 +371,8 @@ class bigjob(api.base.bigjob):
         self.js =None
         if lrms_saga_url.scheme=="gce+ssh":
             self.js = job_plugin.gcessh.Service(lrms_saga_url)
+        elif lrms_saga_url.scheme=="ec2+ssh":
+            self.js = job_plugin.ec2ssh.Service(lrms_saga_url)
         else:
             self.js = SAGAJobService(lrms_saga_url)
 

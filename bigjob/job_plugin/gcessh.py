@@ -29,6 +29,19 @@ GCE_PROJECT_ID='bigjob-pilot'
 USER_ID='luckow'
 SSH_KEY_FILE='/Users/luckow/.ssh/google_compute_engine'
 
+
+"""
+Google Compute Engine currently provides a default image with Ubuntu 12.04
+
+To use BJ, a custom image containing gcc and build essentials needs to be
+created.
+
+$ apt-get update
+$ apt-get install gcc python-all-dev 
+
+"""
+GCE_IMAGE_URL="https://www.googleapis.com/compute/v1beta12/projects/bigjob-pilot/images/bigjob-image"
+
 class gce_states:
     PROVISIONING="PROVISIONING"
     STAGING="STAGING"
@@ -102,9 +115,10 @@ class Job(object):
           ],         
           "zone": "https://www.googleapis.com/compute/v1beta12/projects/bigjob-pilot/zones/us-central1-a",
           "machineType": "https://www.googleapis.com/compute/v1beta12/projects/bigjob-pilot/machine-types/n1-standard-1",
-          "name": self.id
+          "name": self.id,
+          "image": GCE_IMAGE_URL       
         }
-        
+         
         http = httplib2.Http()
         http = self.credentials.authorize(http)
         gce = build("compute", "v1beta12", http=http)
@@ -118,9 +132,9 @@ class Job(object):
         compute_instance_details = self.__get_instance_resource()
         logger.debug("Compute Instance Details: " + str(compute_instance_details))
         self.network_ip = compute_instance_details["networkInterfaces"][0]["accessConfigs"][0]['natIP']
-        url = "ssh://" + self.network_ip
+        url = "ssh://" + str(self.network_ip)
         logger.debug("Connect to: %s"%(url))
-        js = saga.job.Service(saga.Url(url))
+        js = saga.job.Service(url)
         
         # Submit job
         ctx = saga.Context()
@@ -158,7 +172,8 @@ class Job(object):
         gce = build("compute", "v1beta12", http=http)
         result = gce.instances().get(project=GCE_PROJECT_ID, instance=self.id).execute()
         return result
- 
+    
+    
  
      
 if __name__ == "__main__":
