@@ -69,8 +69,11 @@ class GSFileAdaptor(object):
                         "projectId":GS_PROJECT_ID
         }       
         logger.debug(str(request_dict)) 
-        gs = self.__get_api_client()
-        gs.buckets().insert(body=request_dict).execute()
+        try:
+            gs = self.__get_api_client()
+            gs.buckets().insert(body=request_dict).execute()
+        except:
+            pass # Do nothing if bucket already exists
                 
         
     def get_pilotdata_size(self):
@@ -101,12 +104,12 @@ class GSFileAdaptor(object):
     def put_du(self, du):
         logger.debug("Copy DU to Google Storage")
         gs = self.__get_api_client()
-        for i in du.list_data_unit_items():     
-            remote_path = os.path.join(str(du.id), os.path.basename(i.local_url))
-            logger.debug("Put file: %s to %s"%(i.local_url, remote_path))        
+        for i in du.list().keys():     
+            remote_path = os.path.join(str(du.id), i)
+            logger.debug("Put file: %s to %s"%(i, remote_path))        
             o = gs.objects().insert(bucket=self.bucket_name, 
                                     name=remote_path,
-                                    media_body=i.local_url).execute()            
+                                    media_body=i).execute()            
             logger.debug("Put file result: %s"%str(o))
                      
     
