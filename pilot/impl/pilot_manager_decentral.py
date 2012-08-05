@@ -24,7 +24,7 @@ from pilot.impl.pilotcompute_manager import PilotCompute, PilotComputeService
 from pilot.impl.pilot_manager import ComputeUnit
 
 #from pilot.coordination.advert import AdvertCoordinationAdaptor as CoordinationAdaptor
-from pilot.coordination.redis import RedisCoordinationAdaptor as CoordinationAdaptor
+from pilot.coordination.redis_adaptor import RedisCoordinationAdaptor as CoordinationAdaptor
 
 """ Loaded Module determines scheduler:
     
