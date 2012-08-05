@@ -20,7 +20,7 @@ from pilot.api import PilotCompute, PilotComputeService, ComputeUnit, State
 
 """ Configure coordination backend here """
 #from pilot.coordination.advert import AdvertCoordinationAdaptor as CoordinationAdaptor
-from pilot.coordination.nocoord import NoCoordinationAdaptor as CoordinationAdaptor
+from pilot.coordination.nocoord_adaptor import NoCoordinationAdaptor as CoordinationAdaptor
 
 
 """ This variable defines the coordination system that is used by BigJob

@@ -25,7 +25,7 @@ from pilot.impl.pilotcompute_manager import ComputeUnit
 
 
 #from pilot.coordination.advert import AdvertCoordinationAdaptor as CoordinationAdaptor
-from pilot.coordination.nocoord import NoCoordinationAdaptor as CoordinationAdaptor
+from pilot.coordination.nocoord_adaptor import NoCoordinationAdaptor as CoordinationAdaptor
 
 
 """ Loaded Module determines scheduler:
