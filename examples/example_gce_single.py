@@ -42,8 +42,8 @@ def main():
     userproxy = None # userproxy (not supported yet due to context issue w/ SAGA)
 
         
-    lrms_url = "ec2+ssh://localhost" # resource url to run on GCE
-    
+    #lrms_url = "ec2+ssh://localhost" # resource url to run on GCE
+    lrms_url = "gce+ssh://locahost"
     ##########################################################################################
 
     print "Start Pilot Job/BigJob at: " + lrms_url
@@ -68,6 +68,7 @@ def main():
     jd.number_of_processes = "1"
     jd.arguments = ["$HELLOWORLD"]
     jd.environment = ['HELLOWORLD=hello_world']
+    jd.input_data = ["hi", "ho"]
     
     # specify an optinal working directory if sub-job should be executed outside of bigjob sandbox
     #jd.working_directory = "/tmp" 

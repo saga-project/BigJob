@@ -11,7 +11,6 @@ import pdb
 import time
 
 from bigjob import logger
-sys.path.insert(0, (os.path.dirname(os.path.abspath( __file__) ) + "/../ext/redis-2.4.9/"))
 from redis import *
 
 if sys.version_info < (2, 5):
@@ -83,6 +82,7 @@ class bigjob_coordination(object):
         except:
             logger.error("Please start Redis server!")
             raise Exception("Please start Redis server!")
+        
         
     def get_address(self):
         return self.address
