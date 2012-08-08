@@ -494,6 +494,10 @@ class DataUnit(DataUnit):
             logger.error("No Pilot Data for PD found")
     
     
+    def get_url(self):
+        """ Return URL that can be used to reconnect to Data Unit """
+        return self.url
+    
     ###########################################################################
     # BigData Internal Methods
     

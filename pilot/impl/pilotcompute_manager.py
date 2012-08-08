@@ -440,7 +440,11 @@ class ComputeUnit(ComputeUnit):
         if compute_unit_description.has_key("error"): 
             jd.error = compute_unit_description["error"]
         if compute_unit_description.has_key("file_transfer"):
-            jd.file_transfer=compute_unit_description["file_transfer"]            
+            jd.file_transfer=compute_unit_description["file_transfer"]  
+        if compute_unit_description.has_key("input_data"):
+            jd.input_data=compute_unit_description["input_data"]  
+        if compute_unit_description.has_key("output_data"):
+            jd.output_data=compute_unit_description["output_data"]            
         return jd
         
         

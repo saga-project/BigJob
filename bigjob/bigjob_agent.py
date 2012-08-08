@@ -344,6 +344,11 @@ class bigjob_agent:
                 # append job to job list
                 self.jobs.append(job_url)
                 
+                
+                # File Stage-In of dependent data units
+                if job_dict.has_key("input_data"):
+                    self.__stage_in_data_units(job_dict["input_data"])
+                
                 # File Stage-In - Move pilot-level files to working directory of sub-job
                 if self.pilot_description!=None:
                     try:
@@ -441,6 +446,11 @@ class bigjob_agent:
             except:
                 traceback.print_exc(file=sys.stderr)
     
+    def __stage_in_data_units(self, input_data=[]):
+        """ stage in data units specified in input_data field """
+        for i in input_data:
+            pass
+        
    
             
     def allocate_nodes(self, job_dict):

@@ -20,6 +20,7 @@ from oauth2client.file import Storage
 from oauth2client.client import OAuth2WebServerFlow
 from oauth2client.tools import run
 import httplib2
+import urllib
 
 """
 AN OAUTH2 Client Id must be created at the Google API console at:
@@ -70,7 +71,7 @@ class GSFileAdaptor(object):
         }       
         logger.debug(str(request_dict)) 
         try:
-            gs = self.__get_api_client()
+            gs = self.__get_api_client()[0]
             gs.buckets().insert(body=request_dict).execute()
         except:
             pass # Do nothing if bucket already exists
@@ -90,7 +91,7 @@ class GSFileAdaptor(object):
         
             
     def create_du(self, du_id):
-        gs = self.__get_api_client()
+        gs = self.__get_api_client()[0]
         o = gs.objects().insert(bucket=self.bucket_name, name=str(du_id)+"/",
                                 body={'media': {
                                             "contentType":"text/ascii",
@@ -103,22 +104,18 @@ class GSFileAdaptor(object):
                 
     def put_du(self, du):
         logger.debug("Copy DU to Google Storage")
-        gs = self.__get_api_client()
         for i in du.list().keys():     
             remote_path = os.path.join(str(du.id), i)
-            logger.debug("Put file: %s to %s"%(i, remote_path))        
-            o = gs.objects().insert(bucket=self.bucket_name, 
-                                    name=remote_path,
-                                    media_body=i).execute()            
-            logger.debug("Put file result: %s"%str(o))
-                     
+            self.__put_file(i, remote_path)
+            
     
-        
-
     def copy_du(self, du, pd_new):
         bucket_name = self.__get_bucket_name(pd_new.service_url)
-        gs = self.__get_api_client()
+        gs = self.__get_api_client()[0]
         bucket = gs.buckets().get(bucket=bucket_name)
+        
+        
+        
         #bucket.insert(media_body)
         
         
@@ -128,9 +125,15 @@ class GSFileAdaptor(object):
         
     
     def get_du(self, du, target_url):
-        remote_url = target_url
-        local_url =  self.service_url  + "/" + str(du.id)
-        self.copy_du_to_url(du, local_url, remote_url)  
+        #du_id=du.id
+        du_id="andre"
+        gs = self.__get_api_client()[0]
+        result = gs.objects().list(bucket=self.bucket_name, 
+                            delimiter="/",
+                            prefix=[du_id]).execute()   
+        logger.debug("Result: " + str(result))
+        
+        
         
         
     def remove_du(self, du):
@@ -139,6 +142,29 @@ class GSFileAdaptor(object):
     
     ###########################################################################
     # Pure File Management APIs
+    def _put_file(self, source, target):
+        logger.debug("Put file: %s to %s"%(source, target))
+        gs = self.__get_api_client()[0]
+        o = gs.objects().insert(bucket=self.bucket_name, 
+                                name=target,
+                                media_body=source).execute()            
+        logger.debug("Put file result: %s"%str(o))
+    
+    
+    def _get_file(self, source, target):
+        logger.debug("GET file: %s to %s"%(source, target))
+        gs, http = self.__get_api_client()
+        f = gs.objects().get(bucket=self.bucket_name, 
+                             object=source).execute()            
+        logger.debug("Get file result: %s"%str(f))
+        downloadUrl = f["media"]['link']
+        if downloadUrl:
+            response, content = http.request(downloadUrl)
+            logger.debug("Download file response: %d"%(response.status))
+            with open(target, 'wb') as f:
+                f.write(content)
+        
+    
     def transfer(self, source_url, target_url):
         pass
     
@@ -168,7 +194,7 @@ class GSFileAdaptor(object):
         http = httplib2.Http()
         http = self.credentials.authorize(http)
         gs = build("storage", "v1beta1", http=http)
-        return gs
+        return gs, http
     
     
     def __get_bucket_name(self, service_url):
@@ -189,4 +215,6 @@ class GSFileAdaptor(object):
 if __name__ == "__main__":
     gs = GSFileAdaptor("gs://google.com/pilot-data-bucket-1234")
     gs.initialize_pilotdata()
-    
+    gs._put_file("test.txt", "test.txt")
+    gs._get_file("test.txt", "test2.txt")
+    gs.get_du(None, ".")
