@@ -214,6 +214,7 @@ class bigjob(api.base.bigjob):
         lrms_saga_url = SAGAUrl(lrms_url)
         self.url = lrms_saga_url
         self.pilot_url = self.app_url + ":" + lrms_saga_url.host
+        self.number_nodes=int(number_nodes)*int(processes_per_node)  
         
         # Store references to BJ in global dict
         _pilot_url_dict[self.pilot_url]=self
@@ -223,10 +224,18 @@ class bigjob(api.base.bigjob):
         self.coordination.set_pilot_state(self.pilot_url, str(Unknown), False)
         self.coordination.set_pilot_description(self.pilot_url, filetransfers)    
         logger.debug("set pilot state to: " + str(Unknown))
+        
         ##############################################################################
+        # Create Job Service (Default: SAGA Job Service, alternative Job Services supported)
+        self.js =None
+        if lrms_saga_url.scheme=="gce+ssh":
+            self.js = job_plugin.gcessh.Service(lrms_saga_url)
+        elif lrms_saga_url.scheme=="ec2+ssh":
+            self.js = job_plugin.ec2ssh.Service(lrms_saga_url)
+        else:
+            self.js = SAGAJobService(lrms_saga_url)
         
-        self.number_nodes=int(number_nodes)        
-        
+        ##############################################################################
         # create job description
         jd = SAGAJobDescription()
         
@@ -242,14 +251,23 @@ class bigjob(api.base.bigjob):
             # will fail if home directory is not the same on remote machine
             # but this is just a guess to avoid failing
             self.working_directory = os.path.expanduser("~") 
-            
-            
+        
+        if queue != None:
+            jd.queue = queue
+        if project !=None:
+            jd.project=project       
+        if walltime!=None:
+            if is_bliss:
+                jd.wall_time_limit=int(walltime)
+            else:
+                jd.wall_time_limit=str(walltime)
+    
+        
+        ##############################################################################
+        # File Management and Stage-In            
         # Determine whether target machine use gsissh or ssh to logon.
         # logger.debug("Detect launch method for: " + lrms_saga_url.host)        
         # self.launch_method = self.__get_launch_method(lrms_saga_url.host,lrms_saga_url.username)
-        
-        ##############################################################################
-        # File Management and Stage-In
         self.bigjob_working_directory_url=""
         if lrms_saga_url.scheme.startswith("gce") or lrms_saga_url.scheme.startswith("ec2"):
             logger.debug("File Staging for Cloud Instances currently not supported.")
@@ -288,6 +306,12 @@ class bigjob(api.base.bigjob):
                 logger.warn("No file staging adaptor found.")
             
             logger.debug("BJ Working Directory: %s", self.working_directory)      
+        
+        if lrms_saga_url.scheme.startswith("condor")==False:
+            jd.working_directory = self.working_directory
+        else:
+            jd.working_directory=""
+        
         
         
         ##############################################################################
@@ -346,39 +370,15 @@ class bigjob(api.base.bigjob):
             jd.spmd_variation = "single"
             jd.arguments = ["python", "-c", bootstrap_script]
             jd.executable = "/usr/bin/env"           
-       
-        if queue != None:
-            jd.queue = queue
-        if project !=None:
-            jd.project=project       
-        if walltime!=None:
-            if is_bliss:
-                jd.wall_time_limit=int(walltime)
-            else:
-                jd.wall_time_limit=str(walltime)
-    
-        if lrms_saga_url.scheme.startswith("condor")==False:
-            jd.working_directory = self.working_directory
-        else:
-            jd.working_directory=""
-
+      
         logger.debug("Working directory: " + jd.working_directory)
         
         jd.output = os.path.join(self.working_directory, "stdout-" + self.uuid + "-agent.txt")
         jd.error = os.path.join(self.working_directory, "stderr-" + self.uuid + "-agent.txt")
-           
-        # Submit job to Job Service (Default: SAGA Job Service, alternative Job Services supported)
-        self.js =None
-        if lrms_saga_url.scheme=="gce+ssh":
-            self.js = job_plugin.gcessh.Service(lrms_saga_url)
-        elif lrms_saga_url.scheme=="ec2+ssh":
-            self.js = job_plugin.ec2ssh.Service(lrms_saga_url)
-        else:
-            self.js = SAGAJobService(lrms_saga_url)
-
+      
+        ##############################################################################
+        # Create and submit pilot job to job service
         logger.debug("Creating pilot job with description: %s" % str(jd))
-              
-
         self.job = self.js.create_job(jd)
         logger.debug("Submit pilot job to: " + str(lrms_saga_url))
         self.job.run()
@@ -529,6 +529,7 @@ class bigjob(api.base.bigjob):
                             #logger.debug("Add attribute: " + str(i) + " Value: " + jd.get_attribute(i))
                             job_dict[i] = jd.get_attribute(i)
                 
+                # Other pilot state information
                 job_dict["state"] = str(Unknown)
                 job_dict["job-id"] = str(job_id)
                 logger.debug("job dict: " + str(job_dict))
@@ -1055,7 +1056,45 @@ def environment():
         self._environment = None
     return locals()
 
+
+def input_data():
+    doc = "List of input data units."
+    def fget(self):
+        return self._input_data
+    def fset(self, val):
+        self._input_data = val
+    def fdel(self, val):
+        self._input_data = None
+    return locals()
+
+def output_data():
+    doc = "List of output data units."
+    def fget(self):
+        return self._output_data
+    def fset(self, val):
+        self._output_data = val
+    def fdel(self, val):
+        self._output_data = None
+    return locals()
+
      
 class description(bliss.saga.job.Description):
     """ Sub-job description """
     environment = property(**environment())   
+    input_data = property(**input_data())
+    output_data = property(**output_data())   
+    
+    
+    def __init__(self):
+        
+        bliss.saga.job.Description.__init__(self)
+        
+        # Extend description class by Pilot-Data relevant attributes
+        self._output_data = None
+        self._input_data = None
+        
+        self._register_rw_vec_attribute(name="InputData", 
+                                        accessor=self.__class__.input_data) 
+        self._register_rw_vec_attribute(name="OutputData", 
+                                        accessor=self.__class__.output_data) 
+        
