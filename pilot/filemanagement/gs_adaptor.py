@@ -18,6 +18,7 @@ from bigjob import logger
 from apiclient.discovery import build
 from oauth2client.file import Storage
 from oauth2client.client import OAuth2WebServerFlow
+from oauth2client.client import Credentials
 from oauth2client.tools import run
 import httplib2
 import urllib
@@ -42,16 +43,21 @@ class GSFileAdaptor(object):
     
    
     
-    def __init__(self, service_url):        
+    def __init__(self, service_url, security_context=None):        
         # Initializations of instance variables
         self.service_url = service_url
         self.bucket_name = self.__get_bucket_name(service_url)
         self.__state=State.New
                 
         # Do OAUTH authentication
-        storage = Storage('gce.dat')
-        self.credentials = storage.get()
+        if security_context!=None:
+            logger.debug("Attempt to restore credentials from security context: " + str(security_context))
+            self.credentials = Credentials.new_from_json(security_context)
+        else:
+            storage = Storage('gce.dat')
+            self.credentials = storage.get()
         if self.credentials is None or self.credentials.invalid == True:
+            logger.debug("No valid credential found. Run new OAuth authentication round...")
             flow = OAuth2WebServerFlow(
                                        client_id=OAUTH2_CLIENT_ID,
                                        client_secret=OAUTH2_CLIENT_SECRET,
@@ -60,7 +66,13 @@ class GSFileAdaptor(object):
                                        user_agent='bigjob-client/1.0')
 
             self.credentials = run(flow, storage)
-                        
+
+    
+    def get_security_context(self):
+        """ Returns security context that needs to be available on the distributed
+            node in order to access this Pilot Data """
+        return self.credentials.to_json()
+    
         
     def initialize_pilotdata(self):
         # check whether directory exists
@@ -74,6 +86,7 @@ class GSFileAdaptor(object):
             gs = self.__get_api_client()[0]
             gs.buckets().insert(body=request_dict).execute()
         except:
+            logger.debug("Error creating bucket: " + self.bucket_name)
             pass # Do nothing if bucket already exists
                 
         
@@ -92,10 +105,10 @@ class GSFileAdaptor(object):
             
     def create_du(self, du_id):
         gs = self.__get_api_client()[0]
-        o = gs.objects().insert(bucket=self.bucket_name, name=str(du_id)+"/",
+        o = gs.objects().insert(bucket=self.bucket_name, name=str(du_id)+"/du_info",
                                 body={'media': {
-                                            "contentType":"text/ascii",
-                                            "data":""    
+                                                "contentType":"text/ascii",
+                                                "data": du_id    
                                                 } 
                                       }                                
                                 ).execute()
@@ -106,17 +119,13 @@ class GSFileAdaptor(object):
         logger.debug("Copy DU to Google Storage")
         for i in du.list().keys():     
             remote_path = os.path.join(str(du.id), i)
-            self.__put_file(i, remote_path)
+            self._put_file(i, remote_path)
             
     
     def copy_du(self, du, pd_new):
         bucket_name = self.__get_bucket_name(pd_new.service_url)
         gs = self.__get_api_client()[0]
-        bucket = gs.buckets().get(bucket=bucket_name)
         
-        
-        
-        #bucket.insert(media_body)
         
         
         remote_url = pd_new.service_url + "/" + str(du.id)
@@ -125,17 +134,18 @@ class GSFileAdaptor(object):
         
     
     def get_du(self, du, target_url):
-        #du_id=du.id
-        du_id="andre"
+        du_id=du.id
+        logger.debug("Get DU: " + str(du_id))
         gs = self.__get_api_client()[0]
-        result = gs.objects().list(bucket=self.bucket_name, 
-                            delimiter="/",
-                            prefix=[du_id]).execute()   
+        result = gs.objects().list(bucket=self.bucket_name, prefix=du_id).execute() 
+                            #delimiter="/",
+                            #prefix=[du_id]).execute()   
         logger.debug("Result: " + str(result))
+        for i in result["items"]:
+            full_filename = i["name"]
+            self._get_file(full_filename, os.path.join(target_url, os.path.basename(full_filename)))
         
-        
-        
-        
+                
     def remove_du(self, du):
         self.__remove_directory(os.path.join(self.bucket_name, du.id))
     
@@ -174,7 +184,8 @@ class GSFileAdaptor(object):
     
     def get_path(self, target_url):
         result = urlparse.urlparse(target_url)
-        target_query = result.path
+        target_path = result.path
+        return target_path
         
         
     ###########################################################################
@@ -198,8 +209,8 @@ class GSFileAdaptor(object):
     
     
     def __get_bucket_name(self, service_url):
-        result = urlparse.urlparse(service_url)
-        bucket_name = result.path.replace("/", "")
+        bucket_name = service_url.replace("gs://", "")
+        bucket_name = bucket_name.replace("/", "")
         return bucket_name
         
    
