@@ -33,6 +33,11 @@ class WebHDFSFileAdaptor(object):
                                self.HDFS_SERVICE_PORT,
                                self.HDFS_USER_NAME)
         
+    def get_security_context(self):
+        """ Returns security context that needs to be available on the distributed
+            node in order to access this Pilot Data """
+        return None
+        
         
     def initialize_pilotstore(self):
         self.__webhdfs.mkdir(self.path)

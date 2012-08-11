@@ -17,6 +17,7 @@ import types
 import logging
 import shutil
 from string import Template
+
 logging.basicConfig(level=logging.DEBUG)
 
 try:
@@ -27,8 +28,10 @@ except:
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/../../ext/threadpool-1.2.7/src/")
 logging.debug(str(sys.path))
 from threadpool import *
-from bigjob import logger
 
+# BigJob/Pilot framework classes
+from bigjob import logger
+from pilot.impl.pilotdata_manager import DataUnit, PilotData
 
 logger.debug("Python Version: " + str(sys.version_info))
 if sys.version_info < (2, 5):
@@ -341,13 +344,14 @@ class bigjob_agent:
                 if not os.path.isabs(error):
                     error=os.path.join(workingdirectory, error)
                 
+                                
                 # append job to job list
                 self.jobs.append(job_url)
                 
                 
                 # File Stage-In of dependent data units
-                if job_dict.has_key("input_data"):
-                    self.__stage_in_data_units(job_dict["input_data"])
+                if job_dict.has_key("InputData"):
+                    self.__stage_in_data_units(eval(job_dict["InputData"]), workingdirectory)
                 
                 # File Stage-In - Move pilot-level files to working directory of sub-job
                 if self.pilot_description!=None:
@@ -445,14 +449,9 @@ class bigjob_agent:
                 self.coordination.set_job_state(job_url, str(bigjob.state.Running))
             except:
                 traceback.print_exc(file=sys.stderr)
+                
     
-    def __stage_in_data_units(self, input_data=[]):
-        """ stage in data units specified in input_data field """
-        for i in input_data:
-            pass
-        
-   
-            
+             
     def allocate_nodes(self, job_dict):
         """ allocate nodes
             allocated nodes will be written to machinefile advert-launcher-machines-<jobid>
@@ -711,6 +710,20 @@ class bigjob_agent:
         self.stop=True
         
     
+    #############################################################################
+    # Private methods
+    
+    def __stage_in_data_units(self, input_data=[], target_directory="."):
+        """ stage in data units specified in input_data field """
+        logger.debug("Stage in input files")
+        for i in input_data:
+            pd_url = self.__get_pd_url(i)
+            du_id = self.__get_du_id(i)
+            pd = PilotData(pd_url=pd_url)
+            du = pd.get_du(du_id)
+            du.export(target_directory)
+    
+    
     def __expand_directory(self, directory):
         """ expands directory name $HOME or ~ to the working directory
             on the respective machine 
@@ -727,8 +740,15 @@ class bigjob_agent:
             pass
         
         return directory
+    
 
-            
+    def __get_pd_url(self, du_url):
+        url = du_url[:du_url.index(":du-")]
+        return url
+
+    def __get_du_id(self, du_url):
+        du_id = du_url[du_url.index("du-"):]
+        return du_id        
     
     def __get_launch_method(self, requested_method):
         """ returns desired execution method: ssh, aprun """

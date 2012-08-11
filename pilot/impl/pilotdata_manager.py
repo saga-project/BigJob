@@ -35,7 +35,6 @@ except:
 #from pilot.coordination.advert import AdvertCoordinationAdaptor as CoordinationAdaptor
 #from pilot.coordination.nocoord import NoCoordinationAdaptor as CoordinationAdaptor
 from pilot.coordination.redis_adaptor import RedisCoordinationAdaptor as CoordinationAdaptor
-
 from bliss.saga import Url as SAGAUrl
 
 
@@ -72,12 +71,14 @@ class PilotData(PilotData):
             In the future more SAGA/Bliss URL schemes/adaptors are supported.        
         """ 
         self.id = None
-        self.url = None
+        self.url = pd_url
         self.pilot_data_description = None
+        self.pilot_data_service = pilot_data_service
         self.service_url=None
         self.size = None
         self.data_unit_description = None
         self.data_units={}
+        self.security_context = None
         
         if pd_url==None and pilot_data_service!=None:      # new pd          
             self.id = self.PD_ID_PREFIX+str(uuid.uuid1())
@@ -86,16 +87,19 @@ class PilotData(PilotData):
         elif pd_url != None:
             logger.warn("Reconnect to PilotData: %s"%pd_url)
             dictionary = CoordinationAdaptor.get_pd(pd_url)
+            if dictionary.has_key("security_context"):
+                self.security_context=dictionary["security_context"]
             pd_dict = eval(dictionary["pilot_data"])
             for i in pd_dict:
                 self.__setattr__(i, pd_dict[i])
-            du_dict = eval(dictionary["data_units"])
-            for i in du_dict:
-                du_id = DataUnit._get_du_id(i)
-                self.data_units[du_id] = None # TODO Restore DataUnit
+            # A Pilot Data does not hold a direct reference to a Data Unit (only URL refs are stored)
+            #du_dict = eval(dictionary["data_units"])
+            #for i in du_dict:
+            #    du_id = DataUnit._get_du_id(i)
+            #    self.data_units[du_id] = None # TODO Restore DataUnit
                         
         self.__initialize_pilot_data()
-        
+        CoordinationAdaptor.update_pd(self)
     
 
     def cancel(self):        
@@ -105,14 +109,12 @@ class PilotData(PilotData):
         
         
     def url_for_du(self, du):
-        if self.data_units.has_key(du.id):
-            return self.service_url + "/" + str(du.id)
-        return None
-    
+        return self.service_url + "/" + str(du.id)
+        
 
     def submit_data_unit(self, data_unit_description):
         """ creates a data unit object and initially imports data specified in data_unit_description """
-        du = DataUnit(pilot_data_service=self, 
+        du = DataUnit(pilot_data=self, 
                       data_unit_description=data_unit_description)
         self.data_units[du.id]=du
         du.add_pilot_data(self)
@@ -121,12 +123,20 @@ class PilotData(PilotData):
     
     def list_data_units(self):
         """ List all data units of PD """
-        return self.data_units.values()           
+        du_urls = CoordinationAdaptor.list_du(self.url)
+        return du_urls          
     
     
     def get_state(self):
         """ Return current state of PD """
         return self.__filemanager.get_state()
+    
+    
+    def get_du(self, du_id):
+        """ Returns Data Unit if part of Pilot Data """
+        du_url = self.url + ":" + du_id
+        du = DataUnit(du_url=du_url)
+        return du
     
     
     def wait(self):
@@ -152,10 +162,12 @@ class PilotData(PilotData):
 
     
     def export_du(self, du, target_url):
+        """ Export Data Unit to a local directory """
         self.__filemanager.get_du(du, target_url)
     
 
     def create_du(self, du):
+        """ Create a new Data Unit within Pilot """
         self.__filemanager.create_du(du.id)
         
                 
@@ -207,10 +219,13 @@ class PilotData(PilotData):
                 self.__filemanager = GSFileAdaptor(self.service_url)
             elif self.service_url.startswith("gs:"):
                 logger.debug("Use Google Cloud Storage backend")
-                self.__filemanager = GSFileAdaptor(self.service_url)
+                self.__filemanager = GSFileAdaptor(self.service_url, self.security_context)
                 
             self.__filemanager.initialize_pilotdata()
             self.__filemanager.get_pilotdata_size()
+            
+            # Update security context
+            self.security_context = self.__filemanager.get_security_context()
             
 
     def __get_pd_id(self, pd_url):
@@ -394,7 +409,7 @@ class DataUnit(DataUnit):
     
     DU_ID_PREFIX="du-"  
 
-    def __init__(self, pilot_data_service=None, data_unit_description=None, du_url=None):
+    def __init__(self, pilot_data=None, data_unit_description=None, du_url=None):
         """
             1.) create a new Pilot Data: pilot_data_service and data_unit_description required
             2.) reconnect to an existing Pilot Data: du_url required 
@@ -404,7 +419,7 @@ class DataUnit(DataUnit):
             self.id = self.DU_ID_PREFIX + str(uuid.uuid1())
             self.data_unit_description = data_unit_description        
             self.pilot_data=[]
-            self.url = CoordinationAdaptor.add_du(pilot_data_service.url, self)
+            self.url = CoordinationAdaptor.add_du(pilot_data.url, self)
             self.state = State.New
             self.data_unit_items = DataUnitItem.create_data_unit_list(self, self.data_unit_description["file_urls"]) 
             CoordinationAdaptor.update_du(self)
@@ -441,7 +456,6 @@ class DataUnit(DataUnit):
             }        
         """        
         base_urls = [i.url_for_du(self) for i in self.get_pilot_data()]
-        
         result_dict = {}
         for i in self.data_unit_items:
             result_dict[i.filename]=[os.path.join(j, i.filename) for j in base_urls]
@@ -640,7 +654,22 @@ class DataUnitItem(object):
         du_dict["id"]=self.id
         return du_dict
     
+def __get_pd_url(du_url):
+    url = du_url[:du_url.index(":du-")]
+    return url
+
+def __get_du_id(du_url):
+    du_id = du_url[du_url.index("du-"):]
+    return du_id
+
 if __name__ == "__main__":
     
-    du = DataUnit(du_url="redis://localhost/bigdata:pds-32d63b2e-df05-11e1-a329-705681b3df0f:pd-37674138-df05-11e1-80d0-705681b3df0f:du-3b8d428c-df05-11e1-af2a-705681b3df0f")
+    du_url = "redis://localhost/bigdata:pds-f31a670c-e3f6-11e1-afaf-705681b3df0f:pd-f31c47b8-e3f6-11e1-af44-705681b3df0f:du-f4debce8-e3f6-11e1-8399-705681b3df0f"
+    pd_url = __get_pd_url(du_url)
+    du_id = __get_du_id(du_url)
+    pd = PilotData(pd_url=pd_url)
+    print str(pd.list_data_units())
+    du = pd.get_du(du_id)
+    
+    #du = DataUnit(du_url="redis://localhost/bigdata:pds-32d63b2e-df05-11e1-a329-705681b3df0f:pd-37674138-df05-11e1-80d0-705681b3df0f:du-3b8d428c-df05-11e1-af2a-705681b3df0f")
     logger.debug(str(du.list()))

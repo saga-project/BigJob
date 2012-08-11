@@ -38,6 +38,12 @@ class SSHFileAdaptor(object):
         self.__sftp = self.__client.open_sftp()
         self.__state=State.New
                         
+    
+    def get_security_context(self):
+        """ Returns security context that needs to be available on the distributed
+            node in order to access this Pilot Data """
+        return None
+        
         
     def initialize_pilotdata(self):
         # check whether directory exists

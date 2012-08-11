@@ -1,8 +1,6 @@
 import logging
 import json
 import pdb
-from redis import *
-
 from pilot import *
 from bigjob import logger
 import bliss.saga as saga
@@ -65,13 +63,15 @@ class RedisCoordinationAdaptor:
     
     @classmethod
     def update_pd(cls, pd):
+        du_urls=None
         if len(pd.data_units) > 0:
             du_urls = [i.url for i in pd.data_units.values()]
         
         pd_dict={
                  "data_units": du_urls,
                  "pilot_data": pd.to_dict(),
-                 "pilot_data_description": pd.pilot_data_description
+                 "pilot_data_description": pd.pilot_data_description,
+                 "security_context": pd.security_context
                  }
         
         cls.__store_entry(pd.url+RedisCoordinationAdaptor.SEPARATOR + "info", pd_dict)
@@ -89,15 +89,7 @@ class RedisCoordinationAdaptor:
         """ return a list of urls to pd managed by the PDS """
         pds_url = cls.__get_url(pds_url)
         logger.debug("List PD at %s"%pds_url)
-        #pds_dir = saga.advert.directory(pds_url, saga.advert.Create | 
-        #                               saga.advert.CreateParents | 
-        #                               saga.advert.ReadWrite)
         
-        #pd_list = pds_dir.list()
-        #pd_full_urls = []
-        #for i in pd_list:
-        #    pd_full_urls.append(pds_url + "/" + i)   
-        #return pd_full_urls
     
     @classmethod
     def delete_pd(cls, pds_url):
@@ -170,7 +162,7 @@ class RedisCoordinationAdaptor:
      
     @classmethod  
     def update_du(cls, du):
-        logger.debug("**** Update pilot data at: " + du.url)
+        logger.debug("**** Update data unit at: " + du.url)
         du_dict_list = [i.to_dict() for i in du.data_unit_items]
         du_urls = [i.url for i in du.pilot_data]
         du_dict = {
@@ -183,19 +175,12 @@ class RedisCoordinationAdaptor:
         
        
     @classmethod
-    def list_du(cls, dus_url):
+    def list_du(cls, pd_url):
         """ return a list of urls to du managed by the PDS """
-        dus_url = cls.__get_url(dus_url)
-        logger.debug("List PDS at %s"%dus_url)
-        #dus_dir = saga.advert.directory(dus_url, saga.advert.Create | 
-        #                               saga.advert.CreateParents | 
-        #                               saga.advert.ReadWrite)
-        
-        #du_list = dus_dir.list()
-        #du_full_urls = []
-        #for i in du_list:
-        #    du_full_urls.append(dus_url + "/" + i)   
-        return du_full_urls
+        pd_url = cls.__get_url(pd_url)
+        logger.debug("List PDS at %s"%pd_url)
+        dus = cls.__list_keys(pd_url+":du-*")
+        return dus
     
     
     @classmethod
@@ -229,6 +214,7 @@ class RedisCoordinationAdaptor:
     # internal Redis-related methods
     @classmethod
     def __get_redis_api_client(cls):
+        import redis
         ''' Initialize Redis API Client     '''
         server_port=6379
         saga_url = saga.Url(RedisCoordinationAdaptor.BASE_URL)
@@ -236,9 +222,9 @@ class RedisCoordinationAdaptor:
         server = saga_url.host
         
         if username==None or username=="":
-            redis_client = Redis(host=server, port=server_port, db=0)
+            redis_client = redis.Redis(host=server, port=server_port, db=0)
         else:
-            redis_client = Redis(host=server, port=server_port, password=username, db=0)
+            redis_client = redis.Redis(host=server, port=server_port, password=username, db=0)
         
         try:
             redis_client.ping()
@@ -252,6 +238,14 @@ class RedisCoordinationAdaptor:
     def __get_url(cls, url):
         return url
     
+    
+    @classmethod
+    def __list_keys(cls, search_url):
+        redis_client = cls.__get_redis_api_client()
+        keys = redis_client.keys(search_url)
+        keys_normalized = [i[:i.index(":info")] for i in keys]
+        return keys_normalized
+        
         
     @classmethod
     def __store_entry(cls, entry_url, content):

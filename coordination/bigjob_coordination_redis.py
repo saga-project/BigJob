@@ -11,7 +11,7 @@ import pdb
 import time
 
 from bigjob import logger
-from redis import *
+import redis
 
 if sys.version_info < (2, 5):
     sys.path.append(os.path.dirname( os.path.abspath( __file__) ) + "/../ext/uuid-1.30/")
@@ -71,14 +71,14 @@ class bigjob_coordination(object):
         logger.debug("Connect to Redis: " + server + " Port: " + str(server_port))
         
         if self.password==None:
-            self.redis = Redis(host=server, port=server_port, db=0)
+            self.redis_client = redis.Redis(host=server, port=server_port, db=0)
         else:
-            self.redis = Redis(host=server, port=server_port, password=self.password, db=0)
-        #self.redis_pubsub = self.redis.pubsub() # redis pubsub client       
+            self.redis_client = redis.Redis(host=server, port=server_port, password=self.password, db=0)
+        #self.redis_client_pubsub = self.redis_client.pubsub() # redis pubsub client       
         #self.resource_lock = threading.RLock()
-        self.pipe = self.redis.pipeline()
+        self.pipe = self.redis_client.pipeline()
         try:
-            self.redis.ping()
+            self.redis_client.ping()
         except:
             logger.error("Please start Redis server!")
             raise Exception("Please start Redis server!")
@@ -92,13 +92,13 @@ class bigjob_coordination(object):
     def set_pilot_state(self, pilot_url, new_state, stopped=False):     
         logger.debug("update state of pilot job to: " + str(new_state) 
                      + " stopped: " + str(stopped))
-        self.redis.hmset(pilot_url, {"state":str(new_state), "stopped":str(stopped)})
+        self.redis_client.hmset(pilot_url, {"state":str(new_state), "stopped":str(stopped)})
         if stopped==True:
             self.queue_job(pilot_url, "STOP")
         
         
     def get_pilot_state(self, pilot_url):
-        state = self.redis.hgetall(pilot_url)
+        state = self.redis_client.hgetall(pilot_url)
         return state
     
     
@@ -106,27 +106,27 @@ class bigjob_coordination(object):
     # Pilot-Job State
     def set_pilot_description(self, pilot_url, description):     
         logger.debug("update description of pilot job to: " + str(description))
-        self.redis.hmset(pilot_url + ":description", {"description":description})
+        self.redis_client.hmset(pilot_url + ":description", {"description":description})
         
     def get_pilot_description(self, pilot_url):
-        description = self.redis.hgetall(pilot_url + ":description")
+        description = self.redis_client.hgetall(pilot_url + ":description")
         return description
     
     #def is_pilot_stopped(self,pilot_url):
-    #    state = self.redis.hgetall(pilot_url)
+    #    state = self.redis_client.hgetall(pilot_url)
     #    if state==None or not state.has_key("stopped"):
     #        return True        
     #    return state["stopped"]
     
     def get_jobs_of_pilot(self, pilot_url):
         """ returns array of job_url that are associated with a pilot """
-        jobs = self.redis.keys(pilot_url+":jobs:*")
+        jobs = self.redis_client.keys(pilot_url+":jobs:*")
         jobs_fqdn = [os.path.join(self.get_address(), i)for i in jobs] 
         return jobs_fqdn
     
     
     def delete_pilot(self, pilot_url):
-        items = self.redis.keys(pilot_url+"*")  
+        items = self.redis_client.keys(pilot_url+"*")  
         for i in items:        
             self.pipe.delete(i)
         self.pipe.execute()
@@ -136,33 +136,33 @@ class bigjob_coordination(object):
     def set_job_state(self, job_url, new_state):
         #self.resource_lock.acquire()        
         logger.debug("set job state to: " + str(new_state))
-        self.redis.hset(job_url, "state", str(new_state))
+        self.redis_client.hset(job_url, "state", str(new_state))
         
         if new_state=="Unknown":
-            self.redis.hset(job_url,"start_time", str(time.time()))
+            self.redis_client.hset(job_url,"start_time", str(time.time()))
         elif new_state=="Running":
-            self.redis.hset(job_url,"end_queue_time", str(time.time()))
+            self.redis_client.hset(job_url,"end_queue_time", str(time.time()))
         elif new_state=="Done":
-            self.redis.hset(job_url, "end_time", str(time.time()))
+            self.redis_client.hset(job_url, "end_time", str(time.time()))
        
         
         #self.resource_lock.release()
         
     def get_job_state(self, job_url):
-        return self.redis.hget(job_url, "state")      
+        return self.redis_client.hget(job_url, "state")      
     
     
     #####################################################################################
     # Sub-Job Description
     def set_job(self, job_url, job_dict):
-        self.redis.hmset(job_url, job_dict)
+        self.redis_client.hmset(job_url, job_dict)
         self.set_job_state(job_url, "Unknown")
         
     def get_job(self, job_url):
-        return self.redis.hgetall(job_url)    
+        return self.redis_client.hgetall(job_url)    
     
     def delete_job(self, job_url):
-        self.redis.delete(job_url+"*")
+        self.redis_client.delete(job_url+"*")
     
     
     #####################################################################################
@@ -170,17 +170,17 @@ class bigjob_coordination(object):
     def queue_job(self, pilot_url, job_url):
         """ queue new job to pilot """
         queue_name = pilot_url + ":queue"
-        self.redis.set(queue_name + ':last_in', pickle.dumps(datetime.datetime.now()))
-        self.redis.lpush(queue_name, job_url)
+        self.redis_client.set(queue_name + ':last_in', pickle.dumps(datetime.datetime.now()))
+        self.redis_client.lpush(queue_name, job_url)
                 
         
     def dequeue_job(self, pilot_url):
         """ deque to new job  of a certain pilot """
         queue_name = pilot_url + ":queue"        
         logger.debug("Dequeue sub-job from: " + queue_name 
-                      + " number queued items: " + str(self.redis.llen(queue_name)))
-        self.redis.set(queue_name + ':last_out', pickle.dumps(datetime.datetime.now()))
-        job_url = self.redis.brpop(queue_name, 1)
+                      + " number queued items: " + str(self.redis_client.llen(queue_name)))
+        self.redis_client.set(queue_name + ':last_out', pickle.dumps(datetime.datetime.now()))
+        job_url = self.redis_client.brpop(queue_name, 1)
         if job_url==None:
             return job_url
         logger.debug("Dequeued: " + str(job_url))

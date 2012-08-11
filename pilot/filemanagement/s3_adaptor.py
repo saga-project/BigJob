@@ -44,7 +44,12 @@ class S3FileAdaptor(object):
         self.__state=State.New
         self.s3_conn = S3Connection(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
       
-                        
+    
+    def get_security_context(self):
+        """ Returns security context that needs to be available on the distributed
+            node in order to access this Pilot Data """
+        return None
+                       
         
     def initialize_pilotdata(self):
         # check whether directory exists
