@@ -18,9 +18,9 @@ if __name__ == "__main__":
     # and pilot data
     pilot_data_service = PilotDataService(coordination_url=COORDINATION_URL)
     pilot_data_description={
-                                "service_url": "gs://pilot-data-" + str(uuid.uuid1()),
+                                "service_url": "s3://pilot-data-" + str(uuid.uuid1()),
                                 "size": 100,   
-                                "affinity_datacenter_label": "us-google",              
+                                "affinity_datacenter_label": "us-east-1",              
                                 "affinity_machine_label": ""                              
                              }
     pd = pilot_data_service.create_pilot(pilot_data_description=pilot_data_description)
@@ -33,7 +33,7 @@ if __name__ == "__main__":
     #absolute_url_list = [os.path.join(base_dir, i) for i in url_list]
     data_unit_description = {
                               "file_urls": [os.path.join(os.getcwd(), "test.txt")],
-                              "affinity_datacenter_label": "us-google",              
+                              "affinity_datacenter_label": "us-east-1",              
                               "affinity_machine_label": ""
                              }    
       
