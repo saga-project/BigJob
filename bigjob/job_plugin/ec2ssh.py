@@ -11,15 +11,18 @@ import bliss.saga as saga
 
 ###############################################################################
 # EC2 General
-EC2_SSH_PRIVATE_KEY_FILE="/Users/luckow/.ec2/id-lsu-keypair"
+#EC2_SSH_PRIVATE_KEY_FILE="/Users/luckow/.ec2/id-lsu-keypair"
+EC2_SSH_PRIVATE_KEY_FILE="/Users/luckow/.ssh/id_rsa"
 EC2_INSTANCE_TYPE="t1.micro"
 EC2_PLACEMENT_GROUP=None
 EC2_SECURITY_GROUP="default"
 
 # VM/Image specific configurations
-EC2_AMI_ID="ami-c7943cae" #  ami-82fa58eb official Amazon Ubuntu 12.04 LTS (requires dev tools installation)
+#EC2_AMI_ID="ami-c7943cae" #  ami-82fa58eb official Amazon Ubuntu 12.04 LTS (requires dev tools installation)
+EC2_AMI_ID="ami-9568c0fc"
 EC2_USERNAME="ubuntu"
-EC2_KEYNAME="lsu-keypair"
+#EC2_KEYNAME="lsu-keypair"
+EC2_KEYNAME="MyKey"
 
 # Authentication
 # Please use ~/.boto file to configure your security credentials (if possible)

@@ -19,7 +19,6 @@ from pilot import PilotComputeService, ComputeDataService, State
 COORDINATION_URL = "advert://localhost/?dbtype=sqlite3"
 #COORDINATION_URL = "redis://localhost:6379"
 
-
 if __name__ == "__main__":      
     
     pilot_compute_service = PilotComputeService(coordination_url=COORDINATION_URL)
