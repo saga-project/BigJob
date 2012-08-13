@@ -28,7 +28,7 @@ setup(name='BigJob',
                     'Topic :: Utilities',
                     ],
       platforms = ('Unix', 'Linux', 'Mac OS'),
-      packages=['bigjob', 'bigjob_dynamic', 'coordination', 'pilot', 'pilot.api','pilot.api.compute', 'pilot.api.data', 'pilot.coordination', 
+      packages=['bigjob', 'bigjob_dynamic', 'coordination', 'pilot', 'bigjob.job_plugin', 'pilot.api','pilot.api.compute', 'pilot.api.data', 'pilot.coordination', 
                 'pilot.filemanagement', 'pilot.impl', 'pilot.scheduler', 'examples', 'api', 'bootstrap', 'cli'],
       include_package_data=True,
       # data files for easy_install

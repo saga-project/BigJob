@@ -25,12 +25,12 @@ from bigjob.state import Running, New, Failed, Done, Unknown
 
 # Optional Job Plugins
 try:
-    import bigjob.job_plugin.gcessh
+    from .job_plugin.gcessh import Service as GCEService
 except:
     pass 
 
 try:
-    import bigjob.job_plugin.ec2ssh
+    from .job_plugin.ec2ssh import Service as EC2Service
 except:
     pass 
 
@@ -229,9 +229,9 @@ class bigjob(api.base.bigjob):
         # Create Job Service (Default: SAGA Job Service, alternative Job Services supported)
         self.js =None
         if lrms_saga_url.scheme=="gce+ssh":
-            self.js = bigjob.job_plugin.gcessh.Service(lrms_saga_url)
+            self.js = GCEService(lrms_saga_url)
         elif lrms_saga_url.scheme=="ec2+ssh":
-            self.js = bigjob.job_plugin.ec2ssh.Service(lrms_saga_url)
+            self.js = EC2Service(lrms_saga_url)
         else:
             self.js = SAGAJobService(lrms_saga_url)
         
