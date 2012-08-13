@@ -9,6 +9,7 @@ import threading
 import time
 import pdb
 import Queue
+from pilot.api.api import PilotError
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 from bigjob import logger
@@ -29,7 +30,13 @@ except:
 try:
     from pilot.filemanagement.gs_adaptor import GSFileAdaptor
 except:
-    logger.warn("Globus Online package not found.") 
+    logger.warn("Goggle Storage package not found.") 
+
+
+try:
+    from pilot.filemanagement.s3_adaptor import S3FileAdaptor
+except:
+    logger.warn("Amazon S3 package not found.") 
 
 
 #from pilot.coordination.advert import AdvertCoordinationAdaptor as CoordinationAdaptor
@@ -220,7 +227,12 @@ class PilotData(PilotData):
             elif self.service_url.startswith("gs:"):
                 logger.debug("Use Google Cloud Storage backend")
                 self.__filemanager = GSFileAdaptor(self.service_url, self.security_context)
-                
+            elif self.service_url.startswith("s3:"):
+                logger.debug("Use Amazon S3 Storage backend")
+                self.__filemanager = S3FileAdaptor(self.service_url, self.security_context)
+            else:
+                raise PilotError("No File Plugin found.")
+            
             self.__filemanager.initialize_pilotdata()
             self.__filemanager.get_pilotdata_size()
             

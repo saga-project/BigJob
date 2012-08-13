@@ -18,6 +18,7 @@ from bigjob import logger
 ##################
 
 from boto.s3.connection import S3Connection
+from boto.s3.key import Key
 
 # Authentication
 # Please use ~/.boto file to configure your security credentials (if possible)
@@ -36,28 +37,33 @@ class S3FileAdaptor(object):
     
    
     
-    def __init__(self, service_url):        
+    def __init__(self, service_url, security_context=None):        
         self.service_url = service_url
-        result = urlparse.urlparse(service_url)
-        self.host = result.netloc
-        self.path = result.path
+        self.bucket_name = self.__get_bucket_name(service_url)
         self.__state=State.New
-        self.s3_conn = S3Connection(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
+        aws_access_key_id=AWS_ACCESS_KEY_ID
+        aws_secret_access_key=AWS_SECRET_ACCESS_KEY
+        if security_context!=None:
+            logger.debug("Attempt to restore credentials from security context: " + str(security_context))
+            security_context = eval(security_context)
+            aws_access_key_id=security_context["aws_access_key_id"]
+            aws_secret_access_key=security_context["aws_secret_access_key"]
+        self.s3_conn = S3Connection(aws_access_key_id, aws_secret_access_key)
       
     
     def get_security_context(self):
         """ Returns security context that needs to be available on the distributed
             node in order to access this Pilot Data """
-        return None
+        return {"aws_access_key_id": self.s3_conn.aws_access_key_id,
+                "aws_secret_access_key": self.s3_conn.aws_secret_access_key}
+
                        
         
     def initialize_pilotdata(self):
-        # check whether directory exists
-        self.__state=State.Running
-        
         # Create bucket
-        self.s3_conn.create_bucket(self.path)
-        
+        self.bucket = self.s3_conn.create_bucket(self.bucket_name)
+        self.__state=State.Running
+       
         
     def get_pilotdata_size(self):
         # unlimited size
@@ -73,29 +79,37 @@ class S3FileAdaptor(object):
         
             
     def create_du(self, du_id):
-        du_dir = os.path.join(self.path, str(du_id))
-        logger.debug("mkdir: " + du_dir)
-        
-                
+        logger.debug("create object: " + du_id)
+        k = Key(self.bucket)
+        k.key = str(du_id)+"/du_info"
+        k.set_contents_from_string(du_id)
+                 
+                 
     def put_du(self, du):
-        pass       
+        logger.debug("Copy DU to S3")
+        for i in du.list().keys():     
+            remote_path = os.path.join(str(du.id), i)
+            self._put_file(i, remote_path)
                 
     
-    def copy_du_to_url(self, du,  local_url, remote_url):
-        pass
-
+    def get_du(self, du, target_url):
+        du_id = du.id
+        logger.debug("Get DU: " + str(du_id))
+        result = self.bucket.list(prefix=du_id)
+        logger.debug("Result: " + str(result))
+        for key in result:
+            full_filename = key.name
+            print full_filename
+            if not full_filename.endswith("/"):
+                self._get_file(full_filename, os.path.join(target_url, os.path.basename(full_filename)))
         
-
+   
     def copy_du(self, du, pd_new):
         remote_url = pd_new.service_url + "/" + str(du.id)
         local_url =  self.service_url  + "/" + str(du.id)
         self.copy_du_to_url(du, local_url, remote_url)  
         
     
-    def get_du(self, du, target_url):
-        remote_url = target_url
-        local_url =  self.service_url  + "/" + str(du.id)
-        self.copy_du_to_url(du, local_url, remote_url)  
         
         
     def remove_du(self, du):
@@ -104,21 +118,35 @@ class S3FileAdaptor(object):
     
     ###########################################################################
     # Pure File Management APIs
+    def _put_file(self, source, target):
+        logger.debug("Put file: %s to %s"%(source, target))
+        k = Key(self.bucket)
+        k.key=target
+        k.set_contents_from_filename(source)
+        logger.debug("Put file result: %s"%source)
+    
+    
+    def _get_file(self, source, target):
+        logger.debug("GET file: %s to %s"%(source, target))
+        k = self.bucket.get_key(source)
+        k.key=source
+        k.get_contents_to_filename(target)
         
+         
     def transfer(self, source_url, target_url):
         pass
     
     def create_remote_directory(self, target_url):
         return True
     
-    
-    def get_path(self, target_url):
-        result = urlparse.urlparse(target_url)
-        target_query = result.path
-        
-        
+                   
     ###########################################################################
-    
+    def __get_bucket_name(self, service_url):
+        bucket_name = service_url.replace("s3://", "")
+        bucket_name = bucket_name.replace("/", "")
+        return bucket_name
+        
+   
    
     def __print_traceback(self):
         exc_type, exc_value, exc_traceback = sys.exc_info()
@@ -129,7 +157,10 @@ class S3FileAdaptor(object):
                               limit=2, file=sys.stdout)
     
     
-if __name__ == "__main__":
-    gs = GSFileAdaptor("gs://google.com/pilot-data-bucket-1234")
-    gs.initialize_pilotdata()
     
+if __name__ == "__main__":
+    s3 = S3FileAdaptor("s3://pilot-data-bucket-1234", None)
+    s3.initialize_pilotdata()
+    s3._put_file("test.txt", "test.txt")
+    s3._get_file("test.txt", "test2.txt")
+    s3.get_du(None, ".")
