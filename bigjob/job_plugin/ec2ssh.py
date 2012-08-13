@@ -19,7 +19,7 @@ EC2_SECURITY_GROUP="default"
 
 # VM/Image specific configurations
 #EC2_AMI_ID="ami-c7943cae" #  ami-82fa58eb official Amazon Ubuntu 12.04 LTS (requires dev tools installation)
-EC2_AMI_ID="ami-9568c0fc"
+EC2_AMI_ID="ami-d7f742be"
 EC2_USERNAME="ubuntu"
 #EC2_KEYNAME="lsu-keypair"
 EC2_KEYNAME="MyKey"
