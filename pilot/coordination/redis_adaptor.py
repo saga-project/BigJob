@@ -21,6 +21,11 @@ class RedisCoordinationAdaptor:
     
     ###########################################################################
     # Construct a base url for an application
+     
+    @classmethod
+    def configure_base_url(cls, base_url):
+        cls.BASE_URL=base_url
+    
     
     @classmethod
     def get_base_url(cls, application_id):

@@ -31,7 +31,7 @@ from threadpool import *
 
 # BigJob/Pilot framework classes
 from bigjob import logger
-from pilot.impl.pilotdata_manager import DataUnit, PilotData
+from pilot.impl.pilotdata_manager import PilotData, PilotDataService
 
 logger.debug("Python Version: " + str(sys.version_info))
 if sys.version_info < (2, 5):
@@ -151,8 +151,11 @@ class bigjob_agent:
                 logger.error("ZMQ Backend not found. Please install ZeroMQ (http://www.zeromq.org/intro:get-the-software) and " 
                       +"PYZMQ (http://zeromq.github.com/pyzmq/)")
 
+        ###
+        # Initiate coordination sub-system of both BJ agent and Pilot Data
         self.coordination = bigjob_coordination(server_connect_url=self.coordination_url)
-    
+        self.pilot_data_service = PilotDataService(coordination_url=self.coordination_url)
+        
         # update state of pilot job to running
         logger.debug("set state to : " +  str(bigjob.state.Running))
         self.coordination.set_pilot_state(self.base_url, str(bigjob.state.Running), False)

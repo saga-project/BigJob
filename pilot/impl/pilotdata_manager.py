@@ -305,7 +305,7 @@ class PilotDataService(PilotDataService):
             pds_id -- restore from pds_id
         """        
         self.pilot_data={}
-        
+        CoordinationAdaptor.configure_base_url(coordination_url)
         if pds_url == None:
             self.id = self.PDS_ID_PREFIX + str(uuid.uuid1())
             application_url = CoordinationAdaptor.get_base_url(application_id)

@@ -9,11 +9,12 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 from pilot import PilotComputeService, PilotDataService, ComputeDataService, State
 
 
-COORDINATION_URL = "redis://localhost:6379"
+#COORDINATION_URL = "redis://localhost:6379"
+COORDINATION_URL="redis://ILikeBigJob_wITH-REdIS@gw68.quarry.iu.teragrid.org:6379/pcs/pcs-4867ff08-e192-11e1-a694-00003e980000"
 
 if __name__ == "__main__":      
     
-    
+    print COORDINATION_URL
     # create pilot data service (factory for data pilots (physical, distributed storage))
     # and pilot data
     pilot_data_service = PilotDataService(coordination_url=COORDINATION_URL)
@@ -46,9 +47,9 @@ if __name__ == "__main__":
 
     # create pilot job service and initiate a pilot job
     pilot_compute_description = {
-                             #"service_url": 'ec2+ssh://aws.amazon.com',
+                             "service_url": 'ec2+ssh://aws.amazon.com',
                              #"service_url": 'gce+ssh://api.google.com',
-                             "service_url": 'fork://localhost',
+                             #"service_url": 'fork://localhost',
                              "number_of_processes": 1,                             
                              'affinity_datacenter_label': "us-google",              
                              'affinity_machine_label': "" 
