@@ -6,19 +6,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 sys.path.insert(0, os.getcwd() + "/../")
 from pilot import PilotComputeService, ComputeDataServiceDecentral, State
 
-""" This variable defines the coordination system that is used by BigJob
-    e.g. 
-        advert://localhost (SAGA/Advert SQLITE)
-        advert://advert.cct.lsu.edu:8080 (SAGA/Advert POSTGRESQL)
-        advert://advert.cct.lsu.edu:5432 (SAGA/Advert POSTGRESQL)
-        redis://localhost:6379 (Redis at localhost)
-        tcp://localhost (ZMQ)
-        tcp://* (ZMQ - listening to all interfaces)
-"""
-
-# The decentral ComputeDateService will only work with Redis
 COORDINATION_URL = "redis://localhost:6379"
-
 
 if __name__ == "__main__":      
     

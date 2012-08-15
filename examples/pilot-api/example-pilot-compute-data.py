@@ -7,8 +7,8 @@ import logging
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 from pilot import PilotComputeService, PilotDataService, ComputeDataService, State
 
-COORDINATION_URL = "advert://localhost/?dbtype=sqlite3"
-#COORDINATION_URL = "redis://localhost:6379"
+
+COORDINATION_URL = "redis://localhost:6379"
 
 if __name__ == "__main__":      
     
@@ -28,7 +28,7 @@ if __name__ == "__main__":
     
     # create pilot data service (factory for data pilots (physical, distributed storage))
     # and pilot data
-    pilot_data_service = PilotDataService()
+    pilot_data_service = PilotDataService(coordination_url=COORDINATION_URL)
     pilot_data_description={
                                 "service_url": "ssh://localhost/tmp/pilot-data/",
                                 "size": 100,   
@@ -59,15 +59,14 @@ if __name__ == "__main__":
     logging.debug("Pilot Data URL: %s Description: \n%s"%(data_unit, str(pilot_data_description)))
     
     
-    # start work unit
+    # start compute unit
     compute_unit_description = {
             "executable": "/bin/cat",
             "arguments": ["test.txt"],
             "number_of_processes": 1,
-            "working_directory": data_unit.url,
-            #"working_directory": os.getcwd(),
             "output": "stdout.txt",
             "error": "stderr.txt",   
+            "input_data" : [data_unit.get_url()], # this stages the content of the data unit to the working directory of the compute unit
             "affinity_datacenter_label": "eu-de-south",              
             "affinity_machine_label": "mymachine-1" 
     }    

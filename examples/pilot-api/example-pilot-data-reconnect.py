@@ -9,6 +9,7 @@ logging.basicConfig(level=logging.DEBUG)
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 from pilot import PilotDataService, ComputeDataService, DataUnit, State
 
+COORDINATION_URL = "redis://localhost:6379"
 
 if __name__ == "__main__":        
     
@@ -19,7 +20,7 @@ if __name__ == "__main__":
         sys.exit(-1)
         
     # create pilot data service (factory for pilot stores (physical, distributed storage))
-    pilot_data_service = PilotDataService()
+    pilot_data_service = PilotDataService(coordination_url=COORDINATION_URL)
     pd_new = pilot_data_service.create_pilot({
                                 'service_url': "ssh://localhost/tmp/pilotdata-reconnect/",
                                 'size':100,
