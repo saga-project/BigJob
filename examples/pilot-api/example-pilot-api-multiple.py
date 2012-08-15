@@ -8,9 +8,11 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 sys.path.insert(0, os.getcwd() + "/../")
 from pilot import PilotComputeService, ComputeDataService, State
 
+COORDINATION_URL = "redis://localhost:6379"
+
 if __name__ == "__main__":      
     
-    pilot_compute_service = PilotComputeService()
+    pilot_compute_service = PilotComputeService(coordination_url=COORDINATION_URL)
 
     # create pilot job service and initiate a pilot job
     pilot_compute_description = {

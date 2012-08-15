@@ -113,22 +113,24 @@ class SSHFileAdaptor(object):
 
     def put_du_scp(self, du):
         logger.debug("Copy DU using SCP")
-        for i in du.list_data_unit_items():     
-            remote_path = os.path.join(self.path, str(du.id), os.path.basename(i.local_url))
-            logger.debug("Put file: %s to %s"%(i.local_url, remote_path))                        
-            if i.local_url.startswith("ssh://"):
+        du_items = du.list()
+        for i in du_items.keys():     
+            local_filename = du_items[i]["local"]
+            remote_path = os.path.join(self.path, str(du.id), os.path.basename(local_filename))
+            logger.debug("Put file: %s to %s"%(i, remote_path))                        
+            if local_filename.startswith("ssh://"):
                 # check if remote path is directory
-                if self.__is_remote_directory(i.local_url):
-                    logger.warning("Path %s is a directory. Ignored."%i.local_url)                
+                if self.__is_remote_directory(local_filename):
+                    logger.warning("Path %s is a directory. Ignored."%local_filename)                
                     continue
                 
                
                 #self.__third_party_transfer(i.local_url, remote_path)                
             else:
-                if stat.S_ISDIR(os.stat(i.local_url).st_mode):
-                    logger.warning("Path %s is a directory. Ignored."%i.local_url)                
+                if stat.S_ISDIR(os.stat(local_filename).st_mode):
+                    logger.warning("Path %s is a directory. Ignored."%local_filename)                
                     continue         
-            result = urlparse.urlparse(i.local_url)
+            result = urlparse.urlparse(local_filename)
             source_host = result.netloc
             source_path = result.path
             logger.debug(str((source_host, source_path, self.host, remote_path)))
@@ -140,17 +142,7 @@ class SSHFileAdaptor(object):
             os.system(cmd)                   
                 
     
-    def copy_du_to_url(self, du,  local_url, remote_url):
-        base_dir = self.__get_path_for_du(du)
-        self.create_remote_directory(remote_url)  
-        for filename in self.__sftp.listdir(base_dir):
-            file_url = local_url + "/" + filename
-            file_remote_url = remote_url + "/" + filename
-            logger.debug("Copy " + file_url + " to " + file_remote_url)
-            self.__third_party_transfer_host(file_url, file_remote_url)
-
-        
-
+  
     def copy_du(self, du, pd_new):
         remote_url = pd_new.service_url + "/" + str(du.id)
         local_url =  self.service_url  + "/" + str(du.id)
@@ -207,6 +199,16 @@ class SSHFileAdaptor(object):
         result = urlparse.urlparse(target_url)
         return result.path
         
+    def copy_du_to_url(self, du,  local_url, remote_url):
+        base_dir = self.__get_path_for_du(du)
+        self.create_remote_directory(remote_url)  
+        for filename in self.__sftp.listdir(base_dir):
+            file_url = local_url + "/" + filename
+            file_remote_url = remote_url + "/" + filename
+            logger.debug("Copy " + file_url + " to " + file_remote_url)
+            self.__third_party_transfer_scp(file_url, file_remote_url)
+
+            
     ###########################################################################
     # Private support methods
     def __get_path_for_du(self, du):

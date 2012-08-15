@@ -419,6 +419,14 @@ class DataUnit(DataUnit):
             - Running: At least 1 replica of PD is persistent in a pilot data            
     """
     
+    ## TODO
+    # Currently, DU are stored in Redis in a hierachical tree structure:
+    # <pds>:<pd>:<du>
+    # In the future a DU can be possibly bound to multiple PD
+    # Thus, it should be a top level entity
+    # The lower levels of the hierarchy will only store references to the DU then
+    
+    
     DU_ID_PREFIX="du-"  
 
     def __init__(self, pilot_data=None, data_unit_description=None, du_url=None):
@@ -431,10 +439,14 @@ class DataUnit(DataUnit):
             self.id = self.DU_ID_PREFIX + str(uuid.uuid1())
             self.data_unit_description = data_unit_description        
             self.pilot_data=[]
-            self.url = CoordinationAdaptor.add_du(pilot_data.url, self)
             self.state = State.New
             self.data_unit_items = DataUnitItem.create_data_unit_list(self, self.data_unit_description["file_urls"]) 
-            CoordinationAdaptor.update_du(self)
+            self.url = None
+
+            if pilot_data!=None:
+                # Allow data units that are not connected to a resource!
+                self.url = CoordinationAdaptor.add_du(pilot_data.url, self)
+                CoordinationAdaptor.update_du(self)
         else:
             self.id = DataUnit._get_du_id(du_url)
             self.url = du_url   
@@ -447,31 +459,40 @@ class DataUnit(DataUnit):
     def cancel(self):
         """ Cancel the DU. """
         self.state = State.Done    
-        CoordinationAdaptor.update_du(self)
+        if len(self.pilot_data) > 0: 
+            CoordinationAdaptor.update_du(self)
+
             
-    def add_data_unit(self, data_unit):
+    def add_data_unit_item(self, data_unit):
         self.data_unit_items.append(data_unit)    
-        CoordinationAdaptor.update_du(self)
-        # TODO Update Pilot Data
+        if len(self.pilot_data) > 0: 
+            CoordinationAdaptor.update_du(self)
+
         
         
-    def remove_data_unit(self, data_unit):
+    def remove_data_unit_item(self, data_unit):
         self.data_unit_items.remove(data_unit)
-        CoordinationAdaptor.update_du(self)
-        # TODO Update Pilot Data
+        if len(self.pilot_data) > 0: 
+            CoordinationAdaptor.update_du(self)
+
         
         
     def list(self):
         """ List all items contained in DU 
             {
-                "filename" : [url1, url2]
+                "filename" : { 
+                                "pilot_data" : [url1, url2],
+                                "local" : url
+                             }
             }        
         """        
         base_urls = [i.url_for_du(self) for i in self.get_pilot_data()]
         result_dict = {}
         for i in self.data_unit_items:
-            result_dict[i.filename]=[os.path.join(j, i.filename) for j in base_urls]
-        
+            result_dict[i.filename]={
+                                    "pilot_data": [os.path.join(j, i.filename) for j in base_urls],
+                                    "local": i.local_url
+                                    }
         return result_dict
     
    
@@ -535,7 +556,9 @@ class DataUnit(DataUnit):
     
     def update_state(self, state):
         self.state=state
-        CoordinationAdaptor.update_du(self)
+        
+        if len(self.pilot_data) > 0: 
+            CoordinationAdaptor.update_du(self)
 
     
     def __add_pilot_data(self, pilot_data):
@@ -546,7 +569,10 @@ class DataUnit(DataUnit):
             pilot_data.put_du(self)
         self.pilot_data.append(pilot_data)
         self.state = State.Running
-        CoordinationAdaptor.update_du(self)  
+        
+        self.url = CoordinationAdaptor.add_du(pilot_data.url, self)
+        CoordinationAdaptor.update_du(self)
+            
         
     @classmethod    
     def _get_du_id(cls, du_url):
@@ -598,8 +624,8 @@ class DataUnitItem(object):
             self.id = self.DUI_ID_PREFIX + str(uuid.uuid1())
             self.local_url = local_url   
             self.filename =  os.path.basename(local_url)    
-            if pd != None:
-                self.url = pd.url + "/" + self.filename
+            #if pd != None:
+            #    self.url = pd.url + "/" + self.filename
         
         
     @classmethod    

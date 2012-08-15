@@ -25,8 +25,8 @@ from pilot.impl.pilotcompute_manager import ComputeUnit
 
 
 #from pilot.coordination.advert import AdvertCoordinationAdaptor as CoordinationAdaptor
-from pilot.coordination.nocoord_adaptor import NoCoordinationAdaptor as CoordinationAdaptor
-
+#from pilot.coordination.nocoord_adaptor import NoCoordinationAdaptor as CoordinationAdaptor
+from pilot.coordination.redis_adaptor import RedisCoordinationAdaptor as CoordinationAdaptor
 
 """ Loaded Module determines scheduler:
     
@@ -163,7 +163,7 @@ class ComputeDataService(ComputeDataService):
     
     def submit_data_unit(self, data_unit_description):
         """ creates a data unit object and binds it to a physical resource (a pilotdata) """
-        du = DataUnit(pilot_data_service=self, 
+        du = DataUnit(pilot_data=None, 
                       data_unit_description=data_unit_description)
         self.data_units[du.id]=du
         self.du_queue.put(du)

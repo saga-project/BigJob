@@ -40,7 +40,6 @@ GS_PROJECT_ID="1004462711324"
 
 class GSFileAdaptor(object):
     """ BigData File Management for Pilot Data """
-    
    
     
     def __init__(self, service_url, security_context=None):        
@@ -118,19 +117,12 @@ class GSFileAdaptor(object):
     def put_du(self, du):
         logger.debug("Copy DU to Google Storage")
         for i in du.list().keys():     
-            remote_path = os.path.join(str(du.id), i)
+            remote_path = os.path.join(str(du.id), i["local"])
             self._put_file(i, remote_path)
             
     
     def copy_du(self, du, pd_new):
-        bucket_name = self.__get_bucket_name(pd_new.service_url)
-        gs = self.__get_api_client()[0]
-        
-        
-        
-        remote_url = pd_new.service_url + "/" + str(du.id)
-        local_url =  self.service_url  + "/" + str(du.id)
-        self.copy_du_to_url(du, local_url, remote_url)  
+        pass
         
     
     def get_du(self, du, target_url):
@@ -190,17 +182,6 @@ class GSFileAdaptor(object):
         
     ###########################################################################
     # Auxiliary functions
-    def __copy_du_to_url(self, du,  local_url, remote_url):
-        base_dir = self.__get_path_for_du(du)
-        self.create_remote_directory(remote_url)  
-        for filename in self.__sftp.listdir(base_dir):
-            file_url = local_url + "/" + filename
-            file_remote_url = remote_url + "/" + filename
-            logger.debug("Copy " + file_url + " to " + file_remote_url)
-            self.__third_party_transfer_host(file_url, file_remote_url)
-
-    
-    
     def __get_api_client(self):
         http = httplib2.Http()
         http = self.credentials.authorize(http)

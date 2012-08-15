@@ -7,6 +7,7 @@ logging.basicConfig(level=logging.DEBUG)
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 from pilot import PilotComputeService, PilotDataService, ComputeDataService, State
 
+COORDINATION_URL = "redis://localhost:6379"
 
 if __name__ == "__main__":        
     
@@ -35,11 +36,9 @@ if __name__ == "__main__":
     logging.debug("Pilot Data Description 2: \n%s"%str(data_unit_description2))
         
     
-    # create pilot data service
-    compute_data_service = ComputeDataService()
     
     # create pilot data service (factory for pilot stores (physical, distributed storage))
-    pilot_data_service = PilotDataService()
+    pilot_data_service = PilotDataService(coordination_url=COORDINATION_URL)
     ps1 = pilot_data_service.create_pilot({
                                 'service_url': "ssh://localhost/tmp/pilotdata-1/",
                                 'size':100,
@@ -55,7 +54,9 @@ if __name__ == "__main__":
                                 })
     
     
-    
+      # create pilot data service
+    compute_data_service = ComputeDataService()
+  
     # add resources to pilot data service    
     compute_data_service.add_pilot_data_service(pilot_data_service) 
     
@@ -68,7 +69,7 @@ if __name__ == "__main__":
     logging.debug("Finished setup of Pilot Data and Compute Data Service. Waiting for scheduling of Data Units")
     
     compute_data_service.wait()
-    
+    logging.debug("DU scheduled: " + du1.url)
     logging.debug("Export files of PD")
     du1.export("/tmp/pilot-data-export/")
     #du2.export("ssh://hotel.futuregrid.org/N/u/luckow/pilot-store-export/")
