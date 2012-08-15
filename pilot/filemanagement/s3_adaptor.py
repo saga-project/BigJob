@@ -87,9 +87,11 @@ class S3FileAdaptor(object):
                  
     def put_du(self, du):
         logger.debug("Copy DU to S3")
-        for i in du.list().keys():     
-            remote_path = os.path.join(str(du.id),  i["local"])
-            self._put_file(i, remote_path)
+        du_items = du.list()
+        for i in du_items.keys():     
+            local_filename=du_items[i]["local"]
+            remote_path = os.path.join(str(du.id), local_filename)
+            self._put_file(local_filename, remote_path)
                 
     
     def get_du(self, du, target_url):

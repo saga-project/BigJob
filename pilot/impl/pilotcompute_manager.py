@@ -148,7 +148,7 @@ class PilotComputeService(PilotComputeService):
         if ("walltime" in bj_dict):
             walltime=bj_dict["walltime"]
 
-        working_directory = (os.getcwd()+"/agent")
+        working_directory = None
         if ("working_directory" in bj_dict):
             working_directory=bj_dict["working_directory"]
             

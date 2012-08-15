@@ -250,7 +250,8 @@ class bigjob(api.base.bigjob):
             # if no working dir is set assume use home directory
             # will fail if home directory is not the same on remote machine
             # but this is just a guess to avoid failing
-            self.working_directory = os.path.expanduser("~") 
+            #self.working_directory = os.path.expanduser("~")
+            self.working_directory = "" 
         
         if queue != None:
             jd.queue = queue
