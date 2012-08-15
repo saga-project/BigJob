@@ -21,8 +21,8 @@ import sys
 
 #COORDINATION_URL = "advert://localhost/?dbtype=sqlite3"
 #COORDINATION_URL = "tcp://*"
-COORDINATION_URL = "redis://localhost:6379"
-
+#COORDINATION_URL = "redis://localhost:6379"
+COORDINATION_URL = "redis://ILikeBigJob_wITH-REdIS@gw68.quarry.iu.teragrid.org:6379"
 # for running BJ from local dir
 sys.path.insert(0, os.getcwd() + "/../")
 
@@ -39,7 +39,8 @@ def main():
     walltime=10
     processes_per_node=4
     number_of_processes = 8
-    workingdirectory=os.path.join(os.getcwd(), "agent")  # working directory for agent
+    #workingdirectory=os.path.join(os.getcwd(), "agent")  # working directory for agent
+    workingdirectory="/tmp"
     userproxy = None # userproxy (not supported yet due to context issue w/ SAGA)
 
     
@@ -57,6 +58,7 @@ def main():
     """
     lrms_url = "fork://localhost" # resource url to run the jobs on localhost
     #lrms_url = "ssh://localhost" # resource url to run the jobs on localhost
+    lrms_url = "ssh://ubuntu@23.20.34.187" # resource url to run the jobs on localhost
    
     ##########################################################################################
 
