@@ -93,7 +93,9 @@ class Job(object):
         self.ec2_conn=None
         if self.resource_url.scheme == "euca+ssh":
             region = RegionInfo(name="eucalyptus", endpoint=self.resource_url.host)
-            self.ec2_conn = EC2Connection(aws_access_key_id=self.pilot_compute_description["access_key_id"], 
+            logger.debug("Access Key: %s Secret: %s"%(self.pilot_compute_description["access_key_id"],
+                                                      self.pilot_compute_description["secret_access_key"]))
+            self.ec2_conn = EC2Connection(aws_access_key_id=self.pilot_compute_description["access_key_id"],
                                           aws_secret_access_key=self.pilot_compute_description["secret_access_key"], 
                                           region=region,
                                           port=8773,
