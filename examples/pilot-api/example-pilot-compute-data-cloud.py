@@ -46,16 +46,57 @@ if __name__ == "__main__":
     pilot_compute_service = PilotComputeService(coordination_url=COORDINATION_URL)
 
     # create pilot job service and initiate a pilot job
-    pilot_compute_description = {
+    pilot_compute_description_amazon = {
                              "service_url": 'ec2+ssh://aws.amazon.com',
+                             #"service_url": 'euca+ssh://198.202.120.90/',
                              #"service_url": 'gce+ssh://api.google.com',
                              #"service_url": 'fork://localhost',
                              "number_of_processes": 1,                             
                              'affinity_datacenter_label': "us-google",              
-                             'affinity_machine_label': "" 
+                             'affinity_machine_label': "", 
+                             # cloud specific attributes
+                             "vm_id":"ami-d7f742be",
+                             "vm_ssh_username":"ubuntu",
+                             "vm_ssh_keyname":"MyKey",
+                             "vm_ssh_keyfile":"/Users/luckow/.ssh/id_rsa",
+                             "vm_type":"t1.micro"
+    
                             }
     
-    pilotjob = pilot_compute_service.create_pilot(pilot_compute_description=pilot_compute_description)
+    pilot_compute_description_euca_sierra = {
+                             #"service_url": 'ec2+ssh://aws.amazon.com',
+                             "service_url": 'euca+ssh://198.202.120.90/',
+                             #"service_url": 'gce+ssh://api.google.com',
+                             #"service_url": 'fork://localhost',
+                             "number_of_processes": 1,                             
+                             'affinity_datacenter_label': "us-west",              
+                             'affinity_machine_label': "", 
+                             # cloud specific attributes
+                             "vm_id":"ami-d7f742be",
+                             "vm_ssh_username":"ubuntu",
+                             "vm_ssh_keyname":"MyKey",
+                             "vm_ssh_keyfile":"/Users/luckow/.ssh/id_rsa",
+                             "vm_type":"c1.xlarge",
+                             "access_key_id":"OQTYSHQ9I6ACEXDTKTOGG",
+                             "secret_access_key":"STgYQPTyh89EWKp7lFtd77A4O2aghXjx0owqkNHm"
+                            }
+    
+    pilot_compute_description_euca_india = {
+                             "service_url": 'euca+ssh://149.165.146.135/',
+                             "number_of_processes": 1,                             
+                             'affinity_datacenter_label': "us-east",              
+                             'affinity_machine_label': "", 
+                             # cloud specific attributes
+                             "vm_id":"emi-D0C037B6",
+                             "vm_ssh_username":"root",
+                             "vm_ssh_keyname":"eucakey",
+                             "vm_ssh_keyfile":"/Users/luckow/.ssh/eucakey-india",
+                             "vm_type":"c1.xlarge",
+                             "access_key_id":"8MCXRAMXMHDYKWNKXZ8WF",
+                             "secret_access_key":"YrcUqSw2Arxshrh3ZtenkxerWwCWdMTKvZYoLPAo"
+                            }
+    
+    pilotjob = pilot_compute_service.create_pilot(pilot_compute_description=pilot_compute_description_euca_india)
     
     compute_data_service = ComputeDataService()
     compute_data_service.add_pilot_compute_service(pilot_compute_service)
@@ -64,8 +105,8 @@ if __name__ == "__main__":
     
     # start work unit
     compute_unit_description = {
-            "executable": "/bin/cat",
-            "arguments": ["test.txt"],
+            "executable": "/bin/date",
+            "arguments": [],
             "number_of_processes": 1,
             "output": "stdout.txt",
             "error": "stderr.txt",   
