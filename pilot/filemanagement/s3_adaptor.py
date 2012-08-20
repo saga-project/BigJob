@@ -33,7 +33,12 @@ AWS_ACCESS_KEY_ID=None
 AWS_SECRET_ACCESS_KEY=None
 
 class S3FileAdaptor(object):
-    """ BigData File Management for Pilot Data """
+    """ BigData File Management for Pilot Data 
+        Supports pilot data on top of S3 and Eucalyptus Walrus
+        
+            s3://
+            walrus://<endpoint-ip>    
+    """
     
    
     

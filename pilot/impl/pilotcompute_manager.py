@@ -20,7 +20,7 @@ from pilot.api import PilotCompute, PilotComputeService, ComputeUnit, State
 
 """ Configure coordination backend here """
 #from pilot.coordination.advert import AdvertCoordinationAdaptor as CoordinationAdaptor
-from pilot.coordination.nocoord_adaptor import NoCoordinationAdaptor as CoordinationAdaptor
+from pilot.coordination.redis_adaptor import RedisCoordinationAdaptor as CoordinationAdaptor
 
 
 """ This variable defines the coordination system that is used by BigJob
@@ -30,7 +30,7 @@ from pilot.coordination.nocoord_adaptor import NoCoordinationAdaptor as Coordina
         redis://localhost:6379 (Redis at localhost)
         tcp://localhost (ZMQ)
 """
-COORDINATION_URL = "advert://localhost/?dbtype=sqlite3"
+COORDINATION_URL = "redis://localhost"
 
 
 class PilotComputeService(PilotComputeService):
@@ -130,6 +130,8 @@ class PilotComputeService(PilotComputeService):
         for i in pilot_compute_description.keys():
             resource_description[i] = pilot_compute_description[i] 
         
+        resource_description["pilot_compute_description"] = pilot_compute_description
+        
         return resource_description
 
     
@@ -156,17 +158,18 @@ class PilotComputeService(PilotComputeService):
         if ("file_transfer" in bj_dict):
             bj_filetransfer = bj_dict["file_transfer"]
 
-        bj.start_pilot_job(gram_url,
-                           None,
-                           bj_dict["number_of_processes"],
-                           bj_dict["queue"],
-                           bj_dict["allocation"],
-                           working_directory, 
-                           None,
-                           walltime,
-                           ppn,
-                           filetransfers=bj_filetransfer,
-                           external_queue=self.coordination_queue)
+
+        bj.start_pilot_job(lrms_url = gram_url,
+                           number_nodes = bj_dict["number_of_processes"],
+                           queue = bj_dict["queue"],
+                           project = bj_dict["allocation"],
+                           working_directory = working_directory, 
+                           walltime = walltime,
+                           processes_per_node = ppn,
+                           filetransfers = bj_filetransfer,
+                           external_queue = self.coordination_queue,
+                           pilot_compute_description = bj_dict["pilot_compute_description"]
+                           )
         return bj
     
 ###############################################################################

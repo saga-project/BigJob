@@ -56,10 +56,10 @@ class Service(object):
             gce+ssh://api.google.com    
     """
 
-    def __init__(self, resource_url):
+    def __init__(self, resource_url, pilot_compute_description):
         """Constructor"""
         self.resource_url = resource_url
-            
+        self.pilot_compute_description =  pilot_compute_description   
     
     def create_job(self, job_description):
         j = Job(job_description, self.resource_url)

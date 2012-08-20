@@ -188,7 +188,6 @@ class bigjob(api.base.bigjob):
             
     def start_pilot_job(self, 
                  lrms_url, 
-                 bigjob_agent_executable=None,
                  number_nodes=1,
                  queue=None,
                  project=None,
@@ -197,7 +196,8 @@ class bigjob(api.base.bigjob):
                  walltime=None,
                  processes_per_node=1,
                  filetransfers=None,
-                 external_queue=""):
+                 external_queue="",
+                 pilot_compute_description=None):
         """ Start a batch job (using SAGA Job API) at resource manager. Currently, the following resource manager are supported:
             fork://localhost/ (Default Job Adaptor
             gram://qb1.loni.org/jobmanager-pbs (Globus Adaptor)
@@ -229,9 +229,9 @@ class bigjob(api.base.bigjob):
         # Create Job Service (Default: SAGA Job Service, alternative Job Services supported)
         self.js =None
         if lrms_saga_url.scheme=="gce+ssh":
-            self.js = GCEService(lrms_saga_url)
-        elif lrms_saga_url.scheme=="ec2+ssh":
-            self.js = EC2Service(lrms_saga_url)
+            self.js = GCEService(lrms_saga_url, pilot_compute_description)
+        elif lrms_saga_url.scheme=="ec2+ssh" or lrms_saga_url.scheme=="euca+ssh":
+            self.js = EC2Service(lrms_saga_url, pilot_compute_description)
         else:
             self.js = SAGAJobService(lrms_saga_url)
         
@@ -270,7 +270,8 @@ class bigjob(api.base.bigjob):
         # logger.debug("Detect launch method for: " + lrms_saga_url.host)        
         # self.launch_method = self.__get_launch_method(lrms_saga_url.host,lrms_saga_url.username)
         self.bigjob_working_directory_url=""
-        if lrms_saga_url.scheme.startswith("gce") or lrms_saga_url.scheme.startswith("ec2"):
+        if lrms_saga_url.scheme.startswith("gce") or lrms_saga_url.scheme.startswith("ec2")\
+            or lrms_saga_url.scheme.startswith("euca"):
             logger.debug("File Staging for Cloud Instances currently not supported.")
         elif lrms_saga_url.scheme.startswith("condor") == True:
             logger.debug("Using Condor file staging")
