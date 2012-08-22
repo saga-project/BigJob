@@ -60,7 +60,7 @@ if __name__ == "__main__":
                              # cloud specific attributes
                              "vm_id":"emi-D0C037B6",
                              "vm_ssh_username":"root",
-                             "vm_ssh_keyname":"eucakey",
+                             "vm_ssh_keyname":"luckow",
                              "vm_ssh_keyfile":"/Users/luckow/.ssh/eucakey-india",
                              "vm_type":"c1.xlarge",
                              "access_key_id":"8MCXRAMXMHDYKWNKXZ8WF",

@@ -9,7 +9,6 @@ from boto.ec2.connection import EC2Connection
 from boto.ec2.regioninfo import RegionInfo
 
 import bliss.saga as saga
-from pilot.api.api import PilotError
 
 ###############################################################################
 # EC2 General
