@@ -227,9 +227,11 @@ class PilotData(PilotData):
             elif self.service_url.startswith("gs:"):
                 logger.debug("Use Google Cloud Storage backend")
                 self.__filemanager = GSFileAdaptor(self.service_url, self.security_context)
-            elif self.service_url.startswith("s3:"):
-                logger.debug("Use Amazon S3 Storage backend")
-                self.__filemanager = S3FileAdaptor(self.service_url, self.security_context)
+            elif self.service_url.startswith("s3:") or self.service_url.startswith("walrus:"):
+                logger.debug("Use Amazon S3/Eucalyptus Walrus Storage backend")
+                self.__filemanager = S3FileAdaptor(self.service_url, 
+                                                   self.security_context, 
+                                                   self.pilot_data_description)
             else:
                 raise PilotError("No File Plugin found.")
             
