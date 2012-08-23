@@ -80,7 +80,7 @@ if __name__ == "__main__":
             "number_of_processes": 1,
             "output": "stdout.txt",
             "error": "stderr.txt",   
-            "input_data": [data_unit.get_url()],
+            "input_data": [],
             "output_data": []
     }    
     
