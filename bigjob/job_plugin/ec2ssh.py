@@ -90,15 +90,25 @@ class Job(object):
         self.network_ip=None
         
         self.ec2_conn=None
-        if self.resource_url.scheme == "euca+ssh":
-            region = RegionInfo(name="eucalyptus", endpoint=self.resource_url.host)
+        
+        if self.resource_url.scheme == "euca+ssh" or self.resource_url.scheme == "nova+ssh":
+            host = self.resource_url.host
+            path = self.resource_url.path
+            port = self.resource_url.port
+            region = None
+            logger.debug("Host: %s, Path: %s, Port: %d"%(host, path, port))
+            if self.resource_url.scheme == "euca+ssh":
+                region = RegionInfo(name="eucalyptus", endpoint=host)
+            elif self.resource_url.scheme == "nova+ssh":
+                region = RegionInfo(name="openstack", endpoint=host)
             logger.debug("Access Key: %s Secret: %s"%(self.pilot_compute_description["access_key_id"],
                                                       self.pilot_compute_description["secret_access_key"]))
             self.ec2_conn = EC2Connection(aws_access_key_id=self.pilot_compute_description["access_key_id"],
                                           aws_secret_access_key=self.pilot_compute_description["secret_access_key"], 
                                           region=region,
-                                          port=8773,
-                                          path="/services/Eucalyptus")
+                                          is_secure=False,
+                                          port=port,
+                                          path=path)
         else:
             self.ec2_conn = EC2Connection(aws_access_key_id=self.pilot_compute_description["access_key_id"], 
                                           aws_secret_access_key=self.pilot_compute_description["secret_access_key"])
@@ -126,8 +136,8 @@ class Job(object):
                 
         self.instance = reservation.instances[0]
         self.instance_id = self.instance.id
-        logger.debug("Started EC2 instance: %s"%self.instance_id)
-        if self.resource_url.scheme != "euca+ssh":
+        logger.debug("Started EC2/Eucalyptus/Nova instance: %s"%self.instance_id)
+        if self.resource_url.scheme != "euca+ssh" and self.resource_url.scheme != "nova+ssh":
             self.ec2_conn.create_tags([self.instance_id], {"Name": self.id})
         self.wait_for_running()
         

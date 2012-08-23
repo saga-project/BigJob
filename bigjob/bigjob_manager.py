@@ -230,7 +230,8 @@ class bigjob(api.base.bigjob):
         self.js =None
         if lrms_saga_url.scheme=="gce+ssh":
             self.js = GCEService(lrms_saga_url, pilot_compute_description)
-        elif lrms_saga_url.scheme=="ec2+ssh" or lrms_saga_url.scheme=="euca+ssh":
+        elif lrms_saga_url.scheme=="ec2+ssh" or lrms_saga_url.scheme=="euca+ssh" \
+            or lrms_saga_url.scheme=="nova+ssh":
             self.js = EC2Service(lrms_saga_url, pilot_compute_description)
         else:
             self.js = SAGAJobService(lrms_saga_url)
@@ -271,7 +272,7 @@ class bigjob(api.base.bigjob):
         # self.launch_method = self.__get_launch_method(lrms_saga_url.host,lrms_saga_url.username)
         self.bigjob_working_directory_url=""
         if lrms_saga_url.scheme.startswith("gce") or lrms_saga_url.scheme.startswith("ec2")\
-            or lrms_saga_url.scheme.startswith("euca"):
+            or lrms_saga_url.scheme.startswith("euca") or lrms_saga_url.scheme.startswith("nova"):
             logger.debug("File Staging for Cloud Instances currently not supported.")
         elif lrms_saga_url.scheme.startswith("condor") == True:
             logger.debug("Using Condor file staging")
