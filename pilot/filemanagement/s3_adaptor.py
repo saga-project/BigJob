@@ -65,19 +65,27 @@ class S3FileAdaptor(object):
             aws_secret_access_key=security_context["aws_secret_access_key"]
     
         self.s3_conn=None
-        if self.resource_url.scheme == "walrus":
+        if self.resource_url.scheme == "walrus" or self.resource_url.scheme == "swift":
             calling_format=OrdinaryCallingFormat()
             logger.debug("Access Key: %s Secret: %s Host: %s"%(aws_access_key_id,
                                                                aws_secret_access_key,
                                                                self.resource_url.host)
                          )
+            port = 8773
+            if self.resource_url.port!=None:
+                port = self.resource_url.port
+            
+            path = "/"
+            if self.resource_url.scheme == "walrus":
+                path = "/services/Walrus"
+                
             self.s3_conn = S3Connection(aws_access_key_id=aws_access_key_id,
                                         aws_secret_access_key=aws_secret_access_key,
                                         is_secure=False,
                                         host=self.resource_url.host,
-                                        port=8773,
+                                        port=port,
                                         calling_format=calling_format,
-                                        path="/services/Walrus")
+                                        path=path)
         else: # s3:// urls
             self.s3_conn = S3Connection(aws_access_key_id, aws_secret_access_key)
       
@@ -97,6 +105,7 @@ class S3FileAdaptor(object):
             self.bucket = self.s3_conn.create_bucket(self.bucket_name)
         except:
             # bucket already exists
+            self.__print_traceback()
             self.bucket = self.s3_conn.get_bucket(self.bucket_name)
             
         self.__state=State.Running
@@ -204,12 +213,24 @@ class S3FileAdaptor(object):
                               limit=2, file=sys.stdout)
     
     
-    
-if __name__ == "__main__":
+def test_walrus():
     s3 = S3FileAdaptor("walrus://149.165.146.135/pilot-data-c4eb26eb-ed0c-11e1-ac98-705681b3df0f", 
                        pilot_data_description={ "access_key_id":"8MCXRAMXMHDYKWNKXZ8WF",
                                                 "secret_access_key":"YrcUqSw2Arxshrh3ZtenkxerWwCWdMTKvZYoLPAo" })
     s3.initialize_pilotdata()
-    #s3._put_file("test.txt", "du-7370d7b5-ed0b-11e1-95df-705681b3df0f/test.txt")
-    #s3._get_file("du-7370d7b5-ed0b-11e1-95df-705681b3df0f/test.txt", "test2.txt")
+    s3._put_file("test.txt", "du-7370d7b5-ed0b-11e1-95df-705681b3df0f/test.txt")
+    s3._get_file("du-7370d7b5-ed0b-11e1-95df-705681b3df0f/test.txt", "test2.txt")
     s3.get_du("du-7370d7b5-ed0b-11e1-95df-705681b3df0f", ".")
+    
+def test_swift():
+    s3 = S3FileAdaptor("swift://149.165.146.50:3333/pilot-data-c4eb26eb-ed0c-11e1-ac98-705681b3df0f", 
+                       pilot_data_description={ "access_key_id":"f9716a49c92a4a4cbedb6aba5e78d682",
+                                                "secret_access_key":"bcdff54b7fe94d63b4412c762e823a84" })
+    s3.initialize_pilotdata()
+    s3._put_file("test.txt", "du-7370d7b5-ed0b-11e1-95df-705681b3df0f/test.txt")
+    s3._get_file("du-7370d7b5-ed0b-11e1-95df-705681b3df0f/test.txt", "test2.txt")
+    s3.get_du("du-7370d7b5-ed0b-11e1-95df-705681b3df0f", ".")
+    
+if __name__ == "__main__":
+    test_swift()
+    
