@@ -1089,7 +1089,7 @@ class description(bliss.saga.job.Description):
     
     def __init__(self):
         bliss.saga.job.Description.__init__(self)
-        self.attributes_extensible_ (True)
+        #self.attributes_extensible_ (True)
         
         # Extend description class by Pilot-Data relevant attributes
         self._output_data = None
