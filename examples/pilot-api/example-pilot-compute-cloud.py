@@ -53,7 +53,7 @@ if __name__ == "__main__":
                             }
     
     pilot_compute_description_euca_india = {
-                             "service_url": 'euca+ssh://149.165.146.135/',
+                             "service_url": 'euca+ssh://149.165.146.135:8773/services/Eucalyptus',
                              "number_of_processes": 1,                             
                              'affinity_datacenter_label': "us-east",              
                              'affinity_machine_label': "", 
@@ -65,6 +65,21 @@ if __name__ == "__main__":
                              "vm_type":"c1.xlarge",
                              "access_key_id":"8MCXRAMXMHDYKWNKXZ8WF",
                              "secret_access_key":"YrcUqSw2Arxshrh3ZtenkxerWwCWdMTKvZYoLPAo"
+                            }
+    
+    pilot_compute_description_openstack_india = {
+                             "service_url": 'nova+ssh://149.165.146.50:8773/services/Cloud',
+                             "number_of_processes": 1,                             
+                             'affinity_datacenter_label': "us-east",              
+                             'affinity_machine_label': "", 
+                             # cloud specific attributes
+                             "vm_id":"ami-00000046",
+                             "vm_ssh_username":"root",
+                             "vm_ssh_keyname":"novakey-india",
+                             "vm_ssh_keyfile":"/Users/luckow/.ssh/novakey-india",
+                             "vm_type":"m1.xlarge",
+                             "access_key_id":"f9716a49c92a4a4cbedb6aba5e78d682",
+                             "secret_access_key":"bcdff54b7fe94d63b4412c762e823a84"
                             }
     
     pilotjob = pilot_compute_service.create_pilot(pilot_compute_description=pilot_compute_description_euca_india)
