@@ -97,14 +97,13 @@ if __name__ == "__main__":
 #                            }
     
     pilot_compute_description_euca_india = {
-                             #"service_url": 'euca+ssh://149.165.146.135/',
-                             "service_url": 'fork://localhost',
+                             "service_url": 'euca+ssh://149.165.146.135/',
+                             #"service_url": 'fork://localhost',
                              "number_of_processes": 1,                             
                              'affinity_datacenter_label': "us-east",              
                              'affinity_machine_label': "", 
-                             'working_directory': os.getcwd(),
                              # cloud specific attributes
-                             "vm_id":"emi-D0C037B6",
+                             "vm_id":"emi-EFA63793",
                              "vm_ssh_username":"root",
                              "vm_ssh_keyname":"luckow",
                              "vm_ssh_keyfile":"/Users/luckow/.ssh/eucakey-india",
