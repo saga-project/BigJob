@@ -100,10 +100,10 @@ if __name__ == "__main__":
     }    
     
     compute_unit = compute_data_service.submit_compute_unit(compute_unit_description)
-    logging.debug("Finished setup of ComputeDataService. Waiting for scheduling of PD")
+    logging.info("Finished setup of ComputeDataService. Waiting for scheduling of PD")
     compute_data_service.wait()
     
     
-    logging.debug("Terminate Pilot Compute/Data Service")
+    logging.info("Terminate Pilot Compute/Data Service")
     compute_data_service.cancel()
     pilot_compute_service.cancel()
