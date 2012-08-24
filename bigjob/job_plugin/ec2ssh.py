@@ -93,8 +93,12 @@ class Job(object):
         
         if self.resource_url.scheme == "euca+ssh" or self.resource_url.scheme == "nova+ssh":
             host = self.resource_url.host
-            path = self.resource_url.path
-            port = self.resource_url.port
+            path = "/services/Eucalyptus"
+            if self.resource_url.path!=None: 
+                path = self.resource_url.path
+            port = 8773
+            if self.resource_url.port != None:
+                port = self.resource_url.port
             region = None
             logger.debug("Host: %s, Path: %s, Port: %d"%(host, path, port))
             if self.resource_url.scheme == "euca+ssh":
