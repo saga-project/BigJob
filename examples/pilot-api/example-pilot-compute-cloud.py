@@ -58,7 +58,7 @@ if __name__ == "__main__":
                              'affinity_datacenter_label': "us-east",              
                              'affinity_machine_label': "", 
                              # cloud specific attributes
-                             "vm_id":"emi-D0C037B6",
+                             "vm_id":"emi-9DCC3DFA",
                              "vm_ssh_username":"root",
                              "vm_ssh_keyname":"luckow",
                              "vm_ssh_keyfile":"/Users/luckow/.ssh/eucakey-india",
