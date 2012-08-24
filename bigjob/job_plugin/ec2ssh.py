@@ -161,14 +161,14 @@ class Job(object):
         trials=0
         while trials < 3:
             try:
-                print ("Attempt: %d, submit pilot job to: %s "%(trials,str(url)))
+                logger.debug("Attempt: %d, submit pilot job to: %s "%(trials,str(url)))
                 job.run()
                 break
             except:
                 trials = trials + 1 
                 time.sleep(7)
                 
-        print "Job State : %s" % (job.get_state()) 
+        logger.debug("Job State : %s" % (job.get_state())) 
         
         
 

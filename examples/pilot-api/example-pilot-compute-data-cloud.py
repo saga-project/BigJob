@@ -56,7 +56,7 @@ if __name__ == "__main__":
     # submit pilot data to a pilot store 
     input_data_unit = pd.submit_data_unit(data_unit_description)
     input_data_unit.wait()
-    print("Data Unit URL: " + input_data_unit.get_url())
+    logger.info("Data Unit URL: " + input_data_unit.get_url())
     pilot_compute_service = PilotComputeService(coordination_url=COORDINATION_URL)
     
     pilot_compute_description_euca_india = {
@@ -106,11 +106,11 @@ if __name__ == "__main__":
     }   
     
     compute_unit = compute_data_service.submit_compute_unit(compute_unit_description)
-    logging.debug("Finished setup of ComputeDataService. Waiting for scheduling of PD")
+    logging.info("Finished setup of ComputeDataService. Waiting for scheduling of PD")
     compute_data_service.wait()
     
     
-    logging.debug("Terminate Pilot Compute/Data Service")
+    logging.info("Terminate Pilot Compute/Data Service")
     compute_data_service.cancel()
     pilot_data_service.cancel()
     pilot_compute_service.cancel()
