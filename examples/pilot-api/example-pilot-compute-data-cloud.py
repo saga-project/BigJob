@@ -3,7 +3,7 @@ import os
 import time
 import logging
 import uuid
-logging.basicConfig(level=logging.DEBUG)
+#logging.basicConfig(level=logging.DEBUG)
 
 #sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 from pilot import PilotComputeService, PilotDataService, ComputeDataService, State
@@ -54,54 +54,17 @@ if __name__ == "__main__":
                              }    
       
     # submit pilot data to a pilot store 
-    data_unit = pd.submit_data_unit(data_unit_description)
-    data_unit.wait()
-    print("Data Unit URL: " + data_unit.get_url())
+    input_data_unit = pd.submit_data_unit(data_unit_description)
+    input_data_unit.wait()
+    print("Data Unit URL: " + input_data_unit.get_url())
     pilot_compute_service = PilotComputeService(coordination_url=COORDINATION_URL)
-
-
-##############################################################################################################
-# create pilot job service and initiate a pilot job
-# Pick one of the pilot descriptions for clouds from below
-#
-#    
-#    pilot_compute_description_amazon = {
-#                             "service_url": 'ec2+ssh://aws.amazon.com',
-#                             #"service_url": 'gce+ssh://api.google.com',
-#                             #"service_url": 'fork://localhost',
-#                             "number_of_processes": 1,                             
-#                             'affinity_datacenter_label': "us-google",              
-#                             'affinity_machine_label': "", 
-#                             # cloud specific attributes
-#                             "vm_id":"ami-d7f742be",
-#                             "vm_ssh_username":"ubuntu",
-#                             "vm_ssh_keyname":"MyKey",
-#                             "vm_ssh_keyfile":"/Users/luckow/.ssh/id_rsa",
-#                             "vm_type":"t1.micro"
-#    
-#                            }
-#    
-#    pilot_compute_description_euca_sierra = {
-#                             "service_url": 'euca+ssh://198.202.120.90:8773/services/Eucalyptus',
-#                             "number_of_processes": 1,                             
-#                             'affinity_datacenter_label': "us-west",              
-#                             'affinity_machine_label': "", 
-#                             # cloud specific attributes
-#                             "vm_id":"ami-d7f742be",
-#                             "vm_ssh_username":"ubuntu",
-#                             "vm_ssh_keyname":"MyKey",
-#                             "vm_ssh_keyfile":"/Users/luckow/.ssh/id_rsa",
-#                             "vm_type":"c1.xlarge",
-#                             "access_key_id":"OQTYSHQ9I6ACEXDTKTOGG",
-#                             "secret_access_key":"STgYQPTyh89EWKp7lFtd77A4O2aghXjx0owqkNHm"
-#                            }
     
     pilot_compute_description_euca_india = {
                              "service_url": 'euca+ssh://149.165.146.135:8773/services/Eucalyptus',
-                             #"service_url": 'fork://localhost',
-                             "number_of_processes": 1,                             
+                             "number_of_processes": 1,
                              'affinity_datacenter_label': "us-east",              
                              'affinity_machine_label': "", 
+                             
                              # cloud specific attributes
                              "vm_id":"emi-EFA63793",
                              "vm_ssh_username":"root",
@@ -118,17 +81,29 @@ if __name__ == "__main__":
     compute_data_service.add_pilot_compute_service(pilot_compute_service)
     compute_data_service.add_pilot_data_service(pilot_data_service)
     
+    # create empty data unit for output data
+    output_data_unit_description = {
+         "file_urls": []              
+    }
+    output_data_unit = pd.submit_data_unit(output_data_unit_description)
+    output_data_unit.wait()
     
-    # start work unit
+    # create compute unit
     compute_unit_description = {
             "executable": "/bin/cat",
             "arguments": ["test.txt"],
             "number_of_processes": 1,
             "output": "stdout.txt",
             "error": "stderr.txt",   
-            "input_data": [data_unit.get_url()],
-            "output_data": []
-    }    
+            "input_data": [input_data_unit.get_url()],
+            # Put files stdout.txt and stderr.txt into output data unit
+            "output_data": [
+                            {
+                             output_data_unit.get_url(): 
+                             ["stdout.txt", "stderr.txt"]
+                            }
+                           ]    
+    }   
     
     compute_unit = compute_data_service.submit_compute_unit(compute_unit_description)
     logging.debug("Finished setup of ComputeDataService. Waiting for scheduling of PD")

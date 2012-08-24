@@ -334,7 +334,6 @@ class bigjob_agent:
                     logger.debug("Directory %s already exists."%workingdirectory)
                 logging.debug("Sub-Job: %s, Working_directory: %s"%(job_id, workingdirectory))
                 
-                
                 output="stdout"
                 if (job_dict.has_key("Output") == True):
                     output = job_dict["Output"]
@@ -635,7 +634,19 @@ class bigjob_agent:
                 logger.debug(self.print_job(i) + " state: " + str(p_state) + " return code: " + str(p.returncode))
                 if (p_state != None and (p_state==0 or p_state==255)):
                     logger.debug("Job successful: " + self.print_job(i) + " - set state to Done")
-                    self.update_output_file()
+                    ###########################################################
+                    # Handle stage-out
+                    self.update_output_file() # for Condor case
+                    job_dict = self.coordination.get_job(i) # for Pilot Data case
+                    if job_dict.has_key("OutputData"):
+                        workingdirectory = os.path.join(os.getcwd(), job_dict["job-id"])  
+                        if (job_dict.has_key("WorkingDirectory") == True):
+                            workingdirectory =  job_dict["WorkingDirectory"]
+                            workingdirectory = self.__expand_directory(workingdirectory)
+                        self.__stage_out_data_units(eval(job_dict["OutputData"]), workingdirectory)
+                    
+                    ###########################################################
+                    # Status update
                     self.coordination.set_job_state(i, str(bigjob.state.Done))
                     self.free_nodes(i)
                     del self.processes[i]
@@ -725,6 +736,34 @@ class bigjob_agent:
             pd = PilotData(pd_url=pd_url)
             du = pd.get_du(du_id)
             du.export(target_directory)
+    
+    
+    def __stage_out_data_units(self, output_data=[], workingdirectory=None):
+        """ stage out data to a specified data unit pilot data """
+        logger.debug("Stage out output files")
+        
+        """ Parsing output data field of job description:
+            {
+            ...
+             "output_data": [
+                            {
+                             output_data_unit.get_url(): 
+                             ["stdout.txt", "stderr.txt"]
+                            }
+                            ]
+            }    
+        """
+        for data_unit_dict in output_data: 
+            logger.debug("Process: " + str(data_unit_dict))
+            for du_url in data_unit_dict.keys(): # go through all dicts (each representing 1 PD) 
+                pd_url = self.__get_pd_url(du_url)
+                du_id = self.__get_du_id(du_url)
+                pilot_data = PilotData(pd_url=pd_url)
+                du = pilot_data.get_du(du_id)
+                file_list = data_unit_dict[du_url]
+                logger.debug("Add files: " + str(file_list))
+                for output_file in file_list:
+                    du.add_file(os.path.join(workingdirectory, output_file))
     
     
     def __expand_directory(self, directory):
