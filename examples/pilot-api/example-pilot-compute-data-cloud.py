@@ -3,7 +3,7 @@ import os
 import time
 import logging
 import uuid
-#logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG)
 
 #sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 from pilot import PilotComputeService, PilotDataService, ComputeDataService, State
