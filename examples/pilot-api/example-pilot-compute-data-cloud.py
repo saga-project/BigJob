@@ -82,7 +82,7 @@ if __name__ == "__main__":
 #                            }
 #    
 #    pilot_compute_description_euca_sierra = {
-#                             "service_url": 'euca+ssh://198.202.120.90/',
+#                             "service_url": 'euca+ssh://198.202.120.90:8773/services/Eucalyptus',
 #                             "number_of_processes": 1,                             
 #                             'affinity_datacenter_label': "us-west",              
 #                             'affinity_machine_label': "", 
@@ -97,7 +97,7 @@ if __name__ == "__main__":
 #                            }
     
     pilot_compute_description_euca_india = {
-                             "service_url": 'euca+ssh://149.165.146.135/',
+                             "service_url": 'euca+ssh://149.165.146.135:8773/services/Eucalyptus',
                              #"service_url": 'fork://localhost',
                              "number_of_processes": 1,                             
                              'affinity_datacenter_label': "us-east",              
