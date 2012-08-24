@@ -66,7 +66,7 @@ if __name__ == "__main__":
                              'affinity_machine_label': "", 
                              
                              # cloud specific attributes
-                             "vm_id":"emi-EFA63793",
+                             "vm_id":"emi-9DCC3DFA",
                              "vm_ssh_username":"root",
                              "vm_ssh_keyname":"luckow",
                              "vm_ssh_keyfile":"/Users/luckow/.ssh/eucakey-india",
