@@ -159,7 +159,7 @@ class RedisCoordinationAdaptor:
     
     @classmethod
     def get_du(cls, du_url):
-        logger.debug("**** GET PD: " + du_url)
+        logger.debug("**** GET DU: " + str(du_url))
         du_dict=cls.__retrieve_entry(du_url+ RedisCoordinationAdaptor.SEPARATOR + "info")   
         logger.debug("Retrieved DU: " + du_url + " Content: " + str(du_dict))     
         return du_dict

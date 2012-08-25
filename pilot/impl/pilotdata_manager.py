@@ -473,12 +473,13 @@ class DataUnit(DataUnit):
     def add_files(self, file_url_list=[]):
         item_list = DataUnitItem.create_data_unit_from_urls(None, file_url_list)
         for i in item_list:
-            self.data_unit_items.append(i)    
+            self.data_unit_items.append(i)
+        CoordinationAdaptor.update_du(self)    
         if len(self.pilot_data) > 0: 
             for i in self.pilot_data:
                 logger.debug("Update Pilot Data %s"%(i.get_url()))
                 i.put_du(self)
-            CoordinationAdaptor.update_du(self)
+        CoordinationAdaptor.update_du(self)    
         
     def remove_files(self, file_urls):
         # TODO
@@ -605,10 +606,13 @@ class DataUnit(DataUnit):
     def __refresh(self):
         """ Update list of data units items 
             from coordination service """
-        du_dict = CoordinationAdaptor.get_du(self.url)
-        data_unit_dict_list = eval(du_dict["data_unit_items"])
-        self.data_unit_items = [DataUnitItem.create_data_unit_from_dict(i) for i in data_unit_dict_list]
-        
+        try:
+            if self.url != None:
+                du_dict = CoordinationAdaptor.get_du(self.url)
+                data_unit_dict_list = eval(du_dict["data_unit_items"])
+                self.data_unit_items = [DataUnitItem.create_data_unit_from_dict(i) for i in data_unit_dict_list]
+        except:
+            logger.warn("Refresh of DU %s failed"%(self.get_url()))
         
     def __restore_state(self):
         du_dict = CoordinationAdaptor.get_du(self.url)
