@@ -7,7 +7,7 @@ import uuid
 
 #sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 from pilot import PilotComputeService, PilotDataService, ComputeDataService, State
-
+from bigjob import logger 
 
 #COORDINATION_URL = "redis://localhost:6379"
 COORDINATION_URL="redis://ILikeBigJob_wITH-REdIS@gw68.quarry.iu.teragrid.org:6379/pcs/pcs-4867ff08-e192-11e1-a694-00003e980000"
@@ -30,7 +30,8 @@ if __name__ == "__main__":
 #                             }
     
     pilot_data_description_india = {
-                                "service_url": "walrus://149.165.146.135/pilot-data-" + str(uuid.uuid1()),
+                                #"service_url": "walrus://149.165.146.135/pilot-data-" + str(uuid.uuid1()),
+                                "service_url": "ssh://localhost/tmp/pilot-data-" + str(uuid.uuid1()),
                                 "size": 100,   
                                 "affinity_datacenter_label": "us-east",              
                                 "affinity_machine_label": "",
@@ -60,11 +61,12 @@ if __name__ == "__main__":
     pilot_compute_service = PilotComputeService(coordination_url=COORDINATION_URL)
     
     pilot_compute_description_euca_india = {
-                             "service_url": 'euca+ssh://149.165.146.135:8773/services/Eucalyptus',
+                             #"service_url": 'euca+ssh://149.165.146.135:8773/services/Eucalyptus',
+                             "service_url": 'fork://localhost',
                              "number_of_processes": 1,
                              'affinity_datacenter_label': "us-east",              
                              'affinity_machine_label': "", 
-                             
+                             'working_directory': os.getcwd(),
                              # cloud specific attributes
                              "vm_id":"emi-9DCC3DFA",
                              "vm_ssh_username":"root",
@@ -100,7 +102,7 @@ if __name__ == "__main__":
             "output_data": [
                             {
                              output_data_unit.get_url(): 
-                             ["stdout.txt", "stderr.txt"]
+                             ["std*"]
                             }
                            ]    
     }   

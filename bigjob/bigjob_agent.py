@@ -16,6 +16,7 @@ import ConfigParser
 import types
 import logging
 import shutil
+import fnmatch
 from string import Template
 
 logging.basicConfig(level=logging.DEBUG)
@@ -763,8 +764,22 @@ class bigjob_agent:
                 file_list = data_unit_dict[du_url]
                 logger.debug("Add files: " + str(file_list))
                 for output_file in file_list:
-                    du.add_file(os.path.join(workingdirectory, output_file))
+                    expanded_files = [output_file]
+                    if output_file.find("*")>0 or output_file.find("?")>0:
+                        expanded_files = self.__expand_file_pattern(output_file, workingdirectory)
+                    logger.debug("Expanded files: " + str(expanded_files))
+                    for f in expanded_files:
+                        du.add_file(os.path.join(workingdirectory, f))
     
+    
+    def __expand_file_pattern(self, filename_pattern, workingdirectory):
+        """ expand files with wildcard * to a list """
+        files = os.listdir(workingdirectory)
+        matches = []
+        for i in files:
+            if fnmatch.fnmatch(i, filename_pattern):
+                matches.append(i)
+        return matches
     
     def __expand_directory(self, directory):
         """ expands directory name $HOME or ~ to the working directory
