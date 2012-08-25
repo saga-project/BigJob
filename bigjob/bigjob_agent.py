@@ -763,14 +763,18 @@ class bigjob_agent:
                 du = pilot_data.get_du(du_id)
                 file_list = data_unit_dict[du_url]
                 logger.debug("Add files: " + str(file_list))
+                all_files=[]
                 for output_file in file_list:
                     expanded_files = [output_file]
                     if output_file.find("*")>0 or output_file.find("?")>0:
                         expanded_files = self.__expand_file_pattern(output_file, workingdirectory)
                     logger.debug("Expanded files: " + str(expanded_files))
                     for f in expanded_files:
-                        du.add_file(os.path.join(workingdirectory, f))
-    
+                        all_files.append(os.path.join(workingdirectory, f))
+                 
+                du.add_files(all_files)                        
+                for f in all_files:       
+                    os.remove(f)
     
     def __expand_file_pattern(self, filename_pattern, workingdirectory):
         """ expand files with wildcard * to a list """

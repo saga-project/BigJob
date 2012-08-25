@@ -470,8 +470,8 @@ class DataUnit(DataUnit):
             CoordinationAdaptor.update_du(self)
 
             
-    def add_file(self, file_url):
-        item_list = DataUnitItem.create_data_unit_from_urls(None, [file_url])
+    def add_files(self, file_url_list=[]):
+        item_list = DataUnitItem.create_data_unit_from_urls(None, file_url_list)
         for i in item_list:
             self.data_unit_items.append(i)    
         if len(self.pilot_data) > 0: 
@@ -480,7 +480,7 @@ class DataUnit(DataUnit):
                 i.put_du(self)
             CoordinationAdaptor.update_du(self)
         
-    def remove_file(self, file_url):
+    def remove_files(self, file_urls):
         # TODO
         #self.data_unit_items.remove(input_data_unit)
         if len(self.pilot_data) > 0:
