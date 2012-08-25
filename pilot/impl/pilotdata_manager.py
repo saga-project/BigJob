@@ -497,6 +497,7 @@ class DataUnit(DataUnit):
                              }
             }        
         """        
+        self.__refresh()
         base_urls = [i.url_for_du(self) for i in self.get_pilot_data()]
         result_dict = {}
         for i in self.data_unit_items:
@@ -600,7 +601,15 @@ class DataUnit(DataUnit):
             logger.error("No valid PD URL")
         return None
     
-
+    
+    def __refresh(self):
+        """ Update list of data units items 
+            from coordination service """
+        du_dict = CoordinationAdaptor.get_du(self.url)
+        data_unit_dict_list = eval(du_dict["data_unit_items"])
+        self.data_unit_items = [DataUnitItem.create_data_unit_from_dict(i) for i in data_unit_dict_list]
+        
+        
     def __restore_state(self):
         du_dict = CoordinationAdaptor.get_du(self.url)
         # Restore Data Unit

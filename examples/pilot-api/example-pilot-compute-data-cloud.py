@@ -68,7 +68,7 @@ if __name__ == "__main__":
                              'affinity_machine_label': "", 
                              #'working_directory': os.getcwd(),
                              # cloud specific attributes
-                             "vm_id":"emi-8F013BFC",
+                             "vm_id":"emi-49033B32",
                              "vm_ssh_username":"root",
                              "vm_ssh_keyname":"luckow",
                              "vm_ssh_keyfile":"/Users/luckow/.ssh/eucakey-india",
@@ -108,11 +108,12 @@ if __name__ == "__main__":
     }   
     
     compute_unit = compute_data_service.submit_compute_unit(compute_unit_description)
-    logging.info("Finished setup of ComputeDataService. Waiting for scheduling of PD")
+    logger.info("Finished setup of ComputeDataService. Waiting for scheduling of PD")
     compute_data_service.wait()
     
+    logger.debug("Output Data Unit: " + str(output_data_unit.list()))
     
-    logging.info("Terminate Pilot Compute/Data Service")
+    logger.info("Terminate Pilot Compute/Data Service")
     compute_data_service.cancel()
     pilot_data_service.cancel()
     pilot_compute_service.cancel()
