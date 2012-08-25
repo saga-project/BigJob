@@ -766,9 +766,10 @@ class bigjob_agent:
                 all_files=[]
                 for output_file in file_list:
                     expanded_files = [output_file]
-                    if output_file.find("*")>0 or output_file.find("?")>0:
+                    if output_file.find("*")>=0 or output_file.find("?")>=0:
                         expanded_files = self.__expand_file_pattern(output_file, workingdirectory)
-                    logger.debug("Expanded files: " + str(expanded_files))
+                        logger.debug("Expanded files: " + str(expanded_files))
+                        
                     for f in expanded_files:
                         all_files.append(os.path.join(workingdirectory, f))
                  
@@ -779,6 +780,7 @@ class bigjob_agent:
     def __expand_file_pattern(self, filename_pattern, workingdirectory):
         """ expand files with wildcard * to a list """
         files = os.listdir(workingdirectory)
+        logger.debug("All files in directory: " + str(files))
         matches = []
         for i in files:
             if fnmatch.fnmatch(i, filename_pattern):

@@ -68,7 +68,7 @@ if __name__ == "__main__":
                              'affinity_machine_label': "", 
                              #'working_directory': os.getcwd(),
                              # cloud specific attributes
-                             "vm_id":"emi-9DCC3DFA",
+                             "vm_id":"emi-8F013BFC",
                              "vm_ssh_username":"root",
                              "vm_ssh_keyname":"luckow",
                              "vm_ssh_keyfile":"/Users/luckow/.ssh/eucakey-india",
