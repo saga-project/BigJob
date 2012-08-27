@@ -730,7 +730,7 @@ class bigjob_agent:
     
     def __stage_in_data_units(self, input_data=[], target_directory="."):
         """ stage in data units specified in input_data field """
-        logger.debug("Stage in input files")
+        logger.debug("Stage in input files to: %s"%target_directory)
         for i in input_data:
             pd_url = self.__get_pd_url(i)
             du_id = self.__get_du_id(i)
