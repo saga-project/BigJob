@@ -139,8 +139,8 @@ class Job(object):
         # Submit job
         ctx = saga.Context()
         ctx.type = saga.Context.SSH
-        ctx.userid  = USER_ID
-        ctx.userkey = SSH_KEY_FILE
+        ctx.userid = self.pilot_compute_description["vm_ssh_username"]
+        ctx.userkey = self.pilot_compute_description["vm_ssh_keyfile"]
         js.session.contexts.append(ctx)
 
         job = js.create_job(self.job_description)
