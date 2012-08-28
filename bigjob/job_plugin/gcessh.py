@@ -125,6 +125,7 @@ class Job(object):
         #result = gce.instances().get(instance="bigjob-pilot", project="bigjob-pilot").execute()
         gce.instances().insert(project=GCE_PROJECT_ID, body=request_dict).execute()
         
+        time.sleep(10) # wait for startup
         #wait for compute instance to become active
         self.wait_for_running()
         
