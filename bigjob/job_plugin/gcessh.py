@@ -145,7 +145,16 @@ class Job(object):
 
         job = js.create_job(self.job_description)
         print "Submit pilot job to: " + str(url)
-        job.run()
+        trials=0
+        while trials < 3:
+            try:
+                logger.debug("Attempt: %d, submit pilot job to: %s "%(trials,str(url)))
+                job.run()
+                break
+            except:
+                trials = trials + 1 
+                time.sleep(7)
+        
         print "Job State : %s" % (job.get_state())
        
 
