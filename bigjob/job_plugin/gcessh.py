@@ -62,7 +62,7 @@ class Service(object):
         self.pilot_compute_description =  pilot_compute_description   
     
     def create_job(self, job_description):
-        j = Job(job_description, self.resource_url)
+        j = Job(job_description, self.resource_url, self.pilot_compute_description)
         return j
             
     
@@ -75,10 +75,11 @@ class Service(object):
 class Job(object):
 
 
-    def __init__(self, job_description, saga_url):
+    def __init__(self, job_description, saga_url, pilot_compute_description):
         
         self.job_description = job_description
         self.saga_url = saga_url
+        self.pilot_compute_description = pilot_compute_description
         
         self.id="bigjob-" + str(uuid.uuid1())
         self.network_ip=None
