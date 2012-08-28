@@ -80,7 +80,6 @@ class Job(object):
         self.job_description = job_description
         self.saga_url = saga_url
         self.pilot_compute_description = pilot_compute_description
-        
         self.id="bigjob-" + str(uuid.uuid1())
         self.network_ip=None
         
@@ -140,12 +139,13 @@ class Job(object):
         # Submit job
         ctx = saga.Context()
         ctx.type = saga.Context.SSH
-        ctx.userid = self.pilot_compute_description["vm_ssh_username"]
+        ctx.userid  = self.pilot_compute_description["vm_ssh_username"]
         ctx.userkey = self.pilot_compute_description["vm_ssh_keyfile"]
         js.session.contexts.append(ctx)
 
         job = js.create_job(self.job_description)
         print "Submit pilot job to: " + str(url)
+        
         trials=0
         while trials < 3:
             try:
@@ -155,6 +155,7 @@ class Job(object):
             except:
                 trials = trials + 1 
                 time.sleep(7)
+        
         
         print "Job State : %s" % (job.get_state())
        
