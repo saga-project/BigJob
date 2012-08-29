@@ -9,6 +9,7 @@ from boto.ec2.connection import EC2Connection
 from boto.ec2.regioninfo import RegionInfo
 
 import bliss.saga as saga
+import bliss
 
 ###############################################################################
 # EC2 General
@@ -83,7 +84,8 @@ class Job(object):
     def __init__(self, job_description, resource_url, pilot_compute_description):
         
         self.job_description = job_description
-        self.resource_url = saga.Url(resource_url)
+        logger.debug("URL: " + str(resource_url) + " Type: " + str(type(resource_url)))
+        self.resource_url = saga.Url(str(resource_url))
         self.pilot_compute_description = pilot_compute_description
         
         self.id="bigjob-" + str(uuid.uuid1())
@@ -156,6 +158,8 @@ class Job(object):
         ctx.userid = self.pilot_compute_description["vm_ssh_username"]
         ctx.userkey = self.pilot_compute_description["vm_ssh_keyfile"]
         js.session.contexts.append(ctx)
+
+        logger.debug("Job Description Type: " + str(type(self.job_description)))
 
         job = js.create_job(self.job_description)
         
