@@ -278,9 +278,9 @@ class SSHFileAdaptor(object):
         target_host = result.netloc
         target_path = result.path
         if target_host==None or target_host=="":
-            target_host="localhost"
-
-        cmd = "scp -r %s:%s %s:%s"%(source_host, source_path, target_host, target_path)
+            cmd = "scp -r %s:%s %s"%(source_host, source_path, target_path)
+        else:
+            cmd = "scp -r %s:%s %s:%s"%(source_host, source_path, target_host, target_path)
         rc = os.system(cmd)
         logger.debug("Command: %s Return Code: %d"%(cmd,rc))
 
