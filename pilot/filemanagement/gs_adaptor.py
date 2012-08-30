@@ -119,7 +119,7 @@ class GSFileAdaptor(object):
         du_items = du.list()
         for i in du_items.keys():     
             local_filename=du_items[i]["local"]
-            remote_path = os.path.join(str(du.id), local_filename)
+            remote_path = os.path.join(str(du.id), os.path.basename(local_filename))
             self._put_file(local_filename, remote_path)
             
     
