@@ -144,19 +144,26 @@ class Job(object):
         ctx.userkey = self.pilot_compute_description["vm_ssh_keyfile"]
         js.session.contexts.append(ctx)
 
+
         job = js.create_job(self.job_description)
         print "Submit pilot job to: " + str(url)
         
+        TRIAL_MAX=8
         trials=0
-        while trials < 3:
+        while trials < TRIAL_MAX:
             try:
                 logger.debug("Attempt: %d, submit pilot job to: %s "%(trials,str(url)))
                 job.run()
                 break
             except:
                 trials = trials + 1 
-                time.sleep(7)
+                time.sleep(8)
+                if trials == TRIAL_MAX:
+                    raise Exception("Submission of agent failed.") 
+                
+        logger.debug("Job State : %s" % (job.get_state())) 
         
+      
         
         print "Job State : %s" % (job.get_state())
        
