@@ -145,6 +145,7 @@ class Job(object):
         logger.debug("Started EC2/Eucalyptus/Nova instance: %s"%self.instance_id)
         if self.resource_url.scheme != "euca+ssh" and self.resource_url.scheme != "nova+ssh":
             self.ec2_conn.create_tags([self.instance_id], {"Name": self.id})
+        time.sleep(10)
         self.wait_for_running()
         
         self.network_ip = self.instance.ip_address 
