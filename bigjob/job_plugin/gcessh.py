@@ -154,7 +154,7 @@ class Job(object):
                 break
             except:
                 trials = trials + 1 
-                time.sleep(20)
+                time.sleep(10)
                 if trials == TRIAL_MAX:
                     raise Exception("Submission of agent failed.") 
                 

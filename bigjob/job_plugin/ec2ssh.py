@@ -175,7 +175,7 @@ class Job(object):
             except:
                 self.__print_traceback()
                 trials = trials + 1 
-                time.sleep(30)
+                time.sleep(10)
                 if trials == TRIAL_MAX:
                     raise Exception("Submission of agent failed.") 
                 
