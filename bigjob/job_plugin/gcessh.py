@@ -26,9 +26,6 @@ OAUTH2_CLIENT_SECRET='YOUR_OAUTH2_CLIENT_SECRET'
 
 
 GCE_PROJECT_ID='bigjob-pilot'
-USER_ID='luckow'
-SSH_KEY_FILE='/Users/luckow/.ssh/google_compute_engine'
-
 
 """
 Google Compute Engine currently provides a default image with Ubuntu 12.04
