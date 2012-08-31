@@ -16,6 +16,7 @@ from pilot.api import State
 from bigjob import logger
 
 from apiclient.discovery import build
+from apiclient.http import MediaFileUpload
 from oauth2client.file import Storage
 from oauth2client.client import OAuth2WebServerFlow
 from oauth2client.client import Credentials
@@ -149,9 +150,11 @@ class GSFileAdaptor(object):
     def _put_file(self, source, target):
         logger.debug("Put file: %s to %s"%(source, target))
         gs = self.__get_api_client()[0]
+        media = MediaFileUpload(source, 
+                                mimetype='application/octet-stream')
         o = gs.objects().insert(bucket=self.bucket_name, 
                                 name=target,
-                                media_body=source).execute()            
+                                media_body=media).execute()            
         logger.debug("Put file result: %s"%str(o))
     
     
