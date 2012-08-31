@@ -4,6 +4,7 @@ from bigjob import logger
 import os
 import uuid
 import time
+import traceback
 
 from boto.ec2.connection import EC2Connection
 from boto.ec2.regioninfo import RegionInfo
@@ -172,6 +173,7 @@ class Job(object):
                 job.run()
                 break
             except:
+                self.__print_traceback()
                 trials = trials + 1 
                 time.sleep(8)
                 if trials == TRIAL_MAX:
@@ -198,6 +200,13 @@ class Job(object):
         
     ###########################################################################
     # private methods
+    def __print_traceback(self):
+        exc_type, exc_value, exc_traceback = sys.exc_info()
+        print "*** print_tb:"
+        traceback.print_tb(exc_traceback, limit=1, file=sys.stdout)
+        print "*** print_exception:"
+        traceback.print_exception(exc_type, exc_value, exc_traceback,
+                              limit=2, file=sys.stdout)
     
  
      
