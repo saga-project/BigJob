@@ -125,7 +125,7 @@ class Job(object):
         #result = gce.instances().get(instance="bigjob-pilot", project="bigjob-pilot").execute()
         gce.instances().insert(project=GCE_PROJECT_ID, body=request_dict).execute()
         
-        time.sleep(10) # wait for startup
+        time.sleep(15) # wait for startup
         #wait for compute instance to become active
         self.wait_for_running()
         
@@ -148,7 +148,7 @@ class Job(object):
         job = js.create_job(self.job_description)
         print "Submit pilot job to: " + str(url)
         
-        TRIAL_MAX=8
+        TRIAL_MAX=15
         trials=0
         while trials < TRIAL_MAX:
             try:
@@ -157,7 +157,7 @@ class Job(object):
                 break
             except:
                 trials = trials + 1 
-                time.sleep(8)
+                time.sleep(20)
                 if trials == TRIAL_MAX:
                     raise Exception("Submission of agent failed.") 
                 
