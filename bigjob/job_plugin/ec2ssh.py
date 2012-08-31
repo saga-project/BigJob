@@ -5,7 +5,7 @@ import os
 import uuid
 import time
 import traceback
-
+import sys
 from boto.ec2.connection import EC2Connection
 from boto.ec2.regioninfo import RegionInfo
 
