@@ -159,7 +159,7 @@ class Job(object):
         ctx.type = saga.Context.SSH
         ctx.userid = self.pilot_compute_description["vm_ssh_username"]
         ctx.userkey = self.pilot_compute_description["vm_ssh_keyfile"]
-        js.session.contexts.append(ctx)
+        js.session.contexts = [ctx]
 
         logger.debug("Job Description Type: " + str(type(self.job_description)))
 
