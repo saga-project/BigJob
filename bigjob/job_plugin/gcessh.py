@@ -118,8 +118,8 @@ class Job(object):
             }
           ],         
           "zone": "https://www.googleapis.com/compute/v1beta12/projects/bigjob-pilot/zones/us-central1-a",
-          #"machineType": "https://www.googleapis.com/compute/v1beta12/projects/bigjob-pilot/machine-types/n1-standard-1",
-          "machineType": self.machine_type,
+          "machineType": "https://www.googleapis.com/compute/v1beta12/projects/bigjob-pilot/machine-types/n1-standard-1",
+          "machineType": "https://www.googleapis.com/compute/v1beta12/projects/bigjob-pilot/machine-types/" + self.machine_type,
           "name": self.id,
           "image": self.image_url       
         }
