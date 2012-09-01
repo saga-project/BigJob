@@ -24,7 +24,6 @@ More information with respect to OAUTH: https://developers.google.com/compute/do
 OAUTH2_CLIENT_ID='1004462711324-55akehip32m59u6omdfrt9s8u8ehb0hm.apps.googleusercontent.com'
 OAUTH2_CLIENT_SECRET='EIMML1W7anu0XijVghws0DY-'
 
-
 GCE_PROJECT_ID='bigjob-pilot'
 
 """
@@ -80,6 +79,11 @@ class Job(object):
         self.image_url = GCE_IMAGE_URL
         if self.pilot_compute_description.has_key("vm_id"):
             self.image_url = self.pilot_compute_description["vm_id"]
+            
+        self.machine_type = "n1-standard-1"
+        if self.pilot_compute_description.has_key("vm_type"):
+            self.machine_type = self.pilot_compute_description["vm_type"]
+            
         self.id="bigjob-" + str(uuid.uuid1())
         self.network_ip=None
         
@@ -114,7 +118,8 @@ class Job(object):
             }
           ],         
           "zone": "https://www.googleapis.com/compute/v1beta12/projects/bigjob-pilot/zones/us-central1-a",
-          "machineType": "https://www.googleapis.com/compute/v1beta12/projects/bigjob-pilot/machine-types/n1-standard-1",
+          #"machineType": "https://www.googleapis.com/compute/v1beta12/projects/bigjob-pilot/machine-types/n1-standard-1",
+          "machineType": self.machine_type,
           "name": self.id,
           "image": self.image_url       
         }
