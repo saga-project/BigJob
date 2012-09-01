@@ -77,6 +77,9 @@ class Job(object):
         self.job_description = job_description
         self.saga_url = saga_url
         self.pilot_compute_description = pilot_compute_description
+        self.image_url = GCE_IMAGE_URL
+        if self.pilot_compute_description.has_key("vm_id"):
+            self.image_url = self.pilot_compute_description["vm_id"]
         self.id="bigjob-" + str(uuid.uuid1())
         self.network_ip=None
         
@@ -113,7 +116,7 @@ class Job(object):
           "zone": "https://www.googleapis.com/compute/v1beta12/projects/bigjob-pilot/zones/us-central1-a",
           "machineType": "https://www.googleapis.com/compute/v1beta12/projects/bigjob-pilot/machine-types/n1-standard-1",
           "name": self.id,
-          "image": GCE_IMAGE_URL       
+          "image": self.image_url       
         }
          
         http = httplib2.Http()
