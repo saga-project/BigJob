@@ -42,6 +42,7 @@ AWS_SECRET_ACCESS_KEY=None
 
 
 class State:
+    UNKNOWN="unknown"
     PENDING="pending"
     RUNNING="running"
     
@@ -189,8 +190,12 @@ class Job(object):
         
     
     def get_state(self):
-        self.instance.update()
-        result=self.instance.state
+        result = State.UNKNOWN
+        try:
+            self.instance.update()
+            result=self.instance.state
+        except:
+            logger.warning("Instance not reachable/active yet...")
         return result
     
     
