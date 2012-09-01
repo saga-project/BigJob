@@ -168,7 +168,7 @@ class Job(object):
 
         job = js.create_job(self.job_description)
         
-        TRIAL_MAX=15
+        TRIAL_MAX=20
         trials=0
         while trials < TRIAL_MAX:
             try:
@@ -176,9 +176,11 @@ class Job(object):
                 job.run()
                 break
             except:
-                self.__print_traceback()
+                exc_type, exc_value, exc_traceback = sys.exc_info()
+                logger.warning("Submission failed: " + str(exc_value))
+                #self.__print_traceback()
                 trials = trials + 1 
-                time.sleep(20)
+                time.sleep(25)
                 if trials == TRIAL_MAX:
                     raise Exception("Submission of agent failed.") 
                 
