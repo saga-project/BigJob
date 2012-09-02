@@ -80,11 +80,11 @@ class Job(object):
         if self.pilot_compute_description.has_key("vm_id"):
             self.image_url = self.pilot_compute_description["vm_id"]
             
-        self.machine_type = "n1-standard-1"
+        self.machine_type = "https://www.googleapis.com/compute/v1beta12/projects/bigjob-pilot/machine-types/n1-standard-1"
         if self.pilot_compute_description.has_key("vm_type"):
             self.machine_type = self.pilot_compute_description["vm_type"]
         
-        self.location = "us-east1-a"
+        self.location = "https://www.googleapis.com/compute/v1beta12/projects/bigjob-pilot/zones/us-east1-a"
         if self.pilot_compute_description.has_key("vm_location"):
             self.location = self.pilot_compute_description["vm_location"]
        
@@ -122,7 +122,8 @@ class Job(object):
               "network": "https://www.googleapis.com/compute/v1beta12/projects/bigjob-pilot/networks/default"
             }
           ],         
-          "zone": "https://www.googleapis.com/compute/v1beta12/projects/bigjob-pilot/zones/" + self.location,
+          #"zone": "https://www.googleapis.com/compute/v1beta12/projects/bigjob-pilot/zones/us-east1-a",
+          "zone": self.location,
           #"machineType": "https://www.googleapis.com/compute/v1beta12/projects/bigjob-pilot/machine-types/n1-standard-1",
           "machineType": self.machine_type,
           "name": self.id,
