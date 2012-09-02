@@ -151,7 +151,7 @@ class GSFileAdaptor(object):
         logger.debug("Put file: %s to %s"%(source, target))
         gs = self.__get_api_client()[0]
         media = MediaFileUpload(source, 
-                                mimetype='application/octet-stream')
+                                resumable=False)
         o = gs.objects().insert(bucket=self.bucket_name, 
                                 name=target,
                                 media_body=media).execute()            
@@ -210,8 +210,8 @@ class GSFileAdaptor(object):
     
     
 if __name__ == "__main__":
-    gs = GSFileAdaptor("gs://google.com/pilot-data-bucket-1234")
+    gs = GSFileAdaptor("gs://pilot-data-bucket-1234")
     gs.initialize_pilotdata()
-    gs._put_file("test.txt", "test.txt")
+    gs._put_file("test-random.exe", "test.exe")
     gs._get_file("test.txt", "test2.txt")
     gs.get_du(None, ".")
