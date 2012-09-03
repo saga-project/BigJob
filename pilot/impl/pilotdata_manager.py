@@ -259,7 +259,7 @@ class PilotData(PilotData):
         pd_dict["id"]=self.id
         pd_dict["url"]=self.url
         pd_dict["pilot_data_description"]=self.pilot_data_description
-        logger.debug("PS Dictionary: " + str(pd_dict))
+        logger.debug("PilotData Dictionary: " + str(pd_dict))
         return pd_dict
     
     
