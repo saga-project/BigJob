@@ -150,11 +150,11 @@ class GSFileAdaptor(object):
     def _put_file(self, source, target):
         logger.debug("Put file: %s to %s"%(source, target))
         gs = self.__get_api_client()[0]
-        media = MediaFileUpload(source, 
-                                resumable=False)
+        #media = MediaFileUpload(source, 
+        #                        resumable=False)
         o = gs.objects().insert(bucket=self.bucket_name, 
                                 name=target,
-                                media_body=media).execute()            
+                                media_body=source).execute()            
         logger.debug("Put file result: %s"%str(o))
     
     

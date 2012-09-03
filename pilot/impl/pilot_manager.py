@@ -291,7 +291,9 @@ class ComputeDataService(ComputeDataService):
                 logger.error("*** print_exception:")
                 traceback.print_exception(exc_type, exc_value, exc_traceback,
                               limit=2, file=sys.stderr)
-            time.sleep(5)        
+            
+            if self.cu_queue.empty() and self.du_queue.empty():
+                time.sleep(5)        
 
         logger.debug("Re-Scheduler terminated")
     
