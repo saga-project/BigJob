@@ -109,7 +109,15 @@ class Job(object):
     def run(self):
         request_dict = {
           "kind": "compute#instance",
-          "disks": [],
+          "disks": [
+                    {
+                     "kind": "compute#instanceDisk",
+                     "type": "PERSISTENT",
+                     "mode": "READ",
+                     "deviceName": "reference-genome",
+                     "source": "https://www.googleapis.com/compute/v1beta12/projects/bigjob-pilot/disks/reference-genome"
+                     }
+          ],
           "networkInterfaces": [
             {
               "kind": "compute#instanceNetworkInterface",
@@ -121,7 +129,18 @@ class Job(object):
               ],
               "network": "https://www.googleapis.com/compute/v1beta12/projects/bigjob-pilot/networks/default"
             }
-          ],         
+          ],
+          "serviceAccounts": [
+                              {
+                               "kind": "compute#serviceAccount",
+                               "email": "default",
+                               "scopes": [
+                                          "https://www.googleapis.com/auth/userinfo.email",
+                                          "https://www.googleapis.com/auth/compute",
+                                          "https://www.googleapis.com/auth/devstorage.full_control"
+                                          ]
+                               }
+                              ],         
           #"zone": "https://www.googleapis.com/compute/v1beta12/projects/bigjob-pilot/zones/us-east1-a",
           "zone": self.location,
           #"machineType": "https://www.googleapis.com/compute/v1beta12/projects/bigjob-pilot/machine-types/n1-standard-1",
