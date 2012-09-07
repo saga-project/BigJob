@@ -50,9 +50,12 @@ class S3FileAdaptor(object):
         self.bucket_name = self.__get_bucket_name(resource_url)
         self.__state=State.New
         self.pilot_data_description = pilot_data_description
+        aws_access_key_id=None
+        aws_secret_access_key=None
         
         # try to recover key from pilot_data_description
-        if self.pilot_data_description.has_key("access_key_id") and \
+        if self.pilot_data_description!=None and\
+           self.pilot_data_description.has_key("access_key_id") and \
            self.pilot_data_description.has_key("secret_access_key"):
             aws_access_key_id=self.pilot_data_description["access_key_id"]
             aws_secret_access_key=self.pilot_data_description["secret_access_key"]
@@ -172,10 +175,19 @@ class S3FileAdaptor(object):
     # Pure File Management APIs
     def _put_file(self, source, target):
         logger.debug("Put file: %s to %s"%(source, target))
-        k = Key(self.bucket)
-        k.key=target
-        k.set_contents_from_filename(source)
-        logger.debug("Put file result: %s"%source)
+        if self.__starts_with_valid_prefix(source):
+            logger.debug("Copy file from S3/Walrus")
+            source_bucket_name = self.__get_bucket_name(source)
+            source_key_name = self.__get_key_name(source)
+            self.bucket.copy_key(target, source_bucket_name, source_key_name)
+            #k = Key(source_bucket_name)
+            #k.copy(self.bucket_name, target)
+        else:
+            logger.debug("Copy file from Local")
+            k = Key(self.bucket)
+            k.key=target
+            k.set_contents_from_filename(source)
+            logger.debug("Put file result: %s"%source)
     
     
     def _get_file(self, source, target):
@@ -193,16 +205,45 @@ class S3FileAdaptor(object):
     
                    
     ###########################################################################
+    def __starts_with_valid_prefix(self, url):
+        valid_prefix=["s3", "walrus"]
+        result = False
+        for i in valid_prefix:
+            result = url.startswith(i)
+            if result == True:
+                break
+        return result
+    
     def __get_bucket_name(self, resource_url):
         surl = saga.Url(resource_url)
         if surl.scheme.startswith("s3"):
             bucket_name = resource_url.replace("s3://", "")
-            bucket_name = bucket_name.replace("/", "")
+            try:
+                bucket_name = bucket_name[:bucket_name.index("/")]
+            except:
+                pass
+            #bucket_name = bucket_name.replace("/", "")
         else:
             bucket_name = surl.path[1:]
         return bucket_name
         
    
+    def __get_key_name(self, resource_url):
+        surl = saga.Url(resource_url)
+        # get path out of URL
+        if surl.scheme.startswith("s3"):
+            bucket_name = resource_url.replace("s3://", "")            
+        else:
+            bucket_name = surl.path[1:]
+        
+        # get key path out of URL
+        try:
+            key_name = bucket_name[bucket_name.index("/")+1:]
+        except:
+            pass
+        
+        return key_name
+    
    
     def __print_traceback(self):
         exc_type, exc_value, exc_traceback = sys.exc_info()
@@ -230,7 +271,14 @@ def test_swift():
     s3._put_file("test.txt", "du-7370d7b5-ed0b-11e1-95df-705681b3df0f/test.txt")
     s3._get_file("du-7370d7b5-ed0b-11e1-95df-705681b3df0f/test.txt", "test2.txt")
     s3.get_du("du-7370d7b5-ed0b-11e1-95df-705681b3df0f", ".")
-    
+   
+def test_s3import():
+    s3 = S3FileAdaptor("s3://pilot-data-andre-test-create-from-s3-url", 
+                       pilot_data_description={ "access_key_id":"AKIAJPGNDJRYIG5LIEUA",
+                                                "secret_access_key":"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" })
+    s3.initialize_pilotdata()
+    s3._put_file("s3://pilot-data-05d88e40-f65b-11e1-a327-00215ec9e3ac/du-3624837e-f66f-11e1-a327-00215ec9e3ac/WRT54GS_UG_WEB_20070529.pdf", "bla/test.pdf")
+
 if __name__ == "__main__":
-    test_swift()
+    test_s3import()
     
