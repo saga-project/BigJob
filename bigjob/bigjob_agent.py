@@ -634,7 +634,7 @@ class bigjob_agent:
                 p_state = p.poll()
                 logger.debug(self.print_job(i) + " state: " + str(p_state) + " return code: " + str(p.returncode))
                 if (p_state != None and (p_state==0 or p_state==255)):
-                    logger.debug("Job successful: " + self.print_job(i) + " - set state to Done")
+                    logger.debug("** Job successful: " + self.print_job(i) + " - set state to Done **")
                     ###########################################################
                     # Handle stage-out
                     self.update_output_file() # for Condor case
