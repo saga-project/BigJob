@@ -49,7 +49,7 @@ import subprocess
 
 """ Config parameters (will move to config file in future) """
 CONFIG_FILE="bigjob_agent.conf"
-THREAD_POOL_SIZE=4
+THREAD_POOL_SIZE=8
 APPLICATION_NAME="bigjob"
 
 class bigjob_agent:
