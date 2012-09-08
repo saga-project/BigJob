@@ -118,10 +118,11 @@ class GSFileAdaptor(object):
     def put_du(self, du):
         logger.debug("Copy DU to Google Storage")
         du_items = du.list()
-        for i in du_items.keys():     
+        for i in du_items.keys():   
             local_filename=du_items[i]["local"]
-            remote_path = os.path.join(str(du.id), os.path.basename(local_filename))
-            self._put_file(local_filename, remote_path)
+            if os.path.exists(local_filename):  
+                remote_path = os.path.join(str(du.id), os.path.basename(local_filename))
+                self._put_file(local_filename, remote_path)
             
     
     def copy_du(self, du, pd_new):
