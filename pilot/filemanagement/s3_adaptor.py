@@ -138,11 +138,13 @@ class S3FileAdaptor(object):
         logger.debug("Copy DU to S3/Walrus")
         du_items = du.list()
         for i in du_items.keys():     
-            local_filename=du_items[i]["local"]
-            if os.path.exists(local_filename):
+            try:
+                local_filename=du_items[i]["local"]
                 remote_path = os.path.join(str(du.id), os.path.basename(local_filename))
                 logger.debug("copy %s to %s"%(local_filename, remote_path))
                 self._put_file(local_filename, remote_path)
+            except:
+                logger.debug("Could not copy: " + str(i))
                 
     
     def get_du(self, du, target_url):
@@ -280,6 +282,36 @@ def test_s3import():
     s3.initialize_pilotdata()
     s3._put_file("s3://pilot-data-05d88e40-f65b-11e1-a327-00215ec9e3ac/du-3624837e-f66f-11e1-a327-00215ec9e3ac/WRT54GS_UG_WEB_20070529.pdf", "bla/test.pdf")
 
+def test_s3import_via_pilotapi():
+    COORDINATION_URL="redis://ILikeBigJob_wITH-REdIS@gw68.quarry.iu.teragrid.org:6379"
+    from pilot import PilotComputeService, PilotDataService, ComputeDataService, State
+    pilot_data_service = PilotDataService(coordination_url=COORDINATION_URL)
+    
+    ###################################################################################################
+    # Pick one of the Pilot Data Descriptions below    
+    
+    pilot_data_description_aws={
+                                "service_url": "s3://pilot-data-andre-workflow",
+                                "size": 100,   
+                                "affinity_datacenter_label": "us-east-1",              
+                                "affinity_machine_label": ""    ,
+                                "access_key_id": "AKIAJPGNDJRYIG5LIEUA",
+                                "secret_access_key":"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",                                                         
+                                }
+
+    pd = pilot_data_service.create_pilot(pilot_data_description=pilot_data_description_aws)
+     
+    data_unit_description = {
+                              "file_urls": ['s3://pilot-data-cec5d816-fa8f-11e1-ab5e-e61f1322a75c/du-67b4c762-fa90-11e1-ab5e-e61f1322a75c/ip-10-84-173-21512MB_2.input-chunk-02'],
+                              "affinity_datacenter_label": "us-east-1",              
+                              "affinity_machine_label": ""
+                             }    
+      
+    # submit pilot data to a pilot store 
+    input_data_unit = pd.submit_data_unit(data_unit_description)
+    input_data_unit.wait()
+    
+
 if __name__ == "__main__":
-    test_s3import()
+    test_s3import_via_pilotapi()
     
