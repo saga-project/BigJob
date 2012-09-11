@@ -4,11 +4,13 @@ from bigjob import logger
 import os
 import uuid
 import time
-
+import traceback
+import sys
 from boto.ec2.connection import EC2Connection
 from boto.ec2.regioninfo import RegionInfo
 
 import bliss.saga as saga
+import bliss
 
 ###############################################################################
 # EC2 General
@@ -40,6 +42,7 @@ AWS_SECRET_ACCESS_KEY=None
 
 
 class State:
+    UNKNOWN="unknown"
     PENDING="pending"
     RUNNING="running"
     
@@ -83,7 +86,8 @@ class Job(object):
     def __init__(self, job_description, resource_url, pilot_compute_description):
         
         self.job_description = job_description
-        self.resource_url = saga.Url(resource_url)
+        logger.debug("URL: " + str(resource_url) + " Type: " + str(type(resource_url)))
+        self.resource_url = saga.Url(str(resource_url))
         self.pilot_compute_description = pilot_compute_description
         
         self.id="bigjob-" + str(uuid.uuid1())
@@ -93,8 +97,12 @@ class Job(object):
         
         if self.resource_url.scheme == "euca+ssh" or self.resource_url.scheme == "nova+ssh":
             host = self.resource_url.host
-            path = self.resource_url.path
-            port = self.resource_url.port
+            path = "/services/Eucalyptus"
+            if self.resource_url.path!=None: 
+                path = self.resource_url.path
+            port = 8773
+            if self.resource_url.port != None:
+                port = self.resource_url.port
             region = None
             logger.debug("Host: %s, Path: %s, Port: %d"%(host, path, port))
             if self.resource_url.scheme == "euca+ssh":
@@ -137,9 +145,12 @@ class Job(object):
         self.instance = reservation.instances[0]
         self.instance_id = self.instance.id
         logger.debug("Started EC2/Eucalyptus/Nova instance: %s"%self.instance_id)
+        time.sleep(5)
+        self.wait_for_running()
+        
         if self.resource_url.scheme != "euca+ssh" and self.resource_url.scheme != "nova+ssh":
             self.ec2_conn.create_tags([self.instance_id], {"Name": self.id})
-        self.wait_for_running()
+      
         
         self.network_ip = self.instance.ip_address 
         url = "ssh://" + str(self.network_ip)
@@ -151,20 +162,29 @@ class Job(object):
         ctx.type = saga.Context.SSH
         ctx.userid = self.pilot_compute_description["vm_ssh_username"]
         ctx.userkey = self.pilot_compute_description["vm_ssh_keyfile"]
-        js.session.contexts.append(ctx)
+        js.session.contexts = [ctx]
+
+        logger.debug("Job Description Type: " + str(type(self.job_description)))
 
         job = js.create_job(self.job_description)
+        
+        TRIAL_MAX=30
         trials=0
-        while trials < 3:
+        while trials < TRIAL_MAX:
             try:
-                print ("Attempt: %d, submit pilot job to: %s "%(trials,str(url)))
+                logger.debug("Attempt: %d, submit pilot job to: %s "%(trials,str(url)))
                 job.run()
                 break
             except:
+                exc_type, exc_value, exc_traceback = sys.exc_info()
+                logger.warning("Submission failed: " + str(exc_value))
+                #self.__print_traceback()
                 trials = trials + 1 
-                time.sleep(7)
+                time.sleep(30)
+                if trials == TRIAL_MAX:
+                    raise Exception("Submission of agent failed.") 
                 
-        print "Job State : %s" % (job.get_state()) 
+        logger.debug("Job State : %s" % (job.get_state())) 
         
         
 
@@ -174,8 +194,12 @@ class Job(object):
         
     
     def get_state(self):
-        self.instance.update()
-        result=self.instance.state
+        result = State.UNKNOWN
+        try:
+            self.instance.update()
+            result=self.instance.state
+        except:
+            logger.warning("Instance not reachable/active yet...")
         return result
     
     
@@ -185,6 +209,13 @@ class Job(object):
         
     ###########################################################################
     # private methods
+    def __print_traceback(self):
+        exc_type, exc_value, exc_traceback = sys.exc_info()
+        print "*** print_tb:"
+        traceback.print_tb(exc_traceback, limit=1, file=sys.stdout)
+        print "*** print_exception:"
+        traceback.print_exception(exc_type, exc_value, exc_traceback,
+                              limit=2, file=sys.stdout)
     
  
      

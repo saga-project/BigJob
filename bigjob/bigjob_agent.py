@@ -16,6 +16,7 @@ import ConfigParser
 import types
 import logging
 import shutil
+import fnmatch
 from string import Template
 
 logging.basicConfig(level=logging.DEBUG)
@@ -334,7 +335,6 @@ class bigjob_agent:
                     logger.debug("Directory %s already exists."%workingdirectory)
                 logging.debug("Sub-Job: %s, Working_directory: %s"%(job_id, workingdirectory))
                 
-                
                 output="stdout"
                 if (job_dict.has_key("Output") == True):
                     output = job_dict["Output"]
@@ -634,8 +634,20 @@ class bigjob_agent:
                 p_state = p.poll()
                 logger.debug(self.print_job(i) + " state: " + str(p_state) + " return code: " + str(p.returncode))
                 if (p_state != None and (p_state==0 or p_state==255)):
-                    logger.debug("Job successful: " + self.print_job(i) + " - set state to Done")
-                    self.update_output_file()
+                    logger.debug("** Job successful: " + self.print_job(i) + " - set state to Done **")
+                    ###########################################################
+                    # Handle stage-out
+                    self.update_output_file() # for Condor case
+                    job_dict = self.coordination.get_job(i) # for Pilot Data case
+                    if job_dict.has_key("OutputData"):
+                        workingdirectory = os.path.join(os.getcwd(), job_dict["job-id"])  
+                        if (job_dict.has_key("WorkingDirectory") == True):
+                            workingdirectory =  job_dict["WorkingDirectory"]
+                            workingdirectory = self.__expand_directory(workingdirectory)
+                        self.__stage_out_data_units(eval(job_dict["OutputData"]), workingdirectory)
+                    
+                    ###########################################################
+                    # Status update
                     self.coordination.set_job_state(i, str(bigjob.state.Done))
                     self.free_nodes(i)
                     del self.processes[i]
@@ -718,7 +730,7 @@ class bigjob_agent:
     
     def __stage_in_data_units(self, input_data=[], target_directory="."):
         """ stage in data units specified in input_data field """
-        logger.debug("Stage in input files")
+        logger.debug("Stage in input files to: %s"%target_directory)
         for i in input_data:
             pd_url = self.__get_pd_url(i)
             du_id = self.__get_du_id(i)
@@ -726,6 +738,54 @@ class bigjob_agent:
             du = pd.get_du(du_id)
             du.export(target_directory)
     
+    
+    def __stage_out_data_units(self, output_data=[], workingdirectory=None):
+        """ stage out data to a specified data unit pilot data """
+        logger.debug("Stage out output files")
+        
+        """ Parsing output data field of job description:
+            {
+            ...
+             "output_data": [
+                            {
+                             output_data_unit.get_url(): 
+                             ["stdout.txt", "stderr.txt"]
+                            }
+                            ]
+            }    
+        """
+        for data_unit_dict in output_data: 
+            logger.debug("Process: " + str(data_unit_dict))
+            for du_url in data_unit_dict.keys(): # go through all dicts (each representing 1 PD) 
+                pd_url = self.__get_pd_url(du_url)
+                du_id = self.__get_du_id(du_url)
+                pilot_data = PilotData(pd_url=pd_url)
+                du = pilot_data.get_du(du_id)
+                file_list = data_unit_dict[du_url]
+                logger.debug("Add files: " + str(file_list))
+                all_files=[]
+                for output_file in file_list:
+                    expanded_files = [output_file]
+                    if output_file.find("*")>=0 or output_file.find("?")>=0:
+                        expanded_files = self.__expand_file_pattern(output_file, workingdirectory)
+                        logger.debug("Expanded files: " + str(expanded_files))
+                        
+                    for f in expanded_files:
+                        all_files.append(os.path.join(workingdirectory, f))
+                 
+                du.add_files(all_files)                        
+                for f in all_files:       
+                    os.remove(f)
+    
+    def __expand_file_pattern(self, filename_pattern, workingdirectory):
+        """ expand files with wildcard * to a list """
+        files = os.listdir(workingdirectory)
+        logger.debug("All files in directory: " + str(files))
+        matches = []
+        for i in files:
+            if fnmatch.fnmatch(i, filename_pattern):
+                matches.append(i)
+        return matches
     
     def __expand_directory(self, directory):
         """ expands directory name $HOME or ~ to the working directory

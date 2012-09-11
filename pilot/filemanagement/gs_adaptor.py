@@ -16,6 +16,7 @@ from pilot.api import State
 from bigjob import logger
 
 from apiclient.discovery import build
+from apiclient.http import MediaFileUpload
 from oauth2client.file import Storage
 from oauth2client.client import OAuth2WebServerFlow
 from oauth2client.client import Credentials
@@ -117,10 +118,13 @@ class GSFileAdaptor(object):
     def put_du(self, du):
         logger.debug("Copy DU to Google Storage")
         du_items = du.list()
-        for i in du_items.keys():     
-            local_filename=du_items[i]["local"]
-            remote_path = os.path.join(str(du.id), local_filename)
-            self._put_file(local_filename, remote_path)
+        for i in du_items.keys():   
+            try:
+                local_filename=du_items[i]["local"]
+                remote_path = os.path.join(str(du.id), os.path.basename(local_filename))
+                self._put_file(local_filename, remote_path)
+            except:
+                logger.debug("Could not copy file: " + (str(i)))
             
     
     def copy_du(self, du, pd_new):
@@ -149,6 +153,8 @@ class GSFileAdaptor(object):
     def _put_file(self, source, target):
         logger.debug("Put file: %s to %s"%(source, target))
         gs = self.__get_api_client()[0]
+        #media = MediaFileUpload(source, 
+        #                        resumable=False)
         o = gs.objects().insert(bucket=self.bucket_name, 
                                 name=target,
                                 media_body=source).execute()            
@@ -207,8 +213,8 @@ class GSFileAdaptor(object):
     
     
 if __name__ == "__main__":
-    gs = GSFileAdaptor("gs://google.com/pilot-data-bucket-1234")
+    gs = GSFileAdaptor("gs://pilot-data-bucket-1234")
     gs.initialize_pilotdata()
-    gs._put_file("test.txt", "test.txt")
+    gs._put_file("test-random.exe", "test.exe")
     gs._get_file("test.txt", "test2.txt")
     gs.get_du(None, ".")

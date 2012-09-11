@@ -24,11 +24,7 @@ More information with respect to OAUTH: https://developers.google.com/compute/do
 OAUTH2_CLIENT_ID='1004462711324-55akehip32m59u6omdfrt9s8u8ehb0hm.apps.googleusercontent.com'
 OAUTH2_CLIENT_SECRET='EIMML1W7anu0XijVghws0DY-'
 
-
 GCE_PROJECT_ID='bigjob-pilot'
-USER_ID='luckow'
-SSH_KEY_FILE='/Users/luckow/.ssh/google_compute_engine'
-
 
 """
 Google Compute Engine currently provides a default image with Ubuntu 12.04
@@ -62,7 +58,7 @@ class Service(object):
         self.pilot_compute_description =  pilot_compute_description   
     
     def create_job(self, job_description):
-        j = Job(job_description, self.resource_url)
+        j = Job(job_description, self.resource_url, self.pilot_compute_description)
         return j
             
     
@@ -75,11 +71,24 @@ class Service(object):
 class Job(object):
 
 
-    def __init__(self, job_description, saga_url):
+    def __init__(self, job_description, saga_url, pilot_compute_description):
         
         self.job_description = job_description
         self.saga_url = saga_url
+        self.pilot_compute_description = pilot_compute_description
+        self.image_url = GCE_IMAGE_URL
+        if self.pilot_compute_description.has_key("vm_id"):
+            self.image_url = self.pilot_compute_description["vm_id"]
+            
+        self.machine_type = "https://www.googleapis.com/compute/v1beta12/projects/bigjob-pilot/machine-types/n1-standard-1"
+        if self.pilot_compute_description.has_key("vm_type"):
+            self.machine_type = self.pilot_compute_description["vm_type"]
         
+        self.location = "https://www.googleapis.com/compute/v1beta12/projects/bigjob-pilot/zones/us-east1-a"
+        if self.pilot_compute_description.has_key("vm_location"):
+            self.location = self.pilot_compute_description["vm_location"]
+       
+            
         self.id="bigjob-" + str(uuid.uuid1())
         self.network_ip=None
         
@@ -100,7 +109,15 @@ class Job(object):
     def run(self):
         request_dict = {
           "kind": "compute#instance",
-          "disks": [],
+          "disks": [
+                    {
+                     "kind": "compute#instanceDisk",
+                     "type": "PERSISTENT",
+                     "mode": "READ",
+                     "deviceName": "reference-genome",
+                     "source": "https://www.googleapis.com/compute/v1beta12/projects/bigjob-pilot/disks/reference-genome"
+                     }
+          ],
           "networkInterfaces": [
             {
               "kind": "compute#instanceNetworkInterface",
@@ -112,11 +129,24 @@ class Job(object):
               ],
               "network": "https://www.googleapis.com/compute/v1beta12/projects/bigjob-pilot/networks/default"
             }
-          ],         
-          "zone": "https://www.googleapis.com/compute/v1beta12/projects/bigjob-pilot/zones/us-central1-a",
-          "machineType": "https://www.googleapis.com/compute/v1beta12/projects/bigjob-pilot/machine-types/n1-standard-1",
+          ],
+          "serviceAccounts": [
+                              {
+                               "kind": "compute#serviceAccount",
+                               "email": "default",
+                               "scopes": [
+                                          "https://www.googleapis.com/auth/userinfo.email",
+                                          "https://www.googleapis.com/auth/compute",
+                                          "https://www.googleapis.com/auth/devstorage.full_control"
+                                          ]
+                               }
+                              ],         
+          #"zone": "https://www.googleapis.com/compute/v1beta12/projects/bigjob-pilot/zones/us-east1-a",
+          "zone": self.location,
+          #"machineType": "https://www.googleapis.com/compute/v1beta12/projects/bigjob-pilot/machine-types/n1-standard-1",
+          "machineType": self.machine_type,
           "name": self.id,
-          "image": GCE_IMAGE_URL       
+          "image": self.image_url       
         }
          
         http = httplib2.Http()
@@ -125,6 +155,7 @@ class Job(object):
         #result = gce.instances().get(instance="bigjob-pilot", project="bigjob-pilot").execute()
         gce.instances().insert(project=GCE_PROJECT_ID, body=request_dict).execute()
         
+        time.sleep(15) # wait for startup
         #wait for compute instance to become active
         self.wait_for_running()
         
@@ -139,13 +170,31 @@ class Job(object):
         # Submit job
         ctx = saga.Context()
         ctx.type = saga.Context.SSH
-        ctx.userid  = USER_ID
-        ctx.userkey = SSH_KEY_FILE
-        js.session.contexts.append(ctx)
+        ctx.userid  = self.pilot_compute_description["vm_ssh_username"]
+        ctx.userkey = self.pilot_compute_description["vm_ssh_keyfile"]
+        js.session.contexts = [ctx]
+
 
         job = js.create_job(self.job_description)
         print "Submit pilot job to: " + str(url)
-        job.run()
+        
+        TRIAL_MAX=15
+        trials=0
+        while trials < TRIAL_MAX:
+            try:
+                logger.debug("Attempt: %d, submit pilot job to: %s "%(trials,str(url)))
+                job.run()
+                break
+            except:
+                trials = trials + 1 
+                time.sleep(10)
+                if trials == TRIAL_MAX:
+                    raise Exception("Submission of agent failed.") 
+                
+        logger.debug("Job State : %s" % (job.get_state())) 
+        
+      
+        
         print "Job State : %s" % (job.get_state())
        
 

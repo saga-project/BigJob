@@ -50,9 +50,12 @@ class S3FileAdaptor(object):
         self.bucket_name = self.__get_bucket_name(resource_url)
         self.__state=State.New
         self.pilot_data_description = pilot_data_description
+        aws_access_key_id=None
+        aws_secret_access_key=None
         
         # try to recover key from pilot_data_description
-        if self.pilot_data_description.has_key("access_key_id") and \
+        if self.pilot_data_description!=None and\
+           self.pilot_data_description.has_key("access_key_id") and \
            self.pilot_data_description.has_key("secret_access_key"):
             aws_access_key_id=self.pilot_data_description["access_key_id"]
             aws_secret_access_key=self.pilot_data_description["secret_access_key"]
@@ -65,19 +68,27 @@ class S3FileAdaptor(object):
             aws_secret_access_key=security_context["aws_secret_access_key"]
     
         self.s3_conn=None
-        if self.resource_url.scheme == "walrus":
+        if self.resource_url.scheme == "walrus" or self.resource_url.scheme == "swift":
             calling_format=OrdinaryCallingFormat()
             logger.debug("Access Key: %s Secret: %s Host: %s"%(aws_access_key_id,
                                                                aws_secret_access_key,
                                                                self.resource_url.host)
                          )
+            port = 8773
+            if self.resource_url.port!=None:
+                port = self.resource_url.port
+            
+            path = "/"
+            if self.resource_url.scheme == "walrus":
+                path = "/services/Walrus"
+                
             self.s3_conn = S3Connection(aws_access_key_id=aws_access_key_id,
                                         aws_secret_access_key=aws_secret_access_key,
                                         is_secure=False,
                                         host=self.resource_url.host,
-                                        port=8773,
+                                        port=port,
                                         calling_format=calling_format,
-                                        path="/services/Walrus")
+                                        path=path)
         else: # s3:// urls
             self.s3_conn = S3Connection(aws_access_key_id, aws_secret_access_key)
       
@@ -97,6 +108,7 @@ class S3FileAdaptor(object):
             self.bucket = self.s3_conn.create_bucket(self.bucket_name)
         except:
             # bucket already exists
+            self.__print_traceback()
             self.bucket = self.s3_conn.get_bucket(self.bucket_name)
             
         self.__state=State.Running
@@ -126,10 +138,13 @@ class S3FileAdaptor(object):
         logger.debug("Copy DU to S3/Walrus")
         du_items = du.list()
         for i in du_items.keys():     
-            local_filename=du_items[i]["local"]
-            remote_path = os.path.join(str(du.id), os.path.basename(local_filename))
-            logger.debug("copy %s to %s"%(local_filename, remote_path))
-            self._put_file(local_filename, remote_path)
+            try:
+                local_filename=du_items[i]["local"]
+                remote_path = os.path.join(str(du.id), os.path.basename(local_filename))
+                logger.debug("copy %s to %s"%(local_filename, remote_path))
+                self._put_file(local_filename, remote_path)
+            except:
+                logger.debug("Could not copy: " + str(i))
                 
     
     def get_du(self, du, target_url):
@@ -163,10 +178,19 @@ class S3FileAdaptor(object):
     # Pure File Management APIs
     def _put_file(self, source, target):
         logger.debug("Put file: %s to %s"%(source, target))
-        k = Key(self.bucket)
-        k.key=target
-        k.set_contents_from_filename(source)
-        logger.debug("Put file result: %s"%source)
+        if self.__starts_with_valid_prefix(source):
+            logger.debug("Copy file from S3/Walrus")
+            source_bucket_name = self.__get_bucket_name(source)
+            source_key_name = self.__get_key_name(source)
+            self.bucket.copy_key(target, source_bucket_name, source_key_name)
+            #k = Key(source_bucket_name)
+            #k.copy(self.bucket_name, target)
+        else:
+            logger.debug("Copy file from Local")
+            k = Key(self.bucket)
+            k.key=target
+            k.set_contents_from_filename(source)
+            logger.debug("Put file result: %s"%source)
     
     
     def _get_file(self, source, target):
@@ -184,16 +208,45 @@ class S3FileAdaptor(object):
     
                    
     ###########################################################################
+    def __starts_with_valid_prefix(self, url):
+        valid_prefix=["s3", "walrus"]
+        result = False
+        for i in valid_prefix:
+            result = url.startswith(i)
+            if result == True:
+                break
+        return result
+    
     def __get_bucket_name(self, resource_url):
         surl = saga.Url(resource_url)
         if surl.scheme.startswith("s3"):
             bucket_name = resource_url.replace("s3://", "")
-            bucket_name = bucket_name.replace("/", "")
+            try:
+                bucket_name = bucket_name[:bucket_name.index("/")]
+            except:
+                pass
+            #bucket_name = bucket_name.replace("/", "")
         else:
             bucket_name = surl.path[1:]
         return bucket_name
         
    
+    def __get_key_name(self, resource_url):
+        surl = saga.Url(resource_url)
+        # get path out of URL
+        if surl.scheme.startswith("s3"):
+            bucket_name = resource_url.replace("s3://", "")            
+        else:
+            bucket_name = surl.path[1:]
+        
+        # get key path out of URL
+        try:
+            key_name = bucket_name[bucket_name.index("/")+1:]
+        except:
+            pass
+        
+        return key_name
+    
    
     def __print_traceback(self):
         exc_type, exc_value, exc_traceback = sys.exc_info()
@@ -204,12 +257,61 @@ class S3FileAdaptor(object):
                               limit=2, file=sys.stdout)
     
     
-    
-if __name__ == "__main__":
+def test_walrus():
     s3 = S3FileAdaptor("walrus://149.165.146.135/pilot-data-c4eb26eb-ed0c-11e1-ac98-705681b3df0f", 
                        pilot_data_description={ "access_key_id":"8MCXRAMXMHDYKWNKXZ8WF",
                                                 "secret_access_key":"YrcUqSw2Arxshrh3ZtenkxerWwCWdMTKvZYoLPAo" })
     s3.initialize_pilotdata()
-    #s3._put_file("test.txt", "du-7370d7b5-ed0b-11e1-95df-705681b3df0f/test.txt")
-    #s3._get_file("du-7370d7b5-ed0b-11e1-95df-705681b3df0f/test.txt", "test2.txt")
+    s3._put_file("test.txt", "du-7370d7b5-ed0b-11e1-95df-705681b3df0f/test.txt")
+    s3._get_file("du-7370d7b5-ed0b-11e1-95df-705681b3df0f/test.txt", "test2.txt")
     s3.get_du("du-7370d7b5-ed0b-11e1-95df-705681b3df0f", ".")
+    
+def test_swift():
+    s3 = S3FileAdaptor("swift://149.165.146.50:3333/pilot-data-c4eb26eb-ed0c-11e1-ac98-705681b3df0f", 
+                       pilot_data_description={ "access_key_id":"f9716a49c92a4a4cbedb6aba5e78d682",
+                                                "secret_access_key":"bcdff54b7fe94d63b4412c762e823a84" })
+    s3.initialize_pilotdata()
+    s3._put_file("test.txt", "du-7370d7b5-ed0b-11e1-95df-705681b3df0f/test.txt")
+    s3._get_file("du-7370d7b5-ed0b-11e1-95df-705681b3df0f/test.txt", "test2.txt")
+    s3.get_du("du-7370d7b5-ed0b-11e1-95df-705681b3df0f", ".")
+   
+def test_s3import():
+    s3 = S3FileAdaptor("s3://pilot-data-andre-test-create-from-s3-url", 
+                       pilot_data_description={ "access_key_id":"AKIAJPGNDJRYIG5LIEUA",
+                                                "secret_access_key":"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" })
+    s3.initialize_pilotdata()
+    s3._put_file("s3://pilot-data-05d88e40-f65b-11e1-a327-00215ec9e3ac/du-3624837e-f66f-11e1-a327-00215ec9e3ac/WRT54GS_UG_WEB_20070529.pdf", "bla/test.pdf")
+
+def test_s3import_via_pilotapi():
+    COORDINATION_URL="redis://ILikeBigJob_wITH-REdIS@gw68.quarry.iu.teragrid.org:6379"
+    from pilot import PilotComputeService, PilotDataService, ComputeDataService, State
+    pilot_data_service = PilotDataService(coordination_url=COORDINATION_URL)
+    
+    ###################################################################################################
+    # Pick one of the Pilot Data Descriptions below    
+    
+    pilot_data_description_aws={
+                                "service_url": "s3://pilot-data-andre-workflow",
+                                "size": 100,   
+                                "affinity_datacenter_label": "us-east-1",              
+                                "affinity_machine_label": ""    ,
+                                "access_key_id": "AKIAJPGNDJRYIG5LIEUA",
+                                "secret_access_key":"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",                                                         
+                                }
+
+    pd = pilot_data_service.create_pilot(pilot_data_description=pilot_data_description_aws)
+     
+    data_unit_description = {
+                              "file_urls": ['s3://pilot-data-cec5d816-fa8f-11e1-ab5e-e61f1322a75c/du-67b4c762-fa90-11e1-ab5e-e61f1322a75c/ip-10-84-173-21512MB_2.input-chunk-02'],
+                              "affinity_datacenter_label": "us-east-1",              
+                              "affinity_machine_label": ""
+                             }    
+      
+    # submit pilot data to a pilot store 
+    input_data_unit = pd.submit_data_unit(data_unit_description)
+    input_data_unit.wait()
+    
+
+if __name__ == "__main__":
+    test_s3import_via_pilotapi()
+    

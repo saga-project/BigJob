@@ -113,8 +113,12 @@ class PilotData(PilotData):
         """ Cancel PilotData  """
         #self.__filemanager.delete_pilotdata()
         pass
-        
-        
+    
+     
+    def get_url(self):
+        return self.url
+       
+    
     def url_for_du(self, du):
         return self.service_url + "/" + str(du.id)
         
@@ -171,12 +175,7 @@ class PilotData(PilotData):
     def export_du(self, du, target_url):
         """ Export Data Unit to a local directory """
         self.__filemanager.get_du(du, target_url)
-    
-
-    def create_du(self, du):
-        """ Create a new Data Unit within Pilot """
-        self.__filemanager.create_du(du.id)
-        
+            
                 
     def put_du(self, du):
         logger.debug("Put DU: %s to Pilot-Data: %s"%(du.id,self.service_url))
@@ -207,7 +206,11 @@ class PilotData(PilotData):
     ###########################################################################
     # Auxillary Methods
 
-
+    def create_du(self, du):
+        """ Create a new Data Unit within Pilot """
+        self.__filemanager.create_du(du.id)
+  
+  
     def __initialize_pilot_data(self):
         
         if self.pilot_data_description!=None:
@@ -227,8 +230,10 @@ class PilotData(PilotData):
             elif self.service_url.startswith("gs:"):
                 logger.debug("Use Google Cloud Storage backend")
                 self.__filemanager = GSFileAdaptor(self.service_url, self.security_context)
-            elif self.service_url.startswith("s3:") or self.service_url.startswith("walrus:"):
-                logger.debug("Use Amazon S3/Eucalyptus Walrus Storage backend")
+            elif self.service_url.startswith("s3:") \
+                or self.service_url.startswith("walrus:") \
+                or self.service_url.startswith("swift:"):
+                logger.debug("Use Amazon S3/Eucalyptus Walrus/SWIFT Storage backend")
                 self.__filemanager = S3FileAdaptor(self.service_url, 
                                                    self.security_context, 
                                                    self.pilot_data_description)
@@ -254,7 +259,7 @@ class PilotData(PilotData):
         pd_dict["id"]=self.id
         pd_dict["url"]=self.url
         pd_dict["pilot_data_description"]=self.pilot_data_description
-        logger.debug("PS Dictionary: " + str(pd_dict))
+        logger.debug("PilotData Dictionary: " + str(pd_dict))
         return pd_dict
     
     
@@ -296,7 +301,7 @@ class PilotDataService(PilotDataService):
         'id',             # Reference to this PJS
         'url',            # URL for referencing PilotDataService
         'state',          # Status of the PJS
-        'data_unit'    # List of PJs under this PJS
+        'input_data_unit'    # List of PJs under this PJS
         'affinity_list'   # List of PS on that are affine to each other
     )
 
@@ -465,16 +470,21 @@ class DataUnit(DataUnit):
             CoordinationAdaptor.update_du(self)
 
             
-    def add_data_unit_item(self, data_unit):
-        self.data_unit_items.append(data_unit)    
+    def add_files(self, file_url_list=[]):
+        item_list = DataUnitItem.create_data_unit_from_urls(None, file_url_list)
+        for i in item_list:
+            self.data_unit_items.append(i)
+        CoordinationAdaptor.update_du(self)    
         if len(self.pilot_data) > 0: 
-            CoordinationAdaptor.update_du(self)
-
+            for i in self.pilot_data:
+                logger.debug("Update Pilot Data %s"%(i.get_url()))
+                i.put_du(self)
+        CoordinationAdaptor.update_du(self)    
         
-        
-    def remove_data_unit_item(self, data_unit):
-        self.data_unit_items.remove(data_unit)
-        if len(self.pilot_data) > 0: 
+    def remove_files(self, file_urls):
+        # TODO
+        #self.data_unit_items.remove(input_data_unit)
+        if len(self.pilot_data) > 0:
             CoordinationAdaptor.update_du(self)
 
         
@@ -488,9 +498,11 @@ class DataUnit(DataUnit):
                              }
             }        
         """        
+        self.__refresh()
         base_urls = [i.url_for_du(self) for i in self.get_pilot_data()]
         result_dict = {}
         for i in self.data_unit_items:
+            logger.debug("Process file: %s"%(i.filename))
             result_dict[i.filename]={
                                     "pilot_data": [os.path.join(j, i.filename) for j in base_urls],
                                     "local": i.local_url
@@ -590,7 +602,18 @@ class DataUnit(DataUnit):
             logger.error("No valid PD URL")
         return None
     
-
+    
+    def __refresh(self):
+        """ Update list of data units items 
+            from coordination service """
+        try:
+            if self.url != None:
+                du_dict = CoordinationAdaptor.get_du(self.url)
+                data_unit_dict_list = eval(du_dict["data_unit_items"])
+                self.data_unit_items = [DataUnitItem.create_data_unit_from_dict(i) for i in data_unit_dict_list]
+        except:
+            logger.warn("Refresh of DU %s failed"%(self.get_url()))
+        
     def __restore_state(self):
         du_dict = CoordinationAdaptor.get_du(self.url)
         # Restore Data Unit
@@ -670,13 +693,13 @@ class DataUnitItem(object):
     def create_data_unit_from_urls(cls, pd=None, urls=None):
         """ Creates a list of DUs from URL list
         """    
-        du_list = []    
+        du_item_list = []    
         for i in urls:            
             if cls.__exists_file(i):
                 du = DataUnitItem(pd, i)
-                du_list.append(du)
+                du_item_list.append(du)
     
-        return du_list
+        return du_item_list
     
     
     @classmethod
@@ -694,6 +717,9 @@ class DataUnitItem(object):
         du_dict["id"]=self.id
         return du_dict
     
+###################################################################################################    
+# Tests
+# Auxilliary testing methods
 def __get_pd_url(du_url):
     url = du_url[:du_url.index(":du-")]
     return url
@@ -702,8 +728,8 @@ def __get_du_id(du_url):
     du_id = du_url[du_url.index("du-"):]
     return du_id
 
-if __name__ == "__main__":
-    
+# Tests
+def test_reconnect():
     du_url = "redis://localhost/bigdata:pds-f31a670c-e3f6-11e1-afaf-705681b3df0f:pd-f31c47b8-e3f6-11e1-af44-705681b3df0f:du-f4debce8-e3f6-11e1-8399-705681b3df0f"
     pd_url = __get_pd_url(du_url)
     du_id = __get_du_id(du_url)
@@ -713,3 +739,32 @@ if __name__ == "__main__":
     
     #du = DataUnit(du_url="redis://localhost/bigdata:pds-32d63b2e-df05-11e1-a329-705681b3df0f:pd-37674138-df05-11e1-80d0-705681b3df0f:du-3b8d428c-df05-11e1-af2a-705681b3df0f")
     logger.debug(str(du.list()))
+
+def test_data_unit_add_file():
+    pilot_data_service = PilotDataService(coordination_url="redis://localhost/")
+    pilot_data_description = {
+                                "service_url": "ssh://localhost/tmp/pilot-" + str(uuid.uuid1()),
+                                "size": 100                                   
+                             }
+    pd = pilot_data_service.create_pilot(pilot_data_description=pilot_data_description)
+    
+    # create data unit for output data
+    output_data_unit_description = {
+         "file_urls": [], 
+         "file_url_patterns": ["test.txt"]                             
+    }
+    output_data_unit = pd.submit_data_unit(output_data_unit_description)
+    output_data_unit.wait()
+    logger.debug("Output DU: " + output_data_unit.get_url())
+    pd_reconnect_url = __get_pd_url(output_data_unit.get_url())
+    du_id = __get_du_id(output_data_unit.get_url())
+    pd_reconnect = PilotData(pd_url=pd_reconnect_url)
+    du_reconnect = pd_reconnect.get_du(du_id)
+    du_reconnect.add_file("test.txt")
+    
+    
+    
+
+if __name__ == "__main__":
+    test_data_unit_add_file()
+    
