@@ -7,7 +7,7 @@ import uuid
 
 #sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 from pilot import PilotComputeService, PilotDataService, ComputeDataService, State
-
+from bigjob import logger 
 
 #COORDINATION_URL = "redis://localhost:6379"
 COORDINATION_URL="redis://ILikeBigJob_wITH-REdIS@gw68.quarry.iu.teragrid.org:6379/pcs/pcs-4867ff08-e192-11e1-a694-00003e980000"
@@ -58,7 +58,7 @@ if __name__ == "__main__":
                              'affinity_datacenter_label': "us-east",              
                              'affinity_machine_label': "", 
                              # cloud specific attributes
-                             "vm_id":"emi-D0C037B6",
+                             "vm_id":"emi-9DCC3DFA",
                              "vm_ssh_username":"root",
                              "vm_ssh_keyname":"luckow",
                              "vm_ssh_keyfile":"/Users/luckow/.ssh/eucakey-india",
@@ -100,10 +100,10 @@ if __name__ == "__main__":
     }    
     
     compute_unit = compute_data_service.submit_compute_unit(compute_unit_description)
-    logging.debug("Finished setup of ComputeDataService. Waiting for scheduling of PD")
+    logging.info("Finished setup of ComputeDataService. Waiting for scheduling of PD")
     compute_data_service.wait()
     
     
-    logging.debug("Terminate Pilot Compute/Data Service")
+    logging.info("Terminate Pilot Compute/Data Service")
     compute_data_service.cancel()
     pilot_compute_service.cancel()

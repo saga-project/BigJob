@@ -127,9 +127,12 @@ class SSHFileAdaptor(object):
                
                 #self.__third_party_transfer(i.local_url, remote_path)                
             else:
-                if stat.S_ISDIR(os.stat(local_filename).st_mode):
-                    logger.warning("Path %s is a directory. Ignored."%local_filename)                
-                    continue         
+                try:
+                    if stat.S_ISDIR(os.stat(local_filename).st_mode):
+                        logger.warning("Path %s is a directory. Ignored."%local_filename)                
+                        continue
+                except:
+                    pass         
             result = urlparse.urlparse(local_filename)
             source_host = result.netloc
             source_path = result.path
@@ -138,8 +141,9 @@ class SSHFileAdaptor(object):
                 cmd = "scp "+ source_path + " " + self.host + ":" + remote_path
             else:
                 cmd = "scp "+ source_host+":"+source_path + " " + self.host + ":" + remote_path
-            logger.debug("Command: %s"%cmd)
-            os.system(cmd)                   
+            
+            rc = os.system(cmd)
+            logger.debug("Command: %s Return code: %d"%(cmd, rc) )                   
                 
     
   
@@ -274,9 +278,9 @@ class SSHFileAdaptor(object):
         target_host = result.netloc
         target_path = result.path
         if target_host==None or target_host=="":
-            target_host="localhost"
-
-        cmd = "scp -r %s:%s %s:%s"%(source_host, source_path, target_host, target_path)
+            cmd = "scp -r %s:%s %s"%(source_host, source_path, target_path)
+        else:
+            cmd = "scp -r %s:%s %s:%s"%(source_host, source_path, target_host, target_path)
         rc = os.system(cmd)
         logger.debug("Command: %s Return Code: %d"%(cmd,rc))
 
