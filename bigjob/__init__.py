@@ -93,8 +93,6 @@ except IOError:
 # define external-facing API
 from bigjob.bigjob_manager import bigjob 
 from bigjob.bigjob_manager import subjob
-from bigjob.job_plugin.gcessh import Service as GCEService
-from bigjob.job_plugin.ec2ssh import Service as EC2Service
 try:
     from bigjob.bigjob_manager import description
 except:
