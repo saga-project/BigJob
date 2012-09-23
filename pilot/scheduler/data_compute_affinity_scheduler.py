@@ -31,7 +31,11 @@ class Scheduler:
                 if data_unit_description["affinity_datacenter_label"] == pilot_data_description["affinity_datacenter_label"]\
                 and data_unit_description["affinity_machine_label"] == pilot_data_description["affinity_machine_label"]:
                     candidate_pilot_data.append(i)
-        else:
+        
+        if len(candidate_pilot_data) == 0:
+            # No PD with requested affinity found
+            # move data unit into a "possibly" remote pilot data
+            logger.debug("No pilot data w/ affinity found... Looking for alternative pilot.")
             candidate_pilot_data = self.pilot_data
             
         if len(candidate_pilot_data)>0:
@@ -66,13 +70,19 @@ class Scheduler:
                     if pilot_job_description["affinity_datacenter_label"] == compute_unit_description["affinity_datacenter_label"]\
                         and pilot_job_description["affinity_machine_label"] == compute_unit_description["affinity_machine_label"]:
                         candidate_pilot_jobs.append(i)
-        else:
+                        
+                        
+        if len(candidate_pilot_jobs) == 0:
+            # No PJ with requested affinity found
+            # move compute unit into a "possibly" remote pilot job
+            logger.debug("No pilot compute w/ affinity found... Looking for alternative pilot.")
             for i in self.pilot_jobs:                
                 logger.debug("BJ: %r State: %s"%(i, i.get_state()))
                 free_nodes = i.get_free_nodes()
                 if i.get_state()=="Running" and free_nodes >= required_number_of_processes:
                     candidate_pilot_jobs.append(i)
                     #candidate_pilot_jobs=self.pilot_jobs
+
                 
         logger.debug("Candidate PJs: %r"%(candidate_pilot_jobs))   
         if len(candidate_pilot_jobs)>0:
