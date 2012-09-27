@@ -49,7 +49,6 @@ def main():
     print "Start Pilot Job/BigJob at: " + lrms_url
     bj = bigjob(COORDINATION_URL)
     bj.start_pilot_job( lrms_url,
-                        None,
                         number_of_processes,
                         queue,
                         project,
