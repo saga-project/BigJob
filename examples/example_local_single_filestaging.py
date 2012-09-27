@@ -77,7 +77,6 @@ def main():
     bj_filetransfers=None
     
     bj.start_pilot_job( lrms_url,
-                        None,
                         number_of_processes,
                         queue,
                         project,
