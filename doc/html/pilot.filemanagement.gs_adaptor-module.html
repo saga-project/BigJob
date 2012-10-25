@@ -3,7 +3,7 @@
           "DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title>pilot.coordination.redis</title>
+  <title>pilot.filemanagement.gs_adaptor</title>
   <link rel="stylesheet" href="epydoc.css" type="text/css" />
   <script type="text/javascript" src="epydoc.js"></script>
 </head>
@@ -43,8 +43,8 @@
     <td width="100%">
       <span class="breadcrumbs">
         <a href="pilot-module.html">Package&nbsp;pilot</a> ::
-        <a href="pilot.coordination-module.html">Package&nbsp;coordination</a> ::
-        Module&nbsp;redis
+        <a href="pilot.filemanagement-module.html">Package&nbsp;filemanagement</a> ::
+        Module&nbsp;gs_adaptor
       </span>
     </td>
     <td>
@@ -55,7 +55,9 @@
   </tr>
 </table>
 <!-- ==================== MODULE DESCRIPTION ==================== -->
-<h1 class="epydoc">Module redis</h1><p class="nomargin-top"><span class="codelink"><a href="pilot.coordination.redis-pysrc.html">source&nbsp;code</a></span></p>
+<h1 class="epydoc">Module gs_adaptor</h1><p class="nomargin-top"><span class="codelink"><a href="pilot.filemanagement.gs_adaptor-pysrc.html">source&nbsp;code</a></span></p>
+<p>Google Storage based File Transfer Implementation</p>
+
 <!-- ==================== CLASSES ==================== -->
 <a name="section-Classes"></a>
 <table class="summary" border="1" cellpadding="3"
@@ -68,8 +70,8 @@
     <td width="15%" align="right" valign="top" class="summary">
       <span class="summary-type">&nbsp;</span>
     </td><td class="summary">
-        <a href="pilot.coordination.redis.RedisCoordinationAdaptor-class.html" class="summary-name">RedisCoordinationAdaptor</a><br />
-      Redis Adaptor
+        <a href="pilot.filemanagement.gs_adaptor.GSFileAdaptor-class.html" class="summary-name">GSFileAdaptor</a><br />
+      BigData File Management for Pilot Data
     </td>
   </tr>
 </table>
@@ -85,10 +87,61 @@
     <td width="15%" align="right" valign="top" class="summary">
       <span class="summary-type">&nbsp;</span>
     </td><td class="summary">
-        <a name="__package__"></a><span class="summary-name">__package__</span> = <code title="'pilot.coordination'"><code class="variable-quote">'</code><code class="variable-string">pilot.coordination</code><code class="variable-quote">'</code></code>
+        <a href="pilot.filemanagement.gs_adaptor-module.html#OAUTH2_CLIENT_ID" class="summary-name">OAUTH2_CLIENT_ID</a> = <code title="'1004462711324-55akehip32m59u6omdfrt9s8u8ehb0hm.apps.googleusercontent\
+.com'"><code class="variable-quote">'</code><code class="variable-string">1004462711324-55akehip32m59u6omdfrt9s8u8eh</code><code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="OAUTH2_CLIENT_SECRET"></a><span class="summary-name">OAUTH2_CLIENT_SECRET</span> = <code title="'EIMML1W7anu0XijVghws0DY-'"><code class="variable-quote">'</code><code class="variable-string">EIMML1W7anu0XijVghws0DY-</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="GS_PROJECT_ID"></a><span class="summary-name">GS_PROJECT_ID</span> = <code title="'1004462711324'"><code class="variable-quote">'</code><code class="variable-string">1004462711324</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="__package__"></a><span class="summary-name">__package__</span> = <code title="'pilot.filemanagement'"><code class="variable-quote">'</code><code class="variable-string">pilot.filemanagement</code><code class="variable-quote">'</code></code>
     </td>
   </tr>
 </table>
+<!-- ==================== VARIABLES DETAILS ==================== -->
+<a name="section-VariablesDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td align="left" colspan="2" class="table-header">
+    <span class="table-header">Variables Details</span></td>
+</tr>
+</table>
+<a name="OAUTH2_CLIENT_ID"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">OAUTH2_CLIENT_ID</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+<code class="variable-quote">'</code><code class="variable-string">1004462711324-55akehip32m59u6omdfrt9s8u8ehb0hm.apps.googleusercontent</code><span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+<code class="variable-string">.com</code><code class="variable-quote">'</code>
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
 <!-- ==================== NAVIGATION BAR ==================== -->
 <table class="navbar" border="0" width="100%" cellpadding="0"
        bgcolor="#a0c0ff" cellspacing="0">
@@ -121,7 +174,7 @@
   <tr>
     <td align="left" class="footer">
     <a href="epydoc-log.html">Generated by Epydoc
-    3.0.1 on Sat Jul  7 21:24:45 2012</a>
+    3.0.1 on Thu Oct 25 21:51:26 2012</a>
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"
