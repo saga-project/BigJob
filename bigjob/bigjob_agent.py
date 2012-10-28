@@ -24,9 +24,8 @@ logging.basicConfig(level=logging.DEBUG)
 try:
     import saga
 except:
-    logging.warning("SAGA could not be found. Not all functionalities working")
+    logging.debug("SAGA not imported. ")
 
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/../../ext/threadpool-1.2.7/src/")
 logging.debug(str(sys.path))
 from threadpool import *
 
@@ -36,10 +35,8 @@ from pilot.impl.pilotdata_manager import PilotData, PilotDataService
 
 logger.debug("Python Version: " + str(sys.version_info))
 if sys.version_info < (2, 5):
-    sys.path.append(os.path.dirname( __file__ ) + "/../../ext/uuid-1.30/")
     sys.stderr.write("Warning: Using unsupported Python version\n")
 if sys.version_info < (2, 4):
-    sys.path.append(os.path.dirname( __file__ ) + "/../../ext/subprocess-2.6.4/")
     sys.stderr.write("Warning: Using unsupported Python version\n")
 if sys.version_info < (2, 3):
     sys.stderr.write("Warning: Python versions <2.3 not supported\n")
