@@ -31,7 +31,7 @@ from threadpool import *
 
 # BigJob/Pilot framework classes
 from bigjob import logger
-from pilot.impl.pilotdata_manager import PilotData, PilotDataService
+from pilot.impl.pilotdata_manager import PilotData, DataUnit, PilotDataService
 
 logger.debug("Python Version: " + str(sys.version_info))
 if sys.version_info < (2, 5):
@@ -729,10 +729,12 @@ class bigjob_agent:
         """ stage in data units specified in input_data field """
         logger.debug("Stage in input files to: %s"%target_directory)
         for i in input_data:
-            pd_url = self.__get_pd_url(i)
-            du_id = self.__get_du_id(i)
-            pd = PilotData(pd_url=pd_url)
-            du = pd.get_du(du_id)
+            #pd_url = self.__get_pd_url(i)
+            #du_id = self.__get_du_id(i)
+            #pd = PilotData(pd_url=pd_url)
+            #du = pd.get_du(du_id)
+            #du.export(target_directory)
+            du = DataUnit(du_url=i)
             du.export(target_directory)
     
     
@@ -754,10 +756,10 @@ class bigjob_agent:
         for data_unit_dict in output_data: 
             logger.debug("Process: " + str(data_unit_dict))
             for du_url in data_unit_dict.keys(): # go through all dicts (each representing 1 PD) 
-                pd_url = self.__get_pd_url(du_url)
-                du_id = self.__get_du_id(du_url)
-                pilot_data = PilotData(pd_url=pd_url)
-                du = pilot_data.get_du(du_id)
+                #pd_url = self.__get_pd_url(du_url)
+                #pilot_data = PilotData(pd_url=pd_url)
+                #du = pilot_data.get_du(du_url)
+                du = DataUnit(du_url=du_url)
                 file_list = data_unit_dict[du_url]
                 logger.debug("Add files: " + str(file_list))
                 all_files=[]

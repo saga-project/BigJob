@@ -22,6 +22,9 @@ class PilotComputeDescription(dict):
 
         The PilotComputeDescription is used by the application to specify 
         what kind of PilotJobs it requires.
+        
+        
+        
     """
 
     # Class members
@@ -301,7 +304,7 @@ class ComputeUnitDescription(dict):
         references to depended L{DataUnit}s. ComputeUnitDescription are submitted
         to the L{ComputeDataService}.
         
-        Example::
+        Format::
         
             compute_unit_description =            
                 {
@@ -344,6 +347,17 @@ class ComputeUnitDescription(dict):
                     'output_data': [<data unit url>, ... ]
                 }
             
+            Example::
+                    compute_unit_description = {
+                            "executable": "/bin/cat",
+                            "arguments": ["test.txt"],
+                            "number_of_processes": 1,
+                            "output": "stdout.txt",
+                            "error": "stderr.txt",   
+                            "input_data" : [data_unit.get_url()], # this stages the content of the data unit to the working directory of the compute unit
+                            "affinity_datacenter_label": "eu-de-south",              
+                            "affinity_machine_label": "mymachine-1" 
+                        }     
         ComputeUnitDescription objects are loosely typed. A dictionary containing the respective keys
         can be passed instead to the L{ComputeDataService}.
     """

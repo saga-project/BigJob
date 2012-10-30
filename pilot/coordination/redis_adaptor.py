@@ -42,19 +42,13 @@ class RedisCoordinationAdaptor:
         pds_url_no_dbtype = cls.get_pds_url(application_url, pds.id)
         pds_url = cls.__get_url(pds_url_no_dbtype)
         logger.debug("Create PDS directory at %s"%pds_url)
-        #saga.advert.directory(pds_url, saga.advert.Create | 
-        #                               saga.advert.CreateParents | 
-        #                               saga.advert.ReadWrite)
         return pds_url_no_dbtype
     
     
     @classmethod
     def delete_pds(cls, pds_url):
         pds_url = cls.__get_url(pds_url)
-        #pds_dir = saga.advert.directory(saga.url(pds_url), 
-        #                                saga.advert.Create | 
-        #                                saga.advert.CreateParents | 
-        #                                saga.advert.ReadWrite)
+        
         #pds_dir.remove(pds_url, saga.name_space.Recursive)  
     
     ###########################################################################
@@ -69,11 +63,11 @@ class RedisCoordinationAdaptor:
     @classmethod
     def update_pd(cls, pd):
         du_urls=None
-        if len(pd.data_units) > 0:
-            du_urls = [i.url for i in pd.data_units.values()]
+        if len(pd.data_unit_urls) > 0:
+            du_urls = pd.data_unit_urls
         
         pd_dict={
-                 "data_units": du_urls,
+                 "data_unit_urls": du_urls,
                  "pilot_data": pd.to_dict(),
                  "pilot_data_description": pd.pilot_data_description,
                  "security_context": pd.security_context
@@ -151,8 +145,8 @@ class RedisCoordinationAdaptor:
     ###########################################################################
     #  Data Unit related methods
     @classmethod
-    def add_du(cls, dus_url, du):
-        du_url = dus_url  +  RedisCoordinationAdaptor.SEPARATOR + du.id     
+    def add_du(cls, root_url, du):
+        du_url = root_url  +  RedisCoordinationAdaptor.SEPARATOR + du.id     
         du_url = cls.__get_url(du_url)
         return du_url
 
@@ -183,7 +177,7 @@ class RedisCoordinationAdaptor:
     def list_du(cls, pd_url):
         """ return a list of urls to du managed by the PDS """
         pd_url = cls.__get_url(pd_url)
-        logger.debug("List PDS at %s"%pd_url)
+        logger.debug("List Data-Units of Pilot-Data at %s"%pd_url)
         dus = cls.__list_keys(pd_url+":du-*")
         return dus
     
@@ -201,7 +195,6 @@ class RedisCoordinationAdaptor:
     
     ###########################################################################
     # URL Tweaking
-    
     @classmethod
     def get_pds_url(cls, application_url, pds_id):
         pds_url = application_url +  RedisCoordinationAdaptor.SEPARATOR +pds_id        
@@ -214,6 +207,7 @@ class RedisCoordinationAdaptor:
         cds_url = application_url +  RedisCoordinationAdaptor.SEPARATOR +cds_id        
         logger.debug("CDS URL: %s"%(cds_url))
         return cds_url
+    
     
     ###########################################################################
     # internal Redis-related methods
