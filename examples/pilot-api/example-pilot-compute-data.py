@@ -23,7 +23,7 @@ if __name__ == "__main__":
                              'affinity_machine_label': "mymachine-1" 
                             }
     
-    pilotjob = pilot_compute_service.create_pilot(pilot_compute_description=pilot_compute_description)
+    pilot_compute_service.create_pilot(pilot_compute_description=pilot_compute_description)
     
     
     # create pilot data service (factory for data pilots (physical, distributed storage))
@@ -35,7 +35,8 @@ if __name__ == "__main__":
                                 "affinity_datacenter_label": "eu-de-south",              
                                 "affinity_machine_label": "mymachine-1"                              
                              }
-    ps = pilot_data_service.create_pilot(pilot_data_description=pilot_data_description)
+    
+    pilot_data_service.create_pilot(pilot_data_description=pilot_data_description)
      
     compute_data_service = ComputeDataService()
     compute_data_service.add_pilot_compute_service(pilot_compute_service)
