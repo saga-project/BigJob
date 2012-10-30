@@ -23,8 +23,30 @@ class PilotComputeDescription(dict):
         The PilotComputeDescription is used by the application to specify 
         what kind of PilotJobs it requires.
         
+        Example::
+             pilot_compute_description = {
+                             "service_url": 'fork://localhost',
+                             "number_of_processes": 1,                             
+                             "working_directory": "/tmp/pilot-compute/",
+                             'affinity_datacenter_label': "eu-de-south",              
+                             'affinity_machine_label': "mymachine-1" 
+                            }
         
+        B{Attention}: The PilotComputeDescription is mapped 1:1 to the underlying SAGA-Python (Bliss) 
+        job description, which is used for launching the pilot. Depending on the resource, it is required
+        to add additional attributes, e.g. some XSEDE/Torque resources require the specification
+        of both number_of_process and processes_per_node:
         
+        Example::
+              pilot_compute_description = {
+                             "service_url": 'pbs+ssh://india.futuregrid.org',
+                             "number_of_processes": 8,
+                             "processes_per_node":8,                     
+                             "working_directory": "/N/u/luckow",
+                             'affinity_datacenter_label': "us-east-indiana",              
+                             'affinity_machine_label': "india" 
+                            }
+            
     """
 
     # Class members
