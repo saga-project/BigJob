@@ -48,6 +48,13 @@ from bliss.saga import Url as SAGAUrl
 # generate global application id for this instance
 application_id = "bigdata"
 
+"""
+    Implementation considerations:
+    
+    PilotDataService can have n PilotData 
+    PilotData can have n DataUnits (only DU URLs is held to avoid circular dependencies)
+    A DataUnit can be part of n PilotData 
+"""
 
 class PilotData(PilotData):
     """ B{PilotData} 
@@ -83,8 +90,7 @@ class PilotData(PilotData):
         self.pilot_data_service = pilot_data_service
         self.service_url=None
         self.size = None
-        self.data_unit_description = None
-        self.data_units={}
+        self.data_unit_urls = []
         self.security_context = None
         
         if pd_url==None and pilot_data_service!=None:      # new pd          
@@ -100,10 +106,7 @@ class PilotData(PilotData):
             for i in pd_dict:
                 self.__setattr__(i, pd_dict[i])
             # A Pilot Data does not hold a direct reference to a Data Unit (only URL refs are stored)
-            #du_dict = eval(dictionary["data_units"])
-            #for i in du_dict:
-            #    du_id = DataUnit._get_du_id(i)
-            #    self.data_units[du_id] = None # TODO Restore DataUnit
+            self.data_unit_urls = eval(dictionary["data_unit_urls"])
                         
         self.__initialize_pilot_data()
         CoordinationAdaptor.update_pd(self)
@@ -127,27 +130,27 @@ class PilotData(PilotData):
         """ creates a data unit object and initially imports data specified in data_unit_description """
         du = DataUnit(pilot_data=self, 
                       data_unit_description=data_unit_description)
-        self.data_units[du.id]=du
+        self.data_unit_urls.append(du.get_url())
         du.add_pilot_data(self)
         return du
    
     
     def list_data_units(self):
-        """ List all data units of PD """
-        du_urls = CoordinationAdaptor.list_du(self.url)
-        return du_urls          
+        """ List all data units of Pilot Data """
+        return self.data_unit_urls          
     
     
     def get_state(self):
-        """ Return current state of PD """
+        """ Return current state of Pilot Data """
         return self.__filemanager.get_state()
     
     
-    def get_du(self, du_id):
+    def get_du(self, du_url):
         """ Returns Data Unit if part of Pilot Data """
-        du_url = self.url + ":" + du_id
-        du = DataUnit(du_url=du_url)
-        return du
+        if self.data_unit_urls.count(du_url)>0:
+            du = DataUnit(du_url=du_url)
+            return du        
+        return None
     
     
     def wait(self):
@@ -155,8 +158,8 @@ class PilotData(PilotData):
         while 1:
             finish_counter=0
             result_map = {}
-            dus = self.data_units.values()
-            for du in dus: 
+            for du_url in self.data_units_urls: 
+                du = DataUnit(du_url=du_url)
                 du.wait()
                 state = du.get_state()           
                 #state = job_detail["state"]                
@@ -166,14 +169,16 @@ class PilotData(PilotData):
                     result_map[state] = result_map[state]+1
                 if self.__has_finished(state)==True:
                     finish_counter = finish_counter + 1                   
-            logger.debug("PD ID: " + str(self.id) + " Total DUs: %s States: %s"%(len(dus), str(result_map)))
-            if finish_counter == len(dus):
+            logger.debug("PD ID: " + str(self.id) + " Total DUs: %s States: %s"%(len(self.data_units_urls), str(result_map)))
+            if finish_counter == len(self.data_units_urls):
                 break
             time.sleep(2)
 
     
     def export_du(self, du, target_url):
         """ Export Data Unit to a local directory """
+        if target_url.startswith("/") and os.path.exists(target_url)==False:
+            os.mkdir(target_url)
         self.__filemanager.get_du(du, target_url)
             
                 
@@ -181,15 +186,15 @@ class PilotData(PilotData):
         logger.debug("Put DU: %s to Pilot-Data: %s"%(du.id,self.service_url))
         self.__filemanager.create_du(du.id)
         self.__filemanager.put_du(du)
-        self.data_units[du.id] = du
+        self.data_unit_urls.append(du.get_url())
         CoordinationAdaptor.update_pd(self)
         
         
     def remove_du(self, du):
         """ Remove pilot data from pilot data """
-        if self.data_units.has_key(du.id):
+        if self.data_unit_urls.count(du.get_url())>0:
             self.__filemanager.remove_du(du)
-            del self.data_units[du.id]
+            self.data_unit_urls.remove(du.get_url())
         CoordinationAdaptor.update_pd(self)
         
     
@@ -198,7 +203,8 @@ class PilotData(PilotData):
         self.__filemanager.copy_du(du, pd_new)
         
         # update meta data at pd_new
-        pd_new.data_units[du.id] = du
+        #pd_new.data_units[du.id] = du
+        pd_new.data_unit_urls.append(du.get_url())
         CoordinationAdaptor.update_pd(pd_new)
         
     
@@ -427,8 +433,9 @@ class DataUnit(DataUnit):
     """
     
     ## TODO
-    # Currently, DU are stored in Redis in a hierachical tree structure:
-    # <pds>:<pd>:<du>
+    # DU are stored as top-level objects in Redis:
+    # redis://localhost/<application-id>/du-<id>
+    #
     # In the future a DU can be possibly bound to multiple PD
     # Thus, it should be a top level entity
     # The lower levels of the hierarchy will only store references to the DU then
@@ -450,10 +457,17 @@ class DataUnit(DataUnit):
             self.data_unit_items = DataUnitItem.create_data_unit_list(self, self.data_unit_description["file_urls"]) 
             self.url = None
 
-            if pilot_data!=None:
-                # Allow data units that are not connected to a resource!
-                self.url = CoordinationAdaptor.add_du(pilot_data.url, self)
-                CoordinationAdaptor.update_du(self)
+            # register a data unit as top-level entry in Redis
+            application_url = CoordinationAdaptor.get_base_url(application_id)
+            self.url = CoordinationAdaptor.add_du(application_url, self)
+            CoordinationAdaptor.update_du(self)
+            
+            # Deprecated
+            # old method only allowed the creation of a du if a pd existed
+            #if pilot_data!=None:
+            #    # Allow data units that are not connected to a resource!
+            #    self.url = CoordinationAdaptor.add_du(pilot_data.url, self)
+            #    CoordinationAdaptor.update_du(self)
         else:
             self.id = DataUnit._get_du_id(du_url)
             self.url = du_url   
@@ -471,6 +485,7 @@ class DataUnit(DataUnit):
 
             
     def add_files(self, file_url_list=[]):
+        self.state=State.Pending
         item_list = DataUnitItem.create_data_unit_from_urls(None, file_url_list)
         for i in item_list:
             self.data_unit_items.append(i)
@@ -481,13 +496,13 @@ class DataUnit(DataUnit):
                 i.put_du(self)
         CoordinationAdaptor.update_du(self)    
         
+        
     def remove_files(self, file_urls):
         # TODO
         #self.data_unit_items.remove(input_data_unit)
         if len(self.pilot_data) > 0:
             CoordinationAdaptor.update_du(self)
 
-        
         
     def list(self):
         """ List all items contained in DU 
@@ -549,6 +564,8 @@ class DataUnit(DataUnit):
         """ simple implementation of export: 
                 copies file from first pilot data to local machine
         """
+        if self.state!=State.Running:
+            self.wait()
         if len(self.pilot_data) > 0:
             self.pilot_data[0].export_du(self, target_url)
         else:
@@ -584,7 +601,7 @@ class DataUnit(DataUnit):
         self.pilot_data.append(pilot_data)
         self.state = State.Running
         
-        self.url = CoordinationAdaptor.add_du(pilot_data.url, self)
+        #self.url = CoordinationAdaptor.add_du(pilot_data.url, self)
         CoordinationAdaptor.update_du(self)
             
         
@@ -613,6 +630,7 @@ class DataUnit(DataUnit):
                 self.data_unit_items = [DataUnitItem.create_data_unit_from_dict(i) for i in data_unit_dict_list]
         except:
             logger.warn("Refresh of DU %s failed"%(self.get_url()))
+            
         
     def __restore_state(self):
         du_dict = CoordinationAdaptor.get_du(self.url)
@@ -636,7 +654,7 @@ class DataUnit(DataUnit):
     def __repr__(self):        
         return "PD: " + str(self.url) 
         + " \nData Units: " + str(self.data_unit_items)
-        + " \nPilot Stores: " + str(self.pilot_data)
+        + " \nPilot Data: " + str(self.pilot_data)
     
     
 
@@ -729,17 +747,24 @@ def __get_du_id(du_url):
     return du_id
 
 # Tests
-def test_reconnect():
+def test_pd_reconnect():
     du_url = "redis://localhost/bigdata:pds-f31a670c-e3f6-11e1-afaf-705681b3df0f:pd-f31c47b8-e3f6-11e1-af44-705681b3df0f:du-f4debce8-e3f6-11e1-8399-705681b3df0f"
     pd_url = __get_pd_url(du_url)
-    du_id = __get_du_id(du_url)
     pd = PilotData(pd_url=pd_url)
     print str(pd.list_data_units())
-    du = pd.get_du(du_id)
+    du = pd.get_du(du_url)
     
     #du = DataUnit(du_url="redis://localhost/bigdata:pds-32d63b2e-df05-11e1-a329-705681b3df0f:pd-37674138-df05-11e1-80d0-705681b3df0f:du-3b8d428c-df05-11e1-af2a-705681b3df0f")
     logger.debug(str(du.list()))
 
+
+def test_du_reconnect():
+    du_url = "redis://localhost/bigdata:du-1d1b7078-229f-11e2-834e-705681b3df0f"
+    du = DataUnit(du_url=du_url)
+    logger.debug(str(du.list()))
+    du.export("/tmp/export-test")
+    
+    
 def test_data_unit_add_file():
     pilot_data_service = PilotDataService(coordination_url="redis://localhost/")
     pilot_data_description = {
@@ -756,15 +781,15 @@ def test_data_unit_add_file():
     output_data_unit = pd.submit_data_unit(output_data_unit_description)
     output_data_unit.wait()
     logger.debug("Output DU: " + output_data_unit.get_url())
-    pd_reconnect_url = __get_pd_url(output_data_unit.get_url())
-    du_id = __get_du_id(output_data_unit.get_url())
+    pd_reconnect_url = pd.get_url()
+    du_url = output_data_unit.get_url()
     pd_reconnect = PilotData(pd_url=pd_reconnect_url)
-    du_reconnect = pd_reconnect.get_du(du_id)
-    du_reconnect.add_file("test.txt")
-    
+    du_reconnect = pd_reconnect.get_du(du_url)
+    du_reconnect.add_files(["test.txt"])
     
     
 
 if __name__ == "__main__":
-    test_data_unit_add_file()
+    #test_data_unit_add_file()
+    test_du_reconnect()
     

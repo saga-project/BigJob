@@ -55,7 +55,7 @@ if __name__ == "__main__":
     
     # submit pilot data to a pilot store    
     data_unit = compute_data_service.submit_data_unit(data_unit_description)
-    data_unit.wait()
+    logging.debug("Submitted Data Unit: " + data_unit.get_url())
     logging.debug("Pilot Data URL: %s Description: \n%s"%(data_unit, str(pilot_data_description)))
     
     
@@ -67,15 +67,23 @@ if __name__ == "__main__":
             "output": "stdout.txt",
             "error": "stderr.txt",   
             "input_data" : [data_unit.get_url()], # this stages the content of the data unit to the working directory of the compute unit
+            "output_data": [
+                            {
+                             data_unit.get_url(): 
+                             ["std*"]
+                            }
+                           ],  
             "affinity_datacenter_label": "eu-de-south",              
             "affinity_machine_label": "mymachine-1" 
     }    
+    
+    
     
     compute_unit = compute_data_service.submit_compute_unit(compute_unit_description)
     logging.debug("Finished setup of PSS and PDS. Waiting for scheduling of PD")
     compute_data_service.wait()
     
-    
+    data_unit.export("/tmp/output")
     logging.debug("Terminate Pilot Compute/Data Service")
     compute_data_service.cancel()
     pilot_data_service.cancel()
