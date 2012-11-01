@@ -34,6 +34,7 @@ Configuration of Redis Coordination Backend
 BigJob requires [Redis](http://redis.io) for communication between BigJob manager/agent. Use the following steps to install Redis. 
 
 Mac Homebrew:
+	
 	brew install redis redis-tools hiredis
 
 Linux:
@@ -53,10 +54,10 @@ Start Redis (redis-server executable is located in src/ dir):
 
 
 
-Alternative coordination services
+Alternative coordination services (EXPERIMENTAL - NOT RECOMMENDED!)
 -------------------------------------
 
-BigJob supports different other communication & coordination backends via a plugin mechanism (EXPERIMENTAL).
+BigJob supports different other communication & coordination backends via a plugin mechanism.
 
 ### A) SAGA Advert Service
 
@@ -76,7 +77,7 @@ Standard settings are:
 	REDIS_SERVER_PORT=6379
 
 
-### C) ZMQ
+### B) ZMQ
 
 1.) Install ZeroMQ and pyzmq
 
