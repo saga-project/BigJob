@@ -28,30 +28,10 @@ Installation
 See https://github.com/saga-project/BigJob/wiki/ for further information. The Wiki includes among many things information on how to setup BigJob on various machines, e.g. on XSEDE (Ranger, Kraken) or FutureGrid.
 
 
-Configuration of Coordination Backend
+Configuration of Redis Coordination Backend
 -------------------------------------
 
-BigJob supports different communication & coordination backends via a plugin mechanism.
-Currently supported backends:
-
-A) SAGA Advert Service
-
-B) REDIS, http://redis.io/
-
-C) ZMQ (ZeroMQ), http://www.zeromq.org/
-
-
-### A) SAGA Advert Service
-
-1) Utilise coordination url parameter of BigJob to utilize the Advert Service:
-
-	advert://advert.cct.lsu.edu:8080/ (Postgresql)
-	advert://localhost/ (SQLite)
-
-
-### Redis
-
-1.) Install and run Redis (http://redis.io/)
+BigJob requires [Redis](http://redis.io) for communication between BigJob manager/agent. Use the following steps to install Redis. 
 
 Mac Homebrew:
 	brew install redis redis-tools hiredis
@@ -70,6 +50,20 @@ Start Redis (redis-server executable is located in src/ dir):
 
 	cd src
 	./redis-server
+
+
+
+Alternative coordination services
+-------------------------------------
+
+BigJob supports different other communication & coordination backends via a plugin mechanism (EXPERIMENTAL).
+
+### A) SAGA Advert Service
+
+1) Utilise coordination url parameter of BigJob to utilize the Advert Service:
+
+	advert://advert.cct.lsu.edu:8080/ (Postgresql)
+	advert://localhost/ (SQLite)
 
 
 2) Utilise coordination URL parameter of BigJob to connect to Redis instance:
@@ -116,7 +110,7 @@ http://zeromq.github.com/pyzmq/index.html
 
 will start a local tcp server.
 
----------------------------------------
+
 
 Packaging
 -------------------------------------
