@@ -3,7 +3,7 @@
           "DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title>pilot.coordination.redis_adaptor.RedisCoordinationAdaptor</title>
+  <title>pilot.coordination.advert.AdvertCoordinationAdaptor</title>
   <link rel="stylesheet" href="epydoc.css" type="text/css" />
   <script type="text/javascript" src="epydoc.js"></script>
 </head>
@@ -44,8 +44,8 @@
       <span class="breadcrumbs">
         <a href="pilot-module.html">Package&nbsp;pilot</a> ::
         <a href="pilot.coordination-module.html">Package&nbsp;coordination</a> ::
-        <a href="pilot.coordination.redis_adaptor-module.html">Module&nbsp;redis_adaptor</a> ::
-        Class&nbsp;RedisCoordinationAdaptor
+        <a href="pilot.coordination.advert-module.html">Module&nbsp;advert</a> ::
+        Class&nbsp;AdvertCoordinationAdaptor
       </span>
     </td>
     <td>
@@ -56,8 +56,24 @@
   </tr>
 </table>
 <!-- ==================== CLASS DESCRIPTION ==================== -->
-<h1 class="epydoc">Class RedisCoordinationAdaptor</h1><p class="nomargin-top"><span class="codelink"><a href="pilot.coordination.redis_adaptor-pysrc.html#RedisCoordinationAdaptor">source&nbsp;code</a></span></p>
-<p>Dummy Adaptor - No distributed coordination done</p>
+<h1 class="epydoc">Class AdvertCoordinationAdaptor</h1><p class="nomargin-top"><span class="codelink"><a href="pilot.coordination.advert-pysrc.html#AdvertCoordinationAdaptor">source&nbsp;code</a></span></p>
+<p>BigData persists its data in a central data space, e.g. the Advert 
+  service to facilitate distributed coordination:</p>
+  
+  <p>advert://advert.cct.lsu.edu/pilot/3d0d5960-296d-11e1-8896-00264a13ca4c/data/
+  =&gt; namespace for pilot data</p>
+  
+  <p>advert://advert.cct.lsu.edu/pilot/3d0d5960-296d-11e1-8896-00264a13ca4c/data/pds
+  =&gt; pilot data service 
+  advert://advert.cct.lsu.edu/pilot/3d0d5960-296d-11e1-8896-00264a13ca4c/data/pds/pilot-data-description
+  =&gt; pilot data description ...</p>
+  
+  <p>advert://advert.cct.lsu.edu/pilot/3d0d5960-296d-11e1-8896-00264a13ca4c/data/pds/
+  =&gt; pilot store service 
+  advert://advert.cct.lsu.edu/pilot/3d0d5960-296d-11e1-8896-00264a13ca4c/data/pds/pilot-data-description
+  =&gt; pilot data description</p>
+  <p>This class is stateless - the application's base_url needs to be 
+  passed into every method.</p>
 
 <!-- ==================== CLASS METHODS ==================== -->
 <a name="section-ClassMethods"></a>
@@ -73,27 +89,10 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="configure_base_url"></a><span class="summary-sig-name">configure_base_url</span>(<span class="summary-sig-arg">cls</span>,
-        <span class="summary-sig-arg">base_url</span>)</span></td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="pilot.coordination.redis_adaptor-pysrc.html#RedisCoordinationAdaptor.configure_base_url">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
           <td><span class="summary-sig"><a name="get_base_url"></a><span class="summary-sig-name">get_base_url</span>(<span class="summary-sig-arg">cls</span>,
         <span class="summary-sig-arg">application_id</span>)</span></td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="pilot.coordination.redis_adaptor-pysrc.html#RedisCoordinationAdaptor.get_base_url">source&nbsp;code</a></span>
+            <span class="codelink"><a href="pilot.coordination.advert-pysrc.html#AdvertCoordinationAdaptor.get_base_url">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -111,7 +110,7 @@
         <span class="summary-sig-arg">application_url</span>,
         <span class="summary-sig-arg">pds</span>)</span></td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="pilot.coordination.redis_adaptor-pysrc.html#RedisCoordinationAdaptor.add_pds">source&nbsp;code</a></span>
+            <span class="codelink"><a href="pilot.coordination.advert-pysrc.html#AdvertCoordinationAdaptor.add_pds">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -128,7 +127,7 @@
           <td><span class="summary-sig"><a name="delete_pds"></a><span class="summary-sig-name">delete_pds</span>(<span class="summary-sig-arg">cls</span>,
         <span class="summary-sig-arg">pds_url</span>)</span></td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="pilot.coordination.redis_adaptor-pysrc.html#RedisCoordinationAdaptor.delete_pds">source&nbsp;code</a></span>
+            <span class="codelink"><a href="pilot.coordination.advert-pysrc.html#AdvertCoordinationAdaptor.delete_pds">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -146,7 +145,7 @@
         <span class="summary-sig-arg">pds_url</span>,
         <span class="summary-sig-arg">pd</span>)</span></td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="pilot.coordination.redis_adaptor-pysrc.html#RedisCoordinationAdaptor.add_pd">source&nbsp;code</a></span>
+            <span class="codelink"><a href="pilot.coordination.advert-pysrc.html#AdvertCoordinationAdaptor.add_pd">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -163,7 +162,7 @@
           <td><span class="summary-sig"><a name="update_pd"></a><span class="summary-sig-name">update_pd</span>(<span class="summary-sig-arg">cls</span>,
         <span class="summary-sig-arg">pd</span>)</span></td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="pilot.coordination.redis_adaptor-pysrc.html#RedisCoordinationAdaptor.update_pd">source&nbsp;code</a></span>
+            <span class="codelink"><a href="pilot.coordination.advert-pysrc.html#AdvertCoordinationAdaptor.update_pd">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -178,9 +177,9 @@
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a name="get_pd"></a><span class="summary-sig-name">get_pd</span>(<span class="summary-sig-arg">cls</span>,
-        <span class="summary-sig-arg">pd_url</span>)</span></td>
+        <span class="summary-sig-arg">pds_url</span>)</span></td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="pilot.coordination.redis_adaptor-pysrc.html#RedisCoordinationAdaptor.get_pd">source&nbsp;code</a></span>
+            <span class="codelink"><a href="pilot.coordination.advert-pysrc.html#AdvertCoordinationAdaptor.get_pd">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -198,7 +197,7 @@
         <span class="summary-sig-arg">pds_url</span>)</span><br />
       return a list of urls to pd managed by the PDS</td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="pilot.coordination.redis_adaptor-pysrc.html#RedisCoordinationAdaptor.list_pd">source&nbsp;code</a></span>
+            <span class="codelink"><a href="pilot.coordination.advert-pysrc.html#AdvertCoordinationAdaptor.list_pd">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -215,7 +214,7 @@
           <td><span class="summary-sig"><a name="delete_pd"></a><span class="summary-sig-name">delete_pd</span>(<span class="summary-sig-arg">cls</span>,
         <span class="summary-sig-arg">pds_url</span>)</span></td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="pilot.coordination.redis_adaptor-pysrc.html#RedisCoordinationAdaptor.delete_pd">source&nbsp;code</a></span>
+            <span class="codelink"><a href="pilot.coordination.advert-pysrc.html#AdvertCoordinationAdaptor.delete_pd">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -233,7 +232,7 @@
         <span class="summary-sig-arg">application_url</span>,
         <span class="summary-sig-arg">cds</span>)</span></td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="pilot.coordination.redis_adaptor-pysrc.html#RedisCoordinationAdaptor.add_cds">source&nbsp;code</a></span>
+            <span class="codelink"><a href="pilot.coordination.advert-pysrc.html#AdvertCoordinationAdaptor.add_cds">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -251,7 +250,7 @@
         <span class="summary-sig-arg">cds_url</span>,
         <span class="summary-sig-arg">cds</span>)</span></td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="pilot.coordination.redis_adaptor-pysrc.html#RedisCoordinationAdaptor.update_cds">source&nbsp;code</a></span>
+            <span class="codelink"><a href="pilot.coordination.advert-pysrc.html#AdvertCoordinationAdaptor.update_cds">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -268,7 +267,7 @@
           <td><span class="summary-sig"><a name="delete_cds"></a><span class="summary-sig-name">delete_cds</span>(<span class="summary-sig-arg">cls</span>,
         <span class="summary-sig-arg">cds_url</span>)</span></td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="pilot.coordination.redis_adaptor-pysrc.html#RedisCoordinationAdaptor.delete_cds">source&nbsp;code</a></span>
+            <span class="codelink"><a href="pilot.coordination.advert-pysrc.html#AdvertCoordinationAdaptor.delete_cds">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -283,10 +282,10 @@
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a name="add_du"></a><span class="summary-sig-name">add_du</span>(<span class="summary-sig-arg">cls</span>,
-        <span class="summary-sig-arg">root_url</span>,
+        <span class="summary-sig-arg">dus_url</span>,
         <span class="summary-sig-arg">du</span>)</span></td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="pilot.coordination.redis_adaptor-pysrc.html#RedisCoordinationAdaptor.add_du">source&nbsp;code</a></span>
+            <span class="codelink"><a href="pilot.coordination.advert-pysrc.html#AdvertCoordinationAdaptor.add_du">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -303,7 +302,7 @@
           <td><span class="summary-sig"><a name="get_du"></a><span class="summary-sig-name">get_du</span>(<span class="summary-sig-arg">cls</span>,
         <span class="summary-sig-arg">du_url</span>)</span></td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="pilot.coordination.redis_adaptor-pysrc.html#RedisCoordinationAdaptor.get_du">source&nbsp;code</a></span>
+            <span class="codelink"><a href="pilot.coordination.advert-pysrc.html#AdvertCoordinationAdaptor.get_du">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -320,7 +319,7 @@
           <td><span class="summary-sig"><a name="update_du"></a><span class="summary-sig-name">update_du</span>(<span class="summary-sig-arg">cls</span>,
         <span class="summary-sig-arg">du</span>)</span></td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="pilot.coordination.redis_adaptor-pysrc.html#RedisCoordinationAdaptor.update_du">source&nbsp;code</a></span>
+            <span class="codelink"><a href="pilot.coordination.advert-pysrc.html#AdvertCoordinationAdaptor.update_du">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -335,10 +334,10 @@
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a name="list_du"></a><span class="summary-sig-name">list_du</span>(<span class="summary-sig-arg">cls</span>,
-        <span class="summary-sig-arg">pd_url</span>)</span><br />
+        <span class="summary-sig-arg">dus_url</span>)</span><br />
       return a list of urls to du managed by the PDS</td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="pilot.coordination.redis_adaptor-pysrc.html#RedisCoordinationAdaptor.list_du">source&nbsp;code</a></span>
+            <span class="codelink"><a href="pilot.coordination.advert-pysrc.html#AdvertCoordinationAdaptor.list_du">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -355,7 +354,7 @@
           <td><span class="summary-sig"><a name="delete_du"></a><span class="summary-sig-name">delete_du</span>(<span class="summary-sig-arg">cls</span>,
         <span class="summary-sig-arg">du_url</span>)</span></td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="pilot.coordination.redis_adaptor-pysrc.html#RedisCoordinationAdaptor.delete_du">source&nbsp;code</a></span>
+            <span class="codelink"><a href="pilot.coordination.advert-pysrc.html#AdvertCoordinationAdaptor.delete_du">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -373,7 +372,7 @@
         <span class="summary-sig-arg">application_url</span>,
         <span class="summary-sig-arg">pds_id</span>)</span></td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="pilot.coordination.redis_adaptor-pysrc.html#RedisCoordinationAdaptor.get_pds_url">source&nbsp;code</a></span>
+            <span class="codelink"><a href="pilot.coordination.advert-pysrc.html#AdvertCoordinationAdaptor.get_pds_url">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -391,7 +390,7 @@
         <span class="summary-sig-arg">application_url</span>,
         <span class="summary-sig-arg">cds_id</span>)</span></td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="pilot.coordination.redis_adaptor-pysrc.html#RedisCoordinationAdaptor.get_cds_url">source&nbsp;code</a></span>
+            <span class="codelink"><a href="pilot.coordination.advert-pysrc.html#AdvertCoordinationAdaptor.get_cds_url">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -412,49 +411,49 @@
     <td width="15%" align="right" valign="top" class="summary">
       <span class="summary-type">&nbsp;</span>
     </td><td class="summary">
-        <a name="BASE_URL"></a><span class="summary-name">BASE_URL</span> = <code title="'redis://localhost/'"><code class="variable-quote">'</code><code class="variable-string">redis://localhost/</code><code class="variable-quote">'</code></code>
+        <a name="BASE_URL"></a><span class="summary-name">BASE_URL</span> = <code title="&quot;advert://localhost/&quot;">&quot;advert://localhost/&quot;</code>
     </td>
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
       <span class="summary-type">&nbsp;</span>
     </td><td class="summary">
-        <a name="SEPARATOR"></a><span class="summary-name">SEPARATOR</span> = <code title="':'"><code class="variable-quote">'</code><code class="variable-string">:</code><code class="variable-quote">'</code></code>
+        <a name="BASE_URL_QUERY_STRING"></a><span class="summary-name">BASE_URL_QUERY_STRING</span> = <code title="&quot;?dbtype=sqlite3&quot;">&quot;?dbtype=sqlite3&quot;</code>
     </td>
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
       <span class="summary-type">&nbsp;</span>
     </td><td class="summary">
-        <a name="PILOT_PATH"></a><span class="summary-name">PILOT_PATH</span> = <code title="'pilot'"><code class="variable-quote">'</code><code class="variable-string">pilot</code><code class="variable-quote">'</code></code>
+        <a name="PILOT_PATH"></a><span class="summary-name">PILOT_PATH</span> = <code title="&quot;pilot&quot;">&quot;pilot&quot;</code>
     </td>
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
       <span class="summary-type">&nbsp;</span>
     </td><td class="summary">
-        <a name="PILOT_DATA_PATH"></a><span class="summary-name">PILOT_DATA_PATH</span> = <code title="'pilot'"><code class="variable-quote">'</code><code class="variable-string">pilot</code><code class="variable-quote">'</code></code>
+        <a name="PILOT_DATA_PATH"></a><span class="summary-name">PILOT_DATA_PATH</span> = <code title="&quot;pilot&quot;">&quot;pilot&quot;</code>
     </td>
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
       <span class="summary-type">&nbsp;</span>
     </td><td class="summary">
-        <a name="PILOT_DATA_SERVICE_PATH"></a><span class="summary-name">PILOT_DATA_SERVICE_PATH</span> = <code title="'pilot:pds'"><code class="variable-quote">'</code><code class="variable-string">pilot:pds</code><code class="variable-quote">'</code></code>
+        <a name="PILOT_DATA_SERVICE_PATH"></a><span class="summary-name">PILOT_DATA_SERVICE_PATH</span> = <code title="PILOT_DATA_PATH+ &quot;/pds&quot;">PILOT_DATA_PATH+ &quot;/pds&quot;</code>
     </td>
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
       <span class="summary-type">&nbsp;</span>
     </td><td class="summary">
-        <a name="DATA_UNIT_SERVICE_PATH"></a><span class="summary-name">DATA_UNIT_SERVICE_PATH</span> = <code title="'pilot:dus'"><code class="variable-quote">'</code><code class="variable-string">pilot:dus</code><code class="variable-quote">'</code></code>
+        <a name="DATA_UNIT_SERVICE_PATH"></a><span class="summary-name">DATA_UNIT_SERVICE_PATH</span> = <code title="PILOT_DATA_PATH+ &quot;/dus&quot;">PILOT_DATA_PATH+ &quot;/dus&quot;</code>
     </td>
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
       <span class="summary-type">&nbsp;</span>
     </td><td class="summary">
-        <a name="COMPUTE_DATA_SERVICE_PATH"></a><span class="summary-name">COMPUTE_DATA_SERVICE_PATH</span> = <code title="'pilot:cds'"><code class="variable-quote">'</code><code class="variable-string">pilot:cds</code><code class="variable-quote">'</code></code>
+        <a name="COMPUTE_DATA_SERVICE_PATH"></a><span class="summary-name">COMPUTE_DATA_SERVICE_PATH</span> = <code title="PILOT_DATA_PATH+ &quot;/cds&quot;">PILOT_DATA_PATH+ &quot;/cds&quot;</code>
     </td>
   </tr>
 </table>
@@ -490,7 +489,7 @@
   <tr>
     <td align="left" class="footer">
     <a href="epydoc-log.html">Generated by Epydoc
-    3.0.1 on Tue Oct 30 16:26:20 2012</a>
+    3.0.1 on Sat Jul  7 21:24:46 2012</a>
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"
