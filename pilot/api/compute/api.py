@@ -18,7 +18,8 @@ class State(object):
 class PilotComputeDescription(dict):
     """ B{PilotComputeDescription.}
         
-        A PilotComputeDescription is a based on the SAGA Job Description.
+        A PilotComputeDescription is a based on the attributes defined on 
+        the SAGA Job Description.
 
         The PilotComputeDescription is used by the application to specify 
         what kind of PilotJobs it requires.
@@ -46,39 +47,28 @@ class PilotComputeDescription(dict):
                              'affinity_datacenter_label': "us-east-indiana",              
                              'affinity_machine_label': "india" 
                             }
-            
+    
+        
+         
     """
 
     # Class members
     __slots__ = (
         # Pilot / Agent description
-        'executable',
-        'arguments',
-        'cleanup',
-        'environment',
-        'interactive',
-        'contact',
+        'service_url',
         'project',
-        'start_time',
         'working_directory',
         # I/O
         'input',
         'error',
         'output',
         'file_transfer',
+        
         # Parallelism
         'number_of_processes',      # Total number of processes to start
         'processes_per_host',       # Nr of processes per host
-        'threads_per_process',      # Nr of threads to start per process
-        'total_core_count',         # total number of cores requested
-        'spmd_variation',           # Type and startup mechanism
         
         # Requirements
-        'candidate_hosts',
-        'cpu_architecture',
-        'total_physical_memory', 
-        'operating_system_type',
-        'total_cpu_time',
         'wall_time_limit',
         'queue',
         
@@ -87,8 +77,10 @@ class PilotComputeDescription(dict):
         'affinity_machine_label',       # pilot jobs sharing the same label are located on the same machine
     )
 
+   
     def __init__(self):
-        pass
+        self.service_url.__doc__="SAGA-Python URL for respective resource manager, e.g. fork://localhost"
+
     
     
     def __setattr__(self, attr, value):
