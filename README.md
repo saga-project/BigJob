@@ -14,9 +14,10 @@ Web page: https://github.com/saga-project/BigJob/wiki
 
 Mailing list:  
 
-bigjob-user@googlegroups.com: http://groups.google.com/group/bigjob-users
+[bigjob-user@googlegroups.com](http://groups.google.com/group/bigjob-users)
 
-bigjob-devel@googlegroups.com: http://groups.google.com/group/bigjob-devel
+[bigjob-devel@googlegroups.com](http://groups.google.com/group/bigjob-devel)
+
 
 Installation
 -------------
