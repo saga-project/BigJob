@@ -311,6 +311,8 @@ class bigjob_agent:
                     logger.debug("Environment: " + str(env_list))
                     for i in env_list:
                         logger.debug("Eval " + i)
+                        # Hack for conduction experiments on Kraken
+                        # Kraken specific support for running n sub-jobs at a time
                         if i.startswith("NUMBER_SUBJOBS"):
                             self.number_subjobs=int(i.split("=")[1].strip())
                             logger.debug("NUMBER_SUBJOBS: " + str(self.number_subjobs))
@@ -404,7 +406,7 @@ class bigjob_agent:
                     #command ="chmod +x " + executable +";export PATH=$PATH:" + workingdirectory + ";" +command                    
                 else:
                     # Environment variables need to be handled later!
-                    command =  executable + " " + arguments
+                    command =  envi + executable + " " + arguments
                 
                 # special setup for MPI NAMD jobs
                 machinefile = self.allocate_nodes(job_dict)
