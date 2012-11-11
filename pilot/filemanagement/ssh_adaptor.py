@@ -1,7 +1,9 @@
 '''
 SSH-based coordination scheme between manager and agent
 '''
-import paramiko
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore")
+    import paramiko
 import urlparse
 import pdb
 import errno
@@ -302,7 +304,9 @@ import os
 import urllib
 import sys
 import time
-import paramiko
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore")
+    import paramiko
 
 client = paramiko.SSHClient()
 client.load_system_host_keys()
@@ -337,7 +341,9 @@ import os
 import urllib
 import sys
 import time
-import paramiko
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore")
+    import paramiko
 
 client = paramiko.SSHClient()
 client.load_system_host_keys()
