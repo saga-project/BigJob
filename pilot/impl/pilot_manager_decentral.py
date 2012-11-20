@@ -23,6 +23,7 @@ from pilot.impl.pilotdata_manager import PilotData, DataUnit
 from pilot.impl.pilotcompute_manager import PilotCompute, PilotComputeService
 from pilot.impl.pilot_manager import ComputeUnit
 
+
 #from pilot.coordination.advert import AdvertCoordinationAdaptor as CoordinationAdaptor
 from pilot.coordination.redis_adaptor import RedisCoordinationAdaptor as CoordinationAdaptor
 
@@ -44,7 +45,6 @@ class ComputeDataServiceDecentral(pilot.api.ComputeDataService):
         The decentral ComputeDateService will only work with Redis!
     """    
     CDS_ID_PREFIX="cds-"  
-
 
     def __init__(self, cds_url=None):
         """ Create a ComputeDataService object.
@@ -120,9 +120,13 @@ class ComputeDataServiceDecentral(pilot.api.ComputeDataService):
         return cu
     
     
+    def list_pilot_compute(self):
+        """ List all pilot compute of CDS """
+        return self.pilot_job_service
+    
+    
     ###########################################################################
     # Compute Data Service private methods
-    
     def __submit_cu(self, compute_unit):
         """ Submits compute unit to Bigjob """
                 
@@ -149,11 +153,6 @@ class ComputeDataServiceDecentral(pilot.api.ComputeDataService):
         raise NotImplementedError("Not implemented")
         
     
-    def list_pilot_compute(self):
-        """ List all pilot compute of CDS """
-        return self.pilot_job_service
-    
-    
     def list_pilot_data(self):
         """ Not implemented yet""" 
         raise NotImplementedError("Not implemented")
@@ -174,12 +173,14 @@ class ComputeDataServiceDecentral(pilot.api.ComputeDataService):
         raise NotImplementedError("Not implemented")
     
     
+    ###########################################################################
+    # General     
+   
     def cancel(self):
         """ Cancel the CDS. 
             All associated PD and PC objects are canceled.            
         """
         CoordinationAdaptor.delete_cds(self.url)
-   
    
    
     def wait(self):
