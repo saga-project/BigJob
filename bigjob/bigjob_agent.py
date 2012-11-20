@@ -685,10 +685,12 @@ class bigjob_agent:
     def start_background_thread(self):        
         self.stop=False                
         logger.debug("##################################### New POLL/MONITOR cycle ##################################")
-        logger.debug("Free nodes: " + str(len(self.freenodes)) + " Busy Nodes: " + str(len(self.busynodes)))
         while True and self.stop==False:
+            logger.debug("Free nodes: " + str(len(self.freenodes)) 
+                        + " Busy Nodes: " + str(len(self.busynodes))
+                        + " Number of running sub-jobs: " + str(len(self.jobs)))
             if self.is_stopped(self.base_url)==True:
-                logger.debug("Pilot job entry deleted - terminate agent")
+                logger.debug("Pilot terminated.")
                 break
             else:
                 logger.debug("Pilot job entry: " + str(self.base_url) + " exists. Pilot job not in state stopped.")
