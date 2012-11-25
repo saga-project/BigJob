@@ -57,7 +57,7 @@ application_id = "bigdata"
 """
 
 class PilotData(PilotData):
-    """ B{PilotData} 
+    """ B{PilotData (PD).} 
                 
         This is the object that is returned by the PilotDataService when a 
         new PilotData is created based on a PilotDataDescription. A PilotData represents
@@ -119,10 +119,12 @@ class PilotData(PilotData):
     
      
     def get_url(self):
+        """ Get URL of PilotData. Used for reconnecting to PilotData """
         return self.url
        
     
     def url_for_du(self, du):
+        """ Get full URL to DataUnit within PilotData """
         return self.service_url + "/" + str(du.id)
         
 
@@ -183,6 +185,7 @@ class PilotData(PilotData):
             
                 
     def put_du(self, du):
+        """Copy Data Unit to Pilot Data"""
         logger.debug("Put DU: %s to Pilot-Data: %s"%(du.id,self.service_url))
         self.__filemanager.create_du(du.id)
         self.__filemanager.put_du(du)
@@ -191,7 +194,7 @@ class PilotData(PilotData):
         
         
     def remove_du(self, du):
-        """ Remove pilot data from pilot data """
+        """ Remove Data Unit from Pilot Data """
         if self.data_unit_urls.count(du.get_url())>0:
             self.__filemanager.remove_du(du)
             self.data_unit_urls.remove(du.get_url())
@@ -199,6 +202,7 @@ class PilotData(PilotData):
         
     
     def copy_du(self, du, pd_new):
+        """ Copy DataUnit to another Pilot Data """
         pd_new.create_du(du)
         self.__filemanager.copy_du(du, pd_new)
         
@@ -261,6 +265,7 @@ class PilotData(PilotData):
 
     
     def to_dict(self):
+        """ Internal method that returns a dict with all data contained in this Pilot Data"""
         pd_dict = {}
         pd_dict["id"]=self.id
         pd_dict["url"]=self.url
@@ -270,6 +275,7 @@ class PilotData(PilotData):
     
     
     def __repr__(self):
+        """Returns Pilot Data URL"""
         return self.service_url
     
     
@@ -282,6 +288,7 @@ class PilotData(PilotData):
     
     @classmethod
     def create_pilot_data_from_dict(cls, pd_dict):
+        """Restore Pilot Data from dictionary"""
         pd = PilotData()
         for i in pd_dict.keys():
             pd.__setattr__(i, pd_dict[i])
@@ -294,23 +301,14 @@ class PilotData(PilotData):
 COORDINATION_URL = "redis://localhost"
 
 class PilotDataService(PilotDataService):
-    """ B{PilotDataService} (PDS)
+    """ B{PilotDataService (PDS).}
     
-        Factory for creating pilot data
+        Factory for creating Pilot Data.
     
     """
     
     PDS_ID_PREFIX="pds-"
-
-    # Class members
-    __slots__ = (
-        'id',             # Reference to this PJS
-        'url',            # URL for referencing PilotDataService
-        'state',          # Status of the PJS
-        'input_data_unit'    # List of PJs under this PJS
-        'affinity_list'   # List of PS on that are affine to each other
-    )
-
+    
     def __init__(self, coordination_url=COORDINATION_URL, pds_url=None):
         """ Create a PilotDataService
 
@@ -364,7 +362,7 @@ class PilotDataService(PilotDataService):
     
 
     def cancel(self):
-        """ Cancel the PilotDataService.
+        """ Cancel the PilotDataService. Release all Pilot Data created by this service.
             
             Keyword arguments:
             None
@@ -384,6 +382,7 @@ class PilotDataService(PilotDataService):
  
  
     def get_url(self):
+        """ Returns URL of Pilot Data Service """
         return self.url
  
     ###########################################################################
@@ -398,6 +397,7 @@ class PilotDataService(PilotDataService):
  
  
     def __del__(self):
+        """Releases all Pilot Data created by this Pilot Data Service."""
         self.cancel()         
             
     
@@ -414,7 +414,7 @@ class PilotDataService(PilotDataService):
         
 
 class DataUnit(DataUnit):
-    """ B{DataUnit}
+    """ B{DataUnit (DU).}
     
         This is the object that is returned by the ComputeDataService when a 
         new DataUnit is created based on a DataUnitDescription.
@@ -478,13 +478,14 @@ class DataUnit(DataUnit):
                
             
     def cancel(self):
-        """ Cancel the DU. """
+        """ Cancel the Data Unit. """
         self.state = State.Done    
         if len(self.pilot_data) > 0: 
             CoordinationAdaptor.update_du(self)
 
             
     def add_files(self, file_url_list=[]):
+        """Add files referenced in list to Data Unit"""
         self.state=State.Pending
         item_list = DataUnitItem.create_data_unit_from_urls(None, file_url_list)
         for i in item_list:
@@ -498,6 +499,7 @@ class DataUnit(DataUnit):
         
         
     def remove_files(self, file_urls):
+        """Remove files from Data Unit (NOT implemented yet"""
         # TODO
         #self.data_unit_items.remove(input_data_unit)
         if len(self.pilot_data) > 0:
@@ -547,7 +549,7 @@ class DataUnit(DataUnit):
     
     
     def add_pilot_data(self, pilot_data):
-        """ add DU to a certain pilot data 
+        """ add this DU (self) to a certain pilot data 
             data will be moved into this data
         """
         transfer_thread=threading.Thread(target=self.__add_pilot_data, args=[pilot_data])
@@ -576,18 +578,20 @@ class DataUnit(DataUnit):
         """ Return URL that can be used to reconnect to Data Unit """
         return self.url
     
+    
+    
     ###########################################################################
     # BigData Internal Methods
-    
     def to_dict(self):
+        """ Internal method that returns a dict with all data contained in this DataUnit"""
         du_dict = self.__dict__
         du_dict["id"]=self.id
         return du_dict        
     
     
-    def update_state(self, state):
+    def _update_state(self, state):
+        """ Internal method for updating state"""
         self.state=state
-        
         if len(self.pilot_data) > 0: 
             CoordinationAdaptor.update_du(self)
 

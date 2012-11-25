@@ -182,13 +182,12 @@ pilot.api.data.api" class="py-name" href="#" onclick="return doclink('link-1', '
 <a name="L121"></a><tt class="py-lineno">121</tt>  <tt class="py-line">        <tt class="py-keyword">for</tt> <tt class="py-name">i</tt> <tt class="py-keyword">in</tt> <tt class="py-name">du_items</tt><tt class="py-op">.</tt><tt class="py-name">keys</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt>    </tt>
 <a name="L122"></a><tt class="py-lineno">122</tt>  <tt class="py-line">            <tt class="py-keyword">try</tt><tt class="py-op">:</tt> </tt>
 <a name="L123"></a><tt class="py-lineno">123</tt>  <tt class="py-line">                <tt class="py-name">local_filename</tt><tt class="py-op">=</tt><tt class="py-name">du_items</tt><tt class="py-op">[</tt><tt class="py-name">i</tt><tt class="py-op">]</tt><tt class="py-op">[</tt><tt class="py-string">"local"</tt><tt class="py-op">]</tt> </tt>
-<a name="L124"></a><tt class="py-lineno">124</tt>  <tt class="py-line">                <tt class="py-name">remote_path</tt> <tt class="py-op">=</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">join</tt><tt class="py-op">(</tt><tt class="py-name">str</tt><tt class="py-op">(</tt><tt class="py-name">du</tt><tt class="py-op">.</tt><tt id="link-19" class="py-name" targets="Variable pilot.api.compute.api.ComputeUnit.id=pilot.api.compute.api.ComputeUnit-class.html#id,Variable pilot.api.compute.api.PilotCompute.id=pilot.api.compute.api.PilotCompute-class.html#id,Variable pilot.api.compute.api.PilotComputeService.id=pilot.api.compute.api.PilotComputeService-class.html#id,Variable pilot.api.data.api.DataUnit.id=pilot.api.data.api.DataUnit-class.html#id,Variable pilot.api.data.api.PilotData.id=pilot.api.data.api.PilotData-class.html#id,Variable pilot.api.data.api.PilotDataService.id=pilot.api.data.api.PilotDataService-class.html#id,Variable pilot.impl.pilotdata_manager.PilotDataService.id=pilot.impl.pilotdata_manager.PilotDataService-class.html#id"><a title="pilot.api.compute.api.ComputeUnit.id
+<a name="L124"></a><tt class="py-lineno">124</tt>  <tt class="py-line">                <tt class="py-name">remote_path</tt> <tt class="py-op">=</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">join</tt><tt class="py-op">(</tt><tt class="py-name">str</tt><tt class="py-op">(</tt><tt class="py-name">du</tt><tt class="py-op">.</tt><tt id="link-19" class="py-name" targets="Variable pilot.api.compute.api.ComputeUnit.id=pilot.api.compute.api.ComputeUnit-class.html#id,Variable pilot.api.compute.api.PilotCompute.id=pilot.api.compute.api.PilotCompute-class.html#id,Variable pilot.api.compute.api.PilotComputeService.id=pilot.api.compute.api.PilotComputeService-class.html#id,Variable pilot.api.data.api.DataUnit.id=pilot.api.data.api.DataUnit-class.html#id,Variable pilot.api.data.api.PilotData.id=pilot.api.data.api.PilotData-class.html#id,Variable pilot.api.data.api.PilotDataService.id=pilot.api.data.api.PilotDataService-class.html#id"><a title="pilot.api.compute.api.ComputeUnit.id
 pilot.api.compute.api.PilotCompute.id
 pilot.api.compute.api.PilotComputeService.id
 pilot.api.data.api.DataUnit.id
 pilot.api.data.api.PilotData.id
-pilot.api.data.api.PilotDataService.id
-pilot.impl.pilotdata_manager.PilotDataService.id" class="py-name" href="#" onclick="return doclink('link-19', 'id', 'link-19');">id</a></tt><tt class="py-op">)</tt><tt class="py-op">,</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">basename</tt><tt class="py-op">(</tt><tt class="py-name">local_filename</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+pilot.api.data.api.PilotDataService.id" class="py-name" href="#" onclick="return doclink('link-19', 'id', 'link-19');">id</a></tt><tt class="py-op">)</tt><tt class="py-op">,</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">basename</tt><tt class="py-op">(</tt><tt class="py-name">local_filename</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
 <a name="L125"></a><tt class="py-lineno">125</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_put_file</tt><tt class="py-op">(</tt><tt class="py-name">local_filename</tt><tt class="py-op">,</tt> <tt class="py-name">remote_path</tt><tt class="py-op">)</tt> </tt>
 <a name="L126"></a><tt class="py-lineno">126</tt>  <tt class="py-line">            <tt class="py-keyword">except</tt><tt class="py-op">:</tt> </tt>
 <a name="L127"></a><tt class="py-lineno">127</tt>  <tt class="py-line">                <tt class="py-name">logger</tt><tt class="py-op">.</tt><tt class="py-name">debug</tt><tt class="py-op">(</tt><tt class="py-string">"Could not copy file: "</tt> <tt class="py-op">+</tt> <tt class="py-op">(</tt><tt class="py-name">str</tt><tt class="py-op">(</tt><tt class="py-name">i</tt><tt class="py-op">)</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
@@ -204,8 +203,7 @@ pilot.api.compute.api.PilotCompute.id
 pilot.api.compute.api.PilotComputeService.id
 pilot.api.data.api.DataUnit.id
 pilot.api.data.api.PilotData.id
-pilot.api.data.api.PilotDataService.id
-pilot.impl.pilotdata_manager.PilotDataService.id" class="py-name" href="#" onclick="return doclink('link-20', 'id', 'link-19');">id</a></tt> </tt>
+pilot.api.data.api.PilotDataService.id" class="py-name" href="#" onclick="return doclink('link-20', 'id', 'link-19');">id</a></tt> </tt>
 <a name="L136"></a><tt class="py-lineno">136</tt>  <tt class="py-line">        <tt class="py-name">logger</tt><tt class="py-op">.</tt><tt class="py-name">debug</tt><tt class="py-op">(</tt><tt class="py-string">"Get DU: "</tt> <tt class="py-op">+</tt> <tt class="py-name">str</tt><tt class="py-op">(</tt><tt class="py-name">du_id</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
 <a name="L137"></a><tt class="py-lineno">137</tt>  <tt class="py-line">        <tt class="py-name">gs</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__get_api_client</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt> </tt>
 <a name="L138"></a><tt class="py-lineno">138</tt>  <tt class="py-line">        <tt class="py-name">result</tt> <tt class="py-op">=</tt> <tt class="py-name">gs</tt><tt class="py-op">.</tt><tt class="py-name">objects</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt id="link-21" class="py-name"><a title="pilot.impl.pilotdata_manager.DataUnit.list" class="py-name" href="#" onclick="return doclink('link-21', 'list', 'link-18');">list</a></tt><tt class="py-op">(</tt><tt class="py-name">bucket</tt><tt class="py-op">=</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">bucket_name</tt><tt class="py-op">,</tt> <tt class="py-name">prefix</tt><tt class="py-op">=</tt><tt class="py-name">du_id</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt class="py-name">execute</tt><tt class="py-op">(</tt><tt class="py-op">)</tt>  </tt>
@@ -223,8 +221,7 @@ pilot.api.compute.api.PilotCompute.id
 pilot.api.compute.api.PilotComputeService.id
 pilot.api.data.api.DataUnit.id
 pilot.api.data.api.PilotData.id
-pilot.api.data.api.PilotDataService.id
-pilot.impl.pilotdata_manager.PilotDataService.id" class="py-name" href="#" onclick="return doclink('link-22', 'id', 'link-19');">id</a></tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+pilot.api.data.api.PilotDataService.id" class="py-name" href="#" onclick="return doclink('link-22', 'id', 'link-19');">id</a></tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
 </div><a name="L149"></a><tt class="py-lineno">149</tt>  <tt class="py-line">     </tt>
 <a name="L150"></a><tt class="py-lineno">150</tt>  <tt class="py-line">     </tt>
 <a name="L151"></a><tt class="py-lineno">151</tt>  <tt class="py-line">    <tt class="py-comment">###########################################################################</tt> </tt>
@@ -348,7 +345,7 @@ expandto(location.href);
   <tr>
     <td align="left" class="footer">
     <a href="epydoc-log.html">Generated by Epydoc
-    3.0.1 on Sat Nov  3 16:50:16 2012</a>
+    3.0.1 on Sun Nov 25 18:23:13 2012</a>
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

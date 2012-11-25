@@ -16,7 +16,7 @@ class State(object):
 
 
 class PilotComputeDescription(dict):
-    """ B{PilotComputeDescription.}
+    """ B{PilotComputeDescription (PCD).}
         
         A PilotComputeDescription is a based on the attributes defined on 
         the SAGA Job Description.
@@ -93,10 +93,10 @@ class PilotComputeDescription(dict):
     
 
 class PilotCompute(object):
-    """ PilotCompute (PilotJob). 
+    """ B{PilotCompute (PC)}. 
     
         This is the object that is returned by the PilotComputeService when a 
-        new PilotCompute is created based on a PilotComputeDescription.
+        new PilotCompute (aka Pilot-Job) is created based on a PilotComputeDescription.
 
         The PilotCompute object can be used by the application to keep track 
         of PilotComputes that are active.
@@ -160,7 +160,7 @@ class PilotCompute(object):
 #  Pilot ComputeService
 #
 class PilotComputeService(object):
-    """  PilotComputeService.
+    """  B{PilotComputeService (PCS).}
     
         The PilotComputeService is responsible for creating and managing 
         the PilotComputes.
@@ -220,8 +220,10 @@ class PilotComputeService(object):
 #  ComputeUnitService
 # 
 class ComputeUnitService(object):
-    """  ComputeUnitService.
+    """ B{ComputeUnitService (CUS).}
     
+        Please use ComputeDataService!
+        
         The ComputeUnitService is the application's interface to submit 
         ComputeUnits to the Pilot-Manager in the P* Model.
 
@@ -230,6 +232,7 @@ class ComputeUnitService(object):
 
         The ComputeUnitService is linked to a PilotComputeService for the actual 
         execution of the ComputeUnits.
+               
     """
 
     def __init__(self, wus_id=None):
@@ -308,7 +311,7 @@ class ComputeUnitService(object):
 #  ComuteUnitDescription
 # 
 class ComputeUnitDescription(dict):
-    """ B{ComputeUnitDescription.}
+    """ B{ComputeUnitDescription (CUD).}
     
         The ComputeUnitDescription is a task description based on 
         SAGA Job Description. 
@@ -391,7 +394,7 @@ class ComputeUnitDescription(dict):
 #  ComputeUnit(WU)
 # 
 class ComputeUnit(object):
-    """  ComputeUnit.
+    """ B{ComputeUnit (CU).}
     
         This is the object that is returned by the ComputeUnitService when a 
         new ComputeUnit is created based on a ComputeUnitDescription.

@@ -34,9 +34,9 @@ COORDINATION_URL = "redis://localhost"
 
 
 class PilotComputeService(PilotComputeService):
-    """ B{PilotComputeService}
+    """ B{PilotComputeService (PCS).}
     
-        Factory for L{PilotCompute}s. 
+        Factory for L{PilotCompute}s.. 
                     
     """
     PJS_ID_PREFIX="pcs-"   
@@ -175,7 +175,7 @@ class PilotComputeService(PilotComputeService):
 ###############################################################################
     
 class PilotCompute(PilotCompute):
-    """ B{Pilot Compute} (PC)
+    """ B{Pilot Compute (PC).}
     
         This is the object that is returned by the PilotComputeService when a 
         new PilotCompute is created based on a PilotComputeDescription.
@@ -333,7 +333,7 @@ class PilotCompute(PilotCompute):
 ###############################################################################
         
 class ComputeUnit(ComputeUnit):
-    """ ComputeUnit
+    """ B{ComputeUnit (CU).}
     
         This is the object that is returned by the ComputeDataService when a 
         new ComputeUnit is submitted based on a ComputeUnitDescription.
@@ -363,17 +363,20 @@ class ComputeUnit(ComputeUnit):
            
     
     def get_id(self):
+        """Returns unique identifier of Compute Unit. Deprecated: Please use get_url() instead."""
         return self.id
     
     
     def get_url(self):   
+        """Returns URL of Compute Unit. This URL can be used to reconnect to this Compute Unit later on."""
         if self.__subjob!=None:      
             return self.__subjob.get_url()
         else:
             return self.get_id()   
         
     
-    def get_details(self):   
+    def get_details(self):
+        """Returns dict with Compute Unit Details (e.g. job description, timings)"""   
         if self.__subjob!=None:      
             return self.__subjob.get_details()
         else:
@@ -381,6 +384,7 @@ class ComputeUnit(ComputeUnit):
     
     
     def get_state(self):
+        """Returns current state of Compute Unit"""
         if self.__subjob != None:
             self.state = self.__subjob.get_state()
         return self.state
@@ -399,6 +403,7 @@ class ComputeUnit(ComputeUnit):
 
     
     def cancel(self):
+        """Terminates Compute Unit"""
         if self.__subjob != None:
             return self.__subjob.cancel()
         return None

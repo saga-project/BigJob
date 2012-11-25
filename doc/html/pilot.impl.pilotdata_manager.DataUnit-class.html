@@ -59,36 +59,32 @@
 <h1 class="epydoc">Class DataUnit</h1><p class="nomargin-top"><span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#DataUnit">source&nbsp;code</a></span></p>
 <center>
 <center>  <map id="uml_class_diagram_for_pilot_im_8" name="uml_class_diagram_for_pilot_im_8">
-<area shape="rect" id="node1_22" href="pilot.impl.pilotdata_manager.DataUnit-class.html#DU_ID_PREFIX" title="pilot.impl.pilotdata_manager.DataUnit.DU_ID_PREFIX" alt="" coords="17,215,463,233"/>
-<area shape="rect" id="node1_23" href="pilot.impl.pilotdata_manager.DataUnit-class.html#__init__" title="1.) create a new Pilot Data: pilot_data_service and data_unit_description &#160;required 2.) reconnect to an existing Pilot Data: du_url required" alt="" coords="17,236,463,255"/>
-<area shape="rect" id="node1_24" href="pilot.impl.pilotdata_manager.DataUnit-class.html#cancel" title="Cancel the DU." alt="" coords="17,255,463,273"/>
-<area shape="rect" id="node1_25" href="pilot.impl.pilotdata_manager.DataUnit-class.html#add_files" title="pilot.impl.pilotdata_manager.DataUnit.add_files" alt="" coords="17,273,463,292"/>
-<area shape="rect" id="node1_26" href="pilot.impl.pilotdata_manager.DataUnit-class.html#remove_files" title="pilot.impl.pilotdata_manager.DataUnit.remove_files" alt="" coords="17,292,463,311"/>
-<area shape="rect" id="node1_27" href="pilot.impl.pilotdata_manager.DataUnit-class.html#list" title="List all items contained in DU ..." alt="" coords="17,311,463,329"/>
-<area shape="rect" id="node1_28" href="pilot.impl.pilotdata_manager.DataUnit-class.html#get_state" title="Return current state of DataUnit" alt="" coords="17,329,463,348"/>
-<area shape="rect" id="node1_29" href="pilot.impl.pilotdata_manager.DataUnit-class.html#wait" title="Wait until in running state (or failed state)" alt="" coords="17,348,463,367"/>
-<area shape="rect" id="node1_30" href="pilot.impl.pilotdata_manager.DataUnit-class.html#add_pilot_data" title="add DU to a certain pilot data data will be moved into this data" alt="" coords="17,367,463,385"/>
-<area shape="rect" id="node1_31" href="pilot.impl.pilotdata_manager.DataUnit-class.html#get_pilot_data" title="get a list of pilot data that have a copy of this PD" alt="" coords="17,385,463,404"/>
-<area shape="rect" id="node1_32" href="pilot.impl.pilotdata_manager.DataUnit-class.html#export" title="simple implementation of export: copies file from first pilot data to local machine" alt="" coords="17,404,463,423"/>
-<area shape="rect" id="node1_33" href="pilot.impl.pilotdata_manager.DataUnit-class.html#get_url" title="Return URL that can be used to reconnect to Data Unit" alt="" coords="17,423,463,441"/>
-<area shape="rect" id="node1_34" href="pilot.impl.pilotdata_manager.DataUnit-class.html#to_dict" title="pilot.impl.pilotdata_manager.DataUnit.to_dict" alt="" coords="17,441,463,460"/>
-<area shape="rect" id="node1_35" href="pilot.impl.pilotdata_manager.DataUnit-class.html#update_state" title="pilot.impl.pilotdata_manager.DataUnit.update_state" alt="" coords="17,460,463,479"/>
-<area shape="rect" id="node1_36" href="pilot.impl.pilotdata_manager.DataUnit-class.html#__repr__" title="repr(x)" alt="" coords="17,479,463,497"/>
-<area shape="rect" id="node1" href="pilot.impl.pilotdata_manager.DataUnit-class.html" title="DataUnit" alt="" coords="5,190,475,503"/>
-<area shape="rect" id="node2_37" href="pilot.api.data.api.DataUnit-class.html#description" title="pilot.api.data.api.DataUnit.description" alt="" coords="137,31,341,49"/>
-<area shape="rect" id="node2_38" href="pilot.api.data.api.DataUnit-class.html#file_list" title="pilot.api.data.api.DataUnit.file_list" alt="" coords="137,49,341,68"/>
-<area shape="rect" id="node2_39" href="pilot.api.data.api.DataUnit-class.html#id" title="pilot.api.data.api.DataUnit.id" alt="" coords="137,68,341,87"/>
-<area shape="rect" id="node2_40" href="pilot.api.data.api.DataUnit-class.html#state" title="pilot.api.data.api.DataUnit.state" alt="" coords="137,87,341,105"/>
-<area shape="rect" id="node2_41" href="pilot.api.data.api.DataUnit-class.html#add_data_unit" title="pilot.api.data.api.DataUnit.add_data_unit" alt="" coords="137,108,341,127"/>
-<area shape="rect" id="node2_42" href="pilot.api.data.api.DataUnit-class.html#list_data_units" title="pilot.api.data.api.DataUnit.list_data_units" alt="" coords="137,127,341,145"/>
-<area shape="rect" id="node2_43" href="pilot.api.data.api.DataUnit-class.html#remove_data_unit" title="pilot.api.data.api.DataUnit.remove_data_unit" alt="" coords="137,145,341,164"/>
-<area shape="rect" id="node2" href="pilot.api.data.api.DataUnit-class.html" title="DataUnit." alt="" coords="125,6,353,170"/>
+<area shape="rect" id="node1_18" href="pilot.impl.pilotdata_manager.DataUnit-class.html#DU_ID_PREFIX" title="pilot.impl.pilotdata_manager.DataUnit.DU_ID_PREFIX" alt="" coords="17,164,463,183"/>
+<area shape="rect" id="node1_19" href="pilot.impl.pilotdata_manager.DataUnit-class.html#__init__" title="1.) create a new Pilot Data: pilot_data_service and data_unit_description &#160;required 2.) reconnect to an existing Pilot Data: du_url required" alt="" coords="17,185,463,204"/>
+<area shape="rect" id="node1_20" href="pilot.impl.pilotdata_manager.DataUnit-class.html#cancel" title="Cancel the Data Unit." alt="" coords="17,204,463,223"/>
+<area shape="rect" id="node1_21" href="pilot.impl.pilotdata_manager.DataUnit-class.html#add_files" title="Add files referenced in list to Data Unit" alt="" coords="17,223,463,241"/>
+<area shape="rect" id="node1_22" href="pilot.impl.pilotdata_manager.DataUnit-class.html#remove_files" title="Remove files from Data Unit (NOT implemented yet" alt="" coords="17,241,463,260"/>
+<area shape="rect" id="node1_23" href="pilot.impl.pilotdata_manager.DataUnit-class.html#list" title="List all items contained in DU ..." alt="" coords="17,260,463,279"/>
+<area shape="rect" id="node1_24" href="pilot.impl.pilotdata_manager.DataUnit-class.html#get_state" title="Return current state of DataUnit" alt="" coords="17,279,463,297"/>
+<area shape="rect" id="node1_25" href="pilot.impl.pilotdata_manager.DataUnit-class.html#wait" title="Wait until in running state (or failed state)" alt="" coords="17,297,463,316"/>
+<area shape="rect" id="node1_26" href="pilot.impl.pilotdata_manager.DataUnit-class.html#add_pilot_data" title="add this DU (self) to a certain pilot data data will be moved into this &#160;data" alt="" coords="17,316,463,335"/>
+<area shape="rect" id="node1_27" href="pilot.impl.pilotdata_manager.DataUnit-class.html#get_pilot_data" title="get a list of pilot data that have a copy of this PD" alt="" coords="17,335,463,353"/>
+<area shape="rect" id="node1_28" href="pilot.impl.pilotdata_manager.DataUnit-class.html#export" title="simple implementation of export: copies file from first pilot data to local machine" alt="" coords="17,353,463,372"/>
+<area shape="rect" id="node1_29" href="pilot.impl.pilotdata_manager.DataUnit-class.html#get_url" title="Return URL that can be used to reconnect to Data Unit" alt="" coords="17,372,463,391"/>
+<area shape="rect" id="node1_30" href="pilot.impl.pilotdata_manager.DataUnit-class.html#to_dict" title="Internal method that returns a dict with all data contained in this &#160;DataUnit" alt="" coords="17,391,463,409"/>
+<area shape="rect" id="node1_31" href="pilot.impl.pilotdata_manager.DataUnit-class.html#__repr__" title="repr(x)" alt="" coords="17,409,463,428"/>
+<area shape="rect" id="node1" href="pilot.impl.pilotdata_manager.DataUnit-class.html" title="DataUnit (DU)." alt="" coords="5,139,475,434"/>
+<area shape="rect" id="node2_32" href="pilot.api.data.api.DataUnit-class.html#description" title="pilot.api.data.api.DataUnit.description" alt="" coords="177,31,303,49"/>
+<area shape="rect" id="node2_33" href="pilot.api.data.api.DataUnit-class.html#file_list" title="pilot.api.data.api.DataUnit.file_list" alt="" coords="177,49,303,68"/>
+<area shape="rect" id="node2_34" href="pilot.api.data.api.DataUnit-class.html#id" title="pilot.api.data.api.DataUnit.id" alt="" coords="177,68,303,87"/>
+<area shape="rect" id="node2_35" href="pilot.api.data.api.DataUnit-class.html#state" title="pilot.api.data.api.DataUnit.state" alt="" coords="177,87,303,105"/>
+<area shape="rect" id="node2" href="pilot.api.data.api.DataUnit-class.html" title="DataUnit (DU)." alt="" coords="165,6,315,119"/>
 </map>
   <img src="uml_class_diagram_for_pilot_im_8.gif" alt='' usemap="#uml_class_diagram_for_pilot_im_8" ismap="ismap" class="graph-without-title" />
 </center>
 </center>
 <hr />
-<p><b>DataUnit</b></p>
+<p><b>DataUnit (DU).</b></p>
   <p>This is the object that is returned by the ComputeDataService when a 
   new DataUnit is created based on a DataUnitDescription.</p>
   <p>The DataUnit object can be used by the application to keep track of a 
@@ -144,7 +140,7 @@
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a href="pilot.impl.pilotdata_manager.DataUnit-class.html#cancel" class="summary-sig-name">cancel</a>(<span class="summary-sig-arg">self</span>)</span><br />
-      Cancel the DU.</td>
+      Cancel the Data Unit.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#DataUnit.cancel">source&nbsp;code</a></span>
             
@@ -161,7 +157,8 @@
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a name="add_files"></a><span class="summary-sig-name">add_files</span>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">file_url_list</span>=<span class="summary-sig-default"><code class="variable-group">[</code><code class="variable-group">]</code></span>)</span></td>
+        <span class="summary-sig-arg">file_url_list</span>=<span class="summary-sig-default"><code class="variable-group">[</code><code class="variable-group">]</code></span>)</span><br />
+      Add files referenced in list to Data Unit</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#DataUnit.add_files">source&nbsp;code</a></span>
             
@@ -178,7 +175,8 @@
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a name="remove_files"></a><span class="summary-sig-name">remove_files</span>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">file_urls</span>)</span></td>
+        <span class="summary-sig-arg">file_urls</span>)</span><br />
+      Remove files from Data Unit (NOT implemented yet</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#DataUnit.remove_files">source&nbsp;code</a></span>
             
@@ -247,7 +245,8 @@
         <tr>
           <td><span class="summary-sig"><a name="add_pilot_data"></a><span class="summary-sig-name">add_pilot_data</span>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">pilot_data</span>)</span><br />
-      add DU to a certain pilot data data will be moved into this data</td>
+      add this DU (self) to a certain pilot data data will be moved into 
+      this data</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#DataUnit.add_pilot_data">source&nbsp;code</a></span>
             
@@ -316,26 +315,11 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="to_dict"></a><span class="summary-sig-name">to_dict</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td><span class="summary-sig"><a name="to_dict"></a><span class="summary-sig-name">to_dict</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Internal method that returns a dict with all data contained in this 
+      DataUnit</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#DataUnit.to_dict">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a name="update_state"></a><span class="summary-sig-name">update_state</span>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">state</span>)</span></td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#DataUnit.update_state">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -353,59 +337,6 @@
       repr(x)</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="pilot.impl.pilotdata_manager-pysrc.html#DataUnit.__repr__">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a name="add_data_unit"></a><span class="summary-sig-name">add_data_unit</span>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">data_unit</span>)</span>
-      <em>(Inherited from <a href="pilot.api.data.api.DataUnit-class.html">pilot.api.data.api.DataUnit</a>)</em></td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="pilot.api.data.api-pysrc.html#DataUnit.add_data_unit">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a name="list_data_units"></a><span class="summary-sig-name">list_data_units</span>(<span class="summary-sig-arg">self</span>)</span>
-      <em>(Inherited from <a href="pilot.api.data.api.DataUnit-class.html">pilot.api.data.api.DataUnit</a>)</em></td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="pilot.api.data.api-pysrc.html#DataUnit.list_data_units">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a name="remove_data_unit"></a><span class="summary-sig-name">remove_data_unit</span>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">data_unit</span>)</span>
-      <em>(Inherited from <a href="pilot.api.data.api.DataUnit-class.html">pilot.api.data.api.DataUnit</a>)</em></td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="pilot.api.data.api-pysrc.html#DataUnit.remove_data_unit">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -546,7 +477,7 @@
     </td>
   </tr></table>
   
-  <p>Cancel the DU.</p>
+  <p>Cancel the Data Unit.</p>
   <dl class="fields">
     <dt>Overrides:
         <a href="pilot.api.data.api.DataUnit-class.html#cancel">api.data.api.DataUnit.cancel</a>
@@ -707,7 +638,7 @@ List all items contained in DU
   <tr>
     <td align="left" class="footer">
     <a href="epydoc-log.html">Generated by Epydoc
-    3.0.1 on Sat Nov  3 16:50:15 2012</a>
+    3.0.1 on Sun Nov 25 18:23:12 2012</a>
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"
