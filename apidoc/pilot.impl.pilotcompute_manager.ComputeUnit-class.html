@@ -61,27 +61,27 @@
 <center>  <map id="uml_class_diagram_for_pilot_im_5" name="uml_class_diagram_for_pilot_im_5">
 <area shape="rect" id="node1_15" href="pilot.impl.pilotcompute_manager.ComputeUnit-class.html#CU_ID_PREFIX" title="pilot.impl.pilotcompute_manager.ComputeUnit.CU_ID_PREFIX" alt="" coords="17,196,563,215"/>
 <area shape="rect" id="node1_16" href="pilot.impl.pilotcompute_manager.ComputeUnit-class.html#__init__" title="x.__init__(...) initializes x; see help(type(x)) for signature" alt="" coords="17,217,563,236"/>
-<area shape="rect" id="node1_17" href="pilot.impl.pilotcompute_manager.ComputeUnit-class.html#get_id" title="pilot.impl.pilotcompute_manager.ComputeUnit.get_id" alt="" coords="17,236,563,255"/>
-<area shape="rect" id="node1_18" href="pilot.impl.pilotcompute_manager.ComputeUnit-class.html#get_url" title="pilot.impl.pilotcompute_manager.ComputeUnit.get_url" alt="" coords="17,255,563,273"/>
-<area shape="rect" id="node1_19" href="pilot.impl.pilotcompute_manager.ComputeUnit-class.html#get_details" title="pilot.impl.pilotcompute_manager.ComputeUnit.get_details" alt="" coords="17,273,563,292"/>
-<area shape="rect" id="node1_20" href="pilot.impl.pilotcompute_manager.ComputeUnit-class.html#get_state" title="pilot.impl.pilotcompute_manager.ComputeUnit.get_state" alt="" coords="17,292,563,311"/>
+<area shape="rect" id="node1_17" href="pilot.impl.pilotcompute_manager.ComputeUnit-class.html#get_id" title="Returns unique identifier of Compute Unit." alt="" coords="17,236,563,255"/>
+<area shape="rect" id="node1_18" href="pilot.impl.pilotcompute_manager.ComputeUnit-class.html#get_url" title="Returns URL of Compute Unit." alt="" coords="17,255,563,273"/>
+<area shape="rect" id="node1_19" href="pilot.impl.pilotcompute_manager.ComputeUnit-class.html#get_details" title="Returns dict with Compute Unit Details (e.g." alt="" coords="17,273,563,292"/>
+<area shape="rect" id="node1_20" href="pilot.impl.pilotcompute_manager.ComputeUnit-class.html#get_state" title="Returns current state of Compute Unit" alt="" coords="17,292,563,311"/>
 <area shape="rect" id="node1_21" href="pilot.impl.pilotcompute_manager.ComputeUnit-class.html#wait" title="Wait until in Done state (or Failed state)" alt="" coords="17,311,563,329"/>
-<area shape="rect" id="node1_22" href="pilot.impl.pilotcompute_manager.ComputeUnit-class.html#cancel" title="Cancel the CU." alt="" coords="17,329,563,348"/>
+<area shape="rect" id="node1_22" href="pilot.impl.pilotcompute_manager.ComputeUnit-class.html#cancel" title="Terminates Compute Unit" alt="" coords="17,329,563,348"/>
 <area shape="rect" id="node1_23" href="pilot.impl.pilotcompute_manager.ComputeUnit-class.html#__repr__" title="repr(x)" alt="" coords="17,348,563,367"/>
-<area shape="rect" id="node1" href="pilot.impl.pilotcompute_manager.ComputeUnit-class.html" title="ComputeUnit" alt="" coords="5,171,574,373"/>
+<area shape="rect" id="node1" href="pilot.impl.pilotcompute_manager.ComputeUnit-class.html" title="ComputeUnit (CU)." alt="" coords="5,171,574,373"/>
 <area shape="rect" id="node2_24" href="pilot.api.compute.api.ComputeUnit-class.html#callback" title="pilot.api.compute.api.ComputeUnit.callback" alt="" coords="197,31,384,49"/>
 <area shape="rect" id="node2_25" href="pilot.api.compute.api.ComputeUnit-class.html#description" title="pilot.api.compute.api.ComputeUnit.description" alt="" coords="197,49,384,68"/>
 <area shape="rect" id="node2_26" href="pilot.api.compute.api.ComputeUnit-class.html#id" title="pilot.api.compute.api.ComputeUnit.id" alt="" coords="197,68,384,87"/>
 <area shape="rect" id="node2_27" href="pilot.api.compute.api.ComputeUnit-class.html#state_detail" title="pilot.api.compute.api.ComputeUnit.state_detail" alt="" coords="197,87,384,105"/>
 <area shape="rect" id="node2_28" href="pilot.api.compute.api.ComputeUnit-class.html#set_callback" title="Set a callback function for a member." alt="" coords="197,108,384,127"/>
 <area shape="rect" id="node2_29" href="pilot.api.compute.api.ComputeUnit-class.html#unset_callback" title="Unset a callback function from a member" alt="" coords="197,127,384,145"/>
-<area shape="rect" id="node2" href="pilot.api.compute.api.ComputeUnit-class.html" title="ComputeUnit." alt="" coords="185,6,396,151"/>
+<area shape="rect" id="node2" href="pilot.api.compute.api.ComputeUnit-class.html" title="ComputeUnit (CU)." alt="" coords="185,6,396,151"/>
 </map>
   <img src="uml_class_diagram_for_pilot_im_5.gif" alt='' usemap="#uml_class_diagram_for_pilot_im_5" ismap="ismap" class="graph-without-title" />
 </center>
 </center>
 <hr />
-<p>ComputeUnit</p>
+<p><b>ComputeUnit (CU).</b></p>
   <p>This is the object that is returned by the ComputeDataService when a 
   new ComputeUnit is submitted based on a ComputeUnitDescription.</p>
   <p>The ComputeUnit object can be used by the application to keep track of
@@ -122,7 +122,8 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="get_id"></a><span class="summary-sig-name">get_id</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td><span class="summary-sig"><a href="pilot.impl.pilotcompute_manager.ComputeUnit-class.html#get_id" class="summary-sig-name">get_id</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Returns unique identifier of Compute Unit.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="pilot.impl.pilotcompute_manager-pysrc.html#ComputeUnit.get_id">source&nbsp;code</a></span>
             
@@ -138,7 +139,8 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="get_url"></a><span class="summary-sig-name">get_url</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td><span class="summary-sig"><a href="pilot.impl.pilotcompute_manager.ComputeUnit-class.html#get_url" class="summary-sig-name">get_url</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Returns URL of Compute Unit.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="pilot.impl.pilotcompute_manager-pysrc.html#ComputeUnit.get_url">source&nbsp;code</a></span>
             
@@ -154,7 +156,8 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="get_details"></a><span class="summary-sig-name">get_details</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td><span class="summary-sig"><a href="pilot.impl.pilotcompute_manager.ComputeUnit-class.html#get_details" class="summary-sig-name">get_details</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Returns dict with Compute Unit Details (e.g.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="pilot.impl.pilotcompute_manager-pysrc.html#ComputeUnit.get_details">source&nbsp;code</a></span>
             
@@ -170,7 +173,8 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a href="pilot.impl.pilotcompute_manager.ComputeUnit-class.html#get_state" class="summary-sig-name">get_state</a>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td><span class="summary-sig"><a href="pilot.impl.pilotcompute_manager.ComputeUnit-class.html#get_state" class="summary-sig-name">get_state</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Returns current state of Compute Unit</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="pilot.impl.pilotcompute_manager-pysrc.html#ComputeUnit.get_state">source&nbsp;code</a></span>
             
@@ -204,7 +208,7 @@
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a href="pilot.impl.pilotcompute_manager.ComputeUnit-class.html#cancel" class="summary-sig-name">cancel</a>(<span class="summary-sig-arg">self</span>)</span><br />
-      Cancel the CU.</td>
+      Terminates Compute Unit</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="pilot.impl.pilotcompute_manager-pysrc.html#ComputeUnit.cancel">source&nbsp;code</a></span>
             
@@ -388,6 +392,66 @@
   </dl>
 </td></tr></table>
 </div>
+<a name="get_id"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">get_id</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="pilot.impl.pilotcompute_manager-pysrc.html#ComputeUnit.get_id">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Returns unique identifier of Compute Unit. Deprecated: Please use 
+  get_url() instead.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="get_url"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">get_url</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="pilot.impl.pilotcompute_manager-pysrc.html#ComputeUnit.get_url">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Returns URL of Compute Unit. This URL can be used to reconnect to this
+  Compute Unit later on.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="get_details"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">get_details</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="pilot.impl.pilotcompute_manager-pysrc.html#ComputeUnit.get_details">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Returns dict with Compute Unit Details (e.g. job description, 
+  timings)</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
 <a name="get_state"></a>
 <div>
 <table class="details" border="1" cellpadding="3"
@@ -402,7 +466,7 @@
     </td>
   </tr></table>
   
-  
+  <p>Returns current state of Compute Unit</p>
   <dl class="fields">
     <dt>Overrides:
         <a href="pilot.api.compute.api.ComputeUnit-class.html#get_state">api.compute.api.ComputeUnit.get_state</a>
@@ -446,11 +510,10 @@
     </td>
   </tr></table>
   
-  <p>Cancel the CU.</p>
+  <p>Terminates Compute Unit</p>
   <dl class="fields">
     <dt>Overrides:
         <a href="pilot.api.compute.api.ComputeUnit-class.html#cancel">api.compute.api.ComputeUnit.cancel</a>
-        <dd><em class="note">(inherited documentation)</em></dd>
     </dt>
   </dl>
 </td></tr></table>
@@ -512,7 +575,7 @@
   <tr>
     <td align="left" class="footer">
     <a href="epydoc-log.html">Generated by Epydoc
-    3.0.1 on Tue Oct 30 16:26:21 2012</a>
+    3.0.1 on Sun Nov 25 18:23:12 2012</a>
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"
