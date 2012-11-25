@@ -37,7 +37,7 @@ from pilot.coordination.redis_adaptor import RedisCoordinationAdaptor as Coordin
 from pilot.scheduler.data_compute_affinity_scheduler import Scheduler
 
 class ComputeDataService(ComputeDataService):
-    """ B{ComputeDataService}
+    """ B{ComputeDataService (CDS).}
     
         The ComputeDataService is the application's interface to submit 
         ComputeUnits and PilotData/DataUnit to the Pilot-Manager 
@@ -261,7 +261,7 @@ class ComputeDataService(ComputeDataService):
                         logger.debug("Initiate Transfer to PD.")
                         du.add_pilot_data(pd)
                         logger.debug("Transfer to PD finished.")
-                        du.update_state(State.Running) 
+                        du._update_state(State.Running) 
                         self.du_queue.task_done()                   
                     else:
                         self.du_queue.task_done() 
