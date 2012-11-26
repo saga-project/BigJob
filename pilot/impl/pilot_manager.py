@@ -121,6 +121,9 @@ class ComputeDataService(ComputeDataService):
         CoordinationAdaptor.update_cds(self.url, self)
         return cu
     
+    def list_pilot_compute(self):
+        """ List all pilot compute of CDS """
+        return self.pilot_job_service
     
     ###########################################################################
     # Pilot Data     
@@ -139,12 +142,7 @@ class ComputeDataService(ComputeDataService):
         self.pilot_data_services.remove(pds)
         CoordinationAdaptor.update_cds(self.url, self)
     
-    
-    def list_pilot_compute(self):
-        """ List all pilot compute of CDS """
-        return self.pilot_job_service
-    
-    
+     
     def list_pilot_data(self):
         """ List all pilot data of CDS """
         return self.pilot_data_services
