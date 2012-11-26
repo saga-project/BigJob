@@ -48,7 +48,7 @@ abiflags = getattr(sys, 'abiflags', '')
 
 if sys.version_info <= (2, 5):
     print('ERROR: %s' % sys.exc_info()[1])
-    print('ERROR: This script requires Python 2.6 or greater.")
+    print('ERROR: This script requires Python 2.6 or greater.')
     sys.exit(-1)
 
 if is_pypy:
