@@ -18,6 +18,7 @@ import bigjob
 from bigjob import logger, bigjob, subjob, description
 
 import pilot
+from pilot.api import ComputeDataService, State
 from pilot.api.api import PilotError
 from pilot.impl.pilotdata_manager import PilotData, DataUnit
 from pilot.impl.pilotcompute_manager import PilotCompute, PilotComputeService
@@ -35,8 +36,8 @@ from pilot.coordination.redis_adaptor import RedisCoordinationAdaptor as Coordin
 """
 from pilot.scheduler.data_compute_affinity_scheduler import Scheduler
 
-class ComputeDataServiceDecentral(pilot.api.ComputeDataService):
-    """ ComputeDataServiceDecentral.
+class ComputeDataServiceDecentral(ComputeDataService):
+    """ B{ComputeDataServiceDecentral.}
     
         The ComputeDataService is the application's interface to submit 
         ComputeUnits and PilotData/DataUnit to the Pilot-Manager 
@@ -47,7 +48,7 @@ class ComputeDataServiceDecentral(pilot.api.ComputeDataService):
     CDS_ID_PREFIX="cds-"  
 
     def __init__(self, cds_url=None):
-        """ Create a ComputeDataService object.
+        """ Create a ComputeDataService (Decentral) object.
 
             @param cds_url: Reconnect to an existing CDS (optional).
         """
@@ -66,6 +67,16 @@ class ComputeDataServiceDecentral(pilot.api.ComputeDataService):
         else:
             self.id = self.__get_cds_id(cds_url)
             self.url = cds_url
+           
+        # Background Thread for scheduling
+        self.scheduler = Scheduler()
+        self.du_queue = Queue.Queue()
+        
+        self.stop=threading.Event()
+        self.scheduler_thread=threading.Thread(target=self._scheduler_thread)
+        self.scheduler_thread.daemon=True
+        self.scheduler_thread.start()
+        logger.debug("Created ComputeDataServiceDecentral")
            
         
     def __get_cds_id(self, cds_url):
@@ -144,33 +155,46 @@ class ComputeDataServiceDecentral(pilot.api.ComputeDataService):
     ###########################################################################
     # Pilot Data     
     def add_pilot_data_service(self, pds):
-        """ Not implemented yet"""
-        raise NotImplementedError("Not implemented")
-    
+        """ Add a PilotDataService 
+
+            @param pds: The PilotDataService to add.
+        """
+        self.pilot_data_services.append(pds)
+        CoordinationAdaptor.update_cds(self.url, self)
     
     def remove_pilot_data_service(self, pds):
-        """ Not implemented yet"""        
-        raise NotImplementedError("Not implemented")
-        
+        """ Remove a PilotDataService 
+            @param pds: The PilotDataService to remove 
+        """
+        self.pilot_data_services.remove(pds)
+        CoordinationAdaptor.update_cds(self.url, self)
     
+     
     def list_pilot_data(self):
-        """ Not implemented yet""" 
-        raise NotImplementedError("Not implemented")
+        """ List all pilot data of CDS """
+        return self.pilot_data_services
     
     
     def list_data_units(self):
-        """ Not implemented yet"""
-        raise NotImplementedError("Not implemented")
+        """ List all DUs of CDS """
+        return self.data_units.items()
     
     
     def get_data_unit(self, du_id):
-        """ Not implemented yet"""
-        raise NotImplementedError("Not implemented")
+        if self.data_units.has_key(du_id):
+            return self.data_units[du_id]
+        return None
     
     
     def submit_data_unit(self, data_unit_description):
-        """ Not implemented yet"""
-        raise NotImplementedError("Not implemented")
+        """ creates a data unit object and binds it to a physical resource (a pilotdata) """
+        du = DataUnit(pilot_data=None, 
+                      data_unit_description=data_unit_description)
+        self.data_units[du.id]=du
+        self.du_queue.put(du)
+        # queue currently not persisted
+        CoordinationAdaptor.update_cds(self.url, self)
+        return du
     
     
     ###########################################################################
@@ -180,6 +204,8 @@ class ComputeDataServiceDecentral(pilot.api.ComputeDataService):
         """ Cancel the CDS. 
             All associated PD and PC objects are canceled.            
         """
+        # terminate background thread
+        self.stop.set()
         CoordinationAdaptor.delete_cds(self.url)
    
    
@@ -217,6 +243,56 @@ class ComputeDataServiceDecentral(pilot.api.ComputeDataService):
         """ Make sure that background thread terminates"""
         self.cancel()
    
+   
+    ###########################################################################
+    # Internal Scheduling
+    def __update_scheduler_resources(self):
+        logger.debug("__update_scheduler_resources")        
+        pd = [s for i in self.pilot_data_services for s in i.list_pilots()]
+        self.scheduler.set_pilot_data(pd)
+        pj = [p for i in self.pilot_job_services for p in i.list_pilots()]
+        logger.debug("Pilot-Jobs: " + str(pj))
+        self.scheduler.set_pilot_jobs(pj)
+    
+    
+    def _schedule_du(self, du):
+        """ Schedule DU to a suitable pilot data
+        
+            Currently one level of scheduling is used:
+                1.) Add all resources managed by the contained PDS 
+                2.) Select one resource
+        """ 
+        logger.debug("Schedule PD")
+        self.__update_scheduler_resources()
+        selected_pilot_data = self.scheduler.schedule_pilot_data(du.data_unit_description)
+        return selected_pilot_data 
+    
+    
+    def _scheduler_thread(self):
+        while True and self.stop.isSet()==False:            
+            try:
+                #logger.debug("Scheduler Thread: " + str(self.__class__) + " Pilot Data")
+                du = self.du_queue.get(True, 1)  
+                # check whether this is a real du object  
+                if isinstance(du, DataUnit):
+                    pd=self._schedule_du(du)                
+                    if(pd!=None):                        
+                        logger.debug("Initiate Transfer to PD.")
+                        du.add_pilot_data(pd)
+                        logger.debug("Transfer to PD finished.")
+                        du._update_state(State.Running) 
+                        self.du_queue.task_done()                   
+                    else:
+                        self.du_queue.task_done() 
+                        self.du_queue.put(du)
+            except Queue.Empty:
+                pass
+               
+            if self.du_queue.empty():
+                time.sleep(5)        
+
+        logger.debug("Re-Scheduler terminated")
+    
     
    
     

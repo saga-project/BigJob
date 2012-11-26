@@ -739,6 +739,7 @@ class bigjob_agent:
             #du = pd.get_du(du_id)
             #du.export(target_directory)
             du = DataUnit(du_url=i)
+            du.wait()
             du.export(target_directory)
     
     
