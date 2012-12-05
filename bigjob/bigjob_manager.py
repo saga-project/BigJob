@@ -604,12 +604,12 @@ except:
     os.system("/usr/bin/env")
     try:
         os.system("python " + BOOTSTRAP_FILE + " " + BIGJOB_PYTHON_DIR); 
-        activate_this = BIGJOB_PYTHON_DIR+'bin/activate_this.py'; 
+        activate_this = os.path.join(BIGJOB_PYTHON_DIR, "bin/activate_this.py"); 
         execfile(activate_this, dict(__file__=activate_this))
     except:
         print "BJ installation failed. Trying system-level python (/usr/bin/python)";
         os.system("/usr/bin/python " + BOOTSTRAP_FILE + " " + BIGJOB_PYTHON_DIR); 
-        activate_this = BIGJOB_PYTHON_DIR+'bin/activate_this.py'; 
+        activate_this = os.path.join(BIGJOB_PYTHON_DIR, "bin/activate_this.py"); 
         execfile(activate_this, dict(__file__=activate_this))
 #try to import BJ once again
 import bigjob.bigjob_agent
