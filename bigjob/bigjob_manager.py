@@ -816,8 +816,9 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
     def __stage_files(self, filetransfers, target_url):
         logger.debug("Stage: %s to %s"%(filetransfers, target_url))
         if filetransfers==None:
-            return       
-        self.__filemanager.create_remote_directory(target_url)
+            return
+        if self.__filemanager:
+            self.__filemanager.create_remote_directory(target_url)
         for i in filetransfers:
             source_file=i
             if i.find(">")>0:
@@ -828,7 +829,8 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
             target_url_full = os.path.join(target_url, os.path.basename(source_file))
             logger.debug("Stage: %s to %s"%(source_file, target_url_full))
             #self.__third_party_transfer(source_file, target_url_full)
-            self.__filemanager.transfer(source_file, target_url_full)
+            if self.__filemanager:
+                self.__filemanager.transfer(source_file, target_url_full)
            
        
 
