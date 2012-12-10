@@ -326,7 +326,7 @@ class bigjob(api.base.bigjob):
                                                                           # or another external scheduler
                                                           )
         logger.debug("Adaptor specific modifications: "  + str(lrms_saga_url.scheme))
-        if is_bliss:
+        if is_bliss and lrms_saga_url.scheme.startswith("condor")==False:
             bootstrap_script = self.__escape_bliss(bootstrap_script)
         else:
             if lrms_saga_url.scheme == "gram":
@@ -351,11 +351,14 @@ class bigjob(api.base.bigjob):
            
             jd.executable = "/usr/bin/env"
             jd.arguments = ["python",  os.path.basename(condor_bootstrap_filename)]                
+            if pilot_compute_description.has_key("candidate_hosts"):
+                jd.candidate_hosts = pilot_compute_description["candidate_hosts"]
             bj_file_transfers = []
             file_transfer_spec = condor_bootstrap_filename + " > " + os.path.basename(condor_bootstrap_filename)
             bj_file_transfers.append(file_transfer_spec)
             output_file_name = "output-" + str(self.uuid) + ".tar.gz"
-            output_file_transfer_spec = os.path.join(self.working_directory, output_file_name) +" < " + output_file_name
+            #output_file_transfer_spec = os.path.join(self.working_directory, output_file_name) +" < " + output_file_name
+            output_file_transfer_spec = output_file_name +" < " + output_file_name
             #output_file_transfer_spec = os.path.join(self.working_directory, "output.tar.gz") +" < output.tar.gz"
             logger.debug("Output transfer: " + output_file_transfer_spec)
             bj_file_transfers.append(output_file_transfer_spec)
