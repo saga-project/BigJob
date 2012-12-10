@@ -25,12 +25,12 @@ from bigjob.state import Running, New, Failed, Done, Unknown
 
 # Optional Job Plugins
 try:
-    from .job_plugin.gcessh import Service as GCEService
+    from job_plugin.gcessh import Service as GCEService
 except:
     pass 
 
 try:
-    from .job_plugin.ec2ssh import Service as EC2Service
+    from job_plugin.ec2ssh import Service as EC2Service
 except:
     pass 
 
