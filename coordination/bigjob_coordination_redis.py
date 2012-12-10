@@ -13,13 +13,9 @@ import time
 from bigjob import logger
 import redis
 
-if sys.version_info < (2, 5):
-    sys.path.append(os.path.dirname( os.path.abspath( __file__) ) + "/../ext/uuid-1.30/")
-    sys.stderr.write("Warning: Using unsupported Python version\n")
     
 logging.debug(str(sys.path))
 import uuid
-
 
 
 REDIS_SERVER="localhost"

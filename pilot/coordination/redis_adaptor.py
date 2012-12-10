@@ -1,9 +1,14 @@
 import logging
-import json
 import pdb
 from pilot import *
 from bigjob import logger
 import bliss.saga as saga
+
+try:
+    import json
+except ImportError:
+    import simplejson as json
+
 
 class RedisCoordinationAdaptor:
     """
