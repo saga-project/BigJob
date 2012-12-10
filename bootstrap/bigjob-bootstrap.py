@@ -22,7 +22,7 @@ import distutils.sysconfig
 try:
     import subprocess
 except ImportError:
-    if sys.version_info <= (2, 5):
+    if sys.version_info <= (2, 4):
         print('ERROR: %s' % sys.exc_info()[1])
         print('ERROR: this script requires Python 2.6 or greater; or at least the subprocess module.')
         print('If you copy subprocess.py from a newer version of Python this script will probably work')
@@ -46,7 +46,7 @@ is_pypy = hasattr(sys, 'pypy_version_info')
 is_win  = (sys.platform == 'win32')
 abiflags = getattr(sys, 'abiflags', '')
 
-if sys.version_info <= (2, 5):
+if sys.version_info <= (2, 4):
     print('ERROR: %s' % sys.exc_info()[1])
     print('ERROR: This script requires Python 2.6 or greater.')
     sys.exit(-1)
