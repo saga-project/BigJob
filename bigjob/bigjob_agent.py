@@ -31,11 +31,15 @@ from threadpool import *
 
 # BigJob/Pilot framework classes
 from bigjob import logger
-from pilot.impl.pilotdata_manager import PilotData, DataUnit, PilotDataService
+
+try:
+    from pilot.impl.pilotdata_manager import PilotData, DataUnit, PilotDataService
+except:
+    logger.warning("Pilot Data classes could not be loaded. File movement will not work!")
 
 logger.debug("Python Version: " + str(sys.version_info))
 if sys.version_info < (2, 5):
-    sys.stderr.write("Warning: Using unsupported Python version\n")
+    sys.stderr.write("Python 2.4 - Warning: Not all functionalities working\n")
 if sys.version_info < (2, 4):
     sys.stderr.write("Warning: Using unsupported Python version\n")
 if sys.version_info < (2, 3):
@@ -152,7 +156,7 @@ class bigjob_agent:
         ###
         # Initiate coordination sub-system of both BJ agent and Pilot Data
         self.coordination = bigjob_coordination(server_connect_url=self.coordination_url)
-        self.pilot_data_service = PilotDataService(coordination_url=self.coordination_url)
+        # self.pilot_data_service = PilotDataService(coordination_url=self.coordination_url)
         
         # update state of pilot job to running
         logger.debug("set state to : " +  str(bigjob.state.Running))
@@ -731,16 +735,19 @@ class bigjob_agent:
     
     def __stage_in_data_units(self, input_data=[], target_directory="."):
         """ stage in data units specified in input_data field """
-        logger.debug("Stage in input files to: %s"%target_directory)
-        for i in input_data:
-            #pd_url = self.__get_pd_url(i)
-            #du_id = self.__get_du_id(i)
-            #pd = PilotData(pd_url=pd_url)
-            #du = pd.get_du(du_id)
-            #du.export(target_directory)
-            du = DataUnit(du_url=i)
-            du.wait()
-            du.export(target_directory)
+        try:
+            logger.debug("Stage in input files to: %s"%target_directory)
+            for i in input_data:
+                #pd_url = self.__get_pd_url(i)
+                #du_id = self.__get_du_id(i)
+                #pd = PilotData(pd_url=pd_url)
+                #du = pd.get_du(du_id)
+                #du.export(target_directory)
+                du = DataUnit(du_url=i)
+                du.wait()
+                du.export(target_directory)
+        except:
+            logger.error("Stage-in of files failed.")
     
     
     def __stage_out_data_units(self, output_data=[], workingdirectory=None):
@@ -758,28 +765,31 @@ class bigjob_agent:
                             ]
             }    
         """
-        for data_unit_dict in output_data: 
-            logger.debug("Process: " + str(data_unit_dict))
-            for du_url in data_unit_dict.keys(): # go through all dicts (each representing 1 PD) 
-                #pd_url = self.__get_pd_url(du_url)
-                #pilot_data = PilotData(pd_url=pd_url)
-                #du = pilot_data.get_du(du_url)
-                du = DataUnit(du_url=du_url)
-                file_list = data_unit_dict[du_url]
-                logger.debug("Add files: " + str(file_list))
-                all_files=[]
-                for output_file in file_list:
-                    expanded_files = [output_file]
-                    if output_file.find("*")>=0 or output_file.find("?")>=0:
-                        expanded_files = self.__expand_file_pattern(output_file, workingdirectory)
-                        logger.debug("Expanded files: " + str(expanded_files))
-                        
-                    for f in expanded_files:
-                        all_files.append(os.path.join(workingdirectory, f))
-                 
-                du.add_files(all_files)                        
-                for f in all_files:       
-                    os.remove(f)
+        try:
+            for data_unit_dict in output_data: 
+                logger.debug("Process: " + str(data_unit_dict))
+                for du_url in data_unit_dict.keys(): # go through all dicts (each representing 1 PD) 
+                    #pd_url = self.__get_pd_url(du_url)
+                    #pilot_data = PilotData(pd_url=pd_url)
+                    #du = pilot_data.get_du(du_url)
+                    du = DataUnit(du_url=du_url)
+                    file_list = data_unit_dict[du_url]
+                    logger.debug("Add files: " + str(file_list))
+                    all_files=[]
+                    for output_file in file_list:
+                        expanded_files = [output_file]
+                        if output_file.find("*")>=0 or output_file.find("?")>=0:
+                            expanded_files = self.__expand_file_pattern(output_file, workingdirectory)
+                            logger.debug("Expanded files: " + str(expanded_files))
+                            
+                        for f in expanded_files:
+                            all_files.append(os.path.join(workingdirectory, f))
+                     
+                    du.add_files(all_files)                        
+                    for f in all_files:       
+                        os.remove(f)
+        except:
+            logger.error("Stage out of files failed.")
     
     def __expand_file_pattern(self, filename_pattern, workingdirectory):
         """ expand files with wildcard * to a list """
