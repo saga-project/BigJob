@@ -69,7 +69,7 @@ class iRodsFileAdaptor(object):
             
     def create_du(self, du_id):
         logger.debug("create iRods collection: " + du_id)
-        command = "imkdir -f %s"%(du_id)
+        command = "imkdir %s"%(du_id)
         self.__run_command(command)
 
                  
@@ -111,6 +111,10 @@ class iRodsFileAdaptor(object):
         logger.debug("Put file: %s to %s"%(source, target))
         command = "iput -f -R %s %s %s"%(self.resource_group, source, target)
         self.__run_command(command)
+        home_directory= self.__run_command("ipwd")[0].strip()
+        full_filename = os.path.join(home_directory, target)
+        command = "irepl-osg -f %s -G %s"%(full_filename, self.resource_group)
+        self.__run_command(command) 
          
 
     def transfer(self, source_url, target_url):
@@ -123,7 +127,7 @@ class iRodsFileAdaptor(object):
                    
     ###########################################################################
     def __run_command(self, command):
-        child = pexpect.spawn(command)
+        child = pexpect.spawn(command, timeout=None)
         output = child.readlines()
         logger.debug("Run %s Output: %s"%(command, str(output)))
         child.close()
