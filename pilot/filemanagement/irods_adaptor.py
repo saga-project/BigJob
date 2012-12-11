@@ -92,6 +92,8 @@ class iRodsFileAdaptor(object):
         logger.debug("Get DU: " + str(du_id))
         command = "iget -r %s %s"%(du_id, target_url)
         self.__run_command(command)
+        command = "mv %s/* %s"%(os.path.join(target_url, du_id), target_url)
+        self.__run_command(command)
         
    
     def copy_du(self, du, pd_new):
