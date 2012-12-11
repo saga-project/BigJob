@@ -41,7 +41,6 @@ class iRodsFileAdaptor(object):
         self.vo = re.search("(?<=vo=)(.*)([&\b]{1})", query_string).group(1)
         self.resource_group = re.search("(?<=resource-group=)(.*)[&\b$]?", query_string).group(1)
         logger.debug("VO: %s, Resource Group: %s"%(self.vo, self.resource_group))
-        pexpect.spawn("imkdir")
         
     
     
@@ -70,9 +69,9 @@ class iRodsFileAdaptor(object):
             
     def create_du(self, du_id):
         logger.debug("create iRods collection: " + du_id)
-        child = pexpect.spawn("imkdir -R %s %s"%(self.resource_group, du_id))
-        child.wait()
-        child.close()        
+        command = "imkdir -f %s"%(du_id)
+        self.__run_command(command)
+
                  
     def put_du(self, du):
         logger.debug("Copy DU to iRod")
@@ -88,11 +87,11 @@ class iRodsFileAdaptor(object):
                 
     
     def get_du(self, du, target_url):
-        #du_id = "du-7370d7b5-ed0b-11e1-95df-705681b3df0f"
-        du_id = du.id
+        du_id = "du-7370d7b5-ed0b-11e1-95df-705681b3df0f"
+        #du_id = du.id
         logger.debug("Get DU: " + str(du_id))
-        child = pexpect.spawn("iget -r %s %s"%(du_id, target_url))
-        child.wait()
+        command = "iget -r %s %s"%(du_id, target_url)
+        self.__run_command(command)
         
    
     def copy_du(self, du, pd_new):
@@ -102,17 +101,18 @@ class iRodsFileAdaptor(object):
             
         
     def remove_du(self, du):
-        child = pexpect.spawn("irm %s"%du.id)
-        child.wait()
+        command = "irm %s"%du.id
+        self.__run_command(command)
     
     
     ###########################################################################
     # Pure File Management APIs
     def _put_file(self, source, target):
         logger.debug("Put file: %s to %s"%(source, target))
-        child = pexpect.spawn("iput -f -R %s %s %s"%(source, target))
-        child.wait()
+        command = "iput -f -R %s %s %s"%(self.resource_group, source, target)
+        self.__run_command(command)
          
+
     def transfer(self, source_url, target_url):
         pass
     
@@ -122,9 +122,13 @@ class iRodsFileAdaptor(object):
     
                    
     ###########################################################################
-    
-    
-   
+    def __run_command(self, command):
+        child = pexpect.spawn(command)
+        output = child.readlines()
+        logger.debug("Run %s Output: %s"%(command, str(output)))
+        child.close()
+        return output 
+
     def __print_traceback(self):
         exc_type, exc_value, exc_traceback = sys.exc_info()
         print "*** print_tb:"
@@ -137,9 +141,8 @@ class iRodsFileAdaptor(object):
 def test_irods():
     irods = iRodsFileAdaptor("irods://gw68/?vo=osg&resource-group=osgGridFtpGroup")
     irods.initialize_pilotdata()
-    irods.create_du("du-7370d7b5-ed0b-11e1-95df-705681b3df0f/test.txt")
+    irods.create_du("du-7370d7b5-ed0b-11e1-95df-705681b3df0f")
     irods._put_file("test.txt", "du-7370d7b5-ed0b-11e1-95df-705681b3df0f/test.txt")
-    irods._get_file("du-7370d7b5-ed0b-11e1-95df-705681b3df0f/test.txt", "test2.txt")
     irods.get_du("du-7370d7b5-ed0b-11e1-95df-705681b3df0f", ".")
 
 
