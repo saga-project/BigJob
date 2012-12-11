@@ -38,6 +38,12 @@ try:
 except:
     logger.warn("Amazon S3 package not found.") 
 
+try:
+    from pilot.filemanagement.irods_adaptor import iRodsFileAdaptor
+except:
+    logger.warn("Goggle Storage package not found.") 
+
+
 
 #from pilot.coordination.advert import AdvertCoordinationAdaptor as CoordinationAdaptor
 #from pilot.coordination.nocoord import NoCoordinationAdaptor as CoordinationAdaptor
@@ -240,6 +246,9 @@ class PilotData(PilotData):
             elif self.service_url.startswith("gs:"):
                 logger.debug("Use Google Cloud Storage backend")
                 self.__filemanager = GSFileAdaptor(self.service_url, self.security_context)
+            elif self.service_url.startswith("irods:"):
+                logger.debug("Use iRods Storage backend")
+                self.__filemanager = iRodsFileAdaptor(self.service_url, self.security_context)
             elif self.service_url.startswith("s3:") \
                 or self.service_url.startswith("walrus:") \
                 or self.service_url.startswith("swift:"):
