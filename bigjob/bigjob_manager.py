@@ -319,7 +319,7 @@ class bigjob(api.base.bigjob):
         
         ##############################################################################
         # Create and process BJ bootstrap script
-        bootstrap_script = self.__generate_bootstrap_script(
+        bootstrap_script = self.__generate_bootstrap_script_from_binary(
                                                           self.coordination.get_address(), 
                                                           self.pilot_url, # Queue 1 used by this BJ object 
                                                           external_queue  # Queue 2 used by Pilot Compute Service 
@@ -343,6 +343,13 @@ class bigjob(api.base.bigjob):
         # (Python app cannot be passed inline in Condor job description)
         if lrms_saga_url.scheme.startswith("condor")==True:
 
+            bootstrap_script = self.__generate_bootstrap_script_from_binary(
+                                                          self.coordination.get_address(), 
+                                                          self.pilot_url, # Queue 1 used by this BJ object 
+                                                          external_queue  # Queue 2 used by Pilot Compute Service 
+                                                                          # or another external scheduler
+                                                          )
+     
             condor_bootstrap_filename = os.path.join("/tmp", "bootstrap-"+str(self.uuid))
             condor_bootstrap_file = open(condor_bootstrap_filename, "w")
             condor_bootstrap_file.write(bootstrap_script)
@@ -627,6 +634,67 @@ print "Starting BigJob Agents with following args: " + str(args)
 bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
 """ % (coordination_host, coordination_namespace, external_coordination_namespace))
         return script
+    
+    def __generate_bootstrap_script_from_binary(self, coordination_host, coordination_namespace, 
+                                                external_coordination_namespace="", 
+                                                bigjob_home=None):
+        script = textwrap.dedent("""import sys
+import os
+import urllib
+import sys
+import time
+start_time = time.time()
+home = os.environ.get("HOME")
+#print "Home: " + home
+if home==None: home = os.getcwd()
+BIGJOB_AGENT_DIR= os.path.join(home, ".bigjob")
+if not os.path.exists(BIGJOB_AGENT_DIR): os.mkdir (BIGJOB_AGENT_DIR)
+BIGJOB_PYTHON_DIR=BIGJOB_AGENT_DIR+"/python/"
+if not os.path.exists(BIGJOB_PYTHON_DIR): os.mkdir(BIGJOB_PYTHON_DIR)
+BOOTSTRAP_URL="https://github.com/saga-project/BigJob/blob/master/scripts/bigjob-Linux-x86_64.tar.gz?raw=true"
+BOOTSTRAP_FILE="bigjob-Linux-x86_64.tar.gz"
+#ensure that BJ in .bigjob is upfront in sys.path
+sys.path.insert(0, os.getcwd() + "/../")
+#sys.path.insert(0, /User/luckow/.bigjob/python/lib")
+#sys.path.insert(0, os.getcwd() + "/../../")
+p = list()
+for i in sys.path:
+    if i.find(\".bigjob/python\")>1:
+          p.insert(0, i)
+for i in p: sys.path.insert(0, i)
+print "Python path: " + str(sys.path)
+print "Python version: " + str(sys.version_info)
+try: import saga
+except: print "SAGA and SAGA Python Bindings not found.";
+try: import bigjob.bigjob_agent
+except: 
+    print "BigJob not installed. Attempt to install it."; 
+    opener = urllib.FancyURLopener({}); 
+    opener.retrieve(BOOTSTRAP_URL, BOOTSTRAP_FILE); 
+    print "Execute: " + "tar -xzf " + BOOTSTRAP_FILE
+    os.system("/usr/bin/env")
+    try:
+        os.system("tar -xzf " + BOOTSTRAP_FILE); 
+        activate_this = os.path.join(os.getcwd(), "bin/activate_this.py"); 
+        execfile(activate_this, dict(__file__=activate_this))
+    except:
+        print "BJ installation failed. Trying system-level python (/usr/bin/python)";
+   
+   
+#try to import BJ once again
+import bigjob.bigjob_agent
+# execute bj agent
+args = list()
+args.append("bigjob_agent.py")
+args.append(\"%s\")
+args.append(\"%s\")
+args.append(\"%s\")
+print "Bootstrap time: " + str(time.time()-start_time)
+print "Starting BigJob Agents with following args: " + str(args)
+bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
+""" % (coordination_host, coordination_namespace, external_coordination_namespace))
+        return script
+    
 
     def __escape_rsl(self, bootstrap_script):
         logger.debug("Escape RSL")
