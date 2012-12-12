@@ -87,8 +87,8 @@ class iRodsFileAdaptor(object):
                 
     
     def get_du(self, du, target_url):
-        du_id = "du-7370d7b5-ed0b-11e1-95df-705681b3df0f"
-        #du_id = du.id
+        #du_id = "du-7370d7b5-ed0b-11e1-95df-705681b3df0f"
+        du_id = du.id
         logger.debug("Get DU: " + str(du_id))
         command = "iget -r %s %s"%(du_id, target_url)
         self.__run_command(command)
