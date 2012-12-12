@@ -752,6 +752,7 @@ class bigjob_agent:
                 du.export(target_directory)
         except:
             logger.error("Stage-in of files failed.")
+            self.__print_traceback()
     
     
     def __stage_out_data_units(self, output_data=[], workingdirectory=None):
@@ -794,6 +795,7 @@ class bigjob_agent:
                         os.remove(f)
         except:
             logger.error("Stage out of files failed.")
+            self.__print_traceback()
     
     def __expand_file_pattern(self, filename_pattern, workingdirectory):
         """ expand files with wildcard * to a list """
@@ -858,7 +860,15 @@ class bigjob_agent:
                      + " Launch method: " + str(launch_method))
         return launch_method
     
-  
+    
+    def __print_traceback(self):
+        exc_type, exc_value, exc_traceback = sys.exc_info()
+        print "*** print_tb:"
+        traceback.print_tb(exc_traceback, limit=1, file=sys.stdout)
+        print "*** print_exception:"
+        traceback.print_exception(exc_type, exc_value, exc_traceback,
+                              limit=2, file=sys.stdout)
+        
 #########################################################
 #  main                                                 #
 #########################################################
