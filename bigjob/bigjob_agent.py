@@ -156,8 +156,12 @@ class bigjob_agent:
         ###
         # Initiate coordination sub-system of both BJ agent and Pilot Data
         self.coordination = bigjob_coordination(server_connect_url=self.coordination_url)
-        self.pilot_data_service = PilotDataService(coordination_url=self.coordination_url)
-        
+        try:
+            # initialize coordination subsystem of pilot data
+            self.pilot_data_service = PilotDataService(coordination_url=self.coordination_url)
+        except:
+            logger.warn("Pilot-Data could not be initialized.")
+            
         # update state of pilot job to running
         logger.debug("set state to : " +  str(bigjob.state.Running))
         self.coordination.set_pilot_state(self.base_url, str(bigjob.state.Running), False)
