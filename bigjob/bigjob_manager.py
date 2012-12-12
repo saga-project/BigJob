@@ -569,7 +569,7 @@ class bigjob(api.base.bigjob):
         return url
 
 
-    def __generate_bootstrap_script(self, coordination_host, coordination_namespace, external_coordination_namespace=""):
+    def __generate_bootstrap_script(self, coordination_host, coordination_namespace, external_coordination_namespace="", bigjob_home=None):
         script = textwrap.dedent("""import sys
 import os
 import urllib
@@ -597,7 +597,7 @@ for i in p: sys.path.insert(0, i)
 print "Python path: " + str(sys.path)
 print "Python version: " + str(sys.version_info)
 try: import saga
-except: print "SAGA and SAGA Python Bindings not found: BigJob only work w/ non-SAGA backends e.g. Redis, ZMQ.";
+except: print "SAGA and SAGA Python Bindings not found.";
 try: import bigjob.bigjob_agent
 except: 
     print "BigJob not installed. Attempt to install it."; 
