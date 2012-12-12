@@ -187,6 +187,7 @@ class PilotData(PilotData):
         """ Export Data Unit to a local directory """
         if target_url.startswith("/") and os.path.exists(target_url)==False:
             os.mkdir(target_url)
+        logger.debug("Export Data-Unit to %s"%target_url)
         self.__filemanager.get_du(du, target_url)
             
                 
