@@ -464,7 +464,10 @@ class DataUnit(DataUnit):
             self.data_unit_description = data_unit_description        
             self.pilot_data=[]
             self.state = State.New
-            self.data_unit_items = DataUnitItem.create_data_unit_list(self, self.data_unit_description["file_urls"]) 
+            self.data_unit_items=[]
+            if self.data_unit_description.has_key("file_urls"):
+                self.data_unit_items = DataUnitItem.create_data_unit_list(self, self.data_unit_description["file_urls"]) 
+
             self.url = None
 
             # register a data unit as top-level entry in Redis
