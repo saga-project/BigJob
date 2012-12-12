@@ -749,6 +749,7 @@ class bigjob_agent:
                 #du.export(target_directory)
                 du = DataUnit(du_url=i)
                 du.wait()
+                logger.debug("Reconnected to DU. Exporting it now...")
                 du.export(target_directory)
         except:
             logger.error("Stage-in of files failed.")
