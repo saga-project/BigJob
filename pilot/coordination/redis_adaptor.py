@@ -15,7 +15,6 @@ class RedisCoordinationAdaptor:
     	Dummy Adaptor - No distributed coordination done    
     """
     BASE_URL="redis://localhost/"
-    PORT=6379
     SEPARATOR=":"
     
     PILOT_PATH="pilot"
@@ -29,9 +28,8 @@ class RedisCoordinationAdaptor:
     # Construct a base url for an application
      
     @classmethod
-    def configure_base_url(cls, base_url, port=6379):
+    def configure_base_url(cls, base_url):
         cls.BASE_URL=base_url
-        cls.PORT=6379
     
     @classmethod
     def get_base_url(cls, application_id):
