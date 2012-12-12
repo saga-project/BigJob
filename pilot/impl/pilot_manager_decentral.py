@@ -144,12 +144,25 @@ class ComputeDataServiceDecentral(ComputeDataService):
         if len(self.pilot_job_services)!=1:
             raise PilotError("No PilotComputeService found. Please start a PCS before submitting ComputeUnits.")
         
+        self.__wait_for_du(compute_unit)
+        
         sj = subjob()
         self.pcs_coordination_namespace=self.pilot_job_services[0].coordination_queue
         logger.debug("Submit CU to big-job via external queue: %s"%self.pcs_coordination_namespace)
         sj.submit_job(self.pcs_coordination_namespace, compute_unit.subjob_description)
         compute_unit._update_subjob(sj)
         return compute_unit
+    
+    
+    def __wait_for_du(self, compute_unit):
+        """ wait for Data Units that are required for Compute Unit """
+        cu_description = compute_unit.compute_unit_description
+        if cu_description.has_key("input_data") and len(cu_description["input_data"])>0:
+            for input_du_url in cu_description["input_data"]:
+                for du in self.data_units.values():
+                    if input_du_url == du.get_url():
+                        logger.debug("Wait for DU: %s"%du.get_url())
+                        du.wait()
     
     
     ###########################################################################
