@@ -15,6 +15,7 @@ class RedisCoordinationAdaptor:
     	Dummy Adaptor - No distributed coordination done    
     """
     BASE_URL="redis://localhost/"
+    PORT=6379
     SEPARATOR=":"
     
     PILOT_PATH="pilot"
@@ -28,9 +29,9 @@ class RedisCoordinationAdaptor:
     # Construct a base url for an application
      
     @classmethod
-    def configure_base_url(cls, base_url):
+    def configure_base_url(cls, base_url, port=6379):
         cls.BASE_URL=base_url
-    
+        cls.PORT=6379
     
     @classmethod
     def get_base_url(cls, application_id):
@@ -220,11 +221,10 @@ class RedisCoordinationAdaptor:
     def __get_redis_api_client(cls):
         import redis
         ''' Initialize Redis API Client     '''
-        server_port=6379
         saga_url = saga.Url(RedisCoordinationAdaptor.BASE_URL)
         username = saga_url.username
         server = saga_url.host
-        
+        server_port = saga_url.port
         if username==None or username=="":
             redis_client = redis.Redis(host=server, port=server_port, db=0)
         else:
