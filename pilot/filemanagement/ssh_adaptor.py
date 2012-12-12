@@ -138,9 +138,15 @@ class SSHFileAdaptor(object):
             source_path = result.path
             logger.debug(str((source_host, source_path, self.host, remote_path)))
             if source_host == "" or source_host==None:
-                cmd = "scp "+ source_path + " " + self.user + '@' + self.host + ":" + remote_path
+                if self.user!=None:
+                    cmd = "scp "+ source_path + " " + self.user + '@' + self.host + ":" + remote_path
+                else:
+                    cmd = "scp "+ source_path + " " + self.host + ":" + remote_path
             else:
-                cmd = "scp "+ source_host+":"+source_path + " "+ self.user + '@' + self.host + ":" + remote_path
+                if self.user!=None:
+                    cmd = "scp "+ source_host+":"+source_path + " "+ self.user + '@' + self.host + ":" + remote_path
+                else:
+                    cmd = "scp "+ source_host+":"+source_path + " " + self.host + ":" + remote_path
             
             rc = os.system(cmd)
             logger.debug("Command: %s Return code: %d"%(cmd, rc) )                   
