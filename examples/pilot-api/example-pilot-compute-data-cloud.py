@@ -32,7 +32,6 @@ if __name__ == "__main__":
     pilot_data_description_india = {
                                 "service_url": "walrus://149.165.146.135/pilot-data-" + str(uuid.uuid1()),
                                 #"service_url": "ssh://localhost/tmp/pilot-data-" + str(uuid.uuid1()),
-                                "size": 100,   
                                 "affinity_datacenter_label": "us-east",              
                                 "affinity_machine_label": "",
                                 "access_key_id":"8MCXRAMXMHDYKWNKXZ8WF",
@@ -57,6 +56,7 @@ if __name__ == "__main__":
     # submit pilot data to a pilot store 
     input_data_unit = pd.submit_data_unit(data_unit_description)
     input_data_unit.wait()
+    
     logger.info("Data Unit URL: " + input_data_unit.get_url())
     pilot_compute_service = PilotComputeService(coordination_url=COORDINATION_URL)
     

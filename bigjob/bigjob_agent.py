@@ -798,6 +798,7 @@ class bigjob_agent:
             logger.error("Stage out of files failed.")
             self.__print_traceback()
     
+    
     def __expand_file_pattern(self, filename_pattern, workingdirectory):
         """ expand files with wildcard * to a list """
         files = os.listdir(workingdirectory)
@@ -807,6 +808,7 @@ class bigjob_agent:
             if fnmatch.fnmatch(i, filename_pattern):
                 matches.append(i)
         return matches
+    
     
     def __expand_directory(self, directory):
         """ expands directory name $HOME or ~ to the working directory

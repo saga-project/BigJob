@@ -28,13 +28,13 @@ if __name__ == "__main__":
                              "working_directory": os.path.join(os.getcwd(),"work"),
                             })
 
-    pilot_compute_description.append({ "service_url": 'sge-ssh://pmantha@login3.ranger.tacc.utexas.edu',
-                                  "number_of_processes":32,
+    pilot_compute_description.append({ "service_url": 'sge+ssh://tg804093@login3.ranger.tacc.utexas.edu',
+                                  "number_of_processes":16,
                                   "walltime":10,
                                   "processes_per_node":16,
                                   "queue":"normal",
                                   "allocation":"TG-MCB090174",
-                                  "working_directory": "/share/home/01539/pmantha/agent",
+                                  "working_directory": "/work/01131/tg804093"
                                 })
 
     pilot_compute_description.append({ "service_url": 'pbs-ssh://pmantha@kraken-gsi.nics.teragrid.org',
@@ -45,8 +45,8 @@ if __name__ == "__main__":
                                   "allocation":"TG-MCB090174",
                                   "working_directory": "/lustre/scratch/pmantha/agent/",
                                 })
-    for pcd in pilot_compute_description:
-        pilotjob = pilot_compute_service.create_pilot(pilot_compute_description=pcd)
+    #for pcd in pilot_compute_description:
+    pilotjob = pilot_compute_service.create_pilot(pilot_compute_description=pilot_compute_description[2])
          
     compute_data_service = ComputeDataService()
     compute_data_service.add_pilot_compute_service(pilot_compute_service)
