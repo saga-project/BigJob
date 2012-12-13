@@ -680,8 +680,7 @@ except:
         activate_this = os.path.join(os.getcwd(), ".bigjob/python/bin/activate_this.py"); 
         execfile(activate_this, dict(__file__=activate_this))
         os.system("find . ")
-        os.system(". .bigjob/python/bin/activate; python -c 'import bigjob; print bigjob.version'") 
-        os.system("./.bigjob/python/bin/python -c 'import bigjob; print bigjob.version'") 
+        os.system("export PYTHONHOME=.bigjob/python; .bigjob/python/bin/python -c 'import bigjob; print bigjob.version'")
     except:
         print "BJ installation failed!";
    
