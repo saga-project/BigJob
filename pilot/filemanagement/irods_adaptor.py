@@ -127,6 +127,7 @@ class iRodsFileAdaptor(object):
             command = "rm -rf %s"%(os.path.join(self.localpath, du.id))
         else:
             command = "irm %s"%du.id
+        
         self.__run_command(command)
     
     
@@ -155,6 +156,7 @@ class iRodsFileAdaptor(object):
                    
     ###########################################################################
     def __run_command(self, command):
+        logger.debug(command)
         child = pexpect.spawn(command, timeout=None)
         output = child.readlines()
         logger.debug("Run %s Output: %s"%(command, str(output)))
