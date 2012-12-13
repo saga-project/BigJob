@@ -29,19 +29,29 @@ class iRodsFileAdaptor(object):
         
             Assumption: working iRods installation
         
-            irods:///?vo=<vo>&resource-group=<resource-group>
+            irods://localhost/${OSG_DATA}/?vo=<vo>&resource-group=<resource-group>
             
-    """
-    
-   
-    
+    """ 
     def __init__(self, resource_url, security_context=None, pilot_data_description=None):        
         self.resource_url = saga.Url(resource_url)
         query_string = self.resource_url.query
+        self.localpath = self.resource_url.path
         self.vo = re.search("(?<=vo=)(.*)([&\b]{1})", query_string).group(1)
         self.resource_group = re.search("(?<=resource-group=)(.*)[&\b$]?", query_string).group(1)
         logger.debug("VO: %s, Resource Group: %s"%(self.vo, self.resource_group))
+        self.is_local = self.__is_local()
         
+    
+    def __is_local(self):
+        # test whether path contains environment variable
+        match = re.search("\$\{(.*)\}", self.localpath)
+        if match:
+            env_var = match.group(1)
+            logger.debug("Found: " + env_var)
+            if os.environ.has_key(env_var):
+                self.localpath=os.environ[env_var]
+                return True
+        return False
     
     
     def get_security_context(self):
@@ -69,7 +79,10 @@ class iRodsFileAdaptor(object):
             
     def create_du(self, du_id):
         logger.debug("create iRods collection: " + du_id)
-        command = "imkdir %s"%(du_id)
+        if self.is_local:
+            command = "mkdir %s"%(os.path.join(self.localpath, du_id))
+        else:
+            command = "imkdir %s"%(du_id)
         self.__run_command(command)
 
                  
@@ -90,7 +103,10 @@ class iRodsFileAdaptor(object):
         #du_id = "du-7370d7b5-ed0b-11e1-95df-705681b3df0f"
         du_id = du.id
         logger.debug("Get DU: " + str(du_id))
-        command = "iget -r %s %s"%(du_id, target_url)
+        if self.is_local:
+            command = "cp -r %s %s"%(os.path.join(self.localpath, du_id), target_url)
+        else:
+            command = "iget -r %s %s"%(du_id, target_url)
         logger.debug(command)
         self.__run_command(command)
         if target_url==".":
@@ -107,7 +123,10 @@ class iRodsFileAdaptor(object):
             
         
     def remove_du(self, du):
-        command = "irm %s"%du.id
+        if self.is_local:
+            command = "rm -rf %s"%(os.path.join(self.localpath, du.id))
+        else:
+            command = "irm %s"%du.id
         self.__run_command(command)
     
     
@@ -115,7 +134,10 @@ class iRodsFileAdaptor(object):
     # Pure File Management APIs
     def _put_file(self, source, target):
         logger.debug("Put file: %s to %s"%(source, target))
-        command = "iput -f -R %s %s %s"%(self.resource_group, source, target)
+        if self.is_local:
+            command = "cp -r %s %s"%(os.path.join(source, target))
+        else:
+            command = "iput -f -R %s %s %s"%(self.resource_group, source, target)
         self.__run_command(command)
         home_directory= self.__run_command("ipwd")[0].strip()
         full_filename = os.path.join(home_directory, target)
@@ -149,7 +171,7 @@ class iRodsFileAdaptor(object):
     
     
 def test_irods():
-    irods = iRodsFileAdaptor("irods://gw68/?vo=osg&resource-group=osgGridFtpGroup")
+    irods = iRodsFileAdaptor("irods://gw68/${OSG_DATA}/?vo=osg&resource-group=osgGridFtpGroup")
     irods.initialize_pilotdata()
     irods.create_du("du-7370d7b5-ed0b-11e1-95df-705681b3df0f")
     irods._put_file("test.txt", "du-7370d7b5-ed0b-11e1-95df-705681b3df0f/test.txt")

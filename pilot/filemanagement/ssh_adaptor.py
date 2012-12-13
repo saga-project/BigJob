@@ -15,6 +15,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 from pilot.api import State
 from bigjob import logger
 
+SSH_OPTS="-o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
 
 paramiko_logger = paramiko.util.logging.getLogger()
 #paramiko_logger.setLevel(logging.ERROR)
@@ -139,14 +140,14 @@ class SSHFileAdaptor(object):
             logger.debug(str((source_host, source_path, self.host, remote_path)))
             if source_host == "" or source_host==None:
                 if self.user!=None:
-                    cmd = "scp "+ source_path + " " + self.user + '@' + self.host + ":" + remote_path
+                    cmd = "scp "+ SSH_OPTS + " " + source_path + " " + self.user + '@' + self.host + ":" + remote_path
                 else:
-                    cmd = "scp "+ source_path + " " + self.host + ":" + remote_path
+                    cmd = "scp "+ SSH_OPTS + " " + source_path + " " + self.host + ":" + remote_path
             else:
                 if self.user!=None:
-                    cmd = "scp "+ source_host+":"+source_path + " "+ self.user + '@' + self.host + ":" + remote_path
+                    cmd = "scp "+ SSH_OPTS + " " + source_host+":"+source_path + " "+ self.user + '@' + self.host + ":" + remote_path
                 else:
-                    cmd = "scp "+ source_host+":"+source_path + " " + self.host + ":" + remote_path
+                    cmd = "scp "+ SSH_OPTS + " " + source_host+":"+source_path + " " + self.host + ":" + remote_path
             
             rc = os.system(cmd)
             logger.debug("Command: %s Return code: %d"%(cmd, rc) )                   
