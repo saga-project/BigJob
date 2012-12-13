@@ -3,6 +3,7 @@
 DIR=`pwd`
 BIGJOB_DIR=".bigjob/python"
 python ../bootstrap/bigjob-bootstrap.py ${DIR}/${BIGJOB_DIR}
+python ../bootstrap/bigjob-bootstrap.py --relocatable ${DIR}/${BIGJOB_DIR}
 . ${DIR}/${BIGJOB_DIR}/bin/activate
 easy_install -U bigjob
 

@@ -651,7 +651,7 @@ BIGJOB_AGENT_DIR= os.path.join(home, ".bigjob")
 if not os.path.exists(BIGJOB_AGENT_DIR): os.mkdir (BIGJOB_AGENT_DIR)
 BIGJOB_PYTHON_DIR=BIGJOB_AGENT_DIR+"/python/"
 if not os.path.exists(BIGJOB_PYTHON_DIR): os.mkdir(BIGJOB_PYTHON_DIR)
-BOOTSTRAP_URL="http://github.com/saga-project/BigJob/blob/master/scripts/bigjob-Linux-x86_64.tar.gz"
+BOOTSTRAP_URL="http://github.com/saga-project/BigJob/blob/master/scripts/bigjob-Linux-x86_64.tar.gz?raw=true"
 BOOTSTRAP_FILE="bigjob-Linux-x86_64.tar.gz"
 #ensure that BJ in .bigjob is upfront in sys.path
 sys.path.insert(0, os.getcwd() + "/../")
@@ -671,12 +671,17 @@ except:
     print "BigJob not installed. Attempt to install it."; 
     opener = urllib.FancyURLopener({}); 
     opener.retrieve(BOOTSTRAP_URL, BOOTSTRAP_FILE); 
+    os.system("rm -rf .bigjob")
     print "Execute: " + "tar -xzf " + BOOTSTRAP_FILE
-    os.system("ls")
+    os.system("ls -lta")
     try:
         os.system("tar -xzf " + BOOTSTRAP_FILE); 
-        activate_this = os.path.join(os.getcwd(), "bin/activate_this.py"); 
+        os.system("ls -lta")
+        activate_this = os.path.join(os.getcwd(), ".bigjob/python/bin/activate_this.py"); 
         execfile(activate_this, dict(__file__=activate_this))
+        os.system("find . ")
+        os.system(". .bigjob/python/bin/activate; python -c 'import bigjob; print bigjob.version'") 
+        os.system("./.bigjob/python/bin/python -c 'import bigjob; print bigjob.version'") 
     except:
         print "BJ installation failed!";
    
