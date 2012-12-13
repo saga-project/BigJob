@@ -319,7 +319,7 @@ class bigjob(api.base.bigjob):
         
         ##############################################################################
         # Create and process BJ bootstrap script
-        bootstrap_script = self.__generate_bootstrap_script_from_binary(
+        bootstrap_script = self.__generate_bootstrap_script(
                                                           self.coordination.get_address(), 
                                                           self.pilot_url, # Queue 1 used by this BJ object 
                                                           external_queue  # Queue 2 used by Pilot Compute Service 
