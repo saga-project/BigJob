@@ -49,7 +49,8 @@ class iRodsFileAdaptor(object):
             env_var = match.group(1)
             logger.debug("Found: " + env_var)
             if os.environ.has_key(env_var):
-                self.localpath=os.environ[env_var]
+                self.localpath = re.sub(r'/\$\{.*\}/', os.environ[env_var], self.localpath)
+                logger.debug("Expanding URL Path to: " + self.localpath)
                 return True
         return False
     
