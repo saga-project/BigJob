@@ -189,7 +189,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'BigJob.tex', u'BigJob Documentation',
+  ('index', 'BigJob.tex', u'BigJob Manual',
    u'The BigJob Project', 'manual'),
 ]
 
@@ -233,7 +233,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'BigJob', u'BigJob Documentation',
+  ('index', 'BigJob', u'BigJob Manual',
    u'The BigJob Project', 'BigJob', 'One line description of project.',
    'Miscellaneous'),
 ]
