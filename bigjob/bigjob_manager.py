@@ -680,6 +680,7 @@ except:
         os.system("tar -xzf " + BOOTSTRAP_FILE); 
         os.system("ls -lta")
         os.system(".bigjob/python/bin/python -c 'import bigjob; import bigjob.bigjob_agent; print bigjob.version; bigjob.bigjob_agent.bigjob_agent([\\"bigjob_agent.py\\", \\"%s\\", \\"%s\\", \\"%s\\"])'")
+        
     except:
         print "BJ installation failed!";
 """ % (coordination_host, coordination_namespace, external_coordination_namespace))
