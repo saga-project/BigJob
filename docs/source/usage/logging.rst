@@ -1,6 +1,6 @@
-##############
-Logging System
-##############
+#####################
+Logging and Debugging
+#####################
 
 In a distributed environment unified error logging and reporting is a crucial
 capability for debugging and monitoring. SAGA has a configurable logging system
@@ -86,43 +86,4 @@ executing shell and evaluated by SAGA at program startup.
    following environment variables::
 
        SAGA_VERBOSE=DEBUG SAGA_LOG_TARGETS=STDOUT,/tmp/mysaga.log python mysagaprog.py
-
-.. _log_api:
-
-Logging API
------------
-
-The SAGA logging system can be controlled directly  
-from within an application using SAGA's logging API. This can come in handy if 
-you want to integrate SAGA log messages with an existing Python logging system, 
-re-format the output or something slightly more involved:: 
-
-
-
-Module saga.core.logging
-************************
-
-The logging module provides classes and functions to change the behavior of
-SAGA's logging system. The :func:`getConfig` function is used to get a
-:class:`Config` object which can be used to introspect and change configuration
-system options::
-
-   from saga.core.logging import getConfig as getLoggingConfig
-
-   log_conf = getLoggingConfig()
-   log_conf.level = "DEBUG" # or 'INFO', 'WARNING', 'ERROR', 'CRITICAL'
-
-   # change output channels 
-   if "STDOUT" in log_conf.targets:
-       log_conf.targets.remove('STDOUT')
-       log_conf.targets.add('/tmp/myapp.log')
-
-   # reset all filters
-   log_conf.filters = set()
-
-   # show all active loggers
-   print log_conf.get_registered_logger_names()
-
-.. automodule:: saga.core.logging
-   :members:
 

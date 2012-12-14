@@ -12,8 +12,10 @@ Contents:
    :numbered:
    :maxdepth: 2
 
+   intro/index.rst    
+   install/index.rst
    usage/index.rst
-   adaptors/index.rst
+   patterns/index.rst
    library/index.rst
    tutorial/index.rst
 
