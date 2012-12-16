@@ -237,7 +237,9 @@ class PilotData(PilotData):
             # initialize file adaptor
             if self.service_url.startswith("ssh:"):
                 logger.debug("Use SSH backend")
-                self.__filemanager = SSHFileAdaptor(self.service_url)
+                self.__filemanager = SSHFileAdaptor(self.service_url,
+                                                    self.security_context, 
+                                                    self.pilot_data_description)
             elif self.service_url.startswith("http:"):
                 logger.debug("Use WebHDFS backend")
                 self.__filemanager = WebHDFSFileAdaptor(self.service_url)
