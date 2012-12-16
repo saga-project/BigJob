@@ -231,7 +231,7 @@ class ComputeDataServiceDecentral(ComputeDataService):
             logger.debug("### START WAIT ###")
             for i in self.data_units.values():
                 i.wait()
-            logger.debug("DUs done")        
+            logger.debug("Wait for DUs finished")        
                 
             for i in self.compute_units.values():
                 i.wait()     
