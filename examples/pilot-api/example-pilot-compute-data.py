@@ -34,7 +34,7 @@ if __name__ == "__main__":
                                 "size": 100,   
                                 "affinity_datacenter_label": "eu-de-south",              
                                 "affinity_machine_label": "mymachine-1",
-                                "userkey":"/Users/luckow/.ssh/rsa_osg",                             
+                                #"userkey":"/Users/luckow/.ssh/rsa_osg",                             
                              }
     
     pilot_data_service.create_pilot(pilot_data_description=pilot_data_description)
