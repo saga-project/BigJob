@@ -11,6 +11,7 @@ import logging
 import traceback
 import time
 import re
+import shutil
 
 import pexpect
 
@@ -53,7 +54,7 @@ class iRodsFileAdaptor(object):
                 self.localpath = os.environ[env_var]
                 logger.debug("Expanding URL Path to: " + self.localpath)
                 return True
-        logger.debug("No expansion in: " + self.localpath
+        logger.debug("No expansion in: " + self.localpath)
         return False
     
     
@@ -90,6 +91,7 @@ class iRodsFileAdaptor(object):
 
                  
     def put_du(self, du):
+        start = time.time()
         logger.debug("Copy DU to iRod")
         du_items = du.list()
         for i in du_items.keys():     
@@ -100,23 +102,37 @@ class iRodsFileAdaptor(object):
                 self._put_file(local_filename, remote_path)
             except:
                 logger.debug("Could not copy: " + str(i))
+        logger.debug("Finished Put DU in: " + str(time.time()-start) + " sec.")
                 
     
     def get_du(self, du, target_url):
         #du_id = "du-7370d7b5-ed0b-11e1-95df-705681b3df0f"
+        start = time.time()
         du_id = du.id
         logger.debug("Get DU: " + str(du_id))
         if self.is_local:
             command = "cp -r %s %s"%(os.path.join(self.localpath, du_id), target_url)
         else:
-            command = "iget -r %s %s"%(du_id, target_url)
+            command = "iget -f -r %s %s"%(du_id, target_url)
         logger.debug(command)
         self.__run_command(command)
-        if target_url==".":
-            target_url = os.getcwd()
-        command = "mv %s/* %s"%(os.path.join(target_url, du_id), target_url)
-        self.__run_command(command)
-        logger.debug("Finished Get DU")
+        
+        full_path = os.path.join(target_url, du_id)
+        #logger.debug("Path: " + str(full_path) + " Exists: " + str(os.path.exists(full_path)))
+        #while os.path.exists(full_path)==False:
+        #    time.sleep(1)
+
+        for i in os.listdir(full_path):
+            logger.debug("move " + str(i))
+            shutil.move(os.path.join(full_path, i), target_url)
+
+        shutil.rmtree(full_path)
+        #time.sleep(2)
+        #if target_url==".":
+        #    target_url = os.getcwd()
+        #command = "mv %s/* %s"%(os.path.join(target_url, du_id), target_url)
+        #self.__run_command(command)
+        logger.debug("Finished Get DU in: " + str(time.time()-start) + " sec.")
         
    
     def copy_du(self, du, pd_new):
@@ -143,10 +159,11 @@ class iRodsFileAdaptor(object):
         else:
             command = "iput -f -R %s %s %s"%(self.resource_group, source, target)
         self.__run_command(command)
-        home_directory= self.__run_command("ipwd")[0].strip()
-        full_filename = os.path.join(home_directory, target)
-        command = "irepl-osg -f %s -G %s"%(full_filename, self.resource_group)
-        self.__run_command(command) 
+        if self.is_local==False:
+            home_directory= self.__run_command("ipwd")[0].strip()
+            full_filename = os.path.join(home_directory, target)
+            command = "irepl-osg -f %s -G %s"%(full_filename, self.resource_group)
+            self.__run_command(command) 
          
 
     def transfer(self, source_url, target_url):
