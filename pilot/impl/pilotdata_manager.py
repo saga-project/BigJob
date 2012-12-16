@@ -41,7 +41,7 @@ except:
 try:
     from pilot.filemanagement.irods_adaptor import iRodsFileAdaptor
 except:
-    logger.warn("Goggle Storage package not found.") 
+    logger.warn("iRods Storage package not found.") 
 
 
 
