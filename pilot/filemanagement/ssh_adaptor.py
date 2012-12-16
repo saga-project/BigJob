@@ -1,7 +1,6 @@
 '''
 SSH-based coordination scheme between manager and agent
 '''
-import paramiko
 import urlparse
 import pdb
 import errno
@@ -10,6 +9,7 @@ import os
 import stat
 import logging
 import traceback
+import pexpect
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 from pilot.api import State
@@ -17,49 +17,72 @@ from bigjob import logger
 
 SSH_OPTS="-o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
 
-paramiko_logger = paramiko.util.logging.getLogger()
-#paramiko_logger.setLevel(logging.ERROR)
 
 class SSHFileAdaptor(object):
     """ BigData Coordination File Management for Pilot Store """
     
-    def __init__(self, service_url):        
+    def __init__(self, service_url, security_context=None, pilot_data_description=None):        
         self.service_url = service_url
         result = urlparse.urlparse(service_url)
         self.host = result.hostname
         self.path = result.path        
         self.user = result.username
         
-        # initialize ssh client
-        logger.debug("SSH: connect to: %s"%self.host)
-        self.__client = paramiko.SSHClient()
-        self.__client.load_system_host_keys()
-        self.__client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        self.__client.connect(self.host, username=self.user)
-        self.__sftp = self.__client.open_sftp()
-        self.__state=State.New
-                        
-    
+        self.pilot_data_description=pilot_data_description
+        
+        # handle security context
+        self.userkey=None
+        
+        # try to recover key from pilot_data_description
+        if self.pilot_data_description!=None and\
+           self.pilot_data_description.has_key("userkey"):
+            self.userkey=self.pilot_data_description["userkey"]
+            
+        # try to recover key from security context
+        if security_context!=None:
+            logger.debug("Attempt to restore SSH credentials from security context: " + str(security_context))
+            security_context = eval(security_context)
+            key=security_context["userkey"]             
+            self.userkey=os.path.join(os.getcwd(), ".ssh/id_rsa")
+            if os.path.exists(os.path.join(os.getcwd(),".ssh"))==False:
+                os.makedirs(os.path.join(os.getcwd(), ".ssh"))
+            logger.debug("Write key: " + str(type(key)) + " to: " + self.userkey)
+            try:
+                f = open(self.userkey, "w") 
+                for i in key:
+                    logger.debug("write: " + str(i))
+                    f.write(i)
+                f.close()
+                os.chmod(self.userkey, 0600)
+            except:
+                self.__print_traceback()
+        
+
     def get_security_context(self):
         """ Returns security context that needs to be available on the distributed
             node in order to access this Pilot Data """
+        if self.pilot_data_description.has_key("userkey"):
+            f = open(self.pilot_data_description["userkey"])
+            key = f.readlines()
+            f.close
+            return {"userkey":key}
         return None
         
         
     def initialize_pilotdata(self):
         # check whether directory exists
+        
         try:
-            self.__sftp.chdir(self.path)            
+            command = "mkdir -p %s"%self.path 
+            self.__run_ssh_command(self.userkey, self.user, self.host, command)      
         except IOError:
             # directory does not exist
-            self.__sftp.mkdir(self.path)        
+            pass    
         self.__state=State.Running
         
         
     def get_pilotdata_size(self):
-        # check size
-        size = self.__sftp.stat(self.path).st_size
-        return size
+        return None
     
     
     def delete_pilotdata(self):
@@ -77,40 +100,13 @@ class SSHFileAdaptor(object):
     def create_du(self, du_id):
         du_dir = os.path.join(self.path, str(du_id))
         logger.debug("mkdir: " + du_dir)
-        try:
-            self.__sftp.mkdir(du_dir)
-        except KeyboardInterrupt:
-            raise KeyboardInterrupt
-        except:
-            pass # dir already exists
+        command = " mkdir %s"%du_dir
+        self.__run_ssh_command(self.userkey, self.user, self.host, command)
         
         
     def put_du(self, du):
         self.put_du_scp(du)
                 
-                
-    def put_du_paramiko(self, du):
-        logger.debug("Copy DU using Paramiko")
-        for i in du.list_data_unit_items():     
-            remote_path = os.path.join(self.path, str(du.id), os.path.basename(i.local_url))
-            logger.debug("Put file: %s to %s"%(i.local_url, remote_path))
-                        
-            if i.local_url.startswith("ssh://"):
-                # check if remote path is directory
-                if self.__is_remote_directory(i.local_url):
-                    logger.warning("Path %s is a directory. Ignored."%i.local_url)                
-                    continue      
-                self.__third_party_transfer(i.local_url, remote_path)                
-            else:
-                if stat.S_ISDIR(os.stat(i.local_url).st_mode):
-                    logger.warning("Path %s is a directory. Ignored."%i.local_url)                
-                    continue            
-                #self.__sftp.put(i.local_url, remote_path, self.put_progress, True)
-                ssh_client, sftp_client = self.__create_sftp_client()
-                sftp_client.put(i.local_url, remote_path)
-                sftp_client.close()
-                ssh_client.close()           
-
 
     def put_du_scp(self, du):
         logger.debug("Copy DU using SCP")
@@ -181,64 +177,47 @@ class SSHFileAdaptor(object):
     def transfer(self, source_url, target_url):
         self.__third_party_transfer_scp(source_url, target_url)    
     
+    
     def create_remote_directory(self, target_url):
         result = urlparse.urlparse(target_url)
         target_host = result.hostname
         target_path = result.path
         target_user = result.username
-        try:
-            if not self.__is_remote_directory(target_url):
-                client = paramiko.SSHClient()
-                client.load_system_host_keys()
-                client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-                logger.debug("Create directory at: %s"%(target_host))
-                client.connect(target_host,  username=target_user)
-                sftp = client.open_sftp()  
-                sftp.mkdir(target_path)
-                sftp.close()
-                client.close()
-                return True
-        except KeyboardInterrupt:
-            raise KeyboardInterrupt
-        except:
-            logger.error("Error creating directory: " + str(target_path) 
-                         + " at: " + str(target_host))
-            self.__print_traceback()
-        return False
+        logger.debug("Create directory: %s"%target_path)
+        command = "mkdir %s"%target_path
+        rc = self.__run_ssh_command(self.userkey, target_user, target_host, command)
+        if rc==0:
+            return True
+        else:
+            return False
+                
         
     def get_path(self, target_url):
         result = urlparse.urlparse(target_url)
         return result.path
+    
         
     def copy_du_to_url(self, du,  local_url, remote_url):
-        base_dir = self.__get_path_for_du(du)
-        self.create_remote_directory(remote_url)  
-        for filename in self.__sftp.listdir(base_dir):
-            file_url = local_url + "/" + filename
-            file_remote_url = remote_url + "/" + filename
-            logger.debug("Copy " + file_url + " to " + file_remote_url)
-            self.__third_party_transfer_scp(file_url, file_remote_url)
-
+        self.create_remote_directory(remote_url)
+        self.__third_party_transfer_scp(local_url + "/*", remote_url)
+  
             
     ###########################################################################
     # Private support methods
     def __get_path_for_du(self, du):
         return os.path.join(self.path, str(du.id))
     
+    
     def __remove_directory(self, path):
         """Remove remote directory that may contain files.        
         """
         if self.__exists(path):
-            for filename in self.__sftp.listdir(path):
-                filepath = os.path.join(path, filename)
-                logger.debug("Delete %s"%filepath)
-                if stat.S_ISDIR(self.__sftp.stat(filepath).st_mode):
-                    [self.__remove_directory(filepath)]
-                else:
-                    self.__sftp.remove(filepath)
-            self.__sftp.rmdir(path)
-            
-  
+            command = " rm -rf %s"%path
+            rc = self.__run_ssh_command(self.userkey, self.user, self.host, command)
+            if rc==0:
+                return True
+            else:
+                return False
             
         
     def __is_remote_directory(self, url):
@@ -246,33 +225,16 @@ class SSHFileAdaptor(object):
         host = result.hostname
         path = result.path
         user = result.username
-        #if path.endswith("/"):
-        client = paramiko.SSHClient()
-        client.load_system_host_keys()
-        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        client.connect(host,  username=user)
-        sftp = client.open_sftp()
-        try:
-            if stat.S_ISDIR(sftp.stat(path).st_mode):
-                return True
-            else:
-                return False
-        except KeyboardInterrupt:
-            raise KeyboardInterrupt
-        except:
-            logger.debug("Directory not found: %s"%path)
-        sftp.close()
-        client.close()
-        return False
         
-    def __create_sftp_client(self):
-        ssh_client = paramiko.SSHClient()
-        ssh_client.load_system_host_keys()
-        ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh_client.connect(self.host,  username=self.user)
-        sftp_client = ssh_client.open_sftp()
-        sftp_client.chdir(self.path)
-        return ssh_client, sftp_client
+        command = "test -d %s"%path
+        rc = self.__run_ssh_command(self.userkey, user, host, command)
+        if rc==0:
+            logger.debug("Directory found: %s"%path)
+            return True
+        else:
+            logger.debug("Directory not found: %s"%path)
+            return False
+            
 
     def __third_party_transfer_scp(self, source_url, target_url):
         result = urlparse.urlparse(source_url)
@@ -292,92 +254,45 @@ class SSHFileAdaptor(object):
         logger.debug("Command: %s Return Code: %d"%(cmd,rc))
 
 
-    def __third_party_transfer_host(self, source_url, target_url):
-        """
-            Transfers from source URL to machine of PS (target path)
-        """
-        result = urlparse.urlparse(source_url)
-        source_host = result.netloc
-        source_path = result.path
-        
-        result = urlparse.urlparse(target_url)
-        target_host = result.netloc
-        target_path = result.path
-          
-        python_script= """import sys
-import os
-import urllib
-import sys
-import time
-import paramiko
-
-client = paramiko.SSHClient()
-client.load_system_host_keys()
-client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-client.connect("%s")
-sftp = client.open_sftp()
-sftp.put("%s", "%s")
-"""%(target_host, source_path, target_path)
-
-        logger.debug("Execute: \n%s"%python_script)
-        source_client = paramiko.SSHClient()
-        source_client.load_system_host_keys()
-        source_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        source_client.connect(source_host)
-        stdin, stdout, stderr = source_client.exec_command("python -c \'%s\'"%python_script)
-        stdin.close()
-        logger.debug("************************************************")
-        logger.debug("Stdout: %s\nStderr:%s", stdout.read(), stderr.read())
-        logger.debug("************************************************")
-        
-    
-    def __third_party_transfer(self, source_url, target_path):
-        """
-            Transfers from source URL to machine of PS (target path)
-        """
-        result = urlparse.urlparse(source_url)
-        source_host = result.netloc
-        source_path = result.path
-        
-        python_script= """import sys
-import os
-import urllib
-import sys
-import time
-import paramiko
-
-client = paramiko.SSHClient()
-client.load_system_host_keys()
-client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-client.connect("%s")
-sftp = client.open_sftp()
-sftp.get("%s", "%s")
-
-"""%(source_host, source_path, target_path)
-
-        logger.debug("Execute: \n%s"%python_script)
-        source_client = paramiko.SSHClient()
-        source_client.load_system_host_keys()
-        source_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        source_client.connect(self.host)
-        stdin, stdout, stderr = source_client.exec_command("python -c \'%s\'"%python_script)
-        stdin.close()
-        logger.debug("************************************************")
-        logger.debug("Stdout: %s\nStderr:%s", stdout.read(), stderr.read())
-        logger.debug("************************************************")
-    
+ 
     def __exists(self, path):
         """Return True if the remote path exists
         """
-        try:
-            self.__sftp.stat(path)
-        except IOError, e:
-            if e.errno == errno.ENOENT:
-                return False
-            raise
-        else:
+        command = "test -e %s"%path
+        rc = self.__run_ssh_command(self.userkey, self.user, self.host, command)
+        if rc==0:
             return True
-   
+        else:
+            return False
+        
+ 
+    
+    def __run_ssh_command(self, userkey, user, host, command):
+        prefix=""
+        if host != None:
+            prefix = "ssh " + SSH_OPTS
+            if userkey != None:
+                prefix = prefix + " -i " + userkey
+            if user!=None:
+                prefix = prefix + " " + user+ "@" 
+            prefix = prefix + " " + host
+        
+        command = prefix + " " + command
+        logger.debug(command.strip())
+        child = pexpect.spawn(command.strip(), timeout=None)
+        output = child.readlines()
+        logger.debug("Run %s Output: %s"%(command, str(output)))
+        child.close()
+        return output 
+
+    def __run_scp_command(self, userkey, user, source_host, source_path, target_host, target_path):
+        prefix = "scp "
+        if userkey != None:
+            prefix = prefix + "-i " + userkey
+        if user!=None:
+            prefix = prefix + " " + user + "@" 
+        prefix = prefix + source_host
+    
    
     def __print_traceback(self):
         exc_type, exc_value, exc_traceback = sys.exc_info()
