@@ -559,7 +559,7 @@ class DataUnit(DataUnit):
         
         # Wait for state to change
         while self.state!=State.Running and self.state!=State.Failed:
-            logger.debug("State: %s"%self.state)
+            logger.debug("Waiting DU State: %s"%self.state)
             time.sleep(2)
     
     
