@@ -133,21 +133,9 @@ class SSHFileAdaptor(object):
             result = urlparse.urlparse(local_filename)
             source_host = result.netloc
             source_path = result.path
+            source_user = result.username
             logger.debug(str((source_host, source_path, self.host, remote_path)))
-            if source_host == "" or source_host==None:
-                if self.user!=None:
-                    cmd = "scp "+ SSH_OPTS + " " + source_path + " " + self.user + '@' + self.host + ":" + remote_path
-                else:
-                    cmd = "scp "+ SSH_OPTS + " " + source_path + " " + self.host + ":" + remote_path
-            else:
-                if self.user!=None:
-                    cmd = "scp "+ SSH_OPTS + " " + source_host+":"+source_path + " "+ self.user + '@' + self.host + ":" + remote_path
-                else:
-                    cmd = "scp "+ SSH_OPTS + " " + source_host+":"+source_path + " " + self.host + ":" + remote_path
-            
-            rc = os.system(cmd)
-            logger.debug("Command: %s Return code: %d"%(cmd, rc) )                   
-                
+            self.__run_scp_command(self.userkey, source_user, source_host, source_path, self.user, self.host, remote_path)        
     
   
     def copy_du(self, du, pd_new):
@@ -240,18 +228,16 @@ class SSHFileAdaptor(object):
         result = urlparse.urlparse(source_url)
         source_host = result.netloc
         source_path = result.path
+        source_user = result.username
         if source_host==None or source_host=="":
             source_host="localhost"
 
         result = urlparse.urlparse(target_url)
         target_host = result.netloc
         target_path = result.path
-        if target_host==None or target_host=="":
-            cmd = "scp -r %s:%s %s"%(source_host, source_path, target_path)
-        else:
-            cmd = "scp -r %s:%s %s:%s"%(source_host, source_path, target_host, target_path)
-        rc = os.system(cmd)
-        logger.debug("Command: %s Return Code: %d"%(cmd,rc))
+        target_user = result.username
+        
+        self.__run_scp_command(self.userkey, source_user, source_host, source_path, target_user, target_host, target_path)
 
 
  
@@ -284,14 +270,34 @@ class SSHFileAdaptor(object):
         logger.debug("Run %s Output: %s"%(command, str(output)))
         child.close()
         return output 
+    
 
-    def __run_scp_command(self, userkey, user, source_host, source_path, target_host, target_path):
-        prefix = "scp "
+
+    def __run_scp_command(self, userkey, source_user, source_host, source_path, target_user, target_host, target_path):
+        command = "scp " + SSH_OPTS + " "
         if userkey != None:
-            prefix = prefix + "-i " + userkey
-        if user!=None:
-            prefix = prefix + " " + user + "@" 
-        prefix = prefix + source_host
+            command = command + "-i " + userkey + " "
+        if source_user!=None:
+            command = command + " " + source_user + "@" 
+        if source_host != None and source_host!="":
+            command = command + source_host + ":"
+        
+        # path is a must parameter
+        command = command + source_path + " "
+        
+        if target_user!=None:
+            command = command + " " + target_user + "@" 
+       
+        if target_host != None and target_host!="":
+            command = command + " " + target_host + ":"
+            
+        command = command + target_path 
+        logger.debug(command)    
+        child = pexpect.spawn(command.strip(), timeout=None)
+        output = child.readlines()
+        logger.debug("Run %s Output: %s"%(command, str(output)))
+        child.close()
+        
     
    
     def __print_traceback(self):
