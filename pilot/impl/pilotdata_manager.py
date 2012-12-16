@@ -607,6 +607,7 @@ class DataUnit(DataUnit):
     def _update_state(self, state):
         """ Internal method for updating state"""
         self.state=state
+        logger.debug("Update DU state to " + state + " Number of PD: " + str(len(self.pilot_data)))
         if len(self.pilot_data) > 0: 
             CoordinationAdaptor.update_du(self)
 
