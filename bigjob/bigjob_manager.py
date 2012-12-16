@@ -462,7 +462,8 @@ class bigjob(api.base.bigjob):
             if self.url.scheme.startswith("condor")==False:
                 self.job.cancel()
             else:
-                logger.debug("Output files are being transfered to file: outpt.tar.gz. Please wait until transfer is complete.")
+                pass
+                #logger.debug("Output files are being transfered to file: outpt.tar.gz. Please wait until transfer is complete.")
         except:
             pass
             #traceback.print_stack()
