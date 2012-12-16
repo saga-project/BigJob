@@ -748,6 +748,7 @@ class bigjob_agent:
                 #du = pd.get_du(du_id)
                 #du.export(target_directory)
                 du = DataUnit(du_url=i)
+                logger.debug("DU State: " + du.get_state())
                 du.wait()
                 logger.debug("Reconnected to DU. Exporting it now...")
                 du.export(target_directory)
