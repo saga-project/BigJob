@@ -116,6 +116,7 @@ class RedisCoordinationAdaptor:
         #                               saga.advert.ReadWrite)
         return cds_url_no_dbtype
     
+    
     @classmethod  
     def update_cds(cls, cds_url, cds):
         
