@@ -124,9 +124,12 @@ class iRodsFileAdaptor(object):
 
         for i in os.listdir(full_path):
             logger.debug("move " + str(i))
-            shutil.move(os.path.join(full_path, i), target_url)
+            try:
+                shutil.move(os.path.join(full_path, i), target_url)
+            except:
+                pass
 
-        shutil.rmtree(full_path)
+        shutil.rmtree(full_path, ignore_errors=True)
         #time.sleep(2)
         #if target_url==".":
         #    target_url = os.getcwd()
