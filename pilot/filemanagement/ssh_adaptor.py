@@ -39,7 +39,7 @@ class SSHFileAdaptor(object):
             self.userkey=self.pilot_data_description["userkey"]
             
         # try to recover key from security context
-        if security_context!=None:
+        if security_context!=None and security_context!="None":
             logger.debug("Attempt to restore SSH credentials from security context: " + str(security_context))
             security_context = eval(security_context)
             key=security_context["userkey"]             

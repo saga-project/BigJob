@@ -48,7 +48,7 @@ class iRodsFileAdaptor(object):
         match = re.search("\$\{(.*)\}", self.localpath)
         if match:
             env_var = match.group(1)
-            logger.debug("Found: " + env_var)
+            logger.debug("Found: " + env_var + " in URL.")
             if os.environ.has_key(env_var):
                 #self.localpath = re.sub(r'\$\{.*\}/', os.environ[env_var], self.localpath)
                 self.localpath = os.environ[env_var]
@@ -158,7 +158,7 @@ class iRodsFileAdaptor(object):
     def _put_file(self, source, target):
         logger.debug("Put file: %s to %s"%(source, target))
         if self.is_local:
-            command = "cp -r %s %s"%(os.path.join(source, target))
+            command = "cp -r %s %s"%(source, target)
         else:
             command = "iput -f -R %s %s %s"%(self.resource_group, source, target)
         self.__run_command(command)
@@ -196,7 +196,7 @@ class iRodsFileAdaptor(object):
     
     
 def test_irods():
-    irods = iRodsFileAdaptor("irods://gw68/${OSG_DATA}/?vo=osg&resource-group=osgGridFtpGroup")
+    irods = iRodsFileAdaptor("irods://gw68/${OSG_DATA}/osg/home/luckow/?vo=osg&resource-group=osgGridFtpGroup")
     irods.initialize_pilotdata()
     irods.create_du("du-7370d7b5-ed0b-11e1-95df-705681b3df0f")
     irods._put_file("test.txt", "du-7370d7b5-ed0b-11e1-95df-705681b3df0f/test.txt")
