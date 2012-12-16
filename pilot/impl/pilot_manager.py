@@ -270,7 +270,8 @@ class ComputeDataService(ComputeDataService):
             try:    
                 #logger.debug("Scheduler Thread: " + str(self.__class__) + " Pilot Job")
                 cu = self.cu_queue.get(True, 1)                
-                if isinstance(cu, ComputeUnit):                    
+                if isinstance(cu, ComputeUnit):  
+                    self.__wait_for_du(cu)                  
                     pj=self._schedule_cu(cu) 
                     if pj !=None:
                         cu = self.__expand_working_directory(cu, pj)                        
@@ -296,7 +297,15 @@ class ComputeDataService(ComputeDataService):
         logger.debug("Re-Scheduler terminated")
     
    
-            
+    def __wait_for_du(self, compute_unit):
+        """ wait for Data Units that are required for Compute Unit """
+        cu_description = compute_unit.compute_unit_description
+        if cu_description.has_key("input_data") and len(cu_description["input_data"])>0:
+            for input_du_url in cu_description["input_data"]:
+                for du in self.data_units.values():
+                    if input_du_url == du.get_url():
+                        logger.debug("Wait for DU: %s"%du.get_url())
+                        du.wait()      
     
     def __expand_working_directory(self, compute_unit, pilot_job):
         """ 
