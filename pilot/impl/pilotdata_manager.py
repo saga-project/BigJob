@@ -544,7 +544,10 @@ class DataUnit(DataUnit):
    
     
     def get_state(self):
-        """ Return current state of DataUnit """        
+        """ Return current state of DataUnit """
+        # update remote state
+        du_dict = CoordinationAdaptor.get_du(self.url)
+        self.state = du_dict["state"]
         return self.state  
     
     
@@ -558,7 +561,7 @@ class DataUnit(DataUnit):
             i.join()
         
         # Wait for state to change
-        while self.state!=State.Running and self.state!=State.Failed:
+        while self.state!=State.Running and self.get_state()!=State.Failed:
             logger.debug("Waiting DU State: %s"%self.state)
             time.sleep(2)
     
