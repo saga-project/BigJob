@@ -51,7 +51,7 @@ class iRodsFileAdaptor(object):
             logger.debug("Found: " + env_var + " in URL.")
             logger.debug("Env list: " + str(os.environ))
             if os.environ.has_key(env_var):
-                self.localpath = re.sub(r'\$\{.*\}/', os.environ[env_var], self.localpath)
+                self.localpath = re.sub(r'\$\{.*\}', os.environ[env_var], self.localpath)
                 #self.localpath = os.environ[env_var]
                 logger.debug("Expanding URL Path to: " + self.localpath)
                 return True
@@ -158,16 +158,20 @@ class iRodsFileAdaptor(object):
     # Pure File Management APIs
     def _put_file(self, source, target):
         logger.debug("Put file: %s to %s"%(source, target))
+        start = time.time()
         if self.is_local:
             command = "cp -r %s %s"%(source, target)
         else:
             command = "iput -f -R %s %s %s"%(self.resource_group, source, target)
         self.__run_command(command)
+        put_time = time.time() - start
         if self.is_local==False:
             home_directory= self.__run_command("ipwd")[0].strip()
             full_filename = os.path.join(home_directory, target)
             command = "irepl-osg -f %s -G %s"%(full_filename, self.resource_group)
             self.__run_command(command) 
+        rep_time = time.time() - start - put_time
+        logger.info("Upload;Replication;Total;File Size: %f;%f;%f;%d"%(put_time, rep_time, time.time()-start, os.path.getsize(source)))
          
 
     def transfer(self, source_url, target_url):
