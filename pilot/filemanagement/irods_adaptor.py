@@ -12,6 +12,7 @@ import traceback
 import time
 import re
 import shutil
+import pdb
 
 import pexpect
 
@@ -165,13 +166,18 @@ class iRodsFileAdaptor(object):
             command = "iput -f -R %s %s %s"%(self.resource_group, source, target)
         self.__run_command(command)
         put_time = time.time() - start
+        number_replica = 0
         if self.is_local==False:
+            #pdb.set_trace()
             home_directory= self.__run_command("ipwd")[0].strip()
             full_filename = os.path.join(home_directory, target)
             command = "irepl-osg -f %s -G %s"%(full_filename, self.resource_group)
-            self.__run_command(command) 
+            output = self.__run_command(command) 
+            for i in output:
+                if i.find("copied") > 0 or i.find("replica")>0:
+                    number_replica = number_replica + 1 
         rep_time = time.time() - start - put_time
-        logger.info("Upload;Replication;Total;File Size: %f;%f;%f;%d"%(put_time, rep_time, time.time()-start, os.path.getsize(source)))
+        logger.info("Upload;Replication;Total;File Size;Number Replica: %f;%f;%f;%d;%d"%(put_time, rep_time, time.time()-start, os.path.getsize(source), number_replica))
          
 
     def transfer(self, source_url, target_url):

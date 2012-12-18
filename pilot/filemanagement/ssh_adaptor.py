@@ -147,6 +147,7 @@ class SSHFileAdaptor(object):
     def get_du(self, du, target_url):
         remote_url = target_url
         local_url =  self.service_url  + "/" + str(du.id)
+        logger.debug("get_du(): copy %s to %s:"%(local_url, remote_url))
         self.copy_du_to_url(du, local_url, remote_url)  
         
         
@@ -226,7 +227,7 @@ class SSHFileAdaptor(object):
 
     def __third_party_transfer_scp(self, source_url, target_url):
         result = urlparse.urlparse(source_url)
-        source_host = result.netloc
+        source_host = result.hostname
         source_path = result.path
         source_user = result.username
         if source_host==None or source_host=="":
@@ -256,12 +257,12 @@ class SSHFileAdaptor(object):
     def __run_ssh_command(self, userkey, user, host, command):
         prefix=""
         if host != None:
-            prefix = "ssh " + SSH_OPTS
+            prefix = "ssh " + SSH_OPTS + " "
             if userkey != None:
-                prefix = prefix + " -i " + userkey
+                prefix = prefix + " -i " + userkey + " "
             if user!=None:
                 prefix = prefix + " " + user+ "@" 
-            prefix = prefix + " " + host
+            prefix = prefix + host
         
         command = prefix + " " + command
         logger.debug(command.strip())
@@ -274,6 +275,7 @@ class SSHFileAdaptor(object):
 
 
     def __run_scp_command(self, userkey, source_user, source_host, source_path, target_user, target_host, target_path):
+        logger.debug("Create scp command: source_user: %s, source_host: %s"%(source_user, source_host))
         command = "scp " + SSH_OPTS + " "
         if userkey != None:
             command = command + "-i " + userkey + " "
@@ -289,7 +291,7 @@ class SSHFileAdaptor(object):
             command = command + " " + target_user + "@" 
        
         if target_host != None and target_host!="":
-            command = command + " " + target_host + ":"
+            command = command + target_host + ":"
             
         command = command + target_path 
         logger.debug(command)    
