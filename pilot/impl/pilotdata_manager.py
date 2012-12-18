@@ -577,6 +577,7 @@ class DataUnit(DataUnit):
     
     def get_pilot_data(self):
         """ get a list of pilot data that have a copy of this PD """
+        self.__restore_state()
         return self.pilot_data
     
     
