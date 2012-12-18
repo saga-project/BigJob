@@ -245,7 +245,7 @@ class PilotData(PilotData):
                 self.__filemanager = WebHDFSFileAdaptor(self.service_url)
             elif self.service_url.startswith("go:"):
                 logger.debug("Use Globus Online backend")
-                self.__filemanager = GSFileAdaptor(self.service_url)
+                self.__filemanager = GlobusOnlineFileAdaptor(self.service_url)
             elif self.service_url.startswith("gs:"):
                 logger.debug("Use Google Cloud Storage backend")
                 self.__filemanager = GSFileAdaptor(self.service_url, self.security_context)

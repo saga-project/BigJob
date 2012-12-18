@@ -17,7 +17,9 @@ from pilot.api import State
 from bigjob import logger
 
 from globusonline.transfer import api_client
-from globusonline.transfer.api_client.get_go_cookie import get_go_auth
+
+#from globusonline.transfer.api_client.get_go_cookie import get_go_auth
+from globusonline.transfer.api_client.goauth import get_access_token
 
 class GlobusOnlineFileAdaptor(object):
     """ BigData Coordination File Management for Pilot Data """
@@ -35,11 +37,14 @@ class GlobusOnlineFileAdaptor(object):
         self.user = result.username  
         self.password = result.password
         
-        result = get_go_auth(ca_certs=None, username=self.user, password=self.password)
-        saml_cookie = result.cookie
+        #result = get_go_auth(ca_certs=None, username=self.user, password=self.password)
+        result = get_access_token(ca_certs=None, username=self.user, password=self.password)
+        
+        #saml_cookie = result.cookie
+        saml_cookie = result.token
         
         self.api = api_client.TransferAPIClient(username=self.user,
-                                                saml_cookie=saml_cookie
+                                                goauth=saml_cookie
                                                 )
         status_code, status_message, data = self.api.task_list()
         
@@ -84,31 +89,29 @@ class GlobusOnlineFileAdaptor(object):
         
     def put_du(self, du):
         logging.debug("Copy DU using Globus Online")
-        for i in du.list_data_unit_items():     
-            remote_path = os.path.join(self.path, str(du.id), os.path.basename(i.local_url))
-            logging.debug("Put file: %s to %s"%(i.local_url, remote_path))                        
-            if i.local_url.startswith("ssh://"):
+        du_items = du.list()
+        for i in du_items.keys():  
+            local_filename=du_items[i]["local"]
+            remote_path = os.path.join(self.path, str(du.id), os.path.basename(local_filename))
+            logging.debug("Put file: %s to %s"%(local_filename, remote_path))                        
+            if local_filename.startswith("ssh://"):
                 # check if remote path is directory
-                if self.__is_remote_directory(i.local_url):
-                    logging.warning("Path %s is a directory. Ignored."%i.local_url)                
+                if self.__is_remote_directory(local_filename):
+                    logging.warning("Path %s is a directory. Ignored."%local_filename)                
                     continue
-                
-               
-                #self.__third_party_transfer(i.local_url, remote_path)                
-            else:
-                if stat.S_ISDIR(os.stat(i.local_url).st_mode):
-                    logging.warning("Path %s is a directory. Ignored."%i.local_url)                
-                    continue         
-            result = urlparse.urlparse(i.local_url)
-            source_host = result.netloc
-            source_path = result.path
-            logger.debug(str((source_host, source_path, self.host, remote_path)))
-            if source_host == "" or source_host==None:
-                cmd = "scp "+ source_path + " " + self.host + ":" + remote_path
-            else:
-                cmd = "scp "+ source_host+":"+source_path + " " + self.host + ":" + remote_path
-            logger.debug("Command: %s"%cmd)
-            os.system(cmd)                   
+                result = urlparse.urlparse(local_filename)
+                source_host = result.netloc
+                source_path = result.path
+                logger.debug(str((source_host, source_path, self.host, remote_path)))
+                if source_host == "" or source_host==None:
+                    cmd = "scp "+ source_path + " " + self.host + ":" + remote_path
+                else:
+                    cmd = "scp "+ source_host+":"+source_path + " " + self.host + ":" + remote_path
+                logger.debug("Command: %s"%cmd)
+                os.system(cmd)                   
+            elif(local_filename.startswith("go://")):
+                self.__third_party_transfer_host(local_filename, self.service_url + "/" + str(du.id))
+
                 
     
     def copy_du_to_url(self, du,  local_url, remote_url):
@@ -184,9 +187,6 @@ class GlobusOnlineFileAdaptor(object):
                 else:
                     self.__sftp.remove(filepath)
             self.__sftp.rmdir(path)
-            
-    
-   
             
         
     def __is_remote_directory(self, url):

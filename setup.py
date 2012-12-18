@@ -40,7 +40,7 @@ setup(name='BigJob',
       # data files for pip
       package_data = {'': ['*.conf']},
       install_requires=['uuid', 'threadpool', 'virtualenv', 'redis==2.2.4', 'bliss', 'google-api-python-client', 
-                        'boto>=2.2,<2.3', 'simplejson<2.1', 'pexpect'],
+                        'globusonline-transfer-api-client', 'boto>=2.2,<2.3', 'simplejson<2.1', 'pexpect'],
       entry_points = {
         'console_scripts': [
             'test-bigjob = examples.example_local_single:main',
