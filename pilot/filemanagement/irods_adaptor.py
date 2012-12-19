@@ -177,7 +177,7 @@ class iRodsFileAdaptor(object):
                 if i.find("copied") > 0 or i.find("replica")>0:
                     number_replica = number_replica + 1 
         rep_time = time.time() - start - put_time
-        logger.info("Upload;Replication;Total;File Size;Number Replica: %f;%f;%f;%d;%d"%(put_time, rep_time, time.time()-start, os.path.getsize(source), number_replica))
+        logger.info("Upload;Replication;Total;File Size;Backend;Number Replica: %f;%f;%f;%d;%s,%d"%(put_time, rep_time, time.time()-start, os.path.getsize(source), self.resource_group, number_replica))
          
 
     def transfer(self, source_url, target_url):
