@@ -32,11 +32,14 @@ class SSHFileAdaptor(object):
         
         # handle security context
         self.userkey=None
-        
+        self.security_context=security_context
+         
         # try to recover key from pilot_data_description
         if self.pilot_data_description!=None and\
            self.pilot_data_description.has_key("userkey"):
             self.userkey=self.pilot_data_description["userkey"]
+
+        logger.debug("Security Context: " + str(self.security_context))
             
         # try to recover key from security context
         if security_context!=None and security_context!="None":
@@ -56,17 +59,19 @@ class SSHFileAdaptor(object):
                 os.chmod(self.userkey, 0600)
             except:
                 self.__print_traceback()
+        os.system("find .")
         
 
     def get_security_context(self):
         """ Returns security context that needs to be available on the distributed
             node in order to access this Pilot Data """
-        if self.pilot_data_description.has_key("userkey"):
+        if (self.security_context==None or self.security_context=="None") and self.pilot_data_description.has_key("userkey"):
             f = open(self.pilot_data_description["userkey"])
             key = f.readlines()
             f.close
-            return {"userkey":key}
-        return None
+            self.security_context = {"userkey":key}
+        logger.debug("Return security context: " + str(self.security_context))        
+        return self.security_context
         
         
     def initialize_pilotdata(self):
@@ -76,8 +81,8 @@ class SSHFileAdaptor(object):
             command = "mkdir -p %s"%self.path 
             self.__run_ssh_command(self.userkey, self.user, self.host, command)      
         except IOError:
+            self.__print_traceback()
             # directory does not exist
-            pass    
         self.__state=State.Running
         
         
@@ -99,8 +104,11 @@ class SSHFileAdaptor(object):
             
     def create_du(self, du_id):
         du_dir = os.path.join(self.path, str(du_id))
+        logger.debug("/bin/date")
+        command = "/bin/date"
+        self.__run_ssh_command(self.userkey, self.user, self.host, command)
         logger.debug("mkdir: " + du_dir)
-        command = " mkdir %s"%du_dir
+        command = "mkdir %s"%du_dir
         self.__run_ssh_command(self.userkey, self.user, self.host, command)
         
         
@@ -147,6 +155,7 @@ class SSHFileAdaptor(object):
     def get_du(self, du, target_url):
         remote_url = target_url
         local_url =  self.service_url  + "/" + str(du.id)
+        logger.debug("get_du(): copy %s to %s:"%(local_url, remote_url))
         self.copy_du_to_url(du, local_url, remote_url)  
         
         
@@ -226,7 +235,7 @@ class SSHFileAdaptor(object):
 
     def __third_party_transfer_scp(self, source_url, target_url):
         result = urlparse.urlparse(source_url)
-        source_host = result.netloc
+        source_host = result.hostname
         source_path = result.path
         source_user = result.username
         if source_host==None or source_host=="":
@@ -256,12 +265,12 @@ class SSHFileAdaptor(object):
     def __run_ssh_command(self, userkey, user, host, command):
         prefix=""
         if host != None:
-            prefix = "ssh " + SSH_OPTS
+            prefix = "ssh " + SSH_OPTS + " "
             if userkey != None:
-                prefix = prefix + " -i " + userkey
+                prefix = prefix + " -i " + userkey + " "
             if user!=None:
                 prefix = prefix + " " + user+ "@" 
-            prefix = prefix + " " + host
+            prefix = prefix + host
         
         command = prefix + " " + command
         logger.debug(command.strip())
@@ -274,6 +283,7 @@ class SSHFileAdaptor(object):
 
 
     def __run_scp_command(self, userkey, source_user, source_host, source_path, target_user, target_host, target_path):
+        logger.debug("Create scp command: source_user: %s, source_host: %s"%(source_user, source_host))
         command = "scp " + SSH_OPTS + " "
         if userkey != None:
             command = command + "-i " + userkey + " "
@@ -289,7 +299,7 @@ class SSHFileAdaptor(object):
             command = command + " " + target_user + "@" 
        
         if target_host != None and target_host!="":
-            command = command + " " + target_host + ":"
+            command = command + target_host + ":"
             
         command = command + target_path 
         logger.debug(command)    
@@ -303,8 +313,8 @@ class SSHFileAdaptor(object):
     def __print_traceback(self):
         exc_type, exc_value, exc_traceback = sys.exc_info()
         print "*** print_tb:"
-        traceback.print_tb(exc_traceback, limit=1, file=sys.stdout)
+        traceback.print_tb(exc_traceback, limit=1, file=sys.stderr)
         print "*** print_exception:"
         traceback.print_exception(exc_type, exc_value, exc_traceback,
-                              limit=2, file=sys.stdout)
+                              limit=2, file=sys.stderr)
     

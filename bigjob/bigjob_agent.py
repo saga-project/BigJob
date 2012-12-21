@@ -742,12 +742,8 @@ class bigjob_agent:
         try:
             logger.debug("Stage in input files to: %s"%target_directory)
             for i in input_data:
-                #pd_url = self.__get_pd_url(i)
-                #du_id = self.__get_du_id(i)
-                #pd = PilotData(pd_url=pd_url)
-                #du = pd.get_du(du_id)
-                #du.export(target_directory)
                 du = DataUnit(du_url=i)
+                logger.debug("Restored DU... call get state()")
                 logger.debug("DU State: " + du.get_state())
                 du.wait()
                 logger.debug("Reconnected to DU. Exporting it now...")
@@ -836,6 +832,7 @@ class bigjob_agent:
     def __get_du_id(self, du_url):
         du_id = du_url[du_url.index("du-"):]
         return du_id        
+
     
     def __get_launch_method(self, requested_method):
         """ returns desired execution method: ssh, aprun """
@@ -848,7 +845,7 @@ class bigjob_agent:
         
         ssh_available = False
         try:
-            ssh_available = (subprocess.call("ssh localhost /bin/date", shell=True)==0)
+            ssh_available = (subprocess.call("ssh -o PasswordAuthentication=no -o NumberOfPasswordPrompts=0 localhost /bin/date", shell=True)==0)
         except:
             pass
         
@@ -868,10 +865,10 @@ class bigjob_agent:
     def __print_traceback(self):
         exc_type, exc_value, exc_traceback = sys.exc_info()
         print "*** print_tb:"
-        traceback.print_tb(exc_traceback, limit=1, file=sys.stdout)
+        traceback.print_tb(exc_traceback, limit=1, file=sys.stderr)
         print "*** print_exception:"
         traceback.print_exception(exc_type, exc_value, exc_traceback,
-                              limit=2, file=sys.stdout)
+                              limit=2, file=sys.stderr)
         
 #########################################################
 #  main                                                 #

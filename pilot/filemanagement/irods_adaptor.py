@@ -12,6 +12,7 @@ import traceback
 import time
 import re
 import shutil
+import pdb
 
 import pexpect
 
@@ -124,11 +125,13 @@ class iRodsFileAdaptor(object):
         #    time.sleep(1)
 
         for i in os.listdir(full_path):
-            logger.debug("move " + str(i))
             try:
+                logger.debug("chmod " + str(i))
+                os.chmod(os.path.join(full_path, i), 0777)
+                logger.debug("move " + str(i))
                 shutil.move(os.path.join(full_path, i), target_url)
             except:
-                pass
+                self.__print_traceback()
 
         shutil.rmtree(full_path, ignore_errors=True)
         #time.sleep(2)
@@ -165,13 +168,18 @@ class iRodsFileAdaptor(object):
             command = "iput -f -R %s %s %s"%(self.resource_group, source, target)
         self.__run_command(command)
         put_time = time.time() - start
+        number_replica = 0
         if self.is_local==False:
+            #pdb.set_trace()
             home_directory= self.__run_command("ipwd")[0].strip()
             full_filename = os.path.join(home_directory, target)
             command = "irepl-osg -f %s -G %s"%(full_filename, self.resource_group)
-            self.__run_command(command) 
+            output = self.__run_command(command) 
+            for i in output:
+                if i.find("copied") > 0 or i.find("replica")>0:
+                    number_replica = number_replica + 1 
         rep_time = time.time() - start - put_time
-        logger.info("Upload;Replication;Total;File Size: %f;%f;%f;%d"%(put_time, rep_time, time.time()-start, os.path.getsize(source)))
+        logger.info("Upload;Replication;Total;File Size;Backend;Number Replica: %f;%f;%f;%d;%s;%d"%(put_time, rep_time, time.time()-start, os.path.getsize(source), self.resource_group, number_replica))
          
 
     def transfer(self, source_url, target_url):
@@ -194,10 +202,10 @@ class iRodsFileAdaptor(object):
     def __print_traceback(self):
         exc_type, exc_value, exc_traceback = sys.exc_info()
         print "*** print_tb:"
-        traceback.print_tb(exc_traceback, limit=1, file=sys.stdout)
+        traceback.print_tb(exc_traceback, limit=1, file=sys.stderr)
         print "*** print_exception:"
         traceback.print_exception(exc_type, exc_value, exc_traceback,
-                              limit=2, file=sys.stdout)
+                              limit=2, file=sys.stderr)
     
     
 def test_irods():
