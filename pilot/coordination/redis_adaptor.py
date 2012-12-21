@@ -33,6 +33,9 @@ class RedisCoordinationAdaptor:
     
     @classmethod
     def get_base_url(cls, application_id):
+        if cls.BASE_URL==None:
+            logger.error("Coordination URL not set. Exiting Pilot-Data.")
+            raise Exception("Coordination URL not set. Exiting Pilot-Data.")
         surl = saga.Url(cls.BASE_URL)
         base_url = surl.scheme + "://" + surl.host + "/" + application_id 
         logger.debug(base_url)
