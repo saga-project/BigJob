@@ -155,6 +155,8 @@ class bigjob(api.base.bigjob):
         """  
         
         self.coordination_url = coordination_url
+        if self.coordination_url==None:
+            logger.error("Coordination URL not set. Exiting BigJob.")
         #self.launch_method=""
         self.__filemanager=None
         
