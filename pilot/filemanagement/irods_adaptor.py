@@ -139,7 +139,7 @@ class iRodsFileAdaptor(object):
         #    target_url = os.getcwd()
         #command = "mv %s/* %s"%(os.path.join(target_url, du_id), target_url)
         #self.__run_command(command)
-        logger.debug("Finished Get DU in: " + str(time.time()-start) + " sec.")
+        logger.debug("Finished Get DU " + du.id + " in: " + str(time.time()-start) + " sec.")
         
    
     def copy_du(self, du, pd_new):
