@@ -15,7 +15,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 from pilot.api import State
 from bigjob import logger
 
-SSH_OPTS="-o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
+SSH_OPTS="-o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=0"
 
 
 class SSHFileAdaptor(object):
@@ -59,7 +59,6 @@ class SSHFileAdaptor(object):
                 os.chmod(self.userkey, 0600)
             except:
                 self.__print_traceback()
-        os.system("find .")
         
 
     def get_security_context(self):
@@ -307,6 +306,7 @@ class SSHFileAdaptor(object):
         output = child.readlines()
         logger.debug("Run %s Output: %s"%(command, str(output)))
         child.close()
+        return child.exitstatus
         
     
    

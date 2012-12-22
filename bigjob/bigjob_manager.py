@@ -259,6 +259,7 @@ class bigjob(api.base.bigjob):
         if project !=None:
             jd.project=project       
         if walltime!=None:
+            logger.debug("setting walltime to: " + str(walltime))
             if is_bliss:
                 jd.wall_time_limit=int(walltime)
             else:
@@ -384,7 +385,7 @@ class bigjob(api.base.bigjob):
             jd.arguments = ["python", "-c", bootstrap_script]
             jd.executable = "/usr/bin/env"           
       
-        logger.debug("Working directory: " + jd.working_directory)
+        logger.debug("Working directory: " + jd.working_directory + " Job Description: " + str(jd))
         
         jd.output = os.path.join(self.working_directory, "stdout-" + self.uuid + "-agent.txt")
         jd.error = os.path.join(self.working_directory, "stderr-" + self.uuid + "-agent.txt")
