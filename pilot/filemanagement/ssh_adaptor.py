@@ -247,8 +247,8 @@ class SSHFileAdaptor(object):
             target_host="localhost"
 
         #check whether this is a local transfer
-        if target_host == source_host == "localhost":
-            logger.debug("Target and source host are localhost. Processing: %s IsDir: %s" %(source_path, os.path.isdir(source_path)))
+        if os.path.exists(os.path.dirname(source_path)):
+            logger.debug("Target and source host are localhost. Processing: %s" %(source_path))
             expanded_path = glob.glob(source_path)
             logger.debug("Expanded path: " + str(expanded_path))
             for path in expanded_path: 
@@ -256,9 +256,15 @@ class SSHFileAdaptor(object):
                     logger.debug("Source path %s is directory"%path)
                     files = os.listdir(path)
                     for i in files:
-                        os.symlink(os.path.join(files, i), target_path)
+                        try:
+                            os.symlink(os.path.join(files, i), target_path)
+                        except:
+                            self.__print_traceback()
                 else:
-                    os.symlink(path, os.path.join(target_path, os.path.basename(path)))
+                    try:
+                        os.symlink(path, os.path.join(target_path, os.path.basename(path)))
+                    except:
+                        self.__print_traceback()
         else:
             self.__run_scp_command(self.userkey, source_user, source_host, source_path, target_user, target_host, target_path)
 
