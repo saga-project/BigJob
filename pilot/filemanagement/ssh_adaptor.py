@@ -3,6 +3,7 @@ SSH-based coordination scheme between manager and agent
 '''
 import urlparse
 import pdb
+import glob
 import errno
 import sys
 import os
@@ -75,7 +76,6 @@ class SSHFileAdaptor(object):
         
     def initialize_pilotdata(self):
         # check whether directory exists
-        
         try:
             command = "mkdir -p %s"%self.path 
             self.__run_ssh_command(self.userkey, self.user, self.host, command)      
@@ -127,7 +127,6 @@ class SSHFileAdaptor(object):
                 if self.__is_remote_directory(local_filename):
                     logger.warning("Path %s is a directory. Ignored."%local_filename)                
                     continue
-                
                
                 #self.__third_party_transfer(i.local_url, remote_path)                
             else:
@@ -208,7 +207,7 @@ class SSHFileAdaptor(object):
         """Remove remote directory that may contain files.        
         """
         if self.__exists(path):
-            command = " rm -rf %s"%path
+            command = "rm -rf %s"%path
             rc = self.__run_ssh_command(self.userkey, self.user, self.host, command)
             if rc==0:
                 return True
@@ -244,8 +243,24 @@ class SSHFileAdaptor(object):
         target_host = result.netloc
         target_path = result.path
         target_user = result.username
-        
-        self.__run_scp_command(self.userkey, source_user, source_host, source_path, target_user, target_host, target_path)
+        if target_host==None or target_host=="":
+            target_host="localhost"
+
+        #check whether this is a local transfer
+        if target_host == source_host == "localhost":
+            logger.debug("Target and source host are localhost. Processing: %s IsDir: %s" %(source_path, os.path.isdir(source_path)))
+            expanded_path = glob.glob(source_path)
+            logger.debug("Expanded path: " + str(expanded_path))
+            for path in expanded_path: 
+                if os.path.isdir(path):
+                    logger.debug("Source path %s is directory"%path)
+                    files = os.listdir(path)
+                    for i in files:
+                        os.symlink(os.path.join(files, i), target_path)
+                else:
+                    os.symlink(path, os.path.join(target_path, os.path.basename(path)))
+        else:
+            self.__run_scp_command(self.userkey, source_user, source_host, source_path, target_user, target_host, target_path)
 
 
  
