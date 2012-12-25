@@ -13,7 +13,7 @@ import time
 import re
 import shutil
 import pdb
-
+import glob
 import pexpect
 
 # This is for local debugging!
@@ -114,32 +114,53 @@ class iRodsFileAdaptor(object):
         logger.debug("Get DU: " + str(du_id))
         if self.is_local:
             command = "cp -r %s %s"%(os.path.join(self.localpath, du_id), target_url)
+            source_path = os.path.join(self.localpath, du_id, "*")
+            target_path = target_url
+            logger.debug("Target and source host are localhost. Processing: %s" %(source_path))
+            expanded_path = glob.glob(source_path)
+            logger.debug("Expanded path: " + str(expanded_path))
+            for path in expanded_path:
+                if os.path.isdir(path):
+                    logger.debug("Source path %s is directory"%path)
+                    files = os.listdir(path)
+                    for i in files:
+                        try:
+                            os.symlink(os.path.join(files, i), target_path)
+                            os.chmod(os.path.join(target_path, os.path.basename(path)), 0777)
+                        except:
+                            self.__print_traceback()
+                else:
+                    try:
+                        os.symlink(path, os.path.join(target_path, os.path.basename(path)))
+                    except:
+                        self.__print_traceback()
+
         else:
             command = "iget -f -r %s %s"%(du_id, target_url)
-        logger.debug(command)
-        self.__run_command(command)
-        
-        full_path = os.path.join(target_url, du_id)
-        #logger.debug("Path: " + str(full_path) + " Exists: " + str(os.path.exists(full_path)))
-        #while os.path.exists(full_path)==False:
-        #    time.sleep(1)
-
-        for i in os.listdir(full_path):
-            try:
-                logger.debug("chmod " + str(i))
-                os.chmod(os.path.join(full_path, i), 0777)
-                logger.debug("move " + str(i))
-                shutil.move(os.path.join(full_path, i), target_url)
-            except:
-                self.__print_traceback()
-
-        shutil.rmtree(full_path, ignore_errors=True)
-        #time.sleep(2)
-        #if target_url==".":
-        #    target_url = os.getcwd()
-        #command = "mv %s/* %s"%(os.path.join(target_url, du_id), target_url)
-        #self.__run_command(command)
-        logger.debug("Finished Get DU " + du.id + " in: " + str(time.time()-start) + " sec.")
+            logger.debug(command)
+            self.__run_command(command)
+            
+            full_path = os.path.join(target_url, du_id)
+            #logger.debug("Path: " + str(full_path) + " Exists: " + str(os.path.exists(full_path)))
+            #while os.path.exists(full_path)==False:
+            #    time.sleep(1)
+    
+            for i in os.listdir(full_path):
+                try:
+                    logger.debug("chmod " + str(i))
+                    os.chmod(os.path.join(full_path, i), 0777)
+                    logger.debug("move " + str(i))
+                    shutil.move(os.path.join(full_path, i), target_url)
+                except:
+                    self.__print_traceback()
+    
+            shutil.rmtree(full_path, ignore_errors=True)
+            #time.sleep(2)
+            #if target_url==".":
+            #    target_url = os.getcwd()
+            #command = "mv %s/* %s"%(os.path.join(target_url, du_id), target_url)
+            #self.__run_command(command)
+            logger.debug("Finished Get DU " + du.id + " in: " + str(time.time()-start) + " sec.")
         
    
     def copy_du(self, du, pd_new):
