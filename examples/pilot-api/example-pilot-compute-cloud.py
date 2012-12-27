@@ -27,14 +27,12 @@ if __name__ == "__main__":
                              'affinity_machine_label': "", 
                              # cloud specific attributes
                              "vm_id":"ami-d7f742be",
-                             #"vm_id": "ami-7e37173b",
                              "vm_ssh_username":"ubuntu",
                              "vm_ssh_keyname":"MyKey",
                              "vm_ssh_keyfile":"/Users/luckow/.ssh/id_rsa",
                              "vm_type":"t1.micro",
-                             #"vm_region" : "us-west-1",
-                             "access_key_id":"YOUR_EUCA_ACCESS_KEY_ID",
-                             "secret_access_key":"YOUR_EUCA_SECRET_ACCESS_KEY"
+                             "access_key_id":"x",
+                             "secret_access_key":"x"
                             }
     
     pilot_compute_description_amazon_west = {
@@ -49,9 +47,9 @@ if __name__ == "__main__":
                              "vm_ssh_keyname":"MyKey",
                              "vm_ssh_keyfile":"/Users/luckow/.ssh/id_rsa",
                              "vm_type":"t1.micro",
-                             "vm_region" : "us-west-1",
-                             "access_key_id":"YOUR_AWS_ACCESS_KEY_ID",
-                             "secret_access_key":"YOUR_AWS_SECRET_ACCESS_KEY"
+                             "region" : "us-west-1",
+                             "access_key_id":"x",
+                             "secret_access_key":"x"
                            
                             }
     
