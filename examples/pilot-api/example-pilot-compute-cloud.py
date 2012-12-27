@@ -27,11 +27,32 @@ if __name__ == "__main__":
                              'affinity_machine_label': "", 
                              # cloud specific attributes
                              "vm_id":"ami-d7f742be",
+                             #"vm_id": "ami-7e37173b",
                              "vm_ssh_username":"ubuntu",
                              "vm_ssh_keyname":"MyKey",
                              "vm_ssh_keyfile":"/Users/luckow/.ssh/id_rsa",
-                             "vm_type":"t1.micro"
+                             "vm_type":"t1.micro",
+                             #"vm_region" : "us-west-1",
+                             "access_key_id":"OQTYSHQ9I6ACEXDTKTOGG",
+                             "secret_access_key":"STgYQPTyh89EWKp7lFtd77A4O2aghXjx0owqkNHm"
+                            }
     
+    pilot_compute_description_amazon_west = {
+                             "service_url": 'ec2+ssh://aws.amazon.com',
+                             "number_of_processes": 1,                             
+                             'affinity_datacenter_label': "us-google",              
+                             'affinity_machine_label': "", 
+                             # cloud specific attributes
+                             #"vm_id":"ami-d7f742be",
+                             "vm_id": "ami-7e37173b",
+                             "vm_ssh_username":"ubuntu",
+                             "vm_ssh_keyname":"MyKey",
+                             "vm_ssh_keyfile":"/Users/luckow/.ssh/id_rsa",
+                             "vm_type":"t1.micro",
+                             "vm_region" : "us-west-1",
+                             "access_key_id":"AKIAJPGNDJRYIG5LIEUA",
+                             "secret_access_key":"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"
+                           
                             }
     
     pilot_compute_description_euca_sierra = {
@@ -82,7 +103,7 @@ if __name__ == "__main__":
                              "secret_access_key":"bcdff54b7fe94d63b4412c762e823a84"
                             }
     
-    pilotjob = pilot_compute_service.create_pilot(pilot_compute_description=pilot_compute_description_euca_india)
+    pilotjob = pilot_compute_service.create_pilot(pilot_compute_description=pilot_compute_description_amazon_west)
     
     compute_data_service = ComputeDataService()
     compute_data_service.add_pilot_compute_service(pilot_compute_service)
