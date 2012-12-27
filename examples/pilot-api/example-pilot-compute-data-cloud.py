@@ -26,8 +26,8 @@ if __name__ == "__main__":
                                 "service_url": "s3://pilot-data-" + str(uuid.uuid1()),
                                 "size": 100,   
                                 "region" : "us-west-1", # or "" for DEFAULT/EAST
-                                "access_key_id":"AKIAJPGNDJRYIG5LIEUA",
-                                "secret_access_key":"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"                                                       
+                                "access_key_id":"",
+                                "secret_access_key":""                                                       
                               }
     
     pilot_data_description_india = {
@@ -35,8 +35,8 @@ if __name__ == "__main__":
                                 #"service_url": "ssh://localhost/tmp/pilot-data-" + str(uuid.uuid1()),
                                 "affinity_datacenter_label": "us-east",              
                                 "affinity_machine_label": "",
-                                "access_key_id":"x",
-                                "secret_access_key":"x"
+                                "access_key_id":"",
+                                "secret_access_key":""
                              }
     
     
@@ -74,8 +74,8 @@ if __name__ == "__main__":
                              "vm_ssh_keyfile":"/Users/luckow/.ssh/id_rsa",
                              "vm_type":"t1.micro",
                              "region" : "us-west-1",
-                             "access_key_id":"x",
-                             "secret_access_key":"x"
+                             "access_key_id":"",
+                             "secret_access_key":""
                            
                             }
     
@@ -93,8 +93,8 @@ if __name__ == "__main__":
                              "vm_ssh_keyname":"luckow",
                              "vm_ssh_keyfile":"/Users/luckow/.ssh/eucakey-india",
                              "vm_type":"c1.xlarge",
-                             "access_key_id":"8MCXRAMXMHDYKWNKXZ8WF",
-                             "secret_access_key":"YrcUqSw2Arxshrh3ZtenkxerWwCWdMTKvZYoLPAo"
+                             "access_key_id":"",
+                             "secret_access_key":""
                             }
     
     pilotjob = pilot_compute_service.create_pilot(pilot_compute_description=pilot_compute_description_amazon_west)
