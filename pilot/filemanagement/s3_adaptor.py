@@ -129,7 +129,7 @@ class S3FileAdaptor(object):
             self.bucket = self.s3_conn.create_bucket(self.bucket_name, location=self.s3_region)
         except:
             # bucket already exists
-            self.__print_traceback()
+            #self.__print_traceback()
             self.bucket = self.s3_conn.get_bucket(self.bucket_name)
             
         self.__state=State.Running

@@ -122,10 +122,11 @@ class Job(object):
             aws_region = None
             if self.pilot_compute_description.has_key("region"):
                 region =  self.pilot_compute_description["region"]
-                aws_regions = boto.ec2.regions()
-                for i in aws_regions:
-                    if i.name == region:
-                        aws_region = i 
+                logger.debug("Connect to region: %s" + region)
+                aws_region = boto.ec2.get_region(region,  
+                                                 aws_access_key_id=self.pilot_compute_description["access_key_id"], 
+                                                 aws_secret_access_key=self.pilot_compute_description["secret_access_key"]
+                                                 )
                 
             self.ec2_conn = EC2Connection(aws_access_key_id=self.pilot_compute_description["access_key_id"], 
                                           aws_secret_access_key=self.pilot_compute_description["secret_access_key"],

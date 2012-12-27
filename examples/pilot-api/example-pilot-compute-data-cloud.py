@@ -26,8 +26,8 @@ if __name__ == "__main__":
                                 "service_url": "s3://pilot-data-" + str(uuid.uuid1()),
                                 "size": 100,   
                                 "region" : "us-west-1", # or "" for DEFAULT/EAST
-                                "access_key_id":"YOUR_AWS_ACCESS_KEY_ID",
-                                "secret_access_key":"YOUR_AWS_SECRET_ACCESS_KEY"                                                       
+                                "access_key_id":"",
+                                "secret_access_key":""                                                       
                               }
     
     pilot_data_description_india = {
@@ -35,8 +35,8 @@ if __name__ == "__main__":
                                 #"service_url": "ssh://localhost/tmp/pilot-data-" + str(uuid.uuid1()),
                                 "affinity_datacenter_label": "us-east",              
                                 "affinity_machine_label": "",
-                                "access_key_id":"x",
-                                "secret_access_key":"x"
+                                "access_key_id":"",
+                                "secret_access_key":""
                              }
     
     
@@ -74,8 +74,8 @@ if __name__ == "__main__":
                              "vm_ssh_keyfile":"/Users/luckow/.ssh/id_rsa",
                              "vm_type":"t1.micro",
                              "region" : "us-west-1",
-                             "access_key_id":"x",
-                             "secret_access_key":"x"
+                             "access_key_id":"",
+                             "secret_access_key":""
                            
                             }
     
@@ -93,8 +93,8 @@ if __name__ == "__main__":
                              "vm_ssh_keyname":"luckow",
                              "vm_ssh_keyfile":"/Users/luckow/.ssh/eucakey-india",
                              "vm_type":"c1.xlarge",
-                             "access_key_id":"YOUR_EUCA_ACCESS_KEY_ID",
-                             "secret_access_key":"YOUR_EUCA_SECRET_ACCESS_KEY"
+                             "access_key_id":"",
+                             "secret_access_key":""
                             }
     
     pilotjob = pilot_compute_service.create_pilot(pilot_compute_description=pilot_compute_description_amazon_west)
