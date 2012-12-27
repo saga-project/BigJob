@@ -120,8 +120,8 @@ class Job(object):
                                           path=path)
         else:
             aws_region = None
-            if self.pilot_compute_description.has_key("vm_region"):
-                region =  self.pilot_compute_description["vm_region"]
+            if self.pilot_compute_description.has_key("region"):
+                region =  self.pilot_compute_description["region"]
                 aws_regions = boto.ec2.regions()
                 for i in aws_regions:
                     if i.name == region:
