@@ -226,6 +226,29 @@ class GlobusOnlineFileAdaptor(object):
         target_query = result.path
         target_ep = self.__get_ep(target_query)
         target_path = self.__get_path(target_query)
+
+
+        target_path = os.path.join(target_path, os.path.basename(source_path))
+        logger.debug("transfer from %s:%s to %s:%s"%(source_ep, source_path, target_ep, target_path))
+
+        if os.path.exists(os.path.dirname(source_path)) and os.path.exists(target_path):
+            logger.debug("Target and source host are localhost. Processing: %s" %(source_path))
+            expanded_path = glob.glob(source_path)
+            logger.debug("Expanded path: " + str(expanded_path))
+            for path in expanded_path:
+                if os.path.isdir(path):
+                    logger.debug("Source path %s is directory"%path)
+                    files = os.listdir(path)
+                    for i in files:
+                        try:
+                            os.symlink(os.path.join(files, i), target_path)
+                        except:
+                            self.__print_traceback()
+                else:
+                    try:
+                        os.symlink(path, os.path.join(target_path, os.path.basename(path)))
+                    except:
+                        self.__print_traceback()
         
         transfer_id = self.api.submission_id()[2]["value"]    
         logger.debug("Transfer ID: %s"%transfer_id)    
