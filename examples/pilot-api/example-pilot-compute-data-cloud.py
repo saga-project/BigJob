@@ -25,9 +25,9 @@ if __name__ == "__main__":
     pilot_data_description_aws={
                                 "service_url": "s3://pilot-data-" + str(uuid.uuid1()),
                                 "size": 100,   
-                                "region" : "us-west-1", # or "" for DEFAULT/EAST
-                                "access_key_id":"",
-                                "secret_access_key":""                                                       
+                                #"region" : "", # or "" for DEFAULT/EAST
+                                "access_key_id":"YOUR_AWS_ACCESS_KEY_ID",
+                                "secret_access_key":"YOUR_AWS_SECRET_ACCESS_KEY"                                                       
                               }
     
     pilot_data_description_india = {
@@ -74,8 +74,8 @@ if __name__ == "__main__":
                              "vm_ssh_keyfile":"/Users/luckow/.ssh/id_rsa",
                              "vm_type":"t1.micro",
                              "region" : "us-west-1",
-                             "access_key_id":"",
-                             "secret_access_key":""
+                             "access_key_id":"YOUR_AWS_ACCESS_KEY_ID",
+                             "secret_access_key":"YOUR_AWS_SECRET_ACCESS_KEY"
                            
                             }
     
