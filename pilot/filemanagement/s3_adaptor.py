@@ -105,6 +105,8 @@ class S3FileAdaptor(object):
                                         path=path)
         else: # s3:// urls
             self.s3_region = None
+            # Region specifier according to Amazon API:
+            # http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETlocation.html
             if self.pilot_data_description.has_key("region"):
                 self.s3_region =  self.pilot_data_description["region"]
            
@@ -126,6 +128,9 @@ class S3FileAdaptor(object):
     def initialize_pilotdata(self):
         # Create bucket
         try:
+            if self.s3_region==None:
+                logger.debug("Use default S3 region.")
+                self.s3_region = "" # Default for US East
             self.bucket = self.s3_conn.create_bucket(self.bucket_name, location=self.s3_region)
         except:
             # bucket already exists
