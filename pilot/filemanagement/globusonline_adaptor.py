@@ -60,7 +60,10 @@ class GlobusOnlineFileAdaptor(object):
         
     def initialize_pilotdata(self):
         # check whether directory exists
-        self.api.endpoint_mkdir(self.ep, self.path)            
+        try:
+            self.api.endpoint_mkdir(self.ep, self.path)            
+        except:
+            pass
         self.__state=State.Running
         
         
