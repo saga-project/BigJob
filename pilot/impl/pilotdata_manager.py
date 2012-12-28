@@ -501,7 +501,7 @@ class DataUnit(DataUnit):
             
     def add_files(self, file_url_list=[]):
         """Add files referenced in list to Data Unit"""
-        self.state=State.Pending
+        self._update_state(State.Pending)
         item_list = DataUnitItem.create_data_unit_from_urls(None, file_url_list)
         for i in item_list:
             self.data_unit_items.append(i)
@@ -510,6 +510,7 @@ class DataUnit(DataUnit):
             for i in self.pilot_data:
                 logger.debug("Update Pilot Data %s"%(i.get_url()))
                 i.put_du(self)
+        self._update_state(State.Running)
         CoordinationAdaptor.update_du(self)    
         
         
@@ -560,9 +561,12 @@ class DataUnit(DataUnit):
         for i in self.transfer_threads:
             i.join()
         
-        # Wait for state to change
-        while self.state!=State.Running and self.get_state()!=State.Failed:
-            logger.debug("Waiting DU State: %s"%self.state)
+        # Wait for state to change        
+        while True:
+            self.state = self.get_state()
+            if self.state==State.Running or self.state==State.Failed:
+                break
+            logger.debug("Waiting DU %s State: %s"%(self.get_url(), self.state))
             time.sleep(2)
     
     
@@ -585,7 +589,7 @@ class DataUnit(DataUnit):
         """ simple implementation of export: 
                 copies file from first pilot data to local machine
         """
-        if self.state!=State.Running:
+        if self.get_state()!=State.Running:
             self.wait()
         if len(self.pilot_data) > 0:
             self.pilot_data[0].export_du(self, target_url)
@@ -623,7 +627,7 @@ class DataUnit(DataUnit):
         else: # copy files from original location
             pilot_data.put_du(self)
         self.pilot_data.append(pilot_data)
-        self.state = State.Running
+        self._update_state(State.Running)
         
         #self.url = CoordinationAdaptor.add_du(pilot_data.url, self)
         CoordinationAdaptor.update_du(self)
