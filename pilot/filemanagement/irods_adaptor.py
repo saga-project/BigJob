@@ -2,7 +2,7 @@
 iRods based File Transfer Implementation
 '''
 import urlparse
-
+import datetime
 import errno
 import sys
 import os
@@ -132,6 +132,7 @@ class iRodsFileAdaptor(object):
                 else:
                     try:
                         os.symlink(path, os.path.join(target_path, os.path.basename(path)))
+                        os.chmod(os.path.join(target_path, os.path.basename(path)), 0777)
                     except:
                         self.__print_traceback()
 
@@ -200,7 +201,7 @@ class iRodsFileAdaptor(object):
                 if i.find("copied") > 0 or i.find("replica")>0:
                     number_replica = number_replica + 1 
         rep_time = time.time() - start - put_time
-        logger.info("Upload;Replication;Total;File Size;Backend;Number Replica: %f;%f;%f;%d;%s;%d"%(put_time, rep_time, time.time()-start, os.path.getsize(source), self.resource_group, number_replica))
+        logger.info("Upload;Replication;Total;File Size;Backend;Number Replica;Timestamp: %f;%f;%f;%d;%s;%d;%s"%(put_time, rep_time, time.time()-start, os.path.getsize(source), self.resource_group, number_replica, datetime.datetime.today().isoformat()))
          
 
     def transfer(self, source_url, target_url):
