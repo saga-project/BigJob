@@ -3,6 +3,7 @@ Globus Online based File Transfer
 '''
 import urlparse
 import pdb
+import glob
 import errno
 import sys
 import os
@@ -119,12 +120,34 @@ class GlobusOnlineFileAdaptor(object):
     
     def copy_du_to_url(self, du,  local_url, remote_url):
         base_dir = self.__get_path_for_du(du)
-        self.__create_remote_directory(remote_url)  
-        for filename in self.__sftp.listdir(base_dir):
-            file_url = local_url + "/" + filename
-            file_remote_url = remote_url + "/" + filename
-            logger.debug("Copy " + file_url + " to " + file_remote_url)
-            self.__third_party_transfer_host(file_url, file_remote_url)
+        logger.debug("copy_du_to_url, source: %s remote: %s"%(base_dir, remote_url))
+        if remote_url.startswith("/") and os.path.exists(base_dir):
+            target_path = remote_url
+            source_path = base_dir
+            logger.debug("Target and source host are localhost. Processing: %s" %(source_path))
+            expanded_path = glob.glob(source_path + "/*")
+            logger.debug("Expanded path: " + str(expanded_path))
+            for path in expanded_path:
+                if os.path.isdir(path):
+                    logger.debug("Source path %s is directory"%path)
+                    files = os.listdir(path)
+                    for i in files:
+                        try:
+                            os.symlink(os.path.join(files, i), target_path)
+                        except:
+                            self.__print_traceback()
+                else:
+                    try:
+                        os.symlink(path, os.path.join(target_path, os.path.basename(path)))
+                    except:
+                        self.__print_traceback()
+        else:
+            self.create_remote_directory(remote_url)  
+            for filename in self.__sftp.listdir(base_dir):
+                file_url = local_url + "/" + filename
+                file_remote_url = remote_url + "/" + filename
+                logger.debug("Copy " + file_url + " to " + file_remote_url)
+                self.__third_party_transfer_host(file_url, file_remote_url)
 
         
 
