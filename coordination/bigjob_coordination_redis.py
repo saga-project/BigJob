@@ -132,7 +132,6 @@ class bigjob_coordination(object):
     def set_job_state(self, job_url, new_state):
         #self.resource_lock.acquire()        
         logger.debug("set job state to: " + str(new_state))
-        self.redis_client.hset(job_url, "state", str(new_state))
         
         if new_state=="Unknown":
             self.redis_client.hset(job_url,"start_time", str(time.time()))
@@ -141,6 +140,7 @@ class bigjob_coordination(object):
         elif new_state=="Done":
             self.redis_client.hset(job_url, "end_time", str(time.time()))
        
+        self.redis_client.hset(job_url, "state", str(new_state))
         
         #self.resource_lock.release()
         
