@@ -130,13 +130,55 @@ PilotDataService
 
 PilotDataDescription
 =======================
-.. warning:: DOCUMENT_ME
+PilotDataDescription objects are used to describe the requirements for a 
+:class:`~pilot.impl.pilotdata_manager.PilotData` instance. Currently, the only
+generic property that can be set is :data:`size`, all other properties are 
+backend-specific security / authentication hints. Example::
 
-.. data:: XX 
+    PilotDataDescription pdd()
+    pdd.size = 100
 
-   (Property) XX.
+    data_pilot = service.create_pilot(pdd)
 
-   :type: YY
+.. data:: size 
+
+   The storage space required (in Megabyte) on the storage resource. 
+
+   :type: int
+
+   .. note:: The 'size' attribute is not supported by all PilotData backends.
+
+.. data:: userkey
+
+    DESCRIBE_ME
+
+    :type: string
+
+    .. note:: 'userkey' is only supported by ...
+
+.. data:: access_key_id
+
+    DESCRIBE_ME
+
+    :type: string
+
+    .. note:: 'access_key_id' is only supported by ...
+
+.. data:: secret_access_key
+
+    DESCRIBE_ME
+
+    :type: string
+
+    .. note:: 'secret_access_key' is only supported by ...
+
+.. data:: service_url
+
+    DESCRIBE_ME
+
+    :type: string
+
+    .. note:: 'service_url' is only supported by ...
 
 PilotData
 =========
@@ -155,14 +197,30 @@ ComputeDataService
 Compute and Data Units
 **********************
 
+PilotComputeDescription
+=======================
+.. warning:: DOCUMENT_ME 
+
 .. autoclass:: pilot.impl.pilotcompute_manager.PilotComputeDescription
    :members:
+
+ComputeUnit
+===========
+.. warning:: DOCUMENT_ME 
 
 .. autoclass:: pilot.impl.pilotcompute_manager.ComputeUnit
    :members:
 
+PilotDataDescription
+====================
+.. warning:: DOCUMENT_ME 
+
 .. autoclass:: pilot.impl.pilotdata_manager.PilotDataDescription
    :members:
+
+DataUnit
+========
+.. warning:: DOCUMENT_ME 
 
 .. autoclass:: pilot.impl.pilotdata_manager.DataUnit
    :members:
