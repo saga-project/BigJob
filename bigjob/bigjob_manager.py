@@ -370,8 +370,8 @@ class bigjob(api.base.bigjob):
             #output_file_transfer_spec = os.path.join(self.working_directory, output_file_name) +" < " + output_file_name
             output_file_transfer_spec = output_file_name +" < " + output_file_name
             #output_file_transfer_spec = os.path.join(self.working_directory, "output.tar.gz") +" < output.tar.gz"
-            logger.debug("Output transfer: " + output_file_transfer_spec)
-            bj_file_transfers.append(output_file_transfer_spec)
+            #logger.debug("Output transfer: " + output_file_transfer_spec)
+            #bj_file_transfers.append(output_file_transfer_spec)
             if filetransfers != None:
                 for t in filetransfers:
                     bj_file_transfers.append(t)

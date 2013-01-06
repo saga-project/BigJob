@@ -135,6 +135,8 @@ class bigjob_coordination(object):
         
         if new_state=="Unknown":
             self.redis_client.hset(job_url,"start_time", str(time.time()))
+        elif new_state=="Staging":
+            self.redis_client.hset(job_url,"start_staging_time", str(time.time()))
         elif new_state=="Running":
             self.redis_client.hset(job_url,"end_queue_time", str(time.time()))
         elif new_state=="Done":
