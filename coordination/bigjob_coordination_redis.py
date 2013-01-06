@@ -9,7 +9,7 @@ import os
 import pickle
 import pdb
 import time
-
+import socket
 from bigjob import logger
 import redis
 
@@ -138,6 +138,7 @@ class bigjob_coordination(object):
         elif new_state=="Running":
             self.redis_client.hset(job_url,"end_queue_time", str(time.time()))
         elif new_state=="Done":
+            self.redis_client.hset(job_url, "run_host", socket.gethostname())
             self.redis_client.hset(job_url, "end_time", str(time.time()))
        
         self.redis_client.hset(job_url, "state", str(new_state))
