@@ -357,10 +357,30 @@ class bigjob_agent:
                                 
                 # append job to job list
                 self.jobs.append(job_url)
+
+                ####################################################################################################### 
+                # special setup for MPI NAMD jobs
+                machinefile = self.allocate_nodes(job_dict)
+                host = "localhost"
+                try:
+                    machine_file_handler = open(machinefile, "r")
+                    node= machine_file_handler.readlines()
+                    machine_file_handler.close()
+                    host = node[0].strip()
+                except:
+                    pass
+
+
+                if(machinefile==None):
+                    logger.debug("Not enough resources to run: " + job_url)
+                    self.coordination.set_job_state(job_url, str(bigjob.state.New))
+                    self.coordination.queue_job(self.base_url, job_url)
+                    return # job cannot be run at the moment
                 
-                
+                ####################################################################################################### 
                 # File Stage-In of dependent data units
                 if job_dict.has_key("InputData"):
+                    self.coordination.set_job_state(job_url, str(bigjob.state.Staging))
                     self.__stage_in_data_units(eval(job_dict["InputData"]), workingdirectory)
                 
                 # File Stage-In - Move pilot-level files to working directory of sub-job
@@ -393,6 +413,7 @@ class bigjob_agent:
                 logger.debug("stdout: " + output_file + " stderr: " + error_file)
                 stdout = open(output_file, "w")
                 stderr = open(error_file, "w")
+                # build execution command
                 if self.LAUNCH_METHOD=="aprun":                    
                     if (spmdvariation.lower()=="mpi"):
                         command = envi + "aprun  -n " + str(numberofprocesses) + " " + executable + " " + arguments                   
@@ -415,25 +436,8 @@ class bigjob_agent:
                 else:
                     # Environment variables need to be handled later!
                     command =  envi + executable + " " + arguments
-                
-                # special setup for MPI NAMD jobs
-                machinefile = self.allocate_nodes(job_dict)
-                host = "localhost"
-                try:
-                    machine_file_handler = open(machinefile, "r")
-                    node= machine_file_handler.readlines()
-                    machine_file_handler.close()
-                    host = node[0].strip()
-                except:
-                    pass
 
-
-                if(machinefile==None):
-                    logger.debug("Not enough resources to run: " + job_url)
-                    self.coordination.queue_job(self.base_url, job_url)
-                    return # job cannot be run at the moment
-                
-                # build execution command
+                # add working directory and ssh command
                 if self.LAUNCH_METHOD == "aprun":
                     command ="cd " + workingdirectory + "; " + command
                 elif self.LAUNCH_METHOD == "local":
