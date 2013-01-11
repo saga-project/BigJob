@@ -1,9 +1,14 @@
 import logging
-import json
 import pdb
 from pilot import *
 from bigjob import logger
 import bliss.saga as saga
+
+try:
+    import json
+except ImportError:
+    import simplejson as json
+
 
 class RedisCoordinationAdaptor:
     """
@@ -26,9 +31,11 @@ class RedisCoordinationAdaptor:
     def configure_base_url(cls, base_url):
         cls.BASE_URL=base_url
     
-    
     @classmethod
     def get_base_url(cls, application_id):
+        if cls.BASE_URL==None:
+            logger.error("Coordination URL not set. Exiting Pilot-Data.")
+            raise Exception("Coordination URL not set. Exiting Pilot-Data.")
         surl = saga.Url(cls.BASE_URL)
         base_url = surl.scheme + "://" + surl.host + "/" + application_id 
         logger.debug(base_url)
@@ -111,6 +118,7 @@ class RedisCoordinationAdaptor:
         #                               saga.advert.CreateParents | 
         #                               saga.advert.ReadWrite)
         return cds_url_no_dbtype
+    
     
     @classmethod  
     def update_cds(cls, cds_url, cds):
@@ -215,11 +223,10 @@ class RedisCoordinationAdaptor:
     def __get_redis_api_client(cls):
         import redis
         ''' Initialize Redis API Client     '''
-        server_port=6379
         saga_url = saga.Url(RedisCoordinationAdaptor.BASE_URL)
         username = saga_url.username
         server = saga_url.host
-        
+        server_port = saga_url.port
         if username==None or username=="":
             redis_client = redis.Redis(host=server, port=server_port, db=0)
         else:

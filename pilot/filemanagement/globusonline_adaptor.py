@@ -3,6 +3,7 @@ Globus Online based File Transfer
 '''
 import urlparse
 import pdb
+import glob
 import errno
 import sys
 import os
@@ -17,7 +18,9 @@ from pilot.api import State
 from bigjob import logger
 
 from globusonline.transfer import api_client
-from globusonline.transfer.api_client.get_go_cookie import get_go_auth
+
+#from globusonline.transfer.api_client.get_go_cookie import get_go_auth
+from globusonline.transfer.api_client.goauth import get_access_token
 
 class GlobusOnlineFileAdaptor(object):
     """ BigData Coordination File Management for Pilot Data """
@@ -35,11 +38,14 @@ class GlobusOnlineFileAdaptor(object):
         self.user = result.username  
         self.password = result.password
         
-        result = get_go_auth(ca_certs=None, username=self.user, password=self.password)
-        saml_cookie = result.cookie
+        #result = get_go_auth(ca_certs=None, username=self.user, password=self.password)
+        result = get_access_token(ca_certs=None, username=self.user, password=self.password)
+        
+        #saml_cookie = result.cookie
+        saml_cookie = result.token
         
         self.api = api_client.TransferAPIClient(username=self.user,
-                                                saml_cookie=saml_cookie
+                                                goauth=saml_cookie
                                                 )
         status_code, status_message, data = self.api.task_list()
         
@@ -55,7 +61,10 @@ class GlobusOnlineFileAdaptor(object):
         
     def initialize_pilotdata(self):
         # check whether directory exists
-        self.api.endpoint_mkdir(self.ep, self.path)            
+        try:
+            self.api.endpoint_mkdir(self.ep, self.path)            
+        except:
+            pass
         self.__state=State.Running
         
         
@@ -84,41 +93,61 @@ class GlobusOnlineFileAdaptor(object):
         
     def put_du(self, du):
         logging.debug("Copy DU using Globus Online")
-        for i in du.list_data_unit_items():     
-            remote_path = os.path.join(self.path, str(du.id), os.path.basename(i.local_url))
-            logging.debug("Put file: %s to %s"%(i.local_url, remote_path))                        
-            if i.local_url.startswith("ssh://"):
+        du_items = du.list()
+        for i in du_items.keys():  
+            local_filename=du_items[i]["local"]
+            remote_path = os.path.join(self.path, str(du.id), os.path.basename(local_filename))
+            logging.debug("Put file: %s to %s"%(local_filename, remote_path))                        
+            if local_filename.startswith("ssh://"):
                 # check if remote path is directory
-                if self.__is_remote_directory(i.local_url):
-                    logging.warning("Path %s is a directory. Ignored."%i.local_url)                
+                if self.__is_remote_directory(local_filename):
+                    logging.warning("Path %s is a directory. Ignored."%local_filename)                
                     continue
-                
-               
-                #self.__third_party_transfer(i.local_url, remote_path)                
-            else:
-                if stat.S_ISDIR(os.stat(i.local_url).st_mode):
-                    logging.warning("Path %s is a directory. Ignored."%i.local_url)                
-                    continue         
-            result = urlparse.urlparse(i.local_url)
-            source_host = result.netloc
-            source_path = result.path
-            logger.debug(str((source_host, source_path, self.host, remote_path)))
-            if source_host == "" or source_host==None:
-                cmd = "scp "+ source_path + " " + self.host + ":" + remote_path
-            else:
-                cmd = "scp "+ source_host+":"+source_path + " " + self.host + ":" + remote_path
-            logger.debug("Command: %s"%cmd)
-            os.system(cmd)                   
+                result = urlparse.urlparse(local_filename)
+                source_host = result.netloc
+                source_path = result.path
+                logger.debug(str((source_host, source_path, self.host, remote_path)))
+                if source_host == "" or source_host==None:
+                    cmd = "scp "+ source_path + " " + self.host + ":" + remote_path
+                else:
+                    cmd = "scp "+ source_host+":"+source_path + " " + self.host + ":" + remote_path
+                logger.debug("Command: %s"%cmd)
+                os.system(cmd)                   
+            elif(local_filename.startswith("go://")):
+                self.__third_party_transfer_host(local_filename, self.service_url + "/" + str(du.id))
+
                 
     
     def copy_du_to_url(self, du,  local_url, remote_url):
         base_dir = self.__get_path_for_du(du)
-        self.__create_remote_directory(remote_url)  
-        for filename in self.__sftp.listdir(base_dir):
-            file_url = local_url + "/" + filename
-            file_remote_url = remote_url + "/" + filename
-            logger.debug("Copy " + file_url + " to " + file_remote_url)
-            self.__third_party_transfer_host(file_url, file_remote_url)
+        logger.debug("copy_du_to_url, source: %s remote: %s"%(base_dir, remote_url))
+        if remote_url.startswith("/") and os.path.exists(base_dir):
+            target_path = remote_url
+            source_path = base_dir
+            logger.debug("Target and source host are localhost. Processing: %s" %(source_path))
+            expanded_path = glob.glob(source_path + "/*")
+            logger.debug("Expanded path: " + str(expanded_path))
+            for path in expanded_path:
+                if os.path.isdir(path):
+                    logger.debug("Source path %s is directory"%path)
+                    files = os.listdir(path)
+                    for i in files:
+                        try:
+                            os.symlink(os.path.join(files, i), target_path)
+                        except:
+                            self.__print_traceback()
+                else:
+                    try:
+                        os.symlink(path, os.path.join(target_path, os.path.basename(path)))
+                    except:
+                        self.__print_traceback()
+        else:
+            self.create_remote_directory(remote_url)  
+            for filename in self.__sftp.listdir(base_dir):
+                file_url = local_url + "/" + filename
+                file_remote_url = remote_url + "/" + filename
+                logger.debug("Copy " + file_url + " to " + file_remote_url)
+                self.__third_party_transfer_host(file_url, file_remote_url)
 
         
 
@@ -185,9 +214,6 @@ class GlobusOnlineFileAdaptor(object):
                     self.__sftp.remove(filepath)
             self.__sftp.rmdir(path)
             
-    
-   
-            
         
     def __is_remote_directory(self, url):
         try:
@@ -226,6 +252,29 @@ class GlobusOnlineFileAdaptor(object):
         target_query = result.path
         target_ep = self.__get_ep(target_query)
         target_path = self.__get_path(target_query)
+
+
+        target_path = os.path.join(target_path, os.path.basename(source_path))
+        logger.debug("transfer from %s:%s to %s:%s"%(source_ep, source_path, target_ep, target_path))
+
+        if os.path.exists(os.path.dirname(source_path)) and os.path.exists(target_path):
+            logger.debug("Target and source host are localhost. Processing: %s" %(source_path))
+            expanded_path = glob.glob(source_path)
+            logger.debug("Expanded path: " + str(expanded_path))
+            for path in expanded_path:
+                if os.path.isdir(path):
+                    logger.debug("Source path %s is directory"%path)
+                    files = os.listdir(path)
+                    for i in files:
+                        try:
+                            os.symlink(os.path.join(files, i), target_path)
+                        except:
+                            self.__print_traceback()
+                else:
+                    try:
+                        os.symlink(path, os.path.join(target_path, os.path.basename(path)))
+                    except:
+                        self.__print_traceback()
         
         transfer_id = self.api.submission_id()[2]["value"]    
         logger.debug("Transfer ID: %s"%transfer_id)    

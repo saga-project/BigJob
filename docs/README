@@ -1,0 +1,22 @@
+Generating the documentation:
+
+Install BigJob from sources, i.e., in BigJob source root::
+
+    virtualenv /tmp/BJ/
+    source /tmp/BJ/bin/activate
+    easy_install .
+
+Next install Sphinx in the virtualenv::
+
+    pip install sphinx
+
+Change to the docs directory.
+
+    * make html creates the HTML documentation in build/html
+    * make latexpdf creates the PDF manual in build/latex
+
+
+
+
+
+

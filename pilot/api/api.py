@@ -10,7 +10,7 @@ class PilotError(Exception):
 
 
 class ComputeDataService(compute.api.ComputeUnitService, data.api.PilotDataService):
-    """ B{ComputeDataService.}
+    """ B{ComputeDataService (CDS).}
     
         The ComputeDataService is the application's interface to submit 
         ComputeUnits and PilotData/DataUnit to the Pilot-Manager 

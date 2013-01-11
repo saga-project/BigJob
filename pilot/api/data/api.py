@@ -3,9 +3,9 @@ This file contains the API for the PilotData Framework.
 """
     
 class PilotDataDescription(dict):
-    """ B{PilotDataDescription}
+    """ B{PilotDataDescription (PDD).}
     
-        Dictionary based description of a pilot for data
+        Dictionary based description containing reference to resource for Pilot Data.
         
         Example::
             
@@ -35,7 +35,7 @@ class PilotDataDescription(dict):
 
 
 class PilotData(object):
-    """ PilotData.  """
+    """ B{PilotData (PD)}.  """
 
     # Class members
     __slots__ = (
@@ -67,7 +67,7 @@ class PilotData(object):
 
 
 class PilotDataService(object):
-    """ PilotDataService (PDS).   """
+    """ B{PilotDataService (PDS).} """
 
     # Class members
     __slots__ = (
@@ -116,7 +116,9 @@ class PilotDataService(object):
 # PilotDataService
 # 
 class DataUnitService(object):
-    """ PilotDataService (PDS).   
+    """ B{DataUnitService (DUS).}
+    
+        Please use ComputeDataService
     """
    
     def __init__(self, pds_id=None):
@@ -184,9 +186,10 @@ class DataUnitService(object):
 # DataUnitDescription
 # 
 class DataUnitDescription(dict):
-    """ B{DataUnitDescription}::
+    """ B{DataUnitDescription (DUD).} 
     
-            Description object for the creation of L{DataUnit}s
+        Description object for the creation of L{DataUnit}s::
+    
             {
                 'file_urls': [file1, file2, file3]        
             } 
@@ -208,7 +211,9 @@ class DataUnitDescription(dict):
 # DataUnit 
 # 
 class DataUnit(object):
-    """ DataUnit. Holds a set of files.        
+    """ B{DataUnit (DU).} 
+    
+        Holds a set of files (that generally share the same locality and are used together).        
     """
 
     # Class members
@@ -222,16 +227,7 @@ class DataUnit(object):
     def cancel(self):
         """ Cancel the PD. """
         raise  NotImplementedError("Abstract super class, please use DataUnit implementation class in pilot namespace")
-
-    
-    def add_data_unit(self, data_unit):
-        pass
-    
-    def remove_data_unit(self, data_unit):
-        pass
-    
-    def list_data_units(self):
-        pass
+  
         
     def get_state(self):
         """

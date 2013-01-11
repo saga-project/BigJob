@@ -25,12 +25,12 @@ from bigjob.state import Running, New, Failed, Done, Unknown
 
 # Optional Job Plugins
 try:
-    from .job_plugin.gcessh import Service as GCEService
+    from job_plugin.gcessh import Service as GCEService
 except:
     pass 
 
 try:
-    from .job_plugin.ec2ssh import Service as EC2Service
+    from job_plugin.ec2ssh import Service as EC2Service
 except:
     pass 
 
@@ -155,6 +155,8 @@ class bigjob(api.base.bigjob):
         """  
         
         self.coordination_url = coordination_url
+        if self.coordination_url==None:
+            logger.error("Coordination URL not set. Exiting BigJob.")
         #self.launch_method=""
         self.__filemanager=None
         
@@ -259,6 +261,7 @@ class bigjob(api.base.bigjob):
         if project !=None:
             jd.project=project       
         if walltime!=None:
+            logger.debug("setting walltime to: " + str(walltime))
             if is_bliss:
                 jd.wall_time_limit=int(walltime)
             else:
@@ -326,7 +329,7 @@ class bigjob(api.base.bigjob):
                                                                           # or another external scheduler
                                                           )
         logger.debug("Adaptor specific modifications: "  + str(lrms_saga_url.scheme))
-        if is_bliss:
+        if is_bliss and lrms_saga_url.scheme.startswith("condor")==False:
             bootstrap_script = self.__escape_bliss(bootstrap_script)
         else:
             if lrms_saga_url.scheme == "gram":
@@ -343,6 +346,13 @@ class bigjob(api.base.bigjob):
         # (Python app cannot be passed inline in Condor job description)
         if lrms_saga_url.scheme.startswith("condor")==True:
 
+            bootstrap_script = self.__generate_bootstrap_script_from_binary(
+                                                          self.coordination.get_address(), 
+                                                          self.pilot_url, # Queue 1 used by this BJ object 
+                                                          external_queue  # Queue 2 used by Pilot Compute Service 
+                                                                          # or another external scheduler
+                                                          )
+     
             condor_bootstrap_filename = os.path.join("/tmp", "bootstrap-"+str(self.uuid))
             condor_bootstrap_file = open(condor_bootstrap_filename, "w")
             condor_bootstrap_file.write(bootstrap_script)
@@ -351,14 +361,17 @@ class bigjob(api.base.bigjob):
            
             jd.executable = "/usr/bin/env"
             jd.arguments = ["python",  os.path.basename(condor_bootstrap_filename)]                
+            if pilot_compute_description.has_key("candidate_hosts"):
+                jd.candidate_hosts = pilot_compute_description["candidate_hosts"]
             bj_file_transfers = []
             file_transfer_spec = condor_bootstrap_filename + " > " + os.path.basename(condor_bootstrap_filename)
             bj_file_transfers.append(file_transfer_spec)
             output_file_name = "output-" + str(self.uuid) + ".tar.gz"
-            output_file_transfer_spec = os.path.join(self.working_directory, output_file_name) +" < " + output_file_name
+            #output_file_transfer_spec = os.path.join(self.working_directory, output_file_name) +" < " + output_file_name
+            output_file_transfer_spec = output_file_name +" < " + output_file_name
             #output_file_transfer_spec = os.path.join(self.working_directory, "output.tar.gz") +" < output.tar.gz"
-            logger.debug("Output transfer: " + output_file_transfer_spec)
-            bj_file_transfers.append(output_file_transfer_spec)
+            #logger.debug("Output transfer: " + output_file_transfer_spec)
+            #bj_file_transfers.append(output_file_transfer_spec)
             if filetransfers != None:
                 for t in filetransfers:
                     bj_file_transfers.append(t)
@@ -374,7 +387,7 @@ class bigjob(api.base.bigjob):
             jd.arguments = ["python", "-c", bootstrap_script]
             jd.executable = "/usr/bin/env"           
       
-        logger.debug("Working directory: " + jd.working_directory)
+        logger.debug("Working directory: " + jd.working_directory + " Job Description: " + str(jd))
         
         jd.output = os.path.join(self.working_directory, "stdout-" + self.uuid + "-agent.txt")
         jd.error = os.path.join(self.working_directory, "stderr-" + self.uuid + "-agent.txt")
@@ -452,7 +465,8 @@ class bigjob(api.base.bigjob):
             if self.url.scheme.startswith("condor")==False:
                 self.job.cancel()
             else:
-                logger.debug("Output files are being transfered to file: outpt.tar.gz. Please wait until transfer is complete.")
+                pass
+                #logger.debug("Output files are being transfered to file: outpt.tar.gz. Please wait until transfer is complete.")
         except:
             pass
             #traceback.print_stack()
@@ -566,7 +580,7 @@ class bigjob(api.base.bigjob):
         return url
 
 
-    def __generate_bootstrap_script(self, coordination_host, coordination_namespace, external_coordination_namespace=""):
+    def __generate_bootstrap_script(self, coordination_host, coordination_namespace, external_coordination_namespace="", bigjob_home=None):
         script = textwrap.dedent("""import sys
 import os
 import urllib
@@ -594,7 +608,7 @@ for i in p: sys.path.insert(0, i)
 print "Python path: " + str(sys.path)
 print "Python version: " + str(sys.version_info)
 try: import saga
-except: print "SAGA and SAGA Python Bindings not found: BigJob only work w/ non-SAGA backends e.g. Redis, ZMQ.";
+except: print "SAGA and SAGA Python Bindings not found.";
 try: import bigjob.bigjob_agent
 except: 
     print "BigJob not installed. Attempt to install it."; 
@@ -604,12 +618,12 @@ except:
     os.system("/usr/bin/env")
     try:
         os.system("python " + BOOTSTRAP_FILE + " " + BIGJOB_PYTHON_DIR); 
-        activate_this = BIGJOB_PYTHON_DIR+'bin/activate_this.py'; 
+        activate_this = os.path.join(BIGJOB_PYTHON_DIR, "bin/activate_this.py"); 
         execfile(activate_this, dict(__file__=activate_this))
     except:
         print "BJ installation failed. Trying system-level python (/usr/bin/python)";
         os.system("/usr/bin/python " + BOOTSTRAP_FILE + " " + BIGJOB_PYTHON_DIR); 
-        activate_this = BIGJOB_PYTHON_DIR+'bin/activate_this.py'; 
+        activate_this = os.path.join(BIGJOB_PYTHON_DIR, "bin/activate_this.py"); 
         execfile(activate_this, dict(__file__=activate_this))
 #try to import BJ once again
 import bigjob.bigjob_agent
@@ -624,6 +638,58 @@ print "Starting BigJob Agents with following args: " + str(args)
 bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
 """ % (coordination_host, coordination_namespace, external_coordination_namespace))
         return script
+    
+    def __generate_bootstrap_script_from_binary(self, coordination_host, coordination_namespace, 
+                                                external_coordination_namespace="", 
+                                                bigjob_home=None):
+        script = textwrap.dedent("""import sys
+import os
+import urllib
+import sys
+import time
+start_time = time.time()
+home = os.environ.get("HOME")
+#print "Home: " + home
+if home==None: home = os.getcwd()
+BIGJOB_AGENT_DIR= os.path.join(home, ".bigjob")
+if not os.path.exists(BIGJOB_AGENT_DIR): os.mkdir (BIGJOB_AGENT_DIR)
+BIGJOB_PYTHON_DIR=BIGJOB_AGENT_DIR+"/python/"
+if not os.path.exists(BIGJOB_PYTHON_DIR): os.mkdir(BIGJOB_PYTHON_DIR)
+BOOTSTRAP_URL="http://s3.amazonaws.com/bigjob/bigjob-Linux-x86_64.tar.gz"
+BOOTSTRAP_FILE="bigjob-Linux-x86_64.tar.gz"
+#ensure that BJ in .bigjob is upfront in sys.path
+sys.path.insert(0, os.getcwd() + "/../")
+#sys.path.insert(0, /User/luckow/.bigjob/python/lib")
+#sys.path.insert(0, os.getcwd() + "/../../")
+p = list()
+for i in sys.path:
+    if i.find(\".bigjob/python\")>1:
+          p.insert(0, i)
+for i in p: sys.path.insert(0, i)
+print "Python path: " + str(sys.path)
+print "Python version: " + str(sys.version_info)
+try: import saga
+except: print "SAGA and SAGA Python Bindings not found.";
+try: import bigjob.bigjob_agent
+except: 
+    print "BigJob not installed. Attempt to install it."; 
+    #opener = urllib.FancyURLopener({}); 
+    #ret = opener.retrieve(BOOTSTRAP_URL, BOOTSTRAP_FILE); 
+    print "Download via wget"
+    os.system("wget " + BOOTSTRAP_URL)
+    os.system("rm -rf .bigjob")
+    print "Execute: " + "tar -xzf " + BOOTSTRAP_FILE
+    os.system("ls -lta")
+    try:
+        os.system("tar -xzf " + BOOTSTRAP_FILE); 
+        os.system("ls -lta")
+        os.system(".bigjob/python/bin/python -c 'import bigjob; import bigjob.bigjob_agent; print bigjob.version; bigjob.bigjob_agent.bigjob_agent([\\"bigjob_agent.py\\", \\"%s\\", \\"%s\\", \\"%s\\"])'")
+        
+    except:
+        print "BJ installation failed!";
+""" % (coordination_host, coordination_namespace, external_coordination_namespace))
+        return script
+
 
     def __escape_rsl(self, bootstrap_script):
         logger.debug("Escape RSL")
@@ -816,8 +882,9 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
     def __stage_files(self, filetransfers, target_url):
         logger.debug("Stage: %s to %s"%(filetransfers, target_url))
         if filetransfers==None:
-            return       
-        self.__filemanager.create_remote_directory(target_url)
+            return
+        if self.__filemanager:
+            self.__filemanager.create_remote_directory(target_url)
         for i in filetransfers:
             source_file=i
             if i.find(">")>0:
@@ -828,7 +895,8 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
             target_url_full = os.path.join(target_url, os.path.basename(source_file))
             logger.debug("Stage: %s to %s"%(source_file, target_url_full))
             #self.__third_party_transfer(source_file, target_url_full)
-            self.__filemanager.transfer(source_file, target_url_full)
+            if self.__filemanager:
+                self.__filemanager.transfer(source_file, target_url_full)
            
        
 

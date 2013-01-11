@@ -8,6 +8,7 @@ import traceback
 import sys
 from boto.ec2.connection import EC2Connection
 from boto.ec2.regioninfo import RegionInfo
+import boto.ec2
 
 import bliss.saga as saga
 import bliss
@@ -118,8 +119,20 @@ class Job(object):
                                           port=port,
                                           path=path)
         else:
+            aws_region = None
+            if self.pilot_compute_description.has_key("region"):
+                region =  self.pilot_compute_description["region"]
+                logger.debug("Connect to region: %s"%(str(region)))
+                aws_region = boto.ec2.get_region(region,  
+                                                 aws_access_key_id=self.pilot_compute_description["access_key_id"], 
+                                                 aws_secret_access_key=self.pilot_compute_description["secret_access_key"]
+                                                 )
+
+                
             self.ec2_conn = EC2Connection(aws_access_key_id=self.pilot_compute_description["access_key_id"], 
-                                          aws_secret_access_key=self.pilot_compute_description["secret_access_key"])
+                                          aws_secret_access_key=self.pilot_compute_description["secret_access_key"],
+                                          region = aws_region)
+            
         self.instance = None
         
         
