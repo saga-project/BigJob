@@ -9,17 +9,13 @@ import os
 import pickle
 import pdb
 import time
-
+import socket
 from bigjob import logger
 import redis
 
-if sys.version_info < (2, 5):
-    sys.path.append(os.path.dirname( os.path.abspath( __file__) ) + "/../ext/uuid-1.30/")
-    sys.stderr.write("Warning: Using unsupported Python version\n")
     
 logging.debug(str(sys.path))
 import uuid
-
 
 
 REDIS_SERVER="localhost"
@@ -136,15 +132,18 @@ class bigjob_coordination(object):
     def set_job_state(self, job_url, new_state):
         #self.resource_lock.acquire()        
         logger.debug("set job state to: " + str(new_state))
-        self.redis_client.hset(job_url, "state", str(new_state))
         
         if new_state=="Unknown":
             self.redis_client.hset(job_url,"start_time", str(time.time()))
+        elif new_state=="Staging":
+            self.redis_client.hset(job_url,"start_staging_time", str(time.time()))
         elif new_state=="Running":
             self.redis_client.hset(job_url,"end_queue_time", str(time.time()))
         elif new_state=="Done":
+            self.redis_client.hset(job_url, "run_host", socket.gethostname())
             self.redis_client.hset(job_url, "end_time", str(time.time()))
        
+        self.redis_client.hset(job_url, "state", str(new_state))
         
         #self.resource_lock.release()
         

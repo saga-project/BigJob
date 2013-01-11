@@ -22,25 +22,25 @@ if __name__ == "__main__":
     ###################################################################################################
     # Pick one of the Pilot Data Descriptions below    
     
-#    pilot_data_description_aws={
-#                                "service_url": "s3://pilot-data-" + str(uuid.uuid1()),
-#                                "size": 100,   
-#                                "affinity_datacenter_label": "us-east-1",              
-#                                "affinity_machine_label": ""                              
-#                             }
+    pilot_data_description_aws={
+                                "service_url": "s3://pilot-data-" + str(uuid.uuid1()),
+                                "size": 100,   
+                                #"region" : "", # or "" for DEFAULT/EAST
+                                "access_key_id":"AKIAJPGNDJRYIG5LIEUA",
+                                "secret_access_key":"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"                                                       
+                              }
     
     pilot_data_description_india = {
                                 "service_url": "walrus://149.165.146.135/pilot-data-" + str(uuid.uuid1()),
                                 #"service_url": "ssh://localhost/tmp/pilot-data-" + str(uuid.uuid1()),
-                                "size": 100,   
                                 "affinity_datacenter_label": "us-east",              
                                 "affinity_machine_label": "",
-                                "access_key_id":"8MCXRAMXMHDYKWNKXZ8WF",
-                                "secret_access_key":"YrcUqSw2Arxshrh3ZtenkxerWwCWdMTKvZYoLPAo"
+                                "access_key_id":"",
+                                "secret_access_key":""
                              }
     
     
-    pd = pilot_data_service.create_pilot(pilot_data_description=pilot_data_description_india)
+    pd = pilot_data_service.create_pilot(pilot_data_description=pilot_data_description_aws)
      
      
     # Create Data Unit Description
@@ -57,8 +57,28 @@ if __name__ == "__main__":
     # submit pilot data to a pilot store 
     input_data_unit = pd.submit_data_unit(data_unit_description)
     input_data_unit.wait()
+    
     logger.info("Data Unit URL: " + input_data_unit.get_url())
     pilot_compute_service = PilotComputeService(coordination_url=COORDINATION_URL)
+    
+    pilot_compute_description_amazon_west = {
+                             "service_url": 'ec2+ssh://aws.amazon.com',
+                             "number_of_processes": 1,                             
+                             'affinity_datacenter_label': "us-google",              
+                             'affinity_machine_label': "", 
+                             # cloud specific attributes
+                             #"vm_id":"ami-d7f742be",
+                             "vm_id": "ami-5c3b1b19",
+                             "vm_ssh_username":"ubuntu",
+                             "vm_ssh_keyname":"MyKey",
+                             "vm_ssh_keyfile":"/Users/luckow/.ssh/id_rsa",
+                             "vm_type":"t1.micro",
+                             "region" : "us-west-1",
+                             "access_key_id":"AKIAJPGNDJRYIG5LIEUA",
+                             "secret_access_key":"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"
+                           
+                            }
+    
     
     pilot_compute_description_euca_india = {
                              "service_url": 'euca+ssh://149.165.146.135:8773/services/Eucalyptus',
@@ -73,11 +93,11 @@ if __name__ == "__main__":
                              "vm_ssh_keyname":"luckow",
                              "vm_ssh_keyfile":"/Users/luckow/.ssh/eucakey-india",
                              "vm_type":"c1.xlarge",
-                             "access_key_id":"8MCXRAMXMHDYKWNKXZ8WF",
-                             "secret_access_key":"YrcUqSw2Arxshrh3ZtenkxerWwCWdMTKvZYoLPAo"
+                             "access_key_id":"",
+                             "secret_access_key":""
                             }
     
-    pilotjob = pilot_compute_service.create_pilot(pilot_compute_description=pilot_compute_description_euca_india)
+    pilotjob = pilot_compute_service.create_pilot(pilot_compute_description=pilot_compute_description_amazon_west)
     
     compute_data_service = ComputeDataService()
     compute_data_service.add_pilot_compute_service(pilot_compute_service)

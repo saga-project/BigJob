@@ -31,11 +31,15 @@ from threadpool import *
 
 # BigJob/Pilot framework classes
 from bigjob import logger
-from pilot.impl.pilotdata_manager import PilotData, DataUnit, PilotDataService
+
+try:
+    from pilot.impl.pilotdata_manager import PilotData, DataUnit, PilotDataService
+except:
+    logger.warning("Pilot Data classes could not be loaded. File movement will not work!")
 
 logger.debug("Python Version: " + str(sys.version_info))
 if sys.version_info < (2, 5):
-    sys.stderr.write("Warning: Using unsupported Python version\n")
+    sys.stderr.write("Python 2.4 - Warning: Not all functionalities working\n")
 if sys.version_info < (2, 4):
     sys.stderr.write("Warning: Using unsupported Python version\n")
 if sys.version_info < (2, 3):
@@ -152,8 +156,12 @@ class bigjob_agent:
         ###
         # Initiate coordination sub-system of both BJ agent and Pilot Data
         self.coordination = bigjob_coordination(server_connect_url=self.coordination_url)
-        self.pilot_data_service = PilotDataService(coordination_url=self.coordination_url)
-        
+        try:
+            # initialize coordination subsystem of pilot data
+            self.pilot_data_service = PilotDataService(coordination_url=self.coordination_url)
+        except:
+            logger.warn("Pilot-Data could not be initialized.")
+            
         # update state of pilot job to running
         logger.debug("set state to : " +  str(bigjob.state.Running))
         self.coordination.set_pilot_state(self.base_url, str(bigjob.state.Running), False)
@@ -311,6 +319,8 @@ class bigjob_agent:
                     logger.debug("Environment: " + str(env_list))
                     for i in env_list:
                         logger.debug("Eval " + i)
+                        # Hack for conduction experiments on Kraken
+                        # Kraken specific support for running n sub-jobs at a time
                         if i.startswith("NUMBER_SUBJOBS"):
                             self.number_subjobs=int(i.split("=")[1].strip())
                             logger.debug("NUMBER_SUBJOBS: " + str(self.number_subjobs))
@@ -347,10 +357,30 @@ class bigjob_agent:
                                 
                 # append job to job list
                 self.jobs.append(job_url)
+
+                ####################################################################################################### 
+                # special setup for MPI NAMD jobs
+                machinefile = self.allocate_nodes(job_dict)
+                host = "localhost"
+                try:
+                    machine_file_handler = open(machinefile, "r")
+                    node= machine_file_handler.readlines()
+                    machine_file_handler.close()
+                    host = node[0].strip()
+                except:
+                    pass
+
+
+                if(machinefile==None):
+                    logger.debug("Not enough resources to run: " + job_url)
+                    self.coordination.set_job_state(job_url, str(bigjob.state.New))
+                    self.coordination.queue_job(self.base_url, job_url)
+                    return # job cannot be run at the moment
                 
-                
+                ####################################################################################################### 
                 # File Stage-In of dependent data units
                 if job_dict.has_key("InputData"):
+                    self.coordination.set_job_state(job_url, str(bigjob.state.Staging))
                     self.__stage_in_data_units(eval(job_dict["InputData"]), workingdirectory)
                 
                 # File Stage-In - Move pilot-level files to working directory of sub-job
@@ -383,6 +413,7 @@ class bigjob_agent:
                 logger.debug("stdout: " + output_file + " stderr: " + error_file)
                 stdout = open(output_file, "w")
                 stderr = open(error_file, "w")
+                # build execution command
                 if self.LAUNCH_METHOD=="aprun":                    
                     if (spmdvariation.lower()=="mpi"):
                         command = envi + "aprun  -n " + str(numberofprocesses) + " " + executable + " " + arguments                   
@@ -404,26 +435,9 @@ class bigjob_agent:
                     #command ="chmod +x " + executable +";export PATH=$PATH:" + workingdirectory + ";" +command                    
                 else:
                     # Environment variables need to be handled later!
-                    command =  executable + " " + arguments
-                
-                # special setup for MPI NAMD jobs
-                machinefile = self.allocate_nodes(job_dict)
-                host = "localhost"
-                try:
-                    machine_file_handler = open(machinefile, "r")
-                    node= machine_file_handler.readlines()
-                    machine_file_handler.close()
-                    host = node[0].strip()
-                except:
-                    pass
+                    command =  envi + executable + " " + arguments
 
-
-                if(machinefile==None):
-                    logger.debug("Not enough resources to run: " + job_url)
-                    self.coordination.queue_job(self.base_url, job_url)
-                    return # job cannot be run at the moment
-                
-                # build execution command
+                # add working directory and ssh command
                 if self.LAUNCH_METHOD == "aprun":
                     command ="cd " + workingdirectory + "; " + command
                 elif self.LAUNCH_METHOD == "local":
@@ -677,16 +691,18 @@ class bigjob_agent:
     
     def print_job(self, job_url):
         job_dict = self.coordination.get_job(job_url)
-        return  ("Job: " + job_url  + " Excutable: " + job_dict["Executable"])
+        return  ("Job: " + job_url  + " Executable: " + job_dict["Executable"])
                                 
                             
     def start_background_thread(self):        
         self.stop=False                
         logger.debug("##################################### New POLL/MONITOR cycle ##################################")
-        logger.debug("Free nodes: " + str(len(self.freenodes)) + " Busy Nodes: " + str(len(self.busynodes)))
         while True and self.stop==False:
+            logger.debug("Free nodes: " + str(len(self.freenodes)) 
+                        + " Busy Nodes: " + str(len(self.busynodes))
+                        + " Number of running sub-jobs: " + str(len(self.jobs)))
             if self.is_stopped(self.base_url)==True:
-                logger.debug("Pilot job entry deleted - terminate agent")
+                logger.debug("Pilot terminated.")
                 break
             else:
                 logger.debug("Pilot job entry: " + str(self.base_url) + " exists. Pilot job not in state stopped.")
@@ -727,15 +743,18 @@ class bigjob_agent:
     
     def __stage_in_data_units(self, input_data=[], target_directory="."):
         """ stage in data units specified in input_data field """
-        logger.debug("Stage in input files to: %s"%target_directory)
-        for i in input_data:
-            #pd_url = self.__get_pd_url(i)
-            #du_id = self.__get_du_id(i)
-            #pd = PilotData(pd_url=pd_url)
-            #du = pd.get_du(du_id)
-            #du.export(target_directory)
-            du = DataUnit(du_url=i)
-            du.export(target_directory)
+        try:
+            logger.debug("Stage in input files to: %s"%target_directory)
+            for i in input_data:
+                du = DataUnit(du_url=i)
+                logger.debug("Restored DU... call get state()")
+                logger.debug("DU State: " + du.get_state())
+                du.wait()
+                logger.debug("Reconnected to DU. Exporting it now...")
+                du.export(target_directory)
+        except:
+            logger.error("Stage-in of files failed.")
+            self.__print_traceback()
     
     
     def __stage_out_data_units(self, output_data=[], workingdirectory=None):
@@ -753,28 +772,33 @@ class bigjob_agent:
                             ]
             }    
         """
-        for data_unit_dict in output_data: 
-            logger.debug("Process: " + str(data_unit_dict))
-            for du_url in data_unit_dict.keys(): # go through all dicts (each representing 1 PD) 
-                #pd_url = self.__get_pd_url(du_url)
-                #pilot_data = PilotData(pd_url=pd_url)
-                #du = pilot_data.get_du(du_url)
-                du = DataUnit(du_url=du_url)
-                file_list = data_unit_dict[du_url]
-                logger.debug("Add files: " + str(file_list))
-                all_files=[]
-                for output_file in file_list:
-                    expanded_files = [output_file]
-                    if output_file.find("*")>=0 or output_file.find("?")>=0:
-                        expanded_files = self.__expand_file_pattern(output_file, workingdirectory)
-                        logger.debug("Expanded files: " + str(expanded_files))
-                        
-                    for f in expanded_files:
-                        all_files.append(os.path.join(workingdirectory, f))
-                 
-                du.add_files(all_files)                        
-                for f in all_files:       
-                    os.remove(f)
+        try:
+            for data_unit_dict in output_data: 
+                logger.debug("Process: " + str(data_unit_dict))
+                for du_url in data_unit_dict.keys(): # go through all dicts (each representing 1 PD) 
+                    #pd_url = self.__get_pd_url(du_url)
+                    #pilot_data = PilotData(pd_url=pd_url)
+                    #du = pilot_data.get_du(du_url)
+                    du = DataUnit(du_url=du_url)
+                    file_list = data_unit_dict[du_url]
+                    logger.debug("Add files: " + str(file_list))
+                    all_files=[]
+                    for output_file in file_list:
+                        expanded_files = [output_file]
+                        if output_file.find("*")>=0 or output_file.find("?")>=0:
+                            expanded_files = self.__expand_file_pattern(output_file, workingdirectory)
+                            logger.debug("Expanded files: " + str(expanded_files))
+                            
+                        for f in expanded_files:
+                            all_files.append(os.path.join(workingdirectory, f))
+                     
+                    du.add_files(all_files)                        
+                    for f in all_files:       
+                        os.remove(f)
+        except:
+            logger.error("Stage out of files failed.")
+            self.__print_traceback()
+    
     
     def __expand_file_pattern(self, filename_pattern, workingdirectory):
         """ expand files with wildcard * to a list """
@@ -785,6 +809,7 @@ class bigjob_agent:
             if fnmatch.fnmatch(i, filename_pattern):
                 matches.append(i)
         return matches
+    
     
     def __expand_directory(self, directory):
         """ expands directory name $HOME or ~ to the working directory
@@ -811,6 +836,7 @@ class bigjob_agent:
     def __get_du_id(self, du_url):
         du_id = du_url[du_url.index("du-"):]
         return du_id        
+
     
     def __get_launch_method(self, requested_method):
         """ returns desired execution method: ssh, aprun """
@@ -823,7 +849,7 @@ class bigjob_agent:
         
         ssh_available = False
         try:
-            ssh_available = (subprocess.call("ssh localhost /bin/date", shell=True)==0)
+            ssh_available = (subprocess.call("ssh -o PasswordAuthentication=no -o NumberOfPasswordPrompts=0 localhost /bin/date", shell=True)==0)
         except:
             pass
         
@@ -839,7 +865,15 @@ class bigjob_agent:
                      + " Launch method: " + str(launch_method))
         return launch_method
     
-  
+    
+    def __print_traceback(self):
+        exc_type, exc_value, exc_traceback = sys.exc_info()
+        print "*** print_tb:"
+        traceback.print_tb(exc_traceback, limit=1, file=sys.stderr)
+        print "*** print_exception:"
+        traceback.print_exception(exc_type, exc_value, exc_traceback,
+                              limit=2, file=sys.stderr)
+        
 #########################################################
 #  main                                                 #
 #########################################################

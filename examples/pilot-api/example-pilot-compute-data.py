@@ -8,7 +8,8 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 from pilot import PilotComputeService, PilotDataService, ComputeDataService, State
 
 
-COORDINATION_URL = "redis://localhost:6379"
+#COORDINATION_URL = "redis://localhost:6379"
+COORDINATION_URL = "redis://ILikeBigJob_wITH-REdIS@gw68.quarry.iu.teragrid.org:6379"
 
 if __name__ == "__main__":      
     
@@ -18,7 +19,7 @@ if __name__ == "__main__":
     pilot_compute_description = {
                              "service_url": 'fork://localhost',
                              "number_of_processes": 1,                             
-                             "working_directory": "/tmp/pilot-compute/",
+                             "working_directory": os.getcwd() + "/work/",
                              'affinity_datacenter_label': "eu-de-south",              
                              'affinity_machine_label': "mymachine-1" 
                             }
@@ -33,7 +34,8 @@ if __name__ == "__main__":
                                 "service_url": "ssh://localhost/tmp/pilot-data/",
                                 "size": 100,   
                                 "affinity_datacenter_label": "eu-de-south",              
-                                "affinity_machine_label": "mymachine-1"                              
+                                "affinity_machine_label": "mymachine-1",
+                                #"userkey":"/Users/luckow/.ssh/rsa_osg",                             
                              }
     
     pilot_data_service.create_pilot(pilot_data_description=pilot_data_description)

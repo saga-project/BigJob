@@ -22,6 +22,7 @@ from bigjob import logger
 
 from boto.s3.connection import S3Connection, OrdinaryCallingFormat
 from boto.s3.key import Key
+from boto.s3.connection import Location
 
 # Authentication
 # Please use ~/.boto file to configure your security credentials (if possible)
@@ -41,6 +42,19 @@ class S3FileAdaptor(object):
         
             s3://
             walrus://<endpoint-ip>    
+            
+        Amazon S3 supported regions:
+        
+            Default is an empty string "" => us-east-1
+        
+            'ap-northeast-1'
+            'ap-southeast-1'
+            'ap-southeast-2'
+            'EU'
+            'sa-east-1'
+            'us-west-1'
+            'us-west-2'
+        
     """
     
    
@@ -90,7 +104,16 @@ class S3FileAdaptor(object):
                                         calling_format=calling_format,
                                         path=path)
         else: # s3:// urls
-            self.s3_conn = S3Connection(aws_access_key_id, aws_secret_access_key)
+            self.s3_region = None
+            # Region specifier according to Amazon API:
+            # http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETlocation.html
+            if self.pilot_data_description.has_key("region"):
+                self.s3_region =  self.pilot_data_description["region"]
+           
+            self.s3_conn = S3Connection(
+                                        aws_access_key_id, 
+                                        aws_secret_access_key, 
+                                        )
       
     
     
@@ -105,10 +128,13 @@ class S3FileAdaptor(object):
     def initialize_pilotdata(self):
         # Create bucket
         try:
-            self.bucket = self.s3_conn.create_bucket(self.bucket_name)
+            if self.s3_region==None:
+                logger.debug("Use default S3 region.")
+                self.s3_region = "" # Default for US East
+            self.bucket = self.s3_conn.create_bucket(self.bucket_name, location=self.s3_region)
         except:
             # bucket already exists
-            self.__print_traceback()
+            #self.__print_traceback()
             self.bucket = self.s3_conn.get_bucket(self.bucket_name)
             
         self.__state=State.Running

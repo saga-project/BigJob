@@ -33,12 +33,10 @@ if __name__ == "__main__":
             "arguments": [""],
             "number_of_processes": 1,            
             "output": "stdout.txt",
-            "error": "stderr.txt",   
-            "affinity_datacenter_label": "eu-de-south",              
-            "affinity_machine_label": "mymachine" 
+            "error": "stderr.txt",
     }    
     
-    for i in range(0,128):
+    for i in range(0,4):
         compute_unit = compute_data_service.submit_compute_unit(compute_unit_description)
     
     

@@ -28,9 +28,10 @@ class Scheduler:
         if data_unit_description.has_key("affinity_datacenter_label") and data_unit_description.has_key("affinity_machine_label"):
             for i in self.pilot_data: 
                 pilot_data_description = i.pilot_data_description
-                if data_unit_description["affinity_datacenter_label"] == pilot_data_description["affinity_datacenter_label"]\
-                and data_unit_description["affinity_machine_label"] == pilot_data_description["affinity_machine_label"]:
-                    candidate_pilot_data.append(i)
+                if pilot_data_description.has_key("affinity_machine_label") and pilot_data_description.has_key("affinity_datacenter_label"):
+                    if data_unit_description["affinity_datacenter_label"] == pilot_data_description["affinity_datacenter_label"]\
+                    and data_unit_description["affinity_machine_label"] == pilot_data_description["affinity_machine_label"]:
+                        candidate_pilot_data.append(i)
         
         if len(candidate_pilot_data) == 0:
             # No PD with requested affinity found
