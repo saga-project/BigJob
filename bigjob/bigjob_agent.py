@@ -50,7 +50,7 @@ import subprocess
 
 """ Config parameters (will move to config file in future) """
 CONFIG_FILE="bigjob_agent.conf"
-THREAD_POOL_SIZE=4
+THREAD_POOL_SIZE=1
 APPLICATION_NAME="bigjob"
 
 class bigjob_agent:
@@ -188,7 +188,9 @@ class bigjob_agent:
     
     
     def init_rms(self):
-        if(os.environ.get("PBS_NODEFILE")!=None):
+        if(os.environ.get("GLIDEIN_CPUS")!=None):
+            return self.init_condor_glidein()
+        elif(os.environ.get("PBS_NODEFILE")!=None):
             return self.init_pbs()
         elif(os.environ.get("PE_HOSTFILE")!=None):
             return self.init_sge()
@@ -196,17 +198,32 @@ class bigjob_agent:
             return self.init_local()
         return None
 
+    def init_condor_glidein(self):
+        logger.debug("Init nodefile from Condor GlideIn environment")
+        num_cpus = 1
+        try:
+            if(os.environ.get("GLIDEIN_CPUS")!=None):
+                num_cpus = int(os.environ.get("GLIDEIN_CPUS"))
+        except:
+             pass
+        for i in range(0, num_cpus): 
+            self.freenodes.append("localhost\n")
+        return self.freenodes            
+
     def init_local(self):
-        """ initialize free nodes list with dummy (for fork jobs)"""
+        """ initialize free nodes list with dummy (for fork jobs)"""  
+        logger.debug("Init nodefile from /proc/cpuinfo")
         try:
             num_cpus = self.get_num_cpus()
             for i in range(0, num_cpus): 
                 self.freenodes.append("localhost\n")
         except IOError:
             self.freenodes=["localhost\n"]
+        return self.freenodes            
 
     def init_sge(self):
         """ initialize free nodes list from SGE environment """
+        logger.debug("Init nodeslist from SGE NODEFILE")
         sge_node_file = os.environ.get("PE_HOSTFILE")    
         if sge_node_file == None:
                 return
@@ -226,6 +243,7 @@ class bigjob_agent:
 
     def init_pbs(self):
         """ initialize free nodes list from PBS environment """
+        logger.debug("Init nodeslist from PBS NODEFILE")
         if self.LAUNCH_METHOD == "aprun":
             # Workaround for Kraken
             # PBS_NODEFILE does only contain front node
@@ -606,6 +624,7 @@ class bigjob_agent:
             
             request = WorkRequest(self.start_new_job_in_thread, [job_url])
             self.threadpool.putRequest(request)
+            #time.sleep(1)
             
         # wait for termination of Worker Threads
         # self.threadpool.wait()   
