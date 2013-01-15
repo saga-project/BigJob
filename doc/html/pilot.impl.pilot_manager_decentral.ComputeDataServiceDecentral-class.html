@@ -60,17 +60,17 @@
 <center>
 <center>  <map id="uml_class_diagram_for_pilot_im_4" name="uml_class_diagram_for_pilot_im_4">
 <area shape="rect" id="node1_22" href="pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral-class.html#CDS_ID_PREFIX" title="pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral.CDS_ID_PREFIX" alt="" coords="119,241,440,260"/>
-<area shape="rect" id="node1_23" href="pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral-class.html#__init__" title="Create a ComputeDataService object." alt="" coords="119,263,440,281"/>
+<area shape="rect" id="node1_23" href="pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral-class.html#__init__" title="Create a ComputeDataService (Decentral) object." alt="" coords="119,263,440,281"/>
 <area shape="rect" id="node1_24" href="pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral-class.html#add_pilot_compute_service" title="Add a PilotComputeService to this CDS." alt="" coords="119,281,440,300"/>
 <area shape="rect" id="node1_25" href="pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral-class.html#remove_pilot_compute_service" title="Remove a PilotJobService from this CDS." alt="" coords="119,300,440,319"/>
 <area shape="rect" id="node1_26" href="pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral-class.html#submit_compute_unit" title="Submit a CU to this Compute Data Service." alt="" coords="119,319,440,337"/>
 <area shape="rect" id="node1_27" href="pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral-class.html#list_pilot_compute" title="List all pilot compute of CDS" alt="" coords="119,337,440,356"/>
-<area shape="rect" id="node1_28" href="pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral-class.html#add_pilot_data_service" title="Not implemented yet" alt="" coords="119,356,440,375"/>
-<area shape="rect" id="node1_29" href="pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral-class.html#remove_pilot_data_service" title="Not implemented yet" alt="" coords="119,375,440,393"/>
-<area shape="rect" id="node1_30" href="pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral-class.html#list_pilot_data" title="Not implemented yet" alt="" coords="119,393,440,412"/>
-<area shape="rect" id="node1_31" href="pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral-class.html#list_data_units" title="Not implemented yet" alt="" coords="119,412,440,431"/>
-<area shape="rect" id="node1_32" href="pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral-class.html#get_data_unit" title="Not implemented yet" alt="" coords="119,431,440,449"/>
-<area shape="rect" id="node1_33" href="pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral-class.html#submit_data_unit" title="Not implemented yet" alt="" coords="119,449,440,468"/>
+<area shape="rect" id="node1_28" href="pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral-class.html#add_pilot_data_service" title="Add a PilotDataService" alt="" coords="119,356,440,375"/>
+<area shape="rect" id="node1_29" href="pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral-class.html#remove_pilot_data_service" title="Remove a PilotDataService" alt="" coords="119,375,440,393"/>
+<area shape="rect" id="node1_30" href="pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral-class.html#list_pilot_data" title="List all pilot data of CDS" alt="" coords="119,393,440,412"/>
+<area shape="rect" id="node1_31" href="pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral-class.html#list_data_units" title="List all DUs of CDS" alt="" coords="119,412,440,431"/>
+<area shape="rect" id="node1_32" href="pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral-class.html#get_data_unit" title="pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral.get_data_unit" alt="" coords="119,431,440,449"/>
+<area shape="rect" id="node1_33" href="pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral-class.html#submit_data_unit" title="creates a data unit object and binds it to a physical resource (a &#160;pilotdata)" alt="" coords="119,449,440,468"/>
 <area shape="rect" id="node1_34" href="pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral-class.html#cancel" title="Cancel the CDS." alt="" coords="119,468,440,487"/>
 <area shape="rect" id="node1_35" href="pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral-class.html#wait" title="Waits for CUs and DUs." alt="" coords="119,487,440,505"/>
 <area shape="rect" id="node1_36" href="pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral-class.html#__del__" title="Make sure that background thread terminates" alt="" coords="119,524,440,543"/>
@@ -90,7 +90,7 @@
 </center>
 </center>
 <hr />
-<p>ComputeDataServiceDecentral.</p>
+<p><b>ComputeDataServiceDecentral.</b></p>
   <p>The ComputeDataService is the application's interface to submit 
   ComputeUnits and PilotData/DataUnit to the Pilot-Manager in the P* 
   Model.</p>
@@ -112,7 +112,7 @@
         <tr>
           <td><span class="summary-sig"><a href="pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">cds_url</span>=<span class="summary-sig-default">None</span>)</span><br />
-      Create a ComputeDataService object.</td>
+      Create a ComputeDataService (Decentral) object.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="pilot.impl.pilot_manager_decentral-pysrc.html#ComputeDataServiceDecentral.__init__">source&nbsp;code</a></span>
             
@@ -199,9 +199,9 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="add_pilot_data_service"></a><span class="summary-sig-name">add_pilot_data_service</span>(<span class="summary-sig-arg">self</span>,
+          <td><span class="summary-sig"><a href="pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral-class.html#add_pilot_data_service" class="summary-sig-name">add_pilot_data_service</a>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">pds</span>)</span><br />
-      Not implemented yet</td>
+      Add a PilotDataService</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="pilot.impl.pilot_manager_decentral-pysrc.html#ComputeDataServiceDecentral.add_pilot_data_service">source&nbsp;code</a></span>
             
@@ -217,9 +217,9 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="remove_pilot_data_service"></a><span class="summary-sig-name">remove_pilot_data_service</span>(<span class="summary-sig-arg">self</span>,
+          <td><span class="summary-sig"><a href="pilot.impl.pilot_manager_decentral.ComputeDataServiceDecentral-class.html#remove_pilot_data_service" class="summary-sig-name">remove_pilot_data_service</a>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">pds</span>)</span><br />
-      Not implemented yet</td>
+      Remove a PilotDataService</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="pilot.impl.pilot_manager_decentral-pysrc.html#ComputeDataServiceDecentral.remove_pilot_data_service">source&nbsp;code</a></span>
             
@@ -236,7 +236,7 @@
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a name="list_pilot_data"></a><span class="summary-sig-name">list_pilot_data</span>(<span class="summary-sig-arg">self</span>)</span><br />
-      Not implemented yet</td>
+      List all pilot data of CDS</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="pilot.impl.pilot_manager_decentral-pysrc.html#ComputeDataServiceDecentral.list_pilot_data">source&nbsp;code</a></span>
             
@@ -253,7 +253,7 @@
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a name="list_data_units"></a><span class="summary-sig-name">list_data_units</span>(<span class="summary-sig-arg">self</span>)</span><br />
-      Not implemented yet</td>
+      List all DUs of CDS</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="pilot.impl.pilot_manager_decentral-pysrc.html#ComputeDataServiceDecentral.list_data_units">source&nbsp;code</a></span>
             
@@ -270,8 +270,7 @@
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a name="get_data_unit"></a><span class="summary-sig-name">get_data_unit</span>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">du_id</span>)</span><br />
-      Not implemented yet</td>
+        <span class="summary-sig-arg">du_id</span>)</span></td>
           <td align="right" valign="top">
             <span class="codelink"><a href="pilot.impl.pilot_manager_decentral-pysrc.html#ComputeDataServiceDecentral.get_data_unit">source&nbsp;code</a></span>
             
@@ -289,7 +288,8 @@
         <tr>
           <td><span class="summary-sig"><a name="submit_data_unit"></a><span class="summary-sig-name">submit_data_unit</span>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">data_unit_description</span>)</span><br />
-      Not implemented yet</td>
+      creates a data unit object and binds it to a physical resource (a 
+      pilotdata)</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="pilot.impl.pilot_manager_decentral-pysrc.html#ComputeDataServiceDecentral.submit_data_unit">source&nbsp;code</a></span>
             
@@ -557,7 +557,7 @@
     </td>
   </tr></table>
   
-  <p>Create a ComputeDataService object.</p>
+  <p>Create a ComputeDataService (Decentral) object.</p>
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
@@ -656,6 +656,54 @@ Result
     <dt>Overrides:
         <a href="pilot.api.compute.api.ComputeUnitService-class.html#submit_compute_unit">api.compute.api.ComputeUnitService.submit_compute_unit</a>
     </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="add_pilot_data_service"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">add_pilot_data_service</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">pds</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="pilot.impl.pilot_manager_decentral-pysrc.html#ComputeDataServiceDecentral.add_pilot_data_service">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Add a PilotDataService</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>pds</code></strong> - The PilotDataService to add.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="remove_pilot_data_service"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">remove_pilot_data_service</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">pds</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="pilot.impl.pilot_manager_decentral-pysrc.html#ComputeDataServiceDecentral.remove_pilot_data_service">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Remove a PilotDataService</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>pds</code></strong> - The PilotDataService to remove</li>
+    </ul></dd>
   </dl>
 </td></tr></table>
 </div>
@@ -779,7 +827,7 @@ Result
   <tr>
     <td align="left" class="footer">
     <a href="epydoc-log.html">Generated by Epydoc
-    3.0.1 on Sun Nov 25 18:23:12 2012</a>
+    3.0.1 on Tue Jan 15 11:55:13 2013</a>
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"
