@@ -32,6 +32,10 @@ except:
 try:
     from job_plugin.ec2ssh import Service as EC2Service
 except:
+    pass  
+try:
+    from job_plugin.slurmssh import Service as SlurmService
+except:
     pass 
 
 
@@ -39,6 +43,7 @@ except:
 # import API
 import api.base
 sys.path.append(os.path.dirname(__file__))
+
 
 if SAGA_BLISS == False:
     try:
@@ -231,10 +236,12 @@ class bigjob(api.base.bigjob):
         # Create Job Service (Default: SAGA Job Service, alternative Job Services supported)
         self.js =None
         if lrms_saga_url.scheme=="gce+ssh":
-            self.js = GCEService(lrms_saga_url, pilot_compute_description)
+            self.js = GCEService(lrms_saga_url, pilot_compute_description) 
         elif lrms_saga_url.scheme=="ec2+ssh" or lrms_saga_url.scheme=="euca+ssh" \
             or lrms_saga_url.scheme=="nova+ssh":
-            self.js = EC2Service(lrms_saga_url, pilot_compute_description)
+            self.js = EC2Service(lrms_saga_url, pilot_compute_description)    
+        elif lrms_saga_url.scheme=="slurm+ssh":
+            self.js = SlurmService(lrms_saga_url, pilot_compute_description)          
         else:
             self.js = SAGAJobService(lrms_saga_url)
         
@@ -329,6 +336,7 @@ class bigjob(api.base.bigjob):
                                                                           # or another external scheduler
                                                           )
         logger.debug("Adaptor specific modifications: "  + str(lrms_saga_url.scheme))
+
         if is_bliss and lrms_saga_url.scheme.startswith("condor")==False:
             bootstrap_script = self.__escape_bliss(bootstrap_script)
         else:
@@ -336,8 +344,9 @@ class bigjob(api.base.bigjob):
                 bootstrap_script = self.__escape_rsl(bootstrap_script)
             elif lrms_saga_url.scheme == "pbspro" or lrms_saga_url.scheme=="xt5torque" or lrms_saga_url.scheme=="torque":                
                 bootstrap_script = self.__escape_pbs(bootstrap_script)
-            elif lrms_saga_url.scheme == "ssh":
-                bootstrap_script = self.__escape_ssh(bootstrap_script)
+            elif lrms_saga_url.scheme == "ssh" and lrms_saga_url.scheme == "slurm+ssh":
+                bootstrap_script = self.__escape_ssh(bootstrap_script)                    
+                
         logger.debug(bootstrap_script)
         
         
