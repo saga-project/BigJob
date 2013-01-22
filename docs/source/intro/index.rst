@@ -23,19 +23,20 @@ What makes BigJob different?
 =================
 
 Unlike other common Pilot-Job systems, SAGA BigJob: 
-1. Natively supports MPI job
-2. Works on a variety of back-end systems
+
+#. Natively supports MPI jobs
+#. Works on a variety of back-end systems
 
 =================
 Supported Adaptors
 =================
 
-* fork - Allows job execution and file handling on the local machine
-* SSH - Allows job execution on remote hosts via SSH
-* GSISSH - Allows job execution on remote hosts via GSISSH
-* PBS(+SSH,+GSISSH) - Provides local and remote access (SSH+GSISSH) to PBS/Torque clusters
-* SGE(+SSH,+GSISSH) - Provides local and remote access (SSH+GSISSH) Sun (Oracle) Grid Engine Clusters
-* GRAM - Uses Globus to submit jobs. Globus certificates are required.
-* Amazon EC2(+SSH) - Start Virtual Machines and submit jobs to AWS clouds
-* Eucalyptus(+SSH) - Start Virtual Machines and submit jobs to Eucalyptus clouds
-* Coming Soon: SLURM
+* **fork** - Allows job execution and file handling on the local machine
+* **SSH** - Allows job execution on remote hosts via SSH
+* **GSISSH** - Allows job execution on remote hosts via GSISSH
+* **PBS(+SSH,+GSISSH)** - Provides local and remote access (SSH+GSISSH) to PBS/Torque clusters
+* **SGE(+SSH,+GSISSH)** - Provides local and remote access (SSH+GSISSH) Sun (Oracle) Grid Engine Clusters
+* **GRAM** - Uses Globus to submit jobs. Globus certificates are required.
+* **Amazon EC2(+SSH)** - Start Virtual Machines and submit jobs to AWS clouds
+* **Eucalyptus(+SSH)** - Start Virtual Machines and submit jobs to Eucalyptus clouds
+* *Coming Soon:* **SLURM**
