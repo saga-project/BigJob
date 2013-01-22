@@ -309,7 +309,7 @@ class SSHFileAdaptor(object):
             command = command + "-i " + userkey + " "
         if source_user!=None:
             command = command + " " + source_user + "@" 
-        if source_host != None and source_host!="":
+        if source_host != None and source_host!="" and source_host!="localhost":
             command = command + source_host + ":"
         
         # path is a must parameter
@@ -318,7 +318,7 @@ class SSHFileAdaptor(object):
         if target_user!=None:
             command = command + " " + target_user + "@" 
        
-        if target_host != None and target_host!="":
+        if target_host != None and target_host!="" and target_host!="localhost":
             command = command + target_host + ":"
             
         command = command + target_path 
