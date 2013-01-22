@@ -26,7 +26,6 @@ class Service(object):
             
     
     def create_job(self, job_description):
-        pdb.set_trace()
         j = Job(job_description, self.resource_url, self.pilot_compute_description)
         return j
             
