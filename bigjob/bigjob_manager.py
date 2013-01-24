@@ -231,6 +231,18 @@ class bigjob(api.base.bigjob):
         self.coordination.set_pilot_state(self.pilot_url, str(Unknown), False)
         self.coordination.set_pilot_description(self.pilot_url, filetransfers)    
         logger.debug("set pilot state to: " + str(Unknown))
+        ##############################################################################
+        # Initialize pilot_compute_description if not populated, to support bigjob_native 
+        # api
+        
+        if pilot_compute_description == None:
+			pilot_compute_description={}
+			pilot_compute_description['userproxy'] = userproxy
+			pilot_compute_description['queue'] = queue
+			pilot_compute_description['project'] = project
+			pilot_compute_description['working_directory'] = working_directory
+			pilot_compute_description['walltime'] = walltime
+			pilot_compute_description['number_of_processes'] = number_nodes*processes_per_node
         
         ##############################################################################
         # Create Job Service (Default: SAGA Job Service, alternative Job Services supported)
@@ -243,8 +255,7 @@ class bigjob(api.base.bigjob):
         elif lrms_saga_url.scheme=="slurm+ssh":
             self.js = SlurmService(lrms_saga_url, pilot_compute_description)          
         else:
-            self.js = SAGAJobService(lrms_saga_url)
-        
+            self.js = SAGAJobService(lrms_saga_url)        
         ##############################################################################
         # create job description
         jd = SAGAJobDescription()
