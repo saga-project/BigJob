@@ -236,13 +236,13 @@ class bigjob(api.base.bigjob):
         # api
         
         if pilot_compute_description == None:
-			pilot_compute_description={}
-			pilot_compute_description['userproxy'] = userproxy
-			pilot_compute_description['queue'] = queue
-			pilot_compute_description['project'] = project
-			pilot_compute_description['working_directory'] = working_directory
-			pilot_compute_description['walltime'] = walltime
-			pilot_compute_description['number_of_processes'] = number_nodes*processes_per_node
+            pilot_compute_description={}
+            pilot_compute_description['userproxy'] = userproxy
+            pilot_compute_description['queue'] = queue
+            pilot_compute_description['project'] = project
+            pilot_compute_description['working_directory'] = working_directory
+            pilot_compute_description['walltime'] = walltime
+            pilot_compute_description['number_of_processes'] = number_nodes*processes_per_node
         
         ##############################################################################
         # Create Job Service (Default: SAGA Job Service, alternative Job Services supported)
