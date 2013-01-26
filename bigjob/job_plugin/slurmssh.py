@@ -132,8 +132,9 @@ os.system( "sbatch  " + sbatch_file_name)
         os.remove(os.getcwd() + "/tmperr")
 
         print "Output - \n" + str(outstr)
-        self.job_id=((outstr).split("\n")[-1]).split()[3]
-        print "SLURM JobID: " + str(self.job_id)
+        if ((outstr).split("\n")[-1]).split()[0] == "Submitted": 
+            self.job_id=((outstr).split("\n")[-1]).split()[3]
+            print "SLURM JobID: " + str(self.job_id)
         if self.job_id==None or self.job_id=="":
             raise Exception("BigJob submission via slurm+ssh:// failed: %s %s" % (outstr,errstr))
 
