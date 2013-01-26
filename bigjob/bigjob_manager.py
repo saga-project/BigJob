@@ -233,17 +233,7 @@ class bigjob(api.base.bigjob):
         logger.debug("set pilot state to: " + str(Unknown))
         ##############################################################################
         # Initialize pilot_compute_description if not populated, to support bigjob_native 
-        # api
-        
-        if pilot_compute_description == None:
-            pilot_compute_description={}
-            pilot_compute_description['userproxy'] = userproxy
-            pilot_compute_description['queue'] = queue
-            pilot_compute_description['project'] = project
-            pilot_compute_description['working_directory'] = working_directory
-            pilot_compute_description['walltime'] = walltime
-            pilot_compute_description['number_of_processes'] = number_nodes*processes_per_node
-        
+        # api                
         ##############################################################################
         # Create Job Service (Default: SAGA Job Service, alternative Job Services supported)
         self.js =None
