@@ -175,6 +175,7 @@ os.system( "sbatch  " + sbatch_file_name)
 
 
     def cancel(self):
+        logger.debug("Cancel SLURM job")
         jd = saga.job.Description()
         jd.executable = "scancel"
         jd.arguments = [self.job_id]        
