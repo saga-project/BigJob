@@ -341,7 +341,14 @@ class ComputeUnitDescription(dict):
                     'output': <stdout>,
                                 
                     # Parallelism
+                    
+                    # Defines how many CPU cores are reserved for the application process.
                     'number_of_processes': <Total number of processes to start>,
+                    
+                    # Defines how the application process is launched:
+                    #     "single": ./a.out
+                    #     "mpi": mpirun -np <number_of_processes> ./a.out
+                    # In the MPI case BJ generates an appropriate machinefile
                     'spmd_variation':      <Type and startup mechanism. Supported Values: [single, mpi]>,
                     
                     
