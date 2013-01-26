@@ -501,7 +501,7 @@ class bigjob(api.base.bigjob):
                 sj_id = surl.path
                 if sj_id.startswith("/"): sj_id = sj_id[1:]
                 state = str(self.coordination.get_job_state(sj_id))
-                logger.debug("SJ: %s : State: %s"%(sj_id, str(state)))   
+                #logger.debug("SJ: %s : State: %s"%(sj_id, str(state)))   
                 #state = job_detail["state"]                
                 if result_map.has_key(state)==False:
                     result_map[state]=1
