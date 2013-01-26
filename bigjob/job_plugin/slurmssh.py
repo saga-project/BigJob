@@ -35,14 +35,20 @@ class Service(object):
 
 class Job(object):
     """Constructor"""
-    def __init__(self, job_description, resource_url, pilot_compute_description):
+    def __init__(self, job_description, resource_url, pilot_compute_description=None):
         self.job_description=job_description
         self.bootstrap_script = self.job_description.arguments[2]
         self.job_id = ""
         self.resource_url = resource_url
         self.resource_url.scheme="ssh"
-        if pilot_compute_description.has_key("userproxy"):
-	        self.userproxy = pilot_compute_description["userproxy"]
+        if pilot_compute_description == None:
+            pilot_compute_description={}
+            pilot_compute_description['queue'] = job_description.queue
+            pilot_compute_description['project'] = job_description.project
+            pilot_compute_description['working_directory'] = job_description.working_directory
+            pilot_compute_description['walltime'] = job_description.wall_time_limit
+            pilot_compute_description['number_of_processes'] =  job_description.total_cpu_count
+
         self.working_directory = pilot_compute_description["working_directory"]
         ### convert walltime in minutes to SLURM representation of time ###
         walltime_slurm="1:00:00"
