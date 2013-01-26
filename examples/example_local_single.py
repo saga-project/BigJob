@@ -40,7 +40,7 @@ def main():
     processes_per_node=4
     number_of_processes = 8
     #workingdirectory=os.path.join(os.getcwd(), "agent")  # working directory for agent
-    workingdirectory=os.getcwd()+"/agent"
+    workingdirectory="/tmp"
     userproxy = None # userproxy (not supported yet due to context issue w/ SAGA)
 
     
@@ -56,8 +56,7 @@ def main():
     
     Please ensure that the respective SAGA adaptor is installed and working
     """
-    #lrms_url = "fork://localhost" # resource url to run the jobs on localhost
-    lrms_url = "slurm+ssh://localhost" # resource url to run the jobs on localhost
+    lrms_url = "fork://localhost" # resource url to run the jobs on localhost
     #lrms_url = "ssh://localhost" # resource url to run the jobs on localhost
    
     ##########################################################################################
@@ -78,22 +77,19 @@ def main():
     ##########################################################################################
     # Submit SubJob through BigJob
     jd = description()
-    #jd.executable = "/bin/echo"
-    jd.executable = "/bin/hostname"
+    jd.executable = "/bin/echo"
     #jd.executable = "$HOME/hello.sh"
     jd.number_of_processes = "1"
-    #jd.arguments = ["$HELLOWORLD"]
+    jd.arguments = ["$HELLOWORLD"]
     jd.environment = ['HELLOWORLD=hello_world']
     
     # specify an optinal working directory if sub-job should be executed outside of bigjob sandbox
-    #jd.working_directory = os.getcwd() + "/agent" 
+    #jd.working_directory = "/tmp" 
     jd.output = "stdout.txt"
     jd.error = "stderr.txt"
-    for i in range(0, 64):
-        sj = subjob()
-        sj.submit_job(bj.pilot_url, jd)
+    sj = subjob()
+    sj.submit_job(bj.pilot_url, jd)
     
-    time.sleep(120)
     #########################################
     # busy wait for completion
     while 1:
