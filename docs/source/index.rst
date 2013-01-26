@@ -18,6 +18,7 @@ Contents:
    patterns/index.rst
    library/index.rst
    tutorial/index.rst
+   architecture/index.rst
 
 Indices and tables
 ==================
