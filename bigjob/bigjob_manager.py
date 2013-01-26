@@ -231,10 +231,7 @@ class bigjob(api.base.bigjob):
         self.coordination.set_pilot_state(self.pilot_url, str(Unknown), False)
         self.coordination.set_pilot_description(self.pilot_url, filetransfers)    
         logger.debug("set pilot state to: " + str(Unknown))
-        ##############################################################################
-        # Initialize pilot_compute_description if not populated, to support bigjob_native 
-        # api                
-        ##############################################################################
+
         # Create Job Service (Default: SAGA Job Service, alternative Job Services supported)
         self.js =None
         if lrms_saga_url.scheme=="gce+ssh":
