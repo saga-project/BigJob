@@ -17,6 +17,7 @@ import types
 import logging
 import shutil
 import fnmatch
+import hostlist
 from string import Template
 
 logging.basicConfig(level=logging.DEBUG)
@@ -194,9 +195,30 @@ class bigjob_agent:
             return self.init_pbs()
         elif(os.environ.get("PE_HOSTFILE")!=None):
             return self.init_sge()
+        elif(os.environ.get("SLURM_NODELIST")!=None):
+            return self.init_slurm()
         else:
             return self.init_local()
         return None
+
+
+    def init_slurm(self):
+        logger.debug("Init nodefile from SLURM_NODELIST")
+        hosts = os.environ.get("SLURM_NODELIST") 
+        if hosts == None:
+            self.init_local()
+            return
+
+        hosts=hostlist.expand_hostlist(hosts)
+        number_cpus_per_node = 1
+        if os.environ.get("SLURM_CPUS_ON_NODE")!=None:
+            number_cpus_per_node=int(os.environ.get("SLURM_CPUS_ON_NODE"))
+        for h in hosts:
+            for i in range(0, number_cpus_per_node):
+                self.freenodes.append(h)
+        return self.freenodes
+
+
 
     def init_condor_glidein(self):
         logger.debug("Init nodefile from Condor GlideIn environment")
