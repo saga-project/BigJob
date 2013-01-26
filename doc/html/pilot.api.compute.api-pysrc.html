@@ -389,147 +389,133 @@
 <a name="L330"></a><tt class="py-lineno">330</tt>  <tt class="py-line"><tt class="py-docstring">                    'environment': &lt;environment&gt;,          # environment variables </tt> </tt>
 <a name="L331"></a><tt class="py-lineno">331</tt>  <tt class="py-line"><tt class="py-docstring">                    </tt> </tt>
 <a name="L332"></a><tt class="py-lineno">332</tt>  <tt class="py-line"><tt class="py-docstring">                    # Working directory</tt> </tt>
-<a name="L333"></a><tt class="py-lineno">333</tt>  <tt class="py-line"><tt class="py-docstring">                    # A pilot data url will be translated to the local pilot store url, e.g.</tt> </tt>
-<a name="L334"></a><tt class="py-lineno">334</tt>  <tt class="py-line"><tt class="py-docstring">                    #     pilotdata://localhost/c2fafeae-03a9-11e1-9934-109addae22a3' </tt> </tt>
-<a name="L335"></a><tt class="py-lineno">335</tt>  <tt class="py-line"><tt class="py-docstring">                    #     =&gt;           </tt> </tt>
-<a name="L336"></a><tt class="py-lineno">336</tt>  <tt class="py-line"><tt class="py-docstring">                    #     ssh://localhost/tmp/pilotdata/c2fafeae-03a9-11e1-9934-109addae22a3</tt> </tt>
-<a name="L337"></a><tt class="py-lineno">337</tt>  <tt class="py-line"><tt class="py-docstring">                    #</tt> </tt>
-<a name="L338"></a><tt class="py-lineno">338</tt>  <tt class="py-line"><tt class="py-docstring">                    #     i.e. job is executed in /tmp/pilotdata/c2fafeae-03a9-11e1-9934-109addae22a3</tt> </tt>
-<a name="L339"></a><tt class="py-lineno">339</tt>  <tt class="py-line"><tt class="py-docstring">                    #     where file can be accessed using relative paths</tt> </tt>
-<a name="L340"></a><tt class="py-lineno">340</tt>  <tt class="py-line"><tt class="py-docstring">                    'working_directory': &lt;working directory&gt;,  </tt> </tt>
-<a name="L341"></a><tt class="py-lineno">341</tt>  <tt class="py-line"><tt class="py-docstring">                    </tt> </tt>
-<a name="L342"></a><tt class="py-lineno">342</tt>  <tt class="py-line"><tt class="py-docstring">                    # I/O</tt> </tt>
-<a name="L343"></a><tt class="py-lineno">343</tt>  <tt class="py-line"><tt class="py-docstring">                    'input': &lt;stdin&gt;,</tt> </tt>
-<a name="L344"></a><tt class="py-lineno">344</tt>  <tt class="py-line"><tt class="py-docstring">                    'error': &lt;sterr&gt;,</tt> </tt>
-<a name="L345"></a><tt class="py-lineno">345</tt>  <tt class="py-line"><tt class="py-docstring">                    'output': &lt;stdout&gt;,</tt> </tt>
-<a name="L346"></a><tt class="py-lineno">346</tt>  <tt class="py-line"><tt class="py-docstring">                                </tt> </tt>
-<a name="L347"></a><tt class="py-lineno">347</tt>  <tt class="py-line"><tt class="py-docstring">                    # Parallelism</tt> </tt>
-<a name="L348"></a><tt class="py-lineno">348</tt>  <tt class="py-line"><tt class="py-docstring">                    'number_of_processes': &lt;Total number of processes to start&gt;,</tt> </tt>
-<a name="L349"></a><tt class="py-lineno">349</tt>  <tt class="py-line"><tt class="py-docstring">                    'processes_per_host':  &lt;Nr of processes per host&gt;,</tt> </tt>
-<a name="L350"></a><tt class="py-lineno">350</tt>  <tt class="py-line"><tt class="py-docstring">                    'threads_per_process': &lt;Nr of threads to start per process&gt;,</tt> </tt>
-<a name="L351"></a><tt class="py-lineno">351</tt>  <tt class="py-line"><tt class="py-docstring">                    'total_core_count':    &lt;Total number of cores requested&gt;,</tt> </tt>
-<a name="L352"></a><tt class="py-lineno">352</tt>  <tt class="py-line"><tt class="py-docstring">                    'spmd_variation':      &lt;Type and startup mechanism&gt;,</tt> </tt>
-<a name="L353"></a><tt class="py-lineno">353</tt>  <tt class="py-line"><tt class="py-docstring">                    </tt> </tt>
-<a name="L354"></a><tt class="py-lineno">354</tt>  <tt class="py-line"><tt class="py-docstring">                    # Requirements</tt> </tt>
-<a name="L355"></a><tt class="py-lineno">355</tt>  <tt class="py-line"><tt class="py-docstring">                    'candidate_hosts': [&lt;url&gt;, ...],</tt> </tt>
-<a name="L356"></a><tt class="py-lineno">356</tt>  <tt class="py-line"><tt class="py-docstring">                    'cpu_architecture': &lt;architecture, e.g. x86_64&gt;,</tt> </tt>
-<a name="L357"></a><tt class="py-lineno">357</tt>  <tt class="py-line"><tt class="py-docstring">                    'total_physical_memory': &lt;memory, e.g. 2000&gt;,</tt> </tt>
-<a name="L358"></a><tt class="py-lineno">358</tt>  <tt class="py-line"><tt class="py-docstring">                    'operating_system_type': &lt;os, e.g. Linux&gt;,</tt> </tt>
-<a name="L359"></a><tt class="py-lineno">359</tt>  <tt class="py-line"><tt class="py-docstring">                    'total_cpu_time': &lt;cpu time&gt;,</tt> </tt>
-<a name="L360"></a><tt class="py-lineno">360</tt>  <tt class="py-line"><tt class="py-docstring">                    'wall_time_limit': &lt;walltime in sec, e.g. 600 (sec)&gt;,            </tt> </tt>
-<a name="L361"></a><tt class="py-lineno">361</tt>  <tt class="py-line"><tt class="py-docstring">                    </tt> </tt>
-<a name="L362"></a><tt class="py-lineno">362</tt>  <tt class="py-line"><tt class="py-docstring">                    # Data - input/output data flow for ComputeUnit</tt> </tt>
-<a name="L363"></a><tt class="py-lineno">363</tt>  <tt class="py-line"><tt class="py-docstring">                    'input_data': [&lt;data unit url&gt;, ... ],      </tt> </tt>
-<a name="L364"></a><tt class="py-lineno">364</tt>  <tt class="py-line"><tt class="py-docstring">                    'output_data': [&lt;data unit url&gt;, ... ]</tt> </tt>
-<a name="L365"></a><tt class="py-lineno">365</tt>  <tt class="py-line"><tt class="py-docstring">                }</tt> </tt>
-<a name="L366"></a><tt class="py-lineno">366</tt>  <tt class="py-line"><tt class="py-docstring">            </tt> </tt>
-<a name="L367"></a><tt class="py-lineno">367</tt>  <tt class="py-line"><tt class="py-docstring">            Example::</tt> </tt>
-<a name="L368"></a><tt class="py-lineno">368</tt>  <tt class="py-line"><tt class="py-docstring">                    compute_unit_description = {</tt> </tt>
-<a name="L369"></a><tt class="py-lineno">369</tt>  <tt class="py-line"><tt class="py-docstring">                            "executable": "/bin/cat",</tt> </tt>
-<a name="L370"></a><tt class="py-lineno">370</tt>  <tt class="py-line"><tt class="py-docstring">                            "arguments": ["test.txt"],</tt> </tt>
-<a name="L371"></a><tt class="py-lineno">371</tt>  <tt class="py-line"><tt class="py-docstring">                            "number_of_processes": 1,</tt> </tt>
-<a name="L372"></a><tt class="py-lineno">372</tt>  <tt class="py-line"><tt class="py-docstring">                            "output": "stdout.txt",</tt> </tt>
-<a name="L373"></a><tt class="py-lineno">373</tt>  <tt class="py-line"><tt class="py-docstring">                            "error": "stderr.txt",   </tt> </tt>
-<a name="L374"></a><tt class="py-lineno">374</tt>  <tt class="py-line"><tt class="py-docstring">                            "input_data" : [data_unit.get_url()], # this stages the content of the data unit to the working directory of the compute unit</tt> </tt>
-<a name="L375"></a><tt class="py-lineno">375</tt>  <tt class="py-line"><tt class="py-docstring">                            "affinity_datacenter_label": "eu-de-south",              </tt> </tt>
-<a name="L376"></a><tt class="py-lineno">376</tt>  <tt class="py-line"><tt class="py-docstring">                            "affinity_machine_label": "mymachine-1" </tt> </tt>
-<a name="L377"></a><tt class="py-lineno">377</tt>  <tt class="py-line"><tt class="py-docstring">                        }     </tt> </tt>
-<a name="L378"></a><tt class="py-lineno">378</tt>  <tt class="py-line"><tt class="py-docstring">        ComputeUnitDescription objects are loosely typed. A dictionary containing the respective keys</tt> </tt>
-<a name="L379"></a><tt class="py-lineno">379</tt>  <tt class="py-line"><tt class="py-docstring">        can be passed instead to the L{ComputeDataService}.</tt> </tt>
-<a name="L380"></a><tt class="py-lineno">380</tt>  <tt class="py-line"><tt class="py-docstring">    """</tt> </tt>
-<a name="ComputeUnitDescription.__init__"></a><div id="ComputeUnitDescription.__init__-def"><a name="L381"></a><tt class="py-lineno">381</tt> <a class="py-toggle" href="#" id="ComputeUnitDescription.__init__-toggle" onclick="return toggle('ComputeUnitDescription.__init__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="pilot.api.compute.api.ComputeUnitDescription-class.html#__init__">__init__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
-</div><div id="ComputeUnitDescription.__init__-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="ComputeUnitDescription.__init__-expanded"><a name="L382"></a><tt class="py-lineno">382</tt>  <tt class="py-line">        <tt class="py-keyword">pass</tt> </tt>
-</div><a name="L383"></a><tt class="py-lineno">383</tt>  <tt class="py-line"> </tt>
-<a name="L384"></a><tt class="py-lineno">384</tt>  <tt class="py-line"> </tt>
-<a name="ComputeUnitDescription.__setattr__"></a><div id="ComputeUnitDescription.__setattr__-def"><a name="L385"></a><tt class="py-lineno">385</tt> <a class="py-toggle" href="#" id="ComputeUnitDescription.__setattr__-toggle" onclick="return toggle('ComputeUnitDescription.__setattr__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="pilot.api.compute.api.ComputeUnitDescription-class.html#__setattr__">__setattr__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">attr</tt><tt class="py-op">,</tt> <tt class="py-param">value</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
-</div><div id="ComputeUnitDescription.__setattr__-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="ComputeUnitDescription.__setattr__-expanded"><a name="L386"></a><tt class="py-lineno">386</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">[</tt><tt class="py-name">attr</tt><tt class="py-op">]</tt><tt class="py-op">=</tt><tt class="py-name">value</tt> </tt>
-</div><a name="L387"></a><tt class="py-lineno">387</tt>  <tt class="py-line">         </tt>
-<a name="L388"></a><tt class="py-lineno">388</tt>  <tt class="py-line">     </tt>
-<a name="ComputeUnitDescription.__getattr__"></a><div id="ComputeUnitDescription.__getattr__-def"><a name="L389"></a><tt class="py-lineno">389</tt> <a class="py-toggle" href="#" id="ComputeUnitDescription.__getattr__-toggle" onclick="return toggle('ComputeUnitDescription.__getattr__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="pilot.api.compute.api.ComputeUnitDescription-class.html#__getattr__">__getattr__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">attr</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
-</div><div id="ComputeUnitDescription.__getattr__-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="ComputeUnitDescription.__getattr__-expanded"><a name="L390"></a><tt class="py-lineno">390</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">[</tt><tt class="py-name">attr</tt><tt class="py-op">]</tt> </tt>
-</div></div><a name="L391"></a><tt class="py-lineno">391</tt>  <tt class="py-line"> </tt>
-<a name="L392"></a><tt class="py-lineno">392</tt>  <tt class="py-line"> </tt>
-<a name="L393"></a><tt class="py-lineno">393</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
-<a name="L394"></a><tt class="py-lineno">394</tt>  <tt class="py-line"><tt class="py-comment">#  ComputeUnit(WU)</tt> </tt>
-<a name="L395"></a><tt class="py-lineno">395</tt>  <tt class="py-line"><tt class="py-comment"># </tt> </tt>
-<a name="ComputeUnit"></a><div id="ComputeUnit-def"><a name="L396"></a><tt class="py-lineno">396</tt> <a class="py-toggle" href="#" id="ComputeUnit-toggle" onclick="return toggle('ComputeUnit');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="pilot.api.compute.api.ComputeUnit-class.html">ComputeUnit</a><tt class="py-op">(</tt><tt class="py-base-class">object</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
-</div><div id="ComputeUnit-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="ComputeUnit-expanded"><a name="L397"></a><tt class="py-lineno">397</tt>  <tt class="py-line">    <tt class="py-docstring">""" B{ComputeUnit (CU).}</tt> </tt>
-<a name="L398"></a><tt class="py-lineno">398</tt>  <tt class="py-line"><tt class="py-docstring">    </tt> </tt>
-<a name="L399"></a><tt class="py-lineno">399</tt>  <tt class="py-line"><tt class="py-docstring">        This is the object that is returned by the ComputeUnitService when a </tt> </tt>
-<a name="L400"></a><tt class="py-lineno">400</tt>  <tt class="py-line"><tt class="py-docstring">        new ComputeUnit is created based on a ComputeUnitDescription.</tt> </tt>
-<a name="L401"></a><tt class="py-lineno">401</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
-<a name="L402"></a><tt class="py-lineno">402</tt>  <tt class="py-line"><tt class="py-docstring">        The ComputeUnit object can be used by the application to keep track </tt> </tt>
-<a name="L403"></a><tt class="py-lineno">403</tt>  <tt class="py-line"><tt class="py-docstring">        of ComputeUnits that are active.</tt> </tt>
-<a name="L404"></a><tt class="py-lineno">404</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
-<a name="L405"></a><tt class="py-lineno">405</tt>  <tt class="py-line"><tt class="py-docstring">        A ComputeUnit has state, can be queried and can be cancelled.</tt> </tt>
-<a name="L406"></a><tt class="py-lineno">406</tt>  <tt class="py-line"><tt class="py-docstring">    """</tt> </tt>
+<a name="L333"></a><tt class="py-lineno">333</tt>  <tt class="py-line"><tt class="py-docstring">                    # Recommendation: Do not set working directory!</tt> </tt>
+<a name="L334"></a><tt class="py-lineno">334</tt>  <tt class="py-line"><tt class="py-docstring">                    #     if None working directory is sandbox directory of this CU (automatically</tt> </tt>
+<a name="L335"></a><tt class="py-lineno">335</tt>  <tt class="py-line"><tt class="py-docstring">                    #     created by BigJob)</tt> </tt>
+<a name="L336"></a><tt class="py-lineno">336</tt>  <tt class="py-line"><tt class="py-docstring">                    'working_directory': &lt;working directory&gt;,  </tt> </tt>
+<a name="L337"></a><tt class="py-lineno">337</tt>  <tt class="py-line"><tt class="py-docstring">                    </tt> </tt>
+<a name="L338"></a><tt class="py-lineno">338</tt>  <tt class="py-line"><tt class="py-docstring">                    # I/O</tt> </tt>
+<a name="L339"></a><tt class="py-lineno">339</tt>  <tt class="py-line"><tt class="py-docstring">                    'input': &lt;stdin&gt;,</tt> </tt>
+<a name="L340"></a><tt class="py-lineno">340</tt>  <tt class="py-line"><tt class="py-docstring">                    'error': &lt;sterr&gt;,</tt> </tt>
+<a name="L341"></a><tt class="py-lineno">341</tt>  <tt class="py-line"><tt class="py-docstring">                    'output': &lt;stdout&gt;,</tt> </tt>
+<a name="L342"></a><tt class="py-lineno">342</tt>  <tt class="py-line"><tt class="py-docstring">                                </tt> </tt>
+<a name="L343"></a><tt class="py-lineno">343</tt>  <tt class="py-line"><tt class="py-docstring">                    # Parallelism</tt> </tt>
+<a name="L344"></a><tt class="py-lineno">344</tt>  <tt class="py-line"><tt class="py-docstring">                    'number_of_processes': &lt;Total number of processes to start&gt;,</tt> </tt>
+<a name="L345"></a><tt class="py-lineno">345</tt>  <tt class="py-line"><tt class="py-docstring">                    'spmd_variation':      &lt;Type and startup mechanism. Supported Values: [single, mpi]&gt;,</tt> </tt>
+<a name="L346"></a><tt class="py-lineno">346</tt>  <tt class="py-line"><tt class="py-docstring">                    </tt> </tt>
+<a name="L347"></a><tt class="py-lineno">347</tt>  <tt class="py-line"><tt class="py-docstring">                    </tt> </tt>
+<a name="L348"></a><tt class="py-lineno">348</tt>  <tt class="py-line"><tt class="py-docstring">                    # Data - input/output data flow for ComputeUnit</tt> </tt>
+<a name="L349"></a><tt class="py-lineno">349</tt>  <tt class="py-line"><tt class="py-docstring">                    'input_data': [&lt;data unit url&gt;, ... ],      </tt> </tt>
+<a name="L350"></a><tt class="py-lineno">350</tt>  <tt class="py-line"><tt class="py-docstring">                    'output_data': [&lt;data unit url&gt;, ... ]</tt> </tt>
+<a name="L351"></a><tt class="py-lineno">351</tt>  <tt class="py-line"><tt class="py-docstring">                }</tt> </tt>
+<a name="L352"></a><tt class="py-lineno">352</tt>  <tt class="py-line"><tt class="py-docstring">            </tt> </tt>
+<a name="L353"></a><tt class="py-lineno">353</tt>  <tt class="py-line"><tt class="py-docstring">            Example::</tt> </tt>
+<a name="L354"></a><tt class="py-lineno">354</tt>  <tt class="py-line"><tt class="py-docstring">                    compute_unit_description = {</tt> </tt>
+<a name="L355"></a><tt class="py-lineno">355</tt>  <tt class="py-line"><tt class="py-docstring">                            "executable": "/bin/cat",</tt> </tt>
+<a name="L356"></a><tt class="py-lineno">356</tt>  <tt class="py-line"><tt class="py-docstring">                            "arguments": ["test.txt"],</tt> </tt>
+<a name="L357"></a><tt class="py-lineno">357</tt>  <tt class="py-line"><tt class="py-docstring">                            "number_of_processes": 1,</tt> </tt>
+<a name="L358"></a><tt class="py-lineno">358</tt>  <tt class="py-line"><tt class="py-docstring">                            "output": "stdout.txt",</tt> </tt>
+<a name="L359"></a><tt class="py-lineno">359</tt>  <tt class="py-line"><tt class="py-docstring">                            "error": "stderr.txt",   </tt> </tt>
+<a name="L360"></a><tt class="py-lineno">360</tt>  <tt class="py-line"><tt class="py-docstring">                            "input_data" : [data_unit.get_url()], # this stages the content of the data unit to the working directory of the compute unit</tt> </tt>
+<a name="L361"></a><tt class="py-lineno">361</tt>  <tt class="py-line"><tt class="py-docstring">                            "affinity_datacenter_label": "eu-de-south",              </tt> </tt>
+<a name="L362"></a><tt class="py-lineno">362</tt>  <tt class="py-line"><tt class="py-docstring">                            "affinity_machine_label": "mymachine-1" </tt> </tt>
+<a name="L363"></a><tt class="py-lineno">363</tt>  <tt class="py-line"><tt class="py-docstring">                        }     </tt> </tt>
+<a name="L364"></a><tt class="py-lineno">364</tt>  <tt class="py-line"><tt class="py-docstring">        ComputeUnitDescription objects are loosely typed. A dictionary containing the respective keys</tt> </tt>
+<a name="L365"></a><tt class="py-lineno">365</tt>  <tt class="py-line"><tt class="py-docstring">        can be passed instead to the L{ComputeDataService}.</tt> </tt>
+<a name="L366"></a><tt class="py-lineno">366</tt>  <tt class="py-line"><tt class="py-docstring">    """</tt> </tt>
+<a name="ComputeUnitDescription.__init__"></a><div id="ComputeUnitDescription.__init__-def"><a name="L367"></a><tt class="py-lineno">367</tt> <a class="py-toggle" href="#" id="ComputeUnitDescription.__init__-toggle" onclick="return toggle('ComputeUnitDescription.__init__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="pilot.api.compute.api.ComputeUnitDescription-class.html#__init__">__init__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="ComputeUnitDescription.__init__-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="ComputeUnitDescription.__init__-expanded"><a name="L368"></a><tt class="py-lineno">368</tt>  <tt class="py-line">        <tt class="py-keyword">pass</tt> </tt>
+</div><a name="L369"></a><tt class="py-lineno">369</tt>  <tt class="py-line"> </tt>
+<a name="L370"></a><tt class="py-lineno">370</tt>  <tt class="py-line"> </tt>
+<a name="ComputeUnitDescription.__setattr__"></a><div id="ComputeUnitDescription.__setattr__-def"><a name="L371"></a><tt class="py-lineno">371</tt> <a class="py-toggle" href="#" id="ComputeUnitDescription.__setattr__-toggle" onclick="return toggle('ComputeUnitDescription.__setattr__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="pilot.api.compute.api.ComputeUnitDescription-class.html#__setattr__">__setattr__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">attr</tt><tt class="py-op">,</tt> <tt class="py-param">value</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="ComputeUnitDescription.__setattr__-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="ComputeUnitDescription.__setattr__-expanded"><a name="L372"></a><tt class="py-lineno">372</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">[</tt><tt class="py-name">attr</tt><tt class="py-op">]</tt><tt class="py-op">=</tt><tt class="py-name">value</tt> </tt>
+</div><a name="L373"></a><tt class="py-lineno">373</tt>  <tt class="py-line">         </tt>
+<a name="L374"></a><tt class="py-lineno">374</tt>  <tt class="py-line">     </tt>
+<a name="ComputeUnitDescription.__getattr__"></a><div id="ComputeUnitDescription.__getattr__-def"><a name="L375"></a><tt class="py-lineno">375</tt> <a class="py-toggle" href="#" id="ComputeUnitDescription.__getattr__-toggle" onclick="return toggle('ComputeUnitDescription.__getattr__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="pilot.api.compute.api.ComputeUnitDescription-class.html#__getattr__">__getattr__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">attr</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="ComputeUnitDescription.__getattr__-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="ComputeUnitDescription.__getattr__-expanded"><a name="L376"></a><tt class="py-lineno">376</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">[</tt><tt class="py-name">attr</tt><tt class="py-op">]</tt> </tt>
+</div></div><a name="L377"></a><tt class="py-lineno">377</tt>  <tt class="py-line"> </tt>
+<a name="L378"></a><tt class="py-lineno">378</tt>  <tt class="py-line"> </tt>
+<a name="L379"></a><tt class="py-lineno">379</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L380"></a><tt class="py-lineno">380</tt>  <tt class="py-line"><tt class="py-comment">#  ComputeUnit(WU)</tt> </tt>
+<a name="L381"></a><tt class="py-lineno">381</tt>  <tt class="py-line"><tt class="py-comment"># </tt> </tt>
+<a name="ComputeUnit"></a><div id="ComputeUnit-def"><a name="L382"></a><tt class="py-lineno">382</tt> <a class="py-toggle" href="#" id="ComputeUnit-toggle" onclick="return toggle('ComputeUnit');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="pilot.api.compute.api.ComputeUnit-class.html">ComputeUnit</a><tt class="py-op">(</tt><tt class="py-base-class">object</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="ComputeUnit-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="ComputeUnit-expanded"><a name="L383"></a><tt class="py-lineno">383</tt>  <tt class="py-line">    <tt class="py-docstring">""" B{ComputeUnit (CU).}</tt> </tt>
+<a name="L384"></a><tt class="py-lineno">384</tt>  <tt class="py-line"><tt class="py-docstring">    </tt> </tt>
+<a name="L385"></a><tt class="py-lineno">385</tt>  <tt class="py-line"><tt class="py-docstring">        This is the object that is returned by the ComputeUnitService when a </tt> </tt>
+<a name="L386"></a><tt class="py-lineno">386</tt>  <tt class="py-line"><tt class="py-docstring">        new ComputeUnit is created based on a ComputeUnitDescription.</tt> </tt>
+<a name="L387"></a><tt class="py-lineno">387</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L388"></a><tt class="py-lineno">388</tt>  <tt class="py-line"><tt class="py-docstring">        The ComputeUnit object can be used by the application to keep track </tt> </tt>
+<a name="L389"></a><tt class="py-lineno">389</tt>  <tt class="py-line"><tt class="py-docstring">        of ComputeUnits that are active.</tt> </tt>
+<a name="L390"></a><tt class="py-lineno">390</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L391"></a><tt class="py-lineno">391</tt>  <tt class="py-line"><tt class="py-docstring">        A ComputeUnit has state, can be queried and can be cancelled.</tt> </tt>
+<a name="L392"></a><tt class="py-lineno">392</tt>  <tt class="py-line"><tt class="py-docstring">    """</tt> </tt>
+<a name="L393"></a><tt class="py-lineno">393</tt>  <tt class="py-line"> </tt>
+<a name="L394"></a><tt class="py-lineno">394</tt>  <tt class="py-line">    <tt class="py-comment"># Class members</tt> </tt>
+<a name="L395"></a><tt class="py-lineno">395</tt>  <tt class="py-line">    <tt class="py-name">__slots__</tt> <tt class="py-op">=</tt> <tt class="py-op">(</tt> </tt>
+<a name="L396"></a><tt class="py-lineno">396</tt>  <tt class="py-line">        <tt class="py-string">'id'</tt><tt class="py-op">,</tt>               <tt class="py-comment"># Reference to this WU</tt> </tt>
+<a name="L397"></a><tt class="py-lineno">397</tt>  <tt class="py-line">        <tt class="py-string">'description'</tt><tt class="py-op">,</tt>      <tt class="py-comment"># Description of this WU</tt> </tt>
+<a name="L398"></a><tt class="py-lineno">398</tt>  <tt class="py-line">        <tt class="py-string">'state_detail'</tt><tt class="py-op">,</tt>     <tt class="py-comment"># Detailed (application specific) state of this WU</tt> </tt>
+<a name="L399"></a><tt class="py-lineno">399</tt>  <tt class="py-line">        <tt class="py-string">'callback'</tt>          <tt class="py-comment"># Callback object</tt> </tt>
+<a name="L400"></a><tt class="py-lineno">400</tt>  <tt class="py-line">    <tt class="py-op">)</tt> </tt>
+<a name="L401"></a><tt class="py-lineno">401</tt>  <tt class="py-line"> </tt>
+<a name="L402"></a><tt class="py-lineno">402</tt>  <tt class="py-line">     </tt>
+<a name="ComputeUnit.cancel"></a><div id="ComputeUnit.cancel-def"><a name="L403"></a><tt class="py-lineno">403</tt> <a class="py-toggle" href="#" id="ComputeUnit.cancel-toggle" onclick="return toggle('ComputeUnit.cancel');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="pilot.api.compute.api.ComputeUnit-class.html#cancel">cancel</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="ComputeUnit.cancel-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="ComputeUnit.cancel-expanded"><a name="L404"></a><tt class="py-lineno">404</tt>  <tt class="py-line">        <tt class="py-docstring">""" Cancel the CU. """</tt> </tt>
+<a name="L405"></a><tt class="py-lineno">405</tt>  <tt class="py-line">        <tt class="py-keyword">raise</tt>  <tt class="py-name">NotImplementedError</tt><tt class="py-op">(</tt><tt class="py-string">"Abstract super class, please use ComputeUnit implementation class in pilot namespace"</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L406"></a><tt class="py-lineno">406</tt>  <tt class="py-line"> </tt>
 <a name="L407"></a><tt class="py-lineno">407</tt>  <tt class="py-line"> </tt>
-<a name="L408"></a><tt class="py-lineno">408</tt>  <tt class="py-line">    <tt class="py-comment"># Class members</tt> </tt>
-<a name="L409"></a><tt class="py-lineno">409</tt>  <tt class="py-line">    <tt class="py-name">__slots__</tt> <tt class="py-op">=</tt> <tt class="py-op">(</tt> </tt>
-<a name="L410"></a><tt class="py-lineno">410</tt>  <tt class="py-line">        <tt class="py-string">'id'</tt><tt class="py-op">,</tt>               <tt class="py-comment"># Reference to this WU</tt> </tt>
-<a name="L411"></a><tt class="py-lineno">411</tt>  <tt class="py-line">        <tt class="py-string">'description'</tt><tt class="py-op">,</tt>      <tt class="py-comment"># Description of this WU</tt> </tt>
-<a name="L412"></a><tt class="py-lineno">412</tt>  <tt class="py-line">        <tt class="py-string">'state_detail'</tt><tt class="py-op">,</tt>     <tt class="py-comment"># Detailed (application specific) state of this WU</tt> </tt>
-<a name="L413"></a><tt class="py-lineno">413</tt>  <tt class="py-line">        <tt class="py-string">'callback'</tt>          <tt class="py-comment"># Callback object</tt> </tt>
-<a name="L414"></a><tt class="py-lineno">414</tt>  <tt class="py-line">    <tt class="py-op">)</tt> </tt>
-<a name="L415"></a><tt class="py-lineno">415</tt>  <tt class="py-line"> </tt>
-<a name="L416"></a><tt class="py-lineno">416</tt>  <tt class="py-line">     </tt>
-<a name="ComputeUnit.cancel"></a><div id="ComputeUnit.cancel-def"><a name="L417"></a><tt class="py-lineno">417</tt> <a class="py-toggle" href="#" id="ComputeUnit.cancel-toggle" onclick="return toggle('ComputeUnit.cancel');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="pilot.api.compute.api.ComputeUnit-class.html#cancel">cancel</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
-</div><div id="ComputeUnit.cancel-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="ComputeUnit.cancel-expanded"><a name="L418"></a><tt class="py-lineno">418</tt>  <tt class="py-line">        <tt class="py-docstring">""" Cancel the CU. """</tt> </tt>
-<a name="L419"></a><tt class="py-lineno">419</tt>  <tt class="py-line">        <tt class="py-keyword">raise</tt>  <tt class="py-name">NotImplementedError</tt><tt class="py-op">(</tt><tt class="py-string">"Abstract super class, please use ComputeUnit implementation class in pilot namespace"</tt><tt class="py-op">)</tt> </tt>
-</div><a name="L420"></a><tt class="py-lineno">420</tt>  <tt class="py-line"> </tt>
-<a name="L421"></a><tt class="py-lineno">421</tt>  <tt class="py-line"> </tt>
-<a name="L422"></a><tt class="py-lineno">422</tt>  <tt class="py-line">     </tt>
-<a name="ComputeUnit.set_callback"></a><div id="ComputeUnit.set_callback-def"><a name="L423"></a><tt class="py-lineno">423</tt> <a class="py-toggle" href="#" id="ComputeUnit.set_callback-toggle" onclick="return toggle('ComputeUnit.set_callback');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="pilot.api.compute.api.ComputeUnit-class.html#set_callback">set_callback</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">member</tt><tt class="py-op">,</tt> <tt class="py-param">cb</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
-</div><div id="ComputeUnit.set_callback-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="ComputeUnit.set_callback-expanded"><a name="L424"></a><tt class="py-lineno">424</tt>  <tt class="py-line">        <tt class="py-docstring">""" Set a callback function for a member.</tt> </tt>
-<a name="L425"></a><tt class="py-lineno">425</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
-<a name="L426"></a><tt class="py-lineno">426</tt>  <tt class="py-line"><tt class="py-docstring">            Keyword arguments:</tt> </tt>
-<a name="L427"></a><tt class="py-lineno">427</tt>  <tt class="py-line"><tt class="py-docstring">            member -- The member to set the callback for (state / state_detail).</tt> </tt>
-<a name="L428"></a><tt class="py-lineno">428</tt>  <tt class="py-line"><tt class="py-docstring">            cb -- The callback object to call.</tt> </tt>
-<a name="L429"></a><tt class="py-lineno">429</tt>  <tt class="py-line"><tt class="py-docstring">        """</tt> </tt>
-<a name="L430"></a><tt class="py-lineno">430</tt>  <tt class="py-line">        <tt class="py-keyword">pass</tt> </tt>
-</div><a name="L431"></a><tt class="py-lineno">431</tt>  <tt class="py-line"> </tt>
-<a name="L432"></a><tt class="py-lineno">432</tt>  <tt class="py-line">     </tt>
-<a name="ComputeUnit.unset_callback"></a><div id="ComputeUnit.unset_callback-def"><a name="L433"></a><tt class="py-lineno">433</tt> <a class="py-toggle" href="#" id="ComputeUnit.unset_callback-toggle" onclick="return toggle('ComputeUnit.unset_callback');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="pilot.api.compute.api.ComputeUnit-class.html#unset_callback">unset_callback</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">member</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
-</div><div id="ComputeUnit.unset_callback-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="ComputeUnit.unset_callback-expanded"><a name="L434"></a><tt class="py-lineno">434</tt>  <tt class="py-line">        <tt class="py-docstring">""" Unset a callback function from a member</tt> </tt>
-<a name="L435"></a><tt class="py-lineno">435</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
-<a name="L436"></a><tt class="py-lineno">436</tt>  <tt class="py-line"><tt class="py-docstring">            Keyword arguments:</tt> </tt>
-<a name="L437"></a><tt class="py-lineno">437</tt>  <tt class="py-line"><tt class="py-docstring">            member -- The member to unset the callback from.</tt> </tt>
-<a name="L438"></a><tt class="py-lineno">438</tt>  <tt class="py-line"><tt class="py-docstring">        """</tt> </tt>
-<a name="L439"></a><tt class="py-lineno">439</tt>  <tt class="py-line">        <tt class="py-keyword">pass</tt> </tt>
-</div><a name="L440"></a><tt class="py-lineno">440</tt>  <tt class="py-line">     </tt>
-<a name="L441"></a><tt class="py-lineno">441</tt>  <tt class="py-line"> </tt>
-<a name="ComputeUnit.get_state"></a><div id="ComputeUnit.get_state-def"><a name="L442"></a><tt class="py-lineno">442</tt> <a class="py-toggle" href="#" id="ComputeUnit.get_state-toggle" onclick="return toggle('ComputeUnit.get_state');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="pilot.api.compute.api.ComputeUnit-class.html#get_state">get_state</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
-</div><div id="ComputeUnit.get_state-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="ComputeUnit.get_state-expanded"><a name="L443"></a><tt class="py-lineno">443</tt>  <tt class="py-line">        <tt class="py-keyword">pass</tt> </tt>
-</div><a name="L444"></a><tt class="py-lineno">444</tt>  <tt class="py-line">     </tt>
-<a name="L445"></a><tt class="py-lineno">445</tt>  <tt class="py-line">     </tt>
-<a name="ComputeUnit.wait"></a><div id="ComputeUnit.wait-def"><a name="L446"></a><tt class="py-lineno">446</tt> <a class="py-toggle" href="#" id="ComputeUnit.wait-toggle" onclick="return toggle('ComputeUnit.wait');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="pilot.api.compute.api.ComputeUnit-class.html#wait">wait</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
-</div><div id="ComputeUnit.wait-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="ComputeUnit.wait-expanded"><a name="L447"></a><tt class="py-lineno">447</tt>  <tt class="py-line">        <tt class="py-docstring">""" Wait until in Done state </tt> </tt>
-<a name="L448"></a><tt class="py-lineno">448</tt>  <tt class="py-line"><tt class="py-docstring">            (or Failed state)</tt> </tt>
-<a name="L449"></a><tt class="py-lineno">449</tt>  <tt class="py-line"><tt class="py-docstring">        """</tt> </tt>
-</div></div><a name="L450"></a><tt class="py-lineno">450</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
-<a name="L451"></a><tt class="py-lineno">451</tt>  <tt class="py-line"><tt class="py-comment">#  Callback (Abstract) Class</tt> </tt>
-<a name="L452"></a><tt class="py-lineno">452</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
-<a name="Callback"></a><div id="Callback-def"><a name="L453"></a><tt class="py-lineno">453</tt> <a class="py-toggle" href="#" id="Callback-toggle" onclick="return toggle('Callback');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="pilot.api.compute.api.Callback-class.html">Callback</a><tt class="py-op">(</tt><tt class="py-base-class">object</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
-</div><div id="Callback-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="Callback-expanded"><a name="L454"></a><tt class="py-lineno">454</tt>  <tt class="py-line">    <tt class="py-docstring">""" Callback class.</tt> </tt>
-<a name="L455"></a><tt class="py-lineno">455</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
-<a name="L456"></a><tt class="py-lineno">456</tt>  <tt class="py-line"><tt class="py-docstring">        Specifies the structure for callback classes.</tt> </tt>
-<a name="L457"></a><tt class="py-lineno">457</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
-<a name="L458"></a><tt class="py-lineno">458</tt>  <tt class="py-line"><tt class="py-docstring">        Callbacks can be set for WorkUnits on the state or state_detail members.</tt> </tt>
-<a name="L459"></a><tt class="py-lineno">459</tt>  <tt class="py-line"><tt class="py-docstring">    """</tt> </tt>
-<a name="L460"></a><tt class="py-lineno">460</tt>  <tt class="py-line"> </tt>
-<a name="Callback.cb"></a><div id="Callback.cb-def"><a name="L461"></a><tt class="py-lineno">461</tt> <a class="py-toggle" href="#" id="Callback.cb-toggle" onclick="return toggle('Callback.cb');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="pilot.api.compute.api.Callback-class.html#cb">cb</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">wu</tt><tt class="py-op">,</tt> <tt class="py-param">member</tt><tt class="py-op">,</tt> <tt class="py-param">value</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
-</div><div id="Callback.cb-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="Callback.cb-expanded"><a name="L462"></a><tt class="py-lineno">462</tt>  <tt class="py-line">        <tt class="py-docstring">""" This is the method that needs to be implemented by the application</tt> </tt>
-<a name="L463"></a><tt class="py-lineno">463</tt>  <tt class="py-line"><tt class="py-docstring">        </tt> </tt>
-<a name="L464"></a><tt class="py-lineno">464</tt>  <tt class="py-line"><tt class="py-docstring">            Keyword arguments:</tt> </tt>
-<a name="L465"></a><tt class="py-lineno">465</tt>  <tt class="py-line"><tt class="py-docstring">            wu -- The WU that is calling back.</tt> </tt>
-<a name="L466"></a><tt class="py-lineno">466</tt>  <tt class="py-line"><tt class="py-docstring">            member -- The member that triggered the callback.</tt> </tt>
-<a name="L467"></a><tt class="py-lineno">467</tt>  <tt class="py-line"><tt class="py-docstring">            value -- The new (detailed) state.</tt> </tt>
-<a name="L468"></a><tt class="py-lineno">468</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
-<a name="L469"></a><tt class="py-lineno">469</tt>  <tt class="py-line"><tt class="py-docstring">            Return:</tt> </tt>
-<a name="L470"></a><tt class="py-lineno">470</tt>  <tt class="py-line"><tt class="py-docstring">            Keep -- Keep or remove the callback</tt> </tt>
-<a name="L471"></a><tt class="py-lineno">471</tt>  <tt class="py-line"><tt class="py-docstring">        """</tt> </tt>
-<a name="L472"></a><tt class="py-lineno">472</tt>  <tt class="py-line">        <tt class="py-keyword">pass</tt> </tt>
-</div></div><a name="L473"></a><tt class="py-lineno">473</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<a name="L408"></a><tt class="py-lineno">408</tt>  <tt class="py-line">     </tt>
+<a name="ComputeUnit.set_callback"></a><div id="ComputeUnit.set_callback-def"><a name="L409"></a><tt class="py-lineno">409</tt> <a class="py-toggle" href="#" id="ComputeUnit.set_callback-toggle" onclick="return toggle('ComputeUnit.set_callback');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="pilot.api.compute.api.ComputeUnit-class.html#set_callback">set_callback</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">member</tt><tt class="py-op">,</tt> <tt class="py-param">cb</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="ComputeUnit.set_callback-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="ComputeUnit.set_callback-expanded"><a name="L410"></a><tt class="py-lineno">410</tt>  <tt class="py-line">        <tt class="py-docstring">""" Set a callback function for a member.</tt> </tt>
+<a name="L411"></a><tt class="py-lineno">411</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L412"></a><tt class="py-lineno">412</tt>  <tt class="py-line"><tt class="py-docstring">            Keyword arguments:</tt> </tt>
+<a name="L413"></a><tt class="py-lineno">413</tt>  <tt class="py-line"><tt class="py-docstring">            member -- The member to set the callback for (state / state_detail).</tt> </tt>
+<a name="L414"></a><tt class="py-lineno">414</tt>  <tt class="py-line"><tt class="py-docstring">            cb -- The callback object to call.</tt> </tt>
+<a name="L415"></a><tt class="py-lineno">415</tt>  <tt class="py-line"><tt class="py-docstring">        """</tt> </tt>
+<a name="L416"></a><tt class="py-lineno">416</tt>  <tt class="py-line">        <tt class="py-keyword">pass</tt> </tt>
+</div><a name="L417"></a><tt class="py-lineno">417</tt>  <tt class="py-line"> </tt>
+<a name="L418"></a><tt class="py-lineno">418</tt>  <tt class="py-line">     </tt>
+<a name="ComputeUnit.unset_callback"></a><div id="ComputeUnit.unset_callback-def"><a name="L419"></a><tt class="py-lineno">419</tt> <a class="py-toggle" href="#" id="ComputeUnit.unset_callback-toggle" onclick="return toggle('ComputeUnit.unset_callback');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="pilot.api.compute.api.ComputeUnit-class.html#unset_callback">unset_callback</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">member</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="ComputeUnit.unset_callback-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="ComputeUnit.unset_callback-expanded"><a name="L420"></a><tt class="py-lineno">420</tt>  <tt class="py-line">        <tt class="py-docstring">""" Unset a callback function from a member</tt> </tt>
+<a name="L421"></a><tt class="py-lineno">421</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L422"></a><tt class="py-lineno">422</tt>  <tt class="py-line"><tt class="py-docstring">            Keyword arguments:</tt> </tt>
+<a name="L423"></a><tt class="py-lineno">423</tt>  <tt class="py-line"><tt class="py-docstring">            member -- The member to unset the callback from.</tt> </tt>
+<a name="L424"></a><tt class="py-lineno">424</tt>  <tt class="py-line"><tt class="py-docstring">        """</tt> </tt>
+<a name="L425"></a><tt class="py-lineno">425</tt>  <tt class="py-line">        <tt class="py-keyword">pass</tt> </tt>
+</div><a name="L426"></a><tt class="py-lineno">426</tt>  <tt class="py-line">     </tt>
+<a name="L427"></a><tt class="py-lineno">427</tt>  <tt class="py-line"> </tt>
+<a name="ComputeUnit.get_state"></a><div id="ComputeUnit.get_state-def"><a name="L428"></a><tt class="py-lineno">428</tt> <a class="py-toggle" href="#" id="ComputeUnit.get_state-toggle" onclick="return toggle('ComputeUnit.get_state');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="pilot.api.compute.api.ComputeUnit-class.html#get_state">get_state</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="ComputeUnit.get_state-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="ComputeUnit.get_state-expanded"><a name="L429"></a><tt class="py-lineno">429</tt>  <tt class="py-line">        <tt class="py-keyword">pass</tt> </tt>
+</div><a name="L430"></a><tt class="py-lineno">430</tt>  <tt class="py-line">     </tt>
+<a name="L431"></a><tt class="py-lineno">431</tt>  <tt class="py-line">     </tt>
+<a name="ComputeUnit.wait"></a><div id="ComputeUnit.wait-def"><a name="L432"></a><tt class="py-lineno">432</tt> <a class="py-toggle" href="#" id="ComputeUnit.wait-toggle" onclick="return toggle('ComputeUnit.wait');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="pilot.api.compute.api.ComputeUnit-class.html#wait">wait</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="ComputeUnit.wait-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="ComputeUnit.wait-expanded"><a name="L433"></a><tt class="py-lineno">433</tt>  <tt class="py-line">        <tt class="py-docstring">""" Wait until in Done state </tt> </tt>
+<a name="L434"></a><tt class="py-lineno">434</tt>  <tt class="py-line"><tt class="py-docstring">            (or Failed state)</tt> </tt>
+<a name="L435"></a><tt class="py-lineno">435</tt>  <tt class="py-line"><tt class="py-docstring">        """</tt> </tt>
+</div></div><a name="L436"></a><tt class="py-lineno">436</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L437"></a><tt class="py-lineno">437</tt>  <tt class="py-line"><tt class="py-comment">#  Callback (Abstract) Class</tt> </tt>
+<a name="L438"></a><tt class="py-lineno">438</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="Callback"></a><div id="Callback-def"><a name="L439"></a><tt class="py-lineno">439</tt> <a class="py-toggle" href="#" id="Callback-toggle" onclick="return toggle('Callback');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="pilot.api.compute.api.Callback-class.html">Callback</a><tt class="py-op">(</tt><tt class="py-base-class">object</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Callback-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="Callback-expanded"><a name="L440"></a><tt class="py-lineno">440</tt>  <tt class="py-line">    <tt class="py-docstring">""" Callback class.</tt> </tt>
+<a name="L441"></a><tt class="py-lineno">441</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L442"></a><tt class="py-lineno">442</tt>  <tt class="py-line"><tt class="py-docstring">        Specifies the structure for callback classes.</tt> </tt>
+<a name="L443"></a><tt class="py-lineno">443</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L444"></a><tt class="py-lineno">444</tt>  <tt class="py-line"><tt class="py-docstring">        Callbacks can be set for WorkUnits on the state or state_detail members.</tt> </tt>
+<a name="L445"></a><tt class="py-lineno">445</tt>  <tt class="py-line"><tt class="py-docstring">    """</tt> </tt>
+<a name="L446"></a><tt class="py-lineno">446</tt>  <tt class="py-line"> </tt>
+<a name="Callback.cb"></a><div id="Callback.cb-def"><a name="L447"></a><tt class="py-lineno">447</tt> <a class="py-toggle" href="#" id="Callback.cb-toggle" onclick="return toggle('Callback.cb');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="pilot.api.compute.api.Callback-class.html#cb">cb</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">wu</tt><tt class="py-op">,</tt> <tt class="py-param">member</tt><tt class="py-op">,</tt> <tt class="py-param">value</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Callback.cb-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="Callback.cb-expanded"><a name="L448"></a><tt class="py-lineno">448</tt>  <tt class="py-line">        <tt class="py-docstring">""" This is the method that needs to be implemented by the application</tt> </tt>
+<a name="L449"></a><tt class="py-lineno">449</tt>  <tt class="py-line"><tt class="py-docstring">        </tt> </tt>
+<a name="L450"></a><tt class="py-lineno">450</tt>  <tt class="py-line"><tt class="py-docstring">            Keyword arguments:</tt> </tt>
+<a name="L451"></a><tt class="py-lineno">451</tt>  <tt class="py-line"><tt class="py-docstring">            wu -- The WU that is calling back.</tt> </tt>
+<a name="L452"></a><tt class="py-lineno">452</tt>  <tt class="py-line"><tt class="py-docstring">            member -- The member that triggered the callback.</tt> </tt>
+<a name="L453"></a><tt class="py-lineno">453</tt>  <tt class="py-line"><tt class="py-docstring">            value -- The new (detailed) state.</tt> </tt>
+<a name="L454"></a><tt class="py-lineno">454</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L455"></a><tt class="py-lineno">455</tt>  <tt class="py-line"><tt class="py-docstring">            Return:</tt> </tt>
+<a name="L456"></a><tt class="py-lineno">456</tt>  <tt class="py-line"><tt class="py-docstring">            Keep -- Keep or remove the callback</tt> </tt>
+<a name="L457"></a><tt class="py-lineno">457</tt>  <tt class="py-line"><tt class="py-docstring">        """</tt> </tt>
+<a name="L458"></a><tt class="py-lineno">458</tt>  <tt class="py-line">        <tt class="py-keyword">pass</tt> </tt>
+</div></div><a name="L459"></a><tt class="py-lineno">459</tt>  <tt class="py-line"> </tt><script type="text/javascript">
 <!--
 expandto(location.href);
 // -->
@@ -568,7 +554,7 @@ expandto(location.href);
   <tr>
     <td align="left" class="footer">
     <a href="epydoc-log.html">Generated by Epydoc
-    3.0.1 on Tue Jan 15 11:55:14 2013</a>
+    3.0.1 on Sat Jan 26 18:30:02 2013</a>
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"
