@@ -215,7 +215,7 @@ class bigjob_agent:
             number_cpus_per_node=int(os.environ.get("SLURM_CPUS_ON_NODE"))
         for h in hosts:
             for i in range(0, number_cpus_per_node):
-                self.freenodes.append(h)
+                self.freenodes.append((h + "\n"))
         return self.freenodes
 
 
