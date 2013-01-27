@@ -87,6 +87,8 @@ class bigjob_agent:
         if default_dict.has_key("shell"):
             self.SHELL=default_dict["shell"]
         self.MPIRUN="mpirun"
+        # On TACC resources the default MPICH is 
+        # linked under mpirun_rsh
         if default_dict.has_key("mpirun"):
             self.MPIRUN=default_dict["mpirun"]
         self.OUTPUT_TAR=False
@@ -215,7 +217,7 @@ class bigjob_agent:
             number_cpus_per_node=int(os.environ.get("SLURM_CPUS_ON_NODE"))
         for h in hosts:
             for i in range(0, number_cpus_per_node):
-                self.freenodes.append(h)
+                self.freenodes.append((h + "\n"))
         return self.freenodes
 
 
@@ -469,6 +471,9 @@ class bigjob_agent:
                     #    # + " 1 > "+ str(i)+ "-out.txt " + " 2 > "+ str(i)+ "-err.txt"
                     #    if i != self.number_subjobs-1:
                     #        command = command + " : "
+                elif self.LAUNCH_METHOD=="ibrun" and spmdvariation.lower()=="mpi": 
+                    # Non MPI launch is handled via standard SSH
+                    command = envi + "mpirun_rsh   -np " + str(numberofprocesses) + " -hostfile " + machinefile + " " + executable + " " + arguments                   
                 elif (spmdvariation.lower()!="mpi"):
                     command =  envi + executable + " " + arguments
                     # In particular for Condor - if executable is staged x flag is not set
@@ -478,7 +483,7 @@ class bigjob_agent:
                     command =  envi + executable + " " + arguments
 
                 # add working directory and ssh command
-                if self.LAUNCH_METHOD == "aprun":
+                if self.LAUNCH_METHOD == "aprun" or (self.LAUNCH_METHOD== "ibrun" and spmdvariation.lower()=="mpi"):
                     command ="cd " + workingdirectory + "; " + command
                 elif self.LAUNCH_METHOD == "local":
                     command ="cd " + workingdirectory + "; " + command
@@ -878,6 +883,14 @@ class bigjob_agent:
         du_id = du_url[du_url.index("du-"):]
         return du_id        
 
+    def __ibrun_available(self):
+        " TACC resources use ibrun for MPI startup "
+        ibrun_available = False
+        try:
+            ibrun_available = (subprocess.call("ibrun -n 1 -o 0 /bin/date", shell=True)==0)
+        except:
+            pass
+        return ibrun_available
     
     def __get_launch_method(self, requested_method):
         """ returns desired execution method: ssh, aprun """
@@ -887,6 +900,8 @@ class bigjob_agent:
             aprun_available = (subprocess.call("aprun -n 1 /bin/date", shell=True)==0)
         except:
             pass
+
+        ibrun_available = self.__ibrun_available()
         
         ssh_available = False
         try:
@@ -897,12 +912,17 @@ class bigjob_agent:
         launch_method = "local"
         if requested_method=="aprun" and aprun_available == True:
             launch_method="aprun"
+        elif ibrun_available == True:
+            launch_method="ibrun"
         elif requested_method=="ssh" and ssh_available == True:
             launch_method="ssh"
         # aprun fallback
         elif ssh_available==False and aprun_available==True:
             launch_method="aprun"
-        logger.debug("aprun: " + str(aprun_available) + " ssh: " + str(ssh_available) 
+
+
+        logger.debug("aprun: " + str(aprun_available) + " ibrun: " + str(ibrun_available) 
+                     + " ssh: " + str(ssh_available) 
                      + " Launch method: " + str(launch_method))
         return launch_method
     
