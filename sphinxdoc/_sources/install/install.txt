@@ -40,6 +40,10 @@ You need to *activate* your Python environment in order to make it work. Run the
 
 Activating the virtualenv is *very* important. If you don't activate your virtual Python environment, the rest of this tutorial **will not work.** You can usually tell that your environment is activated properly if your bash command-line prompt starts with :code:`(python)`.
 
+The last step in this process is to add your newly created virtualenv to your :code:`.bashrc` so that any batch jobs that you submit have the same Python environment as you have on your submitting resource. Add the following line at the end of your :code:`$HOME/.bashrc` file::
+	
+	source $HOME/.bigjob/python/bin/activate
+
 =================
 Install BigJob
 =================

@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>3. Troubleshooting &mdash; BigJob 1.0 documentation</title>
+    <title>2.3. Troubleshooting &mdash; BigJob 1.0 documentation</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -30,7 +30,7 @@
     <link rel="top" title="BigJob 1.0 documentation" href="../index.html" />
     <link rel="up" title="2. Installation" href="index.html" />
     <link rel="next" title="3. Working with BigJob" href="../usage/index.html" />
-    <link rel="prev" title="2. Setting Up a Redis Server" href="redis.html" /> 
+    <link rel="prev" title="2.2. Setting Up a Redis Server" href="redis.html" /> 
   </head>
   <body>
     <div class="related">
@@ -43,7 +43,7 @@
           <a href="../usage/index.html" title="3. Working with BigJob"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="redis.html" title="2. Setting Up a Redis Server"
+          <a href="redis.html" title="2.2. Setting Up a Redis Server"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">BigJob 1.0 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">2. Installation</a> &raquo;</li> 
@@ -56,7 +56,45 @@
           <div class="body">
             
   <div class="section" id="troubleshooting">
-<h1>3. Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this headline">¶</a></h1>
+<h1>2.3. Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this headline">¶</a></h1>
+<p>Having trouble with your BigJob installation? We&#8217;re here to help! Below is a list of some common installation problems. If your problem persists, you can always message us at <a class="reference external" href="mailto:bigjob-users&#37;&#52;&#48;googlegroups&#46;com">big job-users<span>&#64;</span>googlegroups<span>&#46;</span>com</a>.</p>
+<p>If you are encountering errors that aren&#8217;t listed below, set the environment variable <tt class="code docutils literal"><span class="pre">$BIGJOB_VERBOSE=100</span></tt> in your <tt class="code docutils literal"><span class="pre">.bashrc</span></tt>.</p>
+<div class="section" id="common-error-messages">
+<h2>2.3.1. Common Error Messages<a class="headerlink" href="#common-error-messages" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>The most common problems we encounter are with incorrect python version.</li>
+</ol>
+<p>In these cases, <tt class="code docutils literal"><span class="pre">import</span> <span class="pre">pilot</span></tt> may return:</p>
+<div class="highlight-python"><pre>Traceback (most recent call last):
+File "&lt;string&gt;", line 1, in &lt;module&gt;
+ImportError: No module named pilot</pre>
+</div>
+<p>Using a virtualenv will modify your Python path, but you can verify that you are using the correct Python in two ways. From command line:</p>
+<div class="highlight-python"><pre>which python</pre>
+</div>
+<p>should return the installation directory where you installed BigJob (i.e. $HOME/.bigjob/python/...).</p>
+<p>On remote resources such as XSEDE, before installing your virtualenv, you must be using Python 2.7.x. Some of these resources use Python 2.4 or Python 2.6 by default. You can use <tt class="code docutils literal"><span class="pre">module</span> <span class="pre">load</span> <span class="pre">python</span></tt> to upgrade to Python 2.7.x.</p>
+<p>Verify that your python version is correct at the destination by trying:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">ssh</span> <span class="o">&lt;</span><span class="n">name</span><span class="o">-</span><span class="n">of</span><span class="o">.</span><span class="n">remote</span><span class="o">.</span><span class="n">resource</span><span class="o">&gt;</span> <span class="s">&quot;python -V&quot;</span>
+</pre></div>
+</div>
+<p>If this does not give the correct python version, check your <tt class="code docutils literal"><span class="pre">.bashrc</span></tt> at the destination to verify that you source your virtual environment.</p>
+<ol class="arabic simple" start="2">
+<li>My stdout file doesn&#8217;t contain the output of /bin/date but &#8220;ssh: connect to host localhost port 22: Connection refused&#8221;</li>
+</ol>
+<p>BigJob utilizes ssh for the execution of sub-jobs. Please ensure that your local SSH daemon is up and running and that you can login without password.</p>
+</div>
+<div class="section" id="frequently-asked-questions">
+<h2>2.3.2. Frequently Asked Questions<a class="headerlink" href="#frequently-asked-questions" title="Permalink to this headline">¶</a></h2>
+<p><strong>Q: How can I update my existing BigJob package?</strong>:</p>
+<div class="highlight-python"><pre>easy_install -U bigjob</pre>
+</div>
+<p><strong>Q: How do I execute and reconnect to long-running sessions of BigJob in a Unix terminal?</strong></p>
+<p>The UNIX <tt class="code docutils literal"><span class="pre">screen</span></tt> tool can / should be used to re-connect to a running BigJob session on a remote machine. For documentation on screen, please see <a class="reference external" href="http://www.slac.stanford.edu/comp/unix/package/epics/extensions/iocConsole/screen.1.html">Screen Manpage</a>.</p>
+<p>You should not just submit a BigJob from your local machine to a remote host and then close the terminal without the use of screen.</p>
+<p><strong>Q: Why is BigJob downloading an installation package?</strong></p>
+<p>BigJob attempts to install itself, if it can&#8217;t find a valid BJ installation on a resource (i.e. if <tt class="code docutils literal"><span class="pre">import</span> <span class="pre">pilot</span></tt> fails). By default BigJob searches for <tt class="code docutils literal"><span class="pre">$HOME/.bigjob/python</span></tt> for a working BJ installation. Please, make sure that the correct Python is found in your default paths. If BJ attempts to install itself despite being already installed on a resource, this can be a sign that the wrong Python is found.</p>
+</div>
 </div>
 
 
@@ -65,9 +103,18 @@
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">2.3. Troubleshooting</a><ul>
+<li><a class="reference internal" href="#common-error-messages">2.3.1. Common Error Messages</a></li>
+<li><a class="reference internal" href="#frequently-asked-questions">2.3.2. Frequently Asked Questions</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="redis.html"
-                        title="previous chapter">2. Setting Up a Redis Server</a></p>
+                        title="previous chapter">2.2. Setting Up a Redis Server</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="../usage/index.html"
                         title="next chapter">3. Working with BigJob</a></p>
@@ -103,7 +150,7 @@
           <a href="../usage/index.html" title="3. Working with BigJob"
              >next</a> |</li>
         <li class="right" >
-          <a href="redis.html" title="2. Setting Up a Redis Server"
+          <a href="redis.html" title="2.2. Setting Up a Redis Server"
              >previous</a> |</li>
         <li><a href="../index.html">BigJob 1.0 documentation</a> &raquo;</li>
           <li><a href="index.html" >2. Installation</a> &raquo;</li> 
