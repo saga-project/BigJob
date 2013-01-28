@@ -57,6 +57,106 @@
             
   <div class="section" id="writing-bigjob-scripts">
 <h1>3.1. Writing BigJob Scripts<a class="headerlink" href="#writing-bigjob-scripts" title="Permalink to this headline">¶</a></h1>
+<p>This documentation is to help provide a familiarity with the scripts and the different configurable parameters that will help you get started. It is not comprehensive. For complete API documentation, please see <a class="reference external" href="../library/index.html">Section 5</a>.</p>
+<div class="section" id="bigjob-jargon">
+<h2>3.1.1. BigJob Jargon<a class="headerlink" href="#bigjob-jargon" title="Permalink to this headline">¶</a></h2>
+<p>Familiarity with the below terms will help you to understand the overview of BigJob functionality.</p>
+<ol class="arabic simple">
+<li><strong>Application</strong> - A program that is composed of computation and data elements</li>
+<li><strong>Pilot-Job (Pilot)</strong> - An entity that actually gets submitted and scheduled on a resource using the resource management system. A Pilot-Job provides application-level control and management of a set of allocated resources. A container for a set of tasks. Allows the logical grouping of compute units (see below)</li>
+<li><strong>Compute Unit</strong> - A self-containing piece of work, e.g. a computational task that potentially operates on a set of input data, also an &#8216;application kernel&#8217;</li>
+<li><strong>Pilot-Data</strong> - Allows the logical grouping of data units (see below). This collection of files can be associated with an extensible set of properties.</li>
+<li><strong>Data Unit</strong> - A container for a logical group of data that is often accessed together or comprises a larger set of data, e.g. data files or chunks</li>
+<li><strong>Pilot-Manager (PM)</strong> - Stores the information of the compute units and is responsible for orchestrating the interactions between the Pilots</li>
+<li><strong>Pilot-Agent</strong> - For each HPC resource specified, a Pilot-Agent is launched. When a resource becomes available, the Pilot-Agent becomes active and pulls the stored information of the compute unit and executes it on that HPC resource.</li>
+<li><strong>Coordination System</strong> - A database used by the Pilot-Manager to store the information of Compute Units and orchestrate Pilot-Agents. Active Pilot-Agents use the coordination system to pull the Compute Unit information in order to execute such Compute Units on HPC resources.</li>
+</ol>
+</div>
+<div class="section" id="import-python-modules">
+<h2>3.1.2. Import Python Modules<a class="headerlink" href="#import-python-modules" title="Permalink to this headline">¶</a></h2>
+<p>You can import any number of Python modules, depending on what you want to do in your script. We recommend the following:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">pilot</span> <span class="kn">import</span> <span class="n">PilotComputeService</span><span class="p">,</span> <span class="n">ComputeDataService</span><span class="p">,</span> <span class="n">State</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="coordination-url">
+<h2>3.1.3. Coordination URL<a class="headerlink" href="#coordination-url" title="Permalink to this headline">¶</a></h2>
+<p>Identify the coordination system to be used. You should have set up a Redis server as part of the <a class="reference external" href="../install/redis.html">Setting Up a Redis Server</a> section.</p>
+<p>Replace the COORDINATION_URL parameter with the path to your Redis server. The following example shows how to do this for localhost and a remote resource, such as cyder:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">COORDINATION_URL</span> <span class="o">=</span> <span class="s">&quot;redis://localhost:6379&quot;</span>   <span class="c"># uses redis database as coordination system.</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">COORDINATION_URL</span> <span class="o">=</span> <span class="s">&quot;redis://cyder.cct.lsu.edu:2525&quot;</span>  <span class="c"># uses redis database on cyder.cct.lsu.edu at port 2525 as coordination system.</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="pilot-compute-description">
+<h2>3.1.4. Pilot Compute Description<a class="headerlink" href="#pilot-compute-description" title="Permalink to this headline">¶</a></h2>
+<p>Pilot description defines the resource specification for managing the jobs on that resource. The following are the resource specifications that need to be provided:</p>
+<ul>
+<li><p class="first"><tt class="code docutils literal"><span class="pre">service_url</span></tt> - Specifies the SAGA-Python job adaptor and resource hostname on which jobs can be executed. For remote hosts, password-less login must be enabled.</p>
+</li>
+<li><p class="first"><tt class="code docutils literal"><span class="pre">number_of_processes</span></tt> - Specifies the total number of processes that need to be allocated to run the jobs.</p>
+</li>
+<li><p class="first"><tt class="code docutils literal"><span class="pre">allocation</span></tt> - Specifies your allocation, if running on an XSEDE resource. This field can be left empty if you are running somewhere that does not require an allocation.</p>
+</li>
+<li><p class="first"><tt class="code docutils literal"><span class="pre">queue</span></tt> - Specifies the job queue to be used. If you are not submitting to a batch queuing system, remove this parameter.</p>
+</li>
+<li><p class="first"><tt class="code docutils literal"><span class="pre">working_directory</span></tt> - Specifies the directory in which the Pilot-Job agent executes.</p>
+</li>
+<li><p class="first"><tt class="code docutils literal"><span class="pre">walltime</span></tt> - Specifies the number of minutes the resources are requested for.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">pilot_compute_description</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&quot;service_url&quot;</span><span class="p">:</span> <span class="s">&quot;sge+ssh://localhost&quot;</span><span class="p">,</span>
+                                   <span class="s">&quot;number_of_processes&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span>
+                                   <span class="s">&quot;allocation&quot;</span><span class="p">:</span> <span class="s">&quot;XSEDE12-SAGA&quot;</span><span class="p">,</span>
+                                   <span class="s">&quot;queue&quot;</span><span class="p">:</span> <span class="s">&quot;development&quot;</span><span class="p">,</span>
+                                   <span class="s">&quot;working_directory&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s">&quot;HOME&quot;</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;/agent&quot;</span><span class="p">,</span>
+                                   <span class="s">&quot;walltime&quot;</span><span class="p">:</span><span class="mi">10</span>
+                                <span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="compute-unit-description">
+<h2>3.1.5. Compute Unit Description<a class="headerlink" href="#compute-unit-description" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p class="first"><tt class="code docutils literal"><span class="pre">executable</span></tt> - specifies the executable.</p>
+</li>
+<li><p class="first"><tt class="code docutils literal"><span class="pre">arguments</span></tt>  - specifies the list of arguments to be passed to executable.</p>
+</li>
+<li><p class="first"><tt class="code docutils literal"><span class="pre">environment</span></tt> - specifies the list of environment variables to be set for the successful of job execution.</p>
+</li>
+<li><p class="first"><tt class="code docutils literal"><span class="pre">working_directory</span></tt> - specifies the directory in which the job has to execute. If not specified, the Pilot-Job creates a default directory.</p>
+</li>
+<li><p class="first"><tt class="code docutils literal"><span class="pre">number_of_processes</span></tt> - specifies the number of processes to be assigned for the job execution.</p>
+</li>
+<li><p class="first"><tt class="code docutils literal"><span class="pre">spmd_variation</span></tt> - specifies the type of job. By default it is single job.</p>
+</li>
+<li><p class="first"><tt class="code docutils literal"><span class="pre">output</span></tt> - specifies the file in which the standard output of the job execution to be stored.</p>
+</li>
+<li><p class="first"><tt class="code docutils literal"><span class="pre">error</span></tt> - specifies the file in which the standard error of the job execution to be stored.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">compute_unit_description</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&quot;executable&quot;</span><span class="p">:</span> <span class="s">&quot;/bin/echo&quot;</span><span class="p">,</span>
+                             <span class="s">&quot;arguments&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s">&quot;Hello&quot;</span><span class="p">,</span><span class="s">&quot;$ENV1&quot;</span><span class="p">,</span><span class="s">&quot;$ENV2&quot;</span><span class="p">],</span>
+                             <span class="s">&quot;environment&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;ENV1=env_arg1&#39;</span><span class="p">,</span><span class="s">&#39;ENV2=env_arg2&#39;</span><span class="p">],</span>
+                             <span class="s">&quot;number_of_processes&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+                             <span class="s">&quot;spmd_variation&quot;</span><span class="p">:</span><span class="s">&quot;mpi&quot;</span><span class="p">,</span>
+                             <span class="s">&quot;output&quot;</span><span class="p">:</span> <span class="s">&quot;stdout.txt&quot;</span><span class="p">,</span>
+                             <span class="s">&quot;error&quot;</span><span class="p">:</span> <span class="s">&quot;stderr.txt&quot;</span>
+                           <span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="pilot-data-description">
+<h2>3.1.6. Pilot Data Description<a class="headerlink" href="#pilot-data-description" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="data-unit-description">
+<h2>3.1.7. Data Unit Description<a class="headerlink" href="#data-unit-description" title="Permalink to this headline">¶</a></h2>
+</div>
 </div>
 
 
@@ -65,6 +165,20 @@
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">3.1. Writing BigJob Scripts</a><ul>
+<li><a class="reference internal" href="#bigjob-jargon">3.1.1. BigJob Jargon</a></li>
+<li><a class="reference internal" href="#import-python-modules">3.1.2. Import Python Modules</a></li>
+<li><a class="reference internal" href="#coordination-url">3.1.3. Coordination URL</a></li>
+<li><a class="reference internal" href="#pilot-compute-description">3.1.4. Pilot Compute Description</a></li>
+<li><a class="reference internal" href="#compute-unit-description">3.1.5. Compute Unit Description</a></li>
+<li><a class="reference internal" href="#pilot-data-description">3.1.6. Pilot Data Description</a></li>
+<li><a class="reference internal" href="#data-unit-description">3.1.7. Data Unit Description</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="index.html"
                         title="previous chapter">3. Working with BigJob</a></p>

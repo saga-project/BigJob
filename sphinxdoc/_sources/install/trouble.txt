@@ -2,7 +2,7 @@
 Troubleshooting
 ###############
 
-Having trouble with your BigJob installation? We're here to help! Below is a list of some common installation problems. If your problem persists, you can always message us at `big job-users@googlegroups.com <bigjob-users@googlegroups.com>`_.
+Having trouble with your BigJob installation? We're here to help! Below is a list of some common installation problems. If your problem persists, you can always message us at `bigjob-users@googlegroups.com <bigjob-users@googlegroups.com>`_.
 
 If you are encountering errors that aren't listed below, set the environment variable :code:`$BIGJOB_VERBOSE=100` in your :code:`.bashrc`.
 
