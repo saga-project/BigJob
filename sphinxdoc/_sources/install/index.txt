@@ -10,7 +10,6 @@ and configuration of BigJob and things that make working with BigJob easier.
 
 
 .. toctree::
-   :numbered:
 
    install.rst
    redis.rst
