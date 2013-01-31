@@ -57,8 +57,8 @@ Pilot Compute Description
 Pilot description defines the resource specification for managing the jobs on that resource. The following are the resource specifications that need to be provided:
 
 - :code:`service_url` - Specifies the SAGA-Python job adaptor and resource hostname on which jobs can be executed. For remote hosts, password-less login must be enabled. 
-- :code:`number_of_processes` - Specifies the total number of processes that need to be allocated to run the jobs.
-- :code:`allocation` - Specifies your allocation, if running on an XSEDE resource. This field can be left empty if you are running somewhere that does not require an allocation.
+- :code:`number_of_processes` - This refers to the number of cores that need to be allocated to run the jobs
+- :code:`allocation` - Specifies your allocation, if running on an XSEDE resource. This field can be removed if you are running somewhere that does not require an allocation.
 - :code:`queue` - Specifies the job queue to be used. If you are not submitting to a batch queuing system, remove this parameter.
 - :code:`working_directory` - Specifies the directory in which the Pilot-Job agent executes.
 - :code:`walltime` - Specifies the number of minutes the resources are requested for. ::
@@ -71,9 +71,9 @@ Pilot description defines the resource specification for managing the jobs on th
                                    	   "walltime":10
                                 	}
 
-======================
+========================
 Compute Unit Description
-======================
+========================
 
 - :code:`executable` - specifies the executable. 
 - :code:`arguments`  - specifies the list of arguments to be passed to executable.
@@ -97,6 +97,18 @@ Compute Unit Description
 ======================
 Pilot Data Description
 ======================
+
+::
+
+	pilot_data_description =    {
+   					'service_url': "ssh://localhost/tmp/pilotstore/",
+   					'size':100,
+   					# Affinity
+					'affinity_datacenter_label',    # pilot stores sharing the same label are located in the same data center          
+					'affinity_machine_label',       # pilot stores sharing the same label are located on the same machine                           
+				    }
+
+
 
 ======================
 Data Unit Description
