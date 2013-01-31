@@ -23,8 +23,9 @@ Library Reference
 Compute and Data Services
 *************************
 
-Some propper discussion what compute and data services are and how they are supposed to
-be used needs to go here. The 'aggregate' ComputeDataService needs to be explained here
+Some proper discussion what compute and data services are and how they are supposed to
+be used needs to go here. The 'aggregate' 
+ComputeDataService needs to be explained here
 as well! And examples! Examples are always good.
 
 

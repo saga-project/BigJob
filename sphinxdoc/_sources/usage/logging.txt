@@ -3,7 +3,7 @@ Logging and Debugging
 #####################
 
 In a distributed environment unified error logging and reporting is a crucial
-capability for debugging and monitoring. SAGA has a configurable logging system
+capability for debugging and monitoring. BigJob has a configurable logging system
 that  captures debug, info, warning and error messages across all of
 its middelware adaptors. The logging system can be controlled in two different
 ways: via :ref:`env_vars` variables, which should be sufficient in most 
