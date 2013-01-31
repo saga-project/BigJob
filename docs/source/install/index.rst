@@ -13,4 +13,5 @@ and configuration of BigJob and things that make working with BigJob easier.
 
    install.rst
    redis.rst
+   xsede.rst
    trouble.rst
