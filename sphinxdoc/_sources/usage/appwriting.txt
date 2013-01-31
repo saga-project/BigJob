@@ -54,10 +54,18 @@ NUMBER_JOBS
 The number of jobs simply defines how many jobs you wish to run. For instance, 1 Pilot-Job may be submitted to run 100 compute units (sub-jobs). In this case, the NUMBER_JOBS parameter would be set to 100. It should be noted that this is usually at the top of the script for convenience but can be added in a for loop around the Compute Unit Description.
 
 ======================
+Pilot Compute Service
+======================
+
+The PilotComputeService (PCS) is a factory for creating Pilot-Compute objects, where the latter is the individual handle to the resource. The PCS takes the COORDINATION_URL (as defined above) as an argument. This is for coordination of the compute and data units with the redis database. ::
+
+    pilot_compute_service = PilotComputeService(COORDINATION_URL)
+
+======================
 Pilot Compute Description
 ======================
 
-The next step in creating your script is to define the pilot compute description (PCD). The PCD just defines the resource in which you will be running on and different attributes required for managing jobs on that resource. Recall that a Pilot-Job requests resources required to run all of the jobs (i.e. it's like one big job instead of many small jobs).
+The next step in creating your script is to define the pilot compute description (PCD). The PCD just defines the compute resource in which you will be running on and different attributes required for managing jobs on that resource. Recall that a Pilot-Job requests resources required to run all of the jobs (i.e. it's like one big job instead of many small jobs). There can be any number of pilotcompute instantiated depending on the compute resources available to the application (using two machines rather than 1 requires 2 pilot compute descriptions).
 
 The following are the resource specifications that need to be provided:
 
@@ -70,7 +78,7 @@ The following are the resource specifications that need to be provided:
 
 	pilot_compute_description = { 	   "service_url": "sge+ssh://localhost",
         	                           "number_of_processes": 12,
-                	                   "allocation": "XSEDE12-SAGA",
+                	                   "allocation": "TG-XXXXXX",
                         	           "queue": "development",
                                 	   "working_directory": os.getenv("HOME")+"/agent",
                                    	   "walltime":10
@@ -85,7 +93,7 @@ After defining a Pilot Compute Description, we tell the system to create the Pil
 Compute Data Service
 ========================
 
-The Compute Data Service ::
+The Compute Data Service is created to handle both Pilot Compute and Pilot Data in a holistic way. It represents the central entry point for the application workload. The CDS takes care of the placement of Compute and Data Units. The set of Pilot Computes and Pilot Data available to the CDS can be changed during the application's runtime. The CDS handles different data-compute affinity and will handle compute/data co-locating for the requested data-compute workload. ::
 
     compute_data_service = ComputeDataService()
     compute_data_service.add_pilot_compute_service(pilot_compute_service)
@@ -121,7 +129,69 @@ After defining a description for the compute units, you want to submit these com
 		compute_data_service.submit_compute_unit(compute_unit_description)
 
 
+We then have the CDS wait for all of the compute units to complete and then do some clean up.
 
+    print ("Waiting for compute units to complete")
+    compute_data_service.wait()
+
+    print ("Terminate Pilot Jobs")
+    compute_data_service.cancel()    
+    pilot_compute_service.cancel()
+
+
+CONGRATULATIONS! You are now ready to write your first BigJob script.
+
+=======================
+Putting it all Together
+=======================
+
+Your first simple BigJob script::
+
+   from pilot import PilotComputeService, ComputeDataService, State
+
+   NUMBER_JOBS = 4
+   COORDINATION_URL = redis://localhost
+
+   pilot_compute_service = PilotComputeService(COORDINATION_URL)
+
+   # create pilot job service and initiate a pilot job
+   pilot_compute_description = {
+                            "service_url": 'fork://localhost',
+                            "number_of_processes": 1,                             
+                            "working_directory": os.path.join(os.getcwd(),"work"),
+                           }
+   
+   pilotjob = pilot_compute_service.create_pilot(pilot_compute_description=pilot_compute_description)
+        
+   compute_data_service = ComputeDataService()
+   compute_data_service.add_pilot_compute_service(pilot_compute_service)
+   
+   # start work unit
+   compute_unit_description = {
+           "executable": "/bin/date",
+           "arguments": [""],
+           "number_of_processes": 1,            
+           "output": "stdout.txt",
+           "error": "stderr.txt",   
+   }   
+               
+   for i in range(NUMBER_JOBS):                                                                                                
+   	compute_unit = compute_data_service.submit_compute_unit(compute_unit_description)
+   
+   compute_data_service.wait()
+
+   compute_data_service.cancel()
+
+
+######################
+Optional Pilot Data
+######################
+
+Suppose we are running an application that needs input data and generates output data. The Pilot-API provides a way to effectively manage the data flow between Compute Units (CUs) and Data Units (DUs). This means you can stage data in and out. 
+
+A CU can have both input and output dependencies to a set of DUs. For this purpose, the API declares two fields: :code:`input_data` and :code:`output_data` that can be populated with a reference to a DU. The runtime system will ensure that these dependencies are met when the CU is executed, i. e. either the DUs are moved to a Pilot that is close to the CU or the CU is executed in a Pilot close to the DU's pilot. The input data is made available in the working directory of the CU. As described, depending on the locality of the DUs/CUs, different costs can be associated with this operation. The runtime system relies on an affinity-aware scheduler that ensures that data movements are minimized and that if possible “affine” CUs and DUs in order to co-locate.
+
+This introduces the concept of affinity for co-location. 
 
 ======================
 Pilot Data Description
@@ -142,3 +212,9 @@ Pilot Data Description
 ======================
 Data Unit Description
 ======================
+
+::
+
+	data_unit_description = {
+       					'file_urls': [file1, file2, file3]        
+   	 			} 

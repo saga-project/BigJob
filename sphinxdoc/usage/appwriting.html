@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../_static/sidebar.js"></script>
     <link rel="top" title="BigJob 1.0 documentation" href="../index.html" />
     <link rel="up" title="3. Working with BigJob" href="index.html" />
-    <link rel="next" title="3.2. Command-Line Tools" href="cmdtools.html" />
+    <link rel="next" title="3.3. Command-Line Tools" href="cmdtools.html" />
     <link rel="prev" title="3. Working with BigJob" href="index.html" /> 
   </head>
   <body>
@@ -40,7 +40,7 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="cmdtools.html" title="3.2. Command-Line Tools"
+          <a href="cmdtools.html" title="3.3. Command-Line Tools"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="index.html" title="3. Working with BigJob"
@@ -94,9 +94,16 @@
 <h2>3.1.4. NUMBER_JOBS<a class="headerlink" href="#number-jobs" title="Permalink to this headline">¶</a></h2>
 <p>The number of jobs simply defines how many jobs you wish to run. For instance, 1 Pilot-Job may be submitted to run 100 compute units (sub-jobs). In this case, the NUMBER_JOBS parameter would be set to 100. It should be noted that this is usually at the top of the script for convenience but can be added in a for loop around the Compute Unit Description.</p>
 </div>
+<div class="section" id="pilot-compute-service">
+<h2>3.1.5. Pilot Compute Service<a class="headerlink" href="#pilot-compute-service" title="Permalink to this headline">¶</a></h2>
+<p>The PilotComputeService (PCS) is a factory for creating Pilot-Compute objects, where the latter is the individual handle to the resource. The PCS takes the COORDINATION_URL (as defined above) as an argument. This is for coordination of the compute and data units with the redis database.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">pilot_compute_service</span> <span class="o">=</span> <span class="n">PilotComputeService</span><span class="p">(</span><span class="n">COORDINATION_URL</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
 <div class="section" id="pilot-compute-description">
-<h2>3.1.5. Pilot Compute Description<a class="headerlink" href="#pilot-compute-description" title="Permalink to this headline">¶</a></h2>
-<p>The next step in creating your script is to define the pilot compute description (PCD). The PCD just defines the resource in which you will be running on and different attributes required for managing jobs on that resource. Recall that a Pilot-Job requests resources required to run all of the jobs (i.e. it&#8217;s like one big job instead of many small jobs).</p>
+<h2>3.1.6. Pilot Compute Description<a class="headerlink" href="#pilot-compute-description" title="Permalink to this headline">¶</a></h2>
+<p>The next step in creating your script is to define the pilot compute description (PCD). The PCD just defines the compute resource in which you will be running on and different attributes required for managing jobs on that resource. Recall that a Pilot-Job requests resources required to run all of the jobs (i.e. it&#8217;s like one big job instead of many small jobs). There can be any number of pilotcompute instantiated depending on the compute resources available to the application (using two machines rather than 1 requires 2 pilot compute descriptions).</p>
 <p>The following are the resource specifications that need to be provided:</p>
 <ul>
 <li><p class="first"><tt class="code docutils literal"><span class="pre">service_url</span></tt> - Specifies the SAGA-Python job adaptor (often this is based on the batch queuing system) and resource hostname (for instance, lonestar.tacc.utexas.edu) on which jobs can be executed. For remote hosts, password-less login must be enabled.</p>
@@ -112,7 +119,7 @@
 <li><p class="first"><tt class="code docutils literal"><span class="pre">walltime</span></tt> - Specifies the number of minutes the resources are requested for.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">pilot_compute_description</span> <span class="o">=</span> <span class="p">{</span>      <span class="s">&quot;service_url&quot;</span><span class="p">:</span> <span class="s">&quot;sge+ssh://localhost&quot;</span><span class="p">,</span>
                                    <span class="s">&quot;number_of_processes&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span>
-                                   <span class="s">&quot;allocation&quot;</span><span class="p">:</span> <span class="s">&quot;XSEDE12-SAGA&quot;</span><span class="p">,</span>
+                                   <span class="s">&quot;allocation&quot;</span><span class="p">:</span> <span class="s">&quot;TG-XXXXXX&quot;</span><span class="p">,</span>
                                    <span class="s">&quot;queue&quot;</span><span class="p">:</span> <span class="s">&quot;development&quot;</span><span class="p">,</span>
                                    <span class="s">&quot;working_directory&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s">&quot;HOME&quot;</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;/agent&quot;</span><span class="p">,</span>
                                    <span class="s">&quot;walltime&quot;</span><span class="p">:</span><span class="mi">10</span>
@@ -127,15 +134,15 @@
 </div>
 </div>
 <div class="section" id="compute-data-service">
-<h2>3.1.6. Compute Data Service<a class="headerlink" href="#compute-data-service" title="Permalink to this headline">¶</a></h2>
-<p>The Compute Data Service</p>
+<h2>3.1.7. Compute Data Service<a class="headerlink" href="#compute-data-service" title="Permalink to this headline">¶</a></h2>
+<p>The Compute Data Service is created to handle both Pilot Compute and Pilot Data in a holistic way. It represents the central entry point for the application workload. The CDS takes care of the placement of Compute and Data Units. The set of Pilot Computes and Pilot Data available to the CDS can be changed during the application&#8217;s runtime. The CDS handles different data-compute affinity and will handle compute/data co-locating for the requested data-compute workload.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">compute_data_service</span> <span class="o">=</span> <span class="n">ComputeDataService</span><span class="p">()</span>
 <span class="n">compute_data_service</span><span class="o">.</span><span class="n">add_pilot_compute_service</span><span class="p">(</span><span class="n">pilot_compute_service</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="compute-unit-description">
-<h2>3.1.7. Compute Unit Description<a class="headerlink" href="#compute-unit-description" title="Permalink to this headline">¶</a></h2>
+<h2>3.1.8. Compute Unit Description<a class="headerlink" href="#compute-unit-description" title="Permalink to this headline">¶</a></h2>
 <p>Next, we must define the actual compute unit that we want to run. These are what constitute the individual jobs that will run within the Pilot. Oftentimes, this will be an executable, which can have input arguments or environment variables.</p>
 <ul>
 <li><p class="first"><tt class="code docutils literal"><span class="pre">executable</span></tt> - Specifies the path to the executable, i.e. NAMD, AMBER, etc.</p>
@@ -170,9 +177,63 @@
        <span class="n">compute_data_service</span><span class="o">.</span><span class="n">submit_compute_unit</span><span class="p">(</span><span class="n">compute_unit_description</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>We then have the CDS wait for all of the compute units to complete and then do some clean up.</p>
+<blockquote>
+<div><p>print (&#8220;Waiting for compute units to complete&#8221;)
+compute_data_service.wait()</p>
+<p>print (&#8220;Terminate Pilot Jobs&#8221;)
+compute_data_service.cancel()
+pilot_compute_service.cancel()</p>
+</div></blockquote>
+<p>CONGRATULATIONS! You are now ready to write your first BigJob script.</p>
 </div>
+<div class="section" id="putting-it-all-together">
+<h2>3.1.9. Putting it all Together<a class="headerlink" href="#putting-it-all-together" title="Permalink to this headline">¶</a></h2>
+<p>Your first simple BigJob script:</p>
+<div class="highlight-python"><pre>from pilot import PilotComputeService, ComputeDataService, State
+
+NUMBER_JOBS = 4
+COORDINATION_URL = redis://localhost
+
+pilot_compute_service = PilotComputeService(COORDINATION_URL)
+
+# create pilot job service and initiate a pilot job
+pilot_compute_description = {
+                         "service_url": 'fork://localhost',
+                         "number_of_processes": 1,
+                         "working_directory": os.path.join(os.getcwd(),"work"),
+                        }
+
+pilotjob = pilot_compute_service.create_pilot(pilot_compute_description=pilot_compute_description)
+
+compute_data_service = ComputeDataService()
+compute_data_service.add_pilot_compute_service(pilot_compute_service)
+
+# start work unit
+compute_unit_description = {
+        "executable": "/bin/date",
+        "arguments": [""],
+        "number_of_processes": 1,
+        "output": "stdout.txt",
+        "error": "stderr.txt",
+}
+
+for i in range(NUMBER_JOBS):
+     compute_unit = compute_data_service.submit_compute_unit(compute_unit_description)
+
+compute_data_service.wait()
+
+compute_data_service.cancel()</pre>
+</div>
+</div>
+</div>
+<div class="section" id="optional-pilot-data">
+<h1>3.2. Optional Pilot Data<a class="headerlink" href="#optional-pilot-data" title="Permalink to this headline">¶</a></h1>
+<p>Suppose we are running an application that needs input data and generates output data. The Pilot-API provides a way to effectively manage the data flow between Compute Units (CUs) and Data Units (DUs). This means you can stage data in and out.</p>
+<p>A CU can have both input and output dependencies to a set of DUs. For this purpose, the API declares two fields: <tt class="code docutils literal"><span class="pre">input_data</span></tt> and <tt class="code docutils literal"><span class="pre">output_data</span></tt> that can be populated with a reference to a DU. The runtime system will ensure that these dependencies are met when the CU is executed, i. e. either the DUs are moved to a Pilot that is close to the CU or the CU is executed in a Pilot close to the DU&#8217;s pilot. The input data is made available in the working directory of the CU. As described, depending on the locality of the DUs/CUs, different costs can be associated with this operation. The runtime system relies on an affinity-aware scheduler that ensures that data movements are minimized and that if possible “affine” CUs and DUs in order to co-locate.</p>
+<p>This introduces the concept of affinity for co-location.</p>
 <div class="section" id="pilot-data-description">
-<h2>3.1.8. Pilot Data Description<a class="headerlink" href="#pilot-data-description" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.1. Pilot Data Description<a class="headerlink" href="#pilot-data-description" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-python"><pre>pilot_data_description =    {
                                 'service_url': "ssh://localhost/tmp/pilotstore/",
                                 'size':100,
@@ -183,7 +244,12 @@
 </div>
 </div>
 <div class="section" id="data-unit-description">
-<h2>3.1.9. Data Unit Description<a class="headerlink" href="#data-unit-description" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.2. Data Unit Description<a class="headerlink" href="#data-unit-description" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">data_unit_description</span> <span class="o">=</span> <span class="p">{</span>
+                                <span class="s">&#39;file_urls&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">file1</span><span class="p">,</span> <span class="n">file2</span><span class="p">,</span> <span class="n">file3</span><span class="p">]</span>
+                        <span class="p">}</span>
+</pre></div>
+</div>
 </div>
 </div>
 
@@ -200,11 +266,16 @@
 <li><a class="reference internal" href="#import-python-modules">3.1.2. Import Python Modules</a></li>
 <li><a class="reference internal" href="#coordination-url">3.1.3. Coordination URL</a></li>
 <li><a class="reference internal" href="#number-jobs">3.1.4. NUMBER_JOBS</a></li>
-<li><a class="reference internal" href="#pilot-compute-description">3.1.5. Pilot Compute Description</a></li>
-<li><a class="reference internal" href="#compute-data-service">3.1.6. Compute Data Service</a></li>
-<li><a class="reference internal" href="#compute-unit-description">3.1.7. Compute Unit Description</a></li>
-<li><a class="reference internal" href="#pilot-data-description">3.1.8. Pilot Data Description</a></li>
-<li><a class="reference internal" href="#data-unit-description">3.1.9. Data Unit Description</a></li>
+<li><a class="reference internal" href="#pilot-compute-service">3.1.5. Pilot Compute Service</a></li>
+<li><a class="reference internal" href="#pilot-compute-description">3.1.6. Pilot Compute Description</a></li>
+<li><a class="reference internal" href="#compute-data-service">3.1.7. Compute Data Service</a></li>
+<li><a class="reference internal" href="#compute-unit-description">3.1.8. Compute Unit Description</a></li>
+<li><a class="reference internal" href="#putting-it-all-together">3.1.9. Putting it all Together</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#optional-pilot-data">3.2. Optional Pilot Data</a><ul>
+<li><a class="reference internal" href="#pilot-data-description">3.2.1. Pilot Data Description</a></li>
+<li><a class="reference internal" href="#data-unit-description">3.2.2. Data Unit Description</a></li>
 </ul>
 </li>
 </ul>
@@ -214,7 +285,7 @@
                         title="previous chapter">3. Working with BigJob</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="cmdtools.html"
-                        title="next chapter">3.2. Command-Line Tools</a></p>
+                        title="next chapter">3.3. Command-Line Tools</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/usage/appwriting.txt"
@@ -244,7 +315,7 @@
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="cmdtools.html" title="3.2. Command-Line Tools"
+          <a href="cmdtools.html" title="3.3. Command-Line Tools"
              >next</a> |</li>
         <li class="right" >
           <a href="index.html" title="3. Working with BigJob"
