@@ -30,11 +30,8 @@ Familiarity with the below terms will help you to understand the overview of Big
 Import Python Modules
 ======================
 
-You can import any number of Python modules, depending on what you want to do in your script. We recommend the following::
+You can import any number of Python modules, depending on what you want to do in your script. You must import the pilot module as follows::
 
-	import os
-	import time
-	import sys
 	from pilot import PilotComputeService, ComputeDataService, State
 
 ======================
@@ -51,19 +48,27 @@ Replace the COORDINATION_URL parameter with the path to your Redis server. The f
 	COORDINATION_URL = "redis://cyder.cct.lsu.edu:2525"  # uses redis database on cyder.cct.lsu.edu at port 2525 as coordination system. 
 
 ======================
+NUMBER_JOBS
+======================
+
+The number of jobs simply defines how many jobs you wish to run. For instance, 1 Pilot-Job may be submitted to run 100 compute units (sub-jobs). In this case, the NUMBER_JOBS parameter would be set to 100. It should be noted that this is usually at the top of the script for convenience but can be added in a for loop around the Compute Unit Description.
+
+======================
 Pilot Compute Description
 ======================
 
-Pilot description defines the resource specification for managing the jobs on that resource. The following are the resource specifications that need to be provided:
+The next step in creating your script is to define the pilot compute description (PCD). The PCD just defines the resource in which you will be running on and different attributes required for managing jobs on that resource. Recall that a Pilot-Job requests resources required to run all of the jobs (i.e. it's like one big job instead of many small jobs).
 
-- :code:`service_url` - Specifies the SAGA-Python job adaptor and resource hostname on which jobs can be executed. For remote hosts, password-less login must be enabled. 
+The following are the resource specifications that need to be provided:
+
+- :code:`service_url` - Specifies the SAGA-Python job adaptor (often this is based on the batch queuing system) and resource hostname (for instance, lonestar.tacc.utexas.edu) on which jobs can be executed. For remote hosts, password-less login must be enabled. 
 - :code:`number_of_processes` - This refers to the number of cores that need to be allocated to run the jobs
-- :code:`allocation` - Specifies your allocation, if running on an XSEDE resource. This field can be removed if you are running somewhere that does not require an allocation.
+- :code:`allocation` - Specifies your allocation, if running on an XSEDE resource. This field must be removed if you are running somewhere that does not require an allocation.
 - :code:`queue` - Specifies the job queue to be used. If you are not submitting to a batch queuing system, remove this parameter.
 - :code:`working_directory` - Specifies the directory in which the Pilot-Job agent executes.
 - :code:`walltime` - Specifies the number of minutes the resources are requested for. ::
 
-	pilot_compute_description = { "service_url": "sge+ssh://localhost",
+	pilot_compute_description = { 	   "service_url": "sge+ssh://localhost",
         	                           "number_of_processes": 12,
                 	                   "allocation": "XSEDE12-SAGA",
                         	           "queue": "development",
@@ -71,18 +76,35 @@ Pilot description defines the resource specification for managing the jobs on th
                                    	   "walltime":10
                                 	}
 
+After defining a Pilot Compute Description, we tell the system to create the Pilot-Job by adding the following line::
+
+	pilot_compute_service.create_pilot(pilot_compute_description=pilot_compute_description)
+
+
+========================
+Compute Data Service
+========================
+
+The Compute Data Service ::
+
+    compute_data_service = ComputeDataService()
+    compute_data_service.add_pilot_compute_service(pilot_compute_service)
+
+
 ========================
 Compute Unit Description
 ========================
 
-- :code:`executable` - specifies the executable. 
-- :code:`arguments`  - specifies the list of arguments to be passed to executable.
-- :code:`environment` - specifies the list of environment variables to be set for the successful of job execution.
-- :code:`working_directory` - specifies the directory in which the job has to execute. If not specified, the Pilot-Job creates a default directory.
-- :code:`number_of_processes` - specifies the number of processes to be assigned for the job execution.
-- :code:`spmd_variation` - specifies the type of job. By default it is single job.
-- :code:`output` - specifies the file in which the standard output of the job execution to be stored.
-- :code:`error` - specifies the file in which the standard error of the job execution to be stored. :: 
+Next, we must define the actual compute unit that we want to run. These are what constitute the individual jobs that will run within the Pilot. Oftentimes, this will be an executable, which can have input arguments or environment variables.
+
+- :code:`executable` - Specifies the path to the executable, i.e. NAMD, AMBER, etc.
+- :code:`arguments`  - Specifies the list of arguments to be passed to executable. This field may not be necessary if your executable does not require input arguments. 
+- :code:`environment` - Specifies the list of environment variables to be set for the successful of job execution. This field may also not be necessary depending on your application.
+- :code:`working_directory` - Specifies the directory in which the job has to execute. If not specified, the Pilot-Job creates a default directory.
+- :code:`number_of_processes` - Specifies the number of cores to be assigned for the job execution.
+- :code:`spmd_variation` - Specifies the type of job. By default, it is single job. It can also be an MPI job.
+- :code:`output` - Specifies the file in which the standard output of the job execution to be stored.
+- :code:`error` - Specifies the file in which the standard error of the job execution to be stored. :: 
 
 	compute_unit_description = { "executable": "/bin/echo",
         	                     "arguments": ["Hello","$ENV1","$ENV2"],
@@ -92,6 +114,13 @@ Compute Unit Description
                              	     "output": "stdout.txt",
                              	     "error": "stderr.txt"
                            	   }    
+
+After defining a description for the compute units, you want to submit these compute units. The number of compute units you submit depends on the NUMBER_JOBS you defined at the top of the script. You will need a :code:`for` loop in Python in order to submit the correct number of jobs. ::
+
+	 for i in range(NUMBER_JOBS):
+		compute_data_service.submit_compute_unit(compute_unit_description)
+
+
 
 
 ======================
