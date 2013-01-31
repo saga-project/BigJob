@@ -178,13 +178,14 @@
 </pre></div>
 </div>
 <p>We then have the CDS wait for all of the compute units to complete and then do some clean up.</p>
-<blockquote>
-<div><p>print (&#8220;Waiting for compute units to complete&#8221;)
-compute_data_service.wait()</p>
-<p>print (&#8220;Terminate Pilot Jobs&#8221;)
-compute_data_service.cancel()
-pilot_compute_service.cancel()</p>
-</div></blockquote>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">print</span> <span class="p">(</span><span class="s">&quot;Waiting for compute units to complete&quot;</span><span class="p">)</span>
+<span class="n">compute_data_service</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+
+<span class="k">print</span> <span class="p">(</span><span class="s">&quot;Terminate Pilot Jobs&quot;</span><span class="p">)</span>
+<span class="n">compute_data_service</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
+<span class="n">pilot_compute_service</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
+</pre></div>
+</div>
 <p>CONGRATULATIONS! You are now ready to write your first BigJob script.</p>
 </div>
 <div class="section" id="putting-it-all-together">
@@ -229,7 +230,7 @@ compute_data_service.cancel()</pre>
 </div>
 <div class="section" id="optional-pilot-data">
 <h1>3.2. Optional Pilot Data<a class="headerlink" href="#optional-pilot-data" title="Permalink to this headline">¶</a></h1>
-<p>Suppose we are running an application that needs input data and generates output data. The Pilot-API provides a way to effectively manage the data flow between Compute Units (CUs) and Data Units (DUs). This means you can stage data in and out.</p>
+<p>Suppose we are running an application that needs input data and generates output data. The Pilot-API provides a way to effectively manage the data flow between the application and its associated data (Compute Units [CUs] and Data Units [DUs]). This means you can stage data in and out of the application.</p>
 <p>A CU can have both input and output dependencies to a set of DUs. For this purpose, the API declares two fields: <tt class="code docutils literal"><span class="pre">input_data</span></tt> and <tt class="code docutils literal"><span class="pre">output_data</span></tt> that can be populated with a reference to a DU. The runtime system will ensure that these dependencies are met when the CU is executed, i. e. either the DUs are moved to a Pilot that is close to the CU or the CU is executed in a Pilot close to the DU&#8217;s pilot. The input data is made available in the working directory of the CU. As described, depending on the locality of the DUs/CUs, different costs can be associated with this operation. The runtime system relies on an affinity-aware scheduler that ensures that data movements are minimized and that if possible “affine” CUs and DUs in order to co-locate.</p>
 <p>This introduces the concept of affinity for co-location.</p>
 <div class="section" id="pilot-data-description">
