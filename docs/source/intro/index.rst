@@ -36,7 +36,7 @@ Supported Adaptors
 * **GSISSH** - Allows job execution on remote hosts via GSISSH
 * **PBS(+SSH,+GSISSH)** - Provides local and remote access (SSH+GSISSH) to PBS/Torque clusters
 * **SGE(+SSH,+GSISSH)** - Provides local and remote access (SSH+GSISSH) Sun (Oracle) Grid Engine Clusters
+* **SLURM(+SSH)** - Provides local and remote access (SSH) to SLURM clusters
 * **GRAM** - Uses Globus to submit jobs. Globus certificates are required.
 * **Amazon EC2(+SSH)** - Start Virtual Machines and submit jobs to AWS clouds
 * **Eucalyptus(+SSH)** - Start Virtual Machines and submit jobs to Eucalyptus clouds
-* *Coming Soon:* **SLURM**
