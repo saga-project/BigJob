@@ -20,7 +20,7 @@ Prerequisites
 Bootstrap your Local Python Environment
 -----------------
 
-Assuming you don't want to mess with your system Python installation, you need a place were you can install BigJob locally. A small tool called `virtualenv <http://pypi.python.org/pypi/virtualenv/>`_ allows you to create a local Python software repository that behaves exactly like the global Python repository, with the only difference that you have write access to it. This is referred to as a 'virtual environment.'
+Assuming you don't want to mess with your system Python installation, you need a place where you can install BigJob locally. A small tool called `virtualenv <http://pypi.python.org/pypi/virtualenv/>`_ allows you to create a local Python software repository that behaves exactly like the global Python repository, with the only difference that you have write access to it. This is referred to as a 'virtual environment.'
 
 To create your local Python environment run the following command (you can install virtualenv on most systems via apt-get or yum, etc.)::
 

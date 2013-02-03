@@ -55,7 +55,7 @@
             
   <div class="section" id="introduction">
 <h1>1. Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
-<p>BigJob is a Pilot-Job framework built on top of The Simple API for Grid Applications (SAGA), a high-level, easy-to-use API for accessing distributed resources. BigJob supports a wide range of application types and is usable over a broad range of infrastructures, i.e., it is general-purpose, extensible, and interoperable. It is written in the python programming language.</p>
+<p>BigJob is a Pilot-Job framework built on top of <a class="reference external" href="http://saga-project.github.com">The Simple API for Grid Applications (SAGA)</a>, a high-level, easy-to-use API for accessing distributed resources. BigJob supports a wide range of application types and is usable over a broad range of infrastructures, i.e., it is general-purpose, extensible, and interoperable. It is written in the python programming language.</p>
 <div class="section" id="introduction-to-pilot-jobs">
 <h2>1.1. Introduction to Pilot-Jobs<a class="headerlink" href="#introduction-to-pilot-jobs" title="Permalink to this headline">¶</a></h2>
 <p>Pilot-Jobs support the decoupling of workload submission from resource assignment. This results in a flexible execution model, which in turn enables the distributed scale-out of applications on multiple and possibly heterogeneous resources. Pilot-Jobs support the use of container jobs with sophisticated workflow management to coordinate the launch and interaction of actual computational tasks within the container. It allows the execution of jobs without the necessity to queue each individual job.</p>
@@ -73,8 +73,28 @@
 <li>Works on a variety of back-end systems</li>
 </ol>
 </div>
+<div class="section" id="bigjob-overview">
+<h2>1.4. BigJob Overview<a class="headerlink" href="#bigjob-overview" title="Permalink to this headline">¶</a></h2>
+<p>SAGA BigJob is comprised of three components.</p>
+<ol class="arabic simple">
+<li><strong>The Pilot-Manager:</strong> Provides the pilot job abstraction and manages the orchestration and scheduling of Pilots. For submission of the pilots, BigJob relies on the SAGA Job API, and thus can be used in conjunction with different SAGA adaptors, e. g. the Globus, PBS, Condor, and Amazon Web Service adaptors.</li>
+<li><strong>The Pilot-Agent:</strong> Responsible for gathering local information and for executing tasks on its local resource</li>
+<li><strong>The Distributed Coordination Service:</strong> Used for communication between the Pilot Manager and Agent.</li>
+</ol>
+<p>The figure below illustrates the architecture of BigJob. BigJob utilizes a Master-Worker coordination model.</p>
+<blockquote>
+<div><img alt="../_images/bigjob-architecture.png" src="../_images/bigjob-architecture.png" />
+</div></blockquote>
+<div class="section" id="what-can-i-use-bigjob-for">
+<h3>1.4.1. What can I use BigJob for?<a class="headerlink" href="#what-can-i-use-bigjob-for" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Parameter sweeps</li>
+<li>Many instances of the same task (ensemble)</li>
+<li>Chained or coupled tasks with data dependencies</li>
+</ul>
+</div>
 <div class="section" id="supported-adaptors">
-<h2>1.4. Supported Adaptors<a class="headerlink" href="#supported-adaptors" title="Permalink to this headline">¶</a></h2>
+<h3>1.4.2. Supported Adaptors<a class="headerlink" href="#supported-adaptors" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><strong>fork</strong> - Allows job execution and file handling on the local machine</li>
 <li><strong>SSH</strong> - Allows job execution on remote hosts via SSH</li>
@@ -86,6 +106,7 @@
 <li><strong>Amazon EC2(+SSH)</strong> - Start Virtual Machines and submit jobs to AWS clouds</li>
 <li><strong>Eucalyptus(+SSH)</strong> - Start Virtual Machines and submit jobs to Eucalyptus clouds</li>
 </ul>
+</div>
 </div>
 </div>
 
@@ -101,7 +122,11 @@
 <li><a class="reference internal" href="#introduction-to-pilot-jobs">1.1. Introduction to Pilot-Jobs</a></li>
 <li><a class="reference internal" href="#why-do-you-need-pilot-jobs">1.2. Why do you need Pilot-Jobs?</a></li>
 <li><a class="reference internal" href="#what-makes-bigjob-different">1.3. What makes BigJob different?</a></li>
-<li><a class="reference internal" href="#supported-adaptors">1.4. Supported Adaptors</a></li>
+<li><a class="reference internal" href="#bigjob-overview">1.4. BigJob Overview</a><ul>
+<li><a class="reference internal" href="#what-can-i-use-bigjob-for">1.4.1. What can I use BigJob for?</a></li>
+<li><a class="reference internal" href="#supported-adaptors">1.4.2. Supported Adaptors</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
