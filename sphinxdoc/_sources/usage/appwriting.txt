@@ -5,7 +5,7 @@ Writing BigJob Scripts
 This documentation is to help provide a familiarity with the scripts and the different configurable parameters that will help you get started. It is not comprehensive. For complete API documentation, please see `Section 5 <../library/index.html>`_.
 
 ======================
-BigJob Jargon
+BigJob Terminology
 ======================
 
 Familiarity with the below terms will help you to understand the overview of BigJob functionality.
