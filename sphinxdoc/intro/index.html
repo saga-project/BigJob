@@ -73,28 +73,39 @@
 <li>Works on a variety of back-end systems</li>
 </ol>
 </div>
-<div class="section" id="bigjob-overview">
-<h2>1.4. BigJob Overview<a class="headerlink" href="#bigjob-overview" title="Permalink to this headline">¶</a></h2>
-<p>SAGA BigJob is comprised of three components.</p>
-<ol class="arabic simple">
-<li><strong>The Pilot-Manager:</strong> Provides the pilot job abstraction and manages the orchestration and scheduling of Pilots. For submission of the pilots, BigJob relies on the SAGA Job API, and thus can be used in conjunction with different SAGA adaptors, e. g. the Globus, PBS, Condor, and Amazon Web Service adaptors.</li>
-<li><strong>The Pilot-Agent:</strong> Responsible for gathering local information and for executing tasks on its local resource</li>
-<li><strong>The Distributed Coordination Service:</strong> Used for communication between the Pilot Manager and Agent.</li>
-</ol>
-<p>The figure below illustrates the architecture of BigJob. BigJob utilizes a Master-Worker coordination model.</p>
-<blockquote>
-<div><img alt="../_images/bigjob-architecture.png" src="../_images/bigjob-architecture.png" />
-</div></blockquote>
 <div class="section" id="what-can-i-use-bigjob-for">
-<h3>1.4.1. What can I use BigJob for?<a class="headerlink" href="#what-can-i-use-bigjob-for" title="Permalink to this headline">¶</a></h3>
-<ul class="simple">
-<li>Parameter sweeps</li>
-<li>Many instances of the same task (ensemble)</li>
-<li>Chained or coupled tasks with data dependencies</li>
+<h2>1.4. What can I use BigJob for?<a class="headerlink" href="#what-can-i-use-bigjob-for" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p class="first">Parameter sweeps</p>
+</li>
+<li><p class="first">Many instances of the same task (ensemble)</p>
+</li>
+<li><p class="first">Chained tasks</p>
+</li>
+<li><p class="first">Loosely coupled but distinct tasks</p>
+</li>
+<li><dl class="first docutils">
+<dt>Dependent tasks</dt>
+<dd><ul class="first last simple">
+<li>Tasks with Data Dependencies</li>
+<li>Tasks with Compute Dependencies</li>
+</ul>
+</dd>
+</dl>
+</li>
 </ul>
 </div>
+<div class="section" id="bigjob-overview">
+<h2>1.5. BigJob Overview<a class="headerlink" href="#bigjob-overview" title="Permalink to this headline">¶</a></h2>
+<p>BigJob is comprised of three major components: (1) The Pilot-Manager, (2) The Pilot-Agent, and (3) The distributed coordination service. In order to understand what each component is responsible for, we must first describe the break down of a distributed application.</p>
+<p>An application is comprised of compute units (the application kernel) and data units (i.e. input/output files or data). Using the Pilot-API, an application can create a Pilot (Pilot-Compute [aka: Pilot-Job] or Pilot-Data) in order to acquire resources (computational or storage, respectively). The Pilot-Compute is the entity that actually gets submitted and scheduled on a resource using the resource management system. Once the resources are acquired, the application can submit compute units and data units via the Pilot-Manager.</p>
+<p>The Pilot-Manager is responsible for the orchestration and scheduling of Pilots. It runs locally on the machine used to run the distributed application. For submission of Pilots, BigJob relies on the SAGA Job API, and thus can be used in conjunction with different SAGA adaptors, e. g. the Globus, PBS, Condor, and Amazon Web Service adaptors. The Pilot-Manager ensures that the tasks are launched onto the correct resource based upon the specified jobID using the correct number of processes.</p>
+<p>The Pilot-Manager then stores information into the distributed coordination service (usually a redis database). For each new job (or chunk of data), an entry is created in the database by the BigJob manager. This database can be located on any resource, including the localhost. It is used for communication between the Pilot-Manager and the Pilot-Agent.</p>
+<p>Once the Pilot-Compute is submitted to the batch queuing system of the remote resource and becomes active, the Pilot-Agent comes into play. The Pilot-Agent is responsible for gathering local information and for executing the actual tasks (compute units) on its local resource. It achieves this by periodically polling for new jobs. If a new job is found and resources are available, the job is dispatched, otherwise it is queued. If multiple resources (machines) are acquired, there will be multiple Pilot-Agents.</p>
+<p>The overall BigJob architecture is shown below. BigJob utilizes a Master-Worker coordination model.</p>
+<img alt="../_images/bigjob-architecture.png" src="../_images/bigjob-architecture.png" />
 <div class="section" id="supported-adaptors">
-<h3>1.4.2. Supported Adaptors<a class="headerlink" href="#supported-adaptors" title="Permalink to this headline">¶</a></h3>
+<h3>1.5.1. Supported Adaptors<a class="headerlink" href="#supported-adaptors" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><strong>fork</strong> - Allows job execution and file handling on the local machine</li>
 <li><strong>SSH</strong> - Allows job execution on remote hosts via SSH</li>
@@ -122,9 +133,9 @@
 <li><a class="reference internal" href="#introduction-to-pilot-jobs">1.1. Introduction to Pilot-Jobs</a></li>
 <li><a class="reference internal" href="#why-do-you-need-pilot-jobs">1.2. Why do you need Pilot-Jobs?</a></li>
 <li><a class="reference internal" href="#what-makes-bigjob-different">1.3. What makes BigJob different?</a></li>
-<li><a class="reference internal" href="#bigjob-overview">1.4. BigJob Overview</a><ul>
-<li><a class="reference internal" href="#what-can-i-use-bigjob-for">1.4.1. What can I use BigJob for?</a></li>
-<li><a class="reference internal" href="#supported-adaptors">1.4.2. Supported Adaptors</a></li>
+<li><a class="reference internal" href="#what-can-i-use-bigjob-for">1.4. What can I use BigJob for?</a></li>
+<li><a class="reference internal" href="#bigjob-overview">1.5. BigJob Overview</a><ul>
+<li><a class="reference internal" href="#supported-adaptors">1.5.1. Supported Adaptors</a></li>
 </ul>
 </li>
 </ul>
