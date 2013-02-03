@@ -27,29 +27,35 @@ Unlike other common Pilot-Job systems, SAGA BigJob:
 #. Natively supports MPI jobs
 #. Works on a variety of back-end systems
 
+===========================
+What can I use BigJob for?
+===========================
+
+* Parameter sweeps
+* Many instances of the same task (ensemble)
+* Chained tasks
+* Loosely coupled but distinct tasks
+* Dependent tasks
+	* Tasks with Data Dependencies
+	* Tasks with Compute Dependencies
+
 =================
 BigJob Overview
 =================
 
-SAGA BigJob is comprised of three components.
+BigJob is comprised of three major components: (1) The Pilot-Manager, (2) The Pilot-Agent, and (3) The distributed coordination service. In order to understand what each component is responsible for, we must first describe the break down of a distributed application.
 
-#. **The Pilot-Manager:** Provides the pilot job abstraction and manages the orchestration and scheduling of Pilots. For submission of the pilots, BigJob relies on the SAGA Job API, and thus can be used in conjunction with different SAGA adaptors, e. g. the Globus, PBS, Condor, and Amazon Web Service adaptors.
+An application is comprised of compute units (the application kernel) and data units (i.e. input/output files or data). Using the Pilot-API, an application can create a Pilot (Pilot-Compute [aka: Pilot-Job] or Pilot-Data) in order to acquire resources (computational or storage, respectively). The Pilot-Compute is the entity that actually gets submitted and scheduled on a resource using the resource management system. Once the resources are acquired, the application can submit compute units and data units via the Pilot-Manager. 
 
-#. **The Pilot-Agent:** Responsible for gathering local information and for executing tasks on its local resource
+The Pilot-Manager is responsible for the orchestration and scheduling of Pilots. It runs locally on the machine used to run the distributed application. For submission of Pilots, BigJob relies on the SAGA Job API, and thus can be used in conjunction with different SAGA adaptors, e. g. the Globus, PBS, Condor, and Amazon Web Service adaptors. The Pilot-Manager ensures that the tasks are launched onto the correct resource based upon the specified jobID using the correct number of processes.
 
-#. **The Distributed Coordination Service:** Used for communication between the Pilot Manager and Agent.
+The Pilot-Manager then stores information into the distributed coordination service (usually a redis database). For each new job (or chunk of data), an entry is created in the database by the BigJob manager. This database can be located on any resource, including the localhost. It is used for communication between the Pilot-Manager and the Pilot-Agent. 
 
-The figure below illustrates the architecture of BigJob. BigJob utilizes a Master-Worker coordination model.
+Once the Pilot-Compute is submitted to the batch queuing system of the remote resource and becomes active, the Pilot-Agent comes into play. The Pilot-Agent is responsible for gathering local information and for executing the actual tasks (compute units) on its local resource. It achieves this by periodically polling for new jobs. If a new job is found and resources are available, the job is dispatched, otherwise it is queued. If multiple resources (machines) are acquired, there will be multiple Pilot-Agents.
 
-    .. image:: ../images/bigjob-architecture.png
+The overall BigJob architecture is shown below. BigJob utilizes a Master-Worker coordination model.
 
----------------------------
-What can I use BigJob for?
----------------------------
-
-* Parameter sweeps
-* Many instances of the same task (ensemble)
-* Chained or coupled tasks with data dependencies
+.. image:: ../images/bigjob-architecture.png
 
 -------------------
 Supported Adaptors
