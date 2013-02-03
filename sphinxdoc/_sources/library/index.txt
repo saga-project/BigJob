@@ -31,29 +31,34 @@ as well! And examples! Examples are always good.
 
 PilotComputeService
 ===================
-.. warning:: DOCUMENT_ME 
+
+The PilotComputeService (PCS) is a factory for creating Pilot-Compute objects, where the latter is the individual handle to the resource. The PCS takes the COORDINATION_URL (as defined above) as an argument. This is for coordination of the compute and data units with the redis database.
 
 .. autoclass:: pilot.impl.pilotcompute_manager.PilotComputeService
    :members:
 
 PilotComputeDescription
 =======================
-.. warning:: DOCUMENT_ME
+
+The PCD defines the compute resource in which you will be running on and different attributes required for managing jobs on that resource. Recall that a Pilot-Job requests resources required to run all of the jobs. There can be any number of Pilot-Computes instantiated depending on the compute resources available to the application (using two machines rather than 1 requires 2 pilot compute descriptions).
 
 .. class:: PilotComputeDescription
 
 .. data:: affinity_datacenter_label
 
-   .. warning:: DOCUMENT_ME
+   The data center label used for affinity topology.
 
    :type: string
+
+   .. note:: Data centers and machines are organized in a logical topology tree (similar to the tree spawned by an DNS topology). The further the distance between two resources, the smaller their affinity.
 
 .. data:: affinity_machine_label
 
-   .. warning:: DOCUMENT_ME
+   The machine (resource) label used for affinity topology. 
 
    :type: string
 
+   .. note:: Data centers and machines are organized in a logical topology tree (similar to the tree spawned by an DNS topology). The further the distance between two resources, the smaller their affinity.
 .. data:: file_transfer
 
    .. warning:: DOCUMENT_ME
@@ -80,44 +85,56 @@ PilotComputeDescription
 
 .. data:: number_of_processes
 
-   .. warning:: DOCUMENT_ME
+	The number of cores that need to be allocated to run the jobs
 
    :type: string
 
 .. data:: processes_per_host
 
-   .. warning:: DOCUMENT_ME
+   	The number of cores per host node. 
 
    :type: string
+
+   .. note:: This field is required by some XSEDE/Torque clusters. If you have to specify ppn when running an MPI job on command line, then you must likely need this field in your BigJob script.
 
 .. data:: project
 
-   .. warning:: DOCUMENT_ME
-
+   	The project allocation, if running on an XSEDE resource.
+ 
    :type: string
+
+   .. note:: This field must be removed if you are running somewhere that does not require an allocation.
 
 .. data:: queue
 
-   .. warning:: DOCUMENT_ME
+	The job queue to be used.
 
    :type: string
 
+   .. note:: If you are not submitting to a batch queuing system, remove this parameter.
+
 .. data:: wall_time_limit
 
-   .. warning:: DOCUMENT_ME
+	The number of minutes the resources are requested for
 
    :type: string
 
 .. data:: working_directory
 
-   .. warning:: DOCUMENT_ME
+	The directory in which the Pilot-Job agent executes
 
    :type: string
 
 
 PilotCompute
 ============
-.. warning:: DOCUMENT_ME 
+A pilot job, which can execute some compute workload (ComputeUnit).
+
+This is the object that is returned by the PilotComputeService when a new PilotCompute is created based on a PilotComputeDescription.
+
+The PilotCompute object can be used by the application to keep track of active pilots.
+
+A PilotCompute has state, can be queried and cancelled.
 
 .. autoclass:: pilot.impl.pilotcompute_manager.PilotCompute
    :members:

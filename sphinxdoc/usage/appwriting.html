@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../_static/sidebar.js"></script>
     <link rel="top" title="BigJob 1.0 documentation" href="../index.html" />
     <link rel="up" title="3. Working with BigJob" href="index.html" />
-    <link rel="next" title="3.3. Command-Line Tools" href="cmdtools.html" />
+    <link rel="next" title="3.2. Command-Line Tools" href="cmdtools.html" />
     <link rel="prev" title="3. Working with BigJob" href="index.html" /> 
   </head>
   <body>
@@ -40,7 +40,7 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="cmdtools.html" title="3.3. Command-Line Tools"
+          <a href="cmdtools.html" title="3.2. Command-Line Tools"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="index.html" title="3. Working with BigJob"
@@ -110,19 +110,19 @@
 </li>
 <li><p class="first"><tt class="code docutils literal"><span class="pre">number_of_processes</span></tt> - This refers to the number of cores that need to be allocated to run the jobs</p>
 </li>
-<li><p class="first"><tt class="code docutils literal"><span class="pre">allocation</span></tt> - Specifies your allocation, if running on an XSEDE resource. This field must be removed if you are running somewhere that does not require an allocation.</p>
+<li><p class="first"><tt class="code docutils literal"><span class="pre">project</span></tt> - Specifies your allocation, if running on an XSEDE resource. This field must be removed if you are running somewhere that does not require an allocation.</p>
 </li>
 <li><p class="first"><tt class="code docutils literal"><span class="pre">queue</span></tt> - Specifies the job queue to be used. If you are not submitting to a batch queuing system, remove this parameter.</p>
 </li>
 <li><p class="first"><tt class="code docutils literal"><span class="pre">working_directory</span></tt> - Specifies the directory in which the Pilot-Job agent executes.</p>
 </li>
-<li><p class="first"><tt class="code docutils literal"><span class="pre">walltime</span></tt> - Specifies the number of minutes the resources are requested for.</p>
+<li><p class="first"><tt class="code docutils literal"><span class="pre">wall_time_limit</span></tt> - Specifies the number of minutes the resources are requested for.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">pilot_compute_description</span> <span class="o">=</span> <span class="p">{</span>      <span class="s">&quot;service_url&quot;</span><span class="p">:</span> <span class="s">&quot;sge+ssh://localhost&quot;</span><span class="p">,</span>
                                    <span class="s">&quot;number_of_processes&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span>
-                                   <span class="s">&quot;allocation&quot;</span><span class="p">:</span> <span class="s">&quot;TG-XXXXXX&quot;</span><span class="p">,</span>
+                                   <span class="s">&quot;project&quot;</span><span class="p">:</span> <span class="s">&quot;TG-XXXXXX&quot;</span><span class="p">,</span>
                                    <span class="s">&quot;queue&quot;</span><span class="p">:</span> <span class="s">&quot;development&quot;</span><span class="p">,</span>
                                    <span class="s">&quot;working_directory&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s">&quot;HOME&quot;</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;/agent&quot;</span><span class="p">,</span>
-                                   <span class="s">&quot;walltime&quot;</span><span class="p">:</span><span class="mi">10</span>
+                                   <span class="s">&quot;wall_time_limit&quot;</span><span class="p">:</span><span class="mi">10</span>
                                 <span class="p">}</span>
 </pre></div>
 </div>
@@ -203,7 +203,7 @@ pilot_compute_description = {
                          "service_url": 'fork://localhost',
                          "number_of_processes": 1,
                          "working_directory": os.path.join(os.getcwd(),"work"),
-                        }
+                            }
 
 pilotjob = pilot_compute_service.create_pilot(pilot_compute_description=pilot_compute_description)
 
@@ -227,14 +227,14 @@ compute_data_service.wait()
 compute_data_service.cancel()</pre>
 </div>
 </div>
-</div>
-<div class="section" id="optional-pilot-data">
-<h1>3.2. Optional Pilot Data<a class="headerlink" href="#optional-pilot-data" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="pilot-data-optional">
+<h2>3.1.10. Pilot Data (Optional)<a class="headerlink" href="#pilot-data-optional" title="Permalink to this headline">¶</a></h2>
 <p>Suppose we are running an application that needs input data and generates output data. The Pilot-API provides a way to effectively manage the data flow between the application and its associated data (Compute Units [CUs] and Data Units [DUs]). This means you can stage data in and out of the application.</p>
 <p>A CU can have both input and output dependencies to a set of DUs. For this purpose, the API declares two fields: <tt class="code docutils literal"><span class="pre">input_data</span></tt> and <tt class="code docutils literal"><span class="pre">output_data</span></tt> that can be populated with a reference to a DU. The runtime system will ensure that these dependencies are met when the CU is executed, i. e. either the DUs are moved to a Pilot that is close to the CU or the CU is executed in a Pilot close to the DU&#8217;s pilot. The input data is made available in the working directory of the CU. As described, depending on the locality of the DUs/CUs, different costs can be associated with this operation. The runtime system relies on an affinity-aware scheduler that ensures that data movements are minimized and that if possible “affine” CUs and DUs in order to co-locate.</p>
 <p>This introduces the concept of affinity for co-location.</p>
+</div>
 <div class="section" id="pilot-data-description">
-<h2>3.2.1. Pilot Data Description<a class="headerlink" href="#pilot-data-description" title="Permalink to this headline">¶</a></h2>
+<h2>3.1.11. Pilot Data Description<a class="headerlink" href="#pilot-data-description" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-python"><pre>pilot_data_description =    {
                                 'service_url': "ssh://localhost/tmp/pilotstore/",
                                 'size':100,
@@ -245,7 +245,7 @@ compute_data_service.cancel()</pre>
 </div>
 </div>
 <div class="section" id="data-unit-description">
-<h2>3.2.2. Data Unit Description<a class="headerlink" href="#data-unit-description" title="Permalink to this headline">¶</a></h2>
+<h2>3.1.12. Data Unit Description<a class="headerlink" href="#data-unit-description" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">data_unit_description</span> <span class="o">=</span> <span class="p">{</span>
                                 <span class="s">&#39;file_urls&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">file1</span><span class="p">,</span> <span class="n">file2</span><span class="p">,</span> <span class="n">file3</span><span class="p">]</span>
                         <span class="p">}</span>
@@ -272,11 +272,9 @@ compute_data_service.cancel()</pre>
 <li><a class="reference internal" href="#compute-data-service">3.1.7. Compute Data Service</a></li>
 <li><a class="reference internal" href="#compute-unit-description">3.1.8. Compute Unit Description</a></li>
 <li><a class="reference internal" href="#putting-it-all-together">3.1.9. Putting it all Together</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#optional-pilot-data">3.2. Optional Pilot Data</a><ul>
-<li><a class="reference internal" href="#pilot-data-description">3.2.1. Pilot Data Description</a></li>
-<li><a class="reference internal" href="#data-unit-description">3.2.2. Data Unit Description</a></li>
+<li><a class="reference internal" href="#pilot-data-optional">3.1.10. Pilot Data (Optional)</a></li>
+<li><a class="reference internal" href="#pilot-data-description">3.1.11. Pilot Data Description</a></li>
+<li><a class="reference internal" href="#data-unit-description">3.1.12. Data Unit Description</a></li>
 </ul>
 </li>
 </ul>
@@ -286,7 +284,7 @@ compute_data_service.cancel()</pre>
                         title="previous chapter">3. Working with BigJob</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="cmdtools.html"
-                        title="next chapter">3.3. Command-Line Tools</a></p>
+                        title="next chapter">3.2. Command-Line Tools</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/usage/appwriting.txt"
@@ -316,7 +314,7 @@ compute_data_service.cancel()</pre>
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="cmdtools.html" title="3.3. Command-Line Tools"
+          <a href="cmdtools.html" title="3.2. Command-Line Tools"
              >next</a> |</li>
         <li class="right" >
           <a href="index.html" title="3. Working with BigJob"
