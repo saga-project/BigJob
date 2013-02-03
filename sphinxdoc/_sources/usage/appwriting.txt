@@ -71,17 +71,17 @@ The following are the resource specifications that need to be provided:
 
 - :code:`service_url` - Specifies the SAGA-Python job adaptor (often this is based on the batch queuing system) and resource hostname (for instance, lonestar.tacc.utexas.edu) on which jobs can be executed. For remote hosts, password-less login must be enabled. 
 - :code:`number_of_processes` - This refers to the number of cores that need to be allocated to run the jobs
-- :code:`allocation` - Specifies your allocation, if running on an XSEDE resource. This field must be removed if you are running somewhere that does not require an allocation.
+- :code:`project` - Specifies your allocation, if running on an XSEDE resource. This field must be removed if you are running somewhere that does not require an allocation.
 - :code:`queue` - Specifies the job queue to be used. If you are not submitting to a batch queuing system, remove this parameter.
 - :code:`working_directory` - Specifies the directory in which the Pilot-Job agent executes.
-- :code:`walltime` - Specifies the number of minutes the resources are requested for. ::
+- :code:`wall_time_limit` - Specifies the number of minutes the resources are requested for. ::
 
 	pilot_compute_description = { 	   "service_url": "sge+ssh://localhost",
         	                           "number_of_processes": 12,
-                	                   "allocation": "TG-XXXXXX",
+                	                   "project": "TG-XXXXXX",
                         	           "queue": "development",
                                 	   "working_directory": os.getenv("HOME")+"/agent",
-                                   	   "walltime":10
+                                   	   "wall_time_limit":10
                                 	}
 
 After defining a Pilot Compute Description, we tell the system to create the Pilot-Job by adding the following line::
@@ -128,7 +128,6 @@ After defining a description for the compute units, you want to submit these com
 	 for i in range(NUMBER_JOBS):
 		compute_data_service.submit_compute_unit(compute_unit_description)
 
-
 We then have the CDS wait for all of the compute units to complete and then do some clean up. ::
 
     print ("Waiting for compute units to complete")
@@ -159,7 +158,7 @@ Your first simple BigJob script::
                             "service_url": 'fork://localhost',
                             "number_of_processes": 1,                             
                             "working_directory": os.path.join(os.getcwd(),"work"),
-                           }
+                               }
    
    pilotjob = pilot_compute_service.create_pilot(pilot_compute_description=pilot_compute_description)
         
@@ -183,9 +182,9 @@ Your first simple BigJob script::
    compute_data_service.cancel()
 
 
-######################
-Optional Pilot Data
-######################
+======================
+Pilot Data (Optional)
+======================
 
 Suppose we are running an application that needs input data and generates output data. The Pilot-API provides a way to effectively manage the data flow between the application and its associated data (Compute Units [CUs] and Data Units [DUs]). This means you can stage data in and out of the application.
 

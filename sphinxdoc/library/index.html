@@ -63,10 +63,7 @@ ComputeDataService needs to be explained here
 as well! And examples! Examples are always good.</p>
 <div class="section" id="pilotcomputeservice">
 <h3>5.1.1. PilotComputeService<a class="headerlink" href="#pilotcomputeservice" title="Permalink to this headline">¶</a></h3>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">DOCUMENT_ME</p>
-</div>
+<p>The PilotComputeService (PCS) is a factory for creating Pilot-Compute objects, where the latter is the individual handle to the resource. The PCS takes the COORDINATION_URL (as defined above) as an argument. This is for coordination of the compute and data units with the redis database.</p>
 <dl class="class">
 <dt id="pilot.impl.pilotcompute_manager.PilotComputeService">
 <em class="property">class </em><tt class="descclassname">pilot.impl.pilotcompute_manager.</tt><tt class="descname">PilotComputeService</tt><big>(</big><em>coordination_url='redis://localhost'</em>, <em>pcs_url=None</em><big>)</big><a class="headerlink" href="#pilot.impl.pilotcompute_manager.PilotComputeService" title="Permalink to this definition">¶</a></dt>
@@ -106,10 +103,7 @@ A list of L{PilotCompute} urls</p>
 </div>
 <div class="section" id="pilotcomputedescription">
 <h3>5.1.2. PilotComputeDescription<a class="headerlink" href="#pilotcomputedescription" title="Permalink to this headline">¶</a></h3>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">DOCUMENT_ME</p>
-</div>
+<p>The PCD defines the compute resource in which you will be running on and different attributes required for managing jobs on that resource. Recall that a Pilot-Job requests resources required to run all of the jobs. There can be any number of Pilot-Computes instantiated depending on the compute resources available to the application (using two machines rather than 1 requires 2 pilot compute descriptions).</p>
 <dl class="class">
 <dt id="PilotComputeDescription">
 <em class="property">class </em><tt class="descname">PilotComputeDescription</tt><a class="headerlink" href="#PilotComputeDescription" title="Permalink to this definition">¶</a></dt>
@@ -118,10 +112,7 @@ A list of L{PilotCompute} urls</p>
 <dl class="data">
 <dt id="affinity_datacenter_label">
 <tt class="descname">affinity_datacenter_label</tt><a class="headerlink" href="#affinity_datacenter_label" title="Permalink to this definition">¶</a></dt>
-<dd><div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">DOCUMENT_ME</p>
-</div>
+<dd><p>The data center label used for affinity topology.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -130,15 +121,16 @@ A list of L{PilotCompute} urls</p>
 </tr>
 </tbody>
 </table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Data centers and machines are organized in a logical topology tree (similar to the tree spawned by an DNS topology). The further the distance between two resources, the smaller their affinity.</p>
+</div>
 </dd></dl>
 
 <dl class="data">
 <dt id="affinity_machine_label">
 <tt class="descname">affinity_machine_label</tt><a class="headerlink" href="#affinity_machine_label" title="Permalink to this definition">¶</a></dt>
-<dd><div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">DOCUMENT_ME</p>
-</div>
+<dd><p>The machine (resource) label used for affinity topology.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -147,6 +139,10 @@ A list of L{PilotCompute} urls</p>
 </tr>
 </tbody>
 </table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Data centers and machines are organized in a logical topology tree (similar to the tree spawned by an DNS topology). The further the distance between two resources, the smaller their affinity.</p>
+</div>
 </dd></dl>
 
 <dl class="data">
@@ -220,10 +216,8 @@ A list of L{PilotCompute} urls</p>
 <dl class="data">
 <dt id="number_of_processes">
 <tt class="descname">number_of_processes</tt><a class="headerlink" href="#number_of_processes" title="Permalink to this definition">¶</a></dt>
-<dd><div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">DOCUMENT_ME</p>
-</div>
+<dd><blockquote>
+<div>The number of cores that need to be allocated to run the jobs</div></blockquote>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -237,10 +231,8 @@ A list of L{PilotCompute} urls</p>
 <dl class="data">
 <dt id="processes_per_host">
 <tt class="descname">processes_per_host</tt><a class="headerlink" href="#processes_per_host" title="Permalink to this definition">¶</a></dt>
-<dd><div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">DOCUMENT_ME</p>
-</div>
+<dd><blockquote>
+<div>The number of cores per host node.</div></blockquote>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -249,15 +241,17 @@ A list of L{PilotCompute} urls</p>
 </tr>
 </tbody>
 </table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This field is required by some XSEDE/Torque clusters. If you have to specify ppn when running an MPI job on command line, then you must likely need this field in your BigJob script.</p>
+</div>
 </dd></dl>
 
 <dl class="data">
 <dt id="project">
 <tt class="descname">project</tt><a class="headerlink" href="#project" title="Permalink to this definition">¶</a></dt>
-<dd><div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">DOCUMENT_ME</p>
-</div>
+<dd><blockquote>
+<div>The project allocation, if running on an XSEDE resource.</div></blockquote>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -266,15 +260,17 @@ A list of L{PilotCompute} urls</p>
 </tr>
 </tbody>
 </table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This field must be removed if you are running somewhere that does not require an allocation.</p>
+</div>
 </dd></dl>
 
 <dl class="data">
 <dt id="queue">
 <tt class="descname">queue</tt><a class="headerlink" href="#queue" title="Permalink to this definition">¶</a></dt>
-<dd><div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">DOCUMENT_ME</p>
-</div>
+<dd><blockquote>
+<div>The job queue to be used.</div></blockquote>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -283,15 +279,17 @@ A list of L{PilotCompute} urls</p>
 </tr>
 </tbody>
 </table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you are not submitting to a batch queuing system, remove this parameter.</p>
+</div>
 </dd></dl>
 
 <dl class="data">
 <dt id="wall_time_limit">
 <tt class="descname">wall_time_limit</tt><a class="headerlink" href="#wall_time_limit" title="Permalink to this definition">¶</a></dt>
-<dd><div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">DOCUMENT_ME</p>
-</div>
+<dd><blockquote>
+<div>The number of minutes the resources are requested for</div></blockquote>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -305,10 +303,8 @@ A list of L{PilotCompute} urls</p>
 <dl class="data">
 <dt id="working_directory">
 <tt class="descname">working_directory</tt><a class="headerlink" href="#working_directory" title="Permalink to this definition">¶</a></dt>
-<dd><div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">DOCUMENT_ME</p>
-</div>
+<dd><blockquote>
+<div>The directory in which the Pilot-Job agent executes</div></blockquote>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -322,10 +318,10 @@ A list of L{PilotCompute} urls</p>
 </div>
 <div class="section" id="pilotcompute">
 <h3>5.1.3. PilotCompute<a class="headerlink" href="#pilotcompute" title="Permalink to this headline">¶</a></h3>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">DOCUMENT_ME</p>
-</div>
+<p>A pilot job, which can execute some compute workload (ComputeUnit).</p>
+<p>This is the object that is returned by the PilotComputeService when a new PilotCompute is created based on a PilotComputeDescription.</p>
+<p>The PilotCompute object can be used by the application to keep track of active pilots.</p>
+<p>A PilotCompute has state, can be queried and cancelled.</p>
 <dl class="class">
 <dt id="pilot.impl.pilotcompute_manager.PilotCompute">
 <em class="property">class </em><tt class="descclassname">pilot.impl.pilotcompute_manager.</tt><tt class="descname">PilotCompute</tt><big>(</big><em>pilot_compute_service=None</em>, <em>bigjob_object=None</em>, <em>pilot_compute_description=None</em>, <em>pilot_url=None</em><big>)</big><a class="headerlink" href="#pilot.impl.pilotcompute_manager.PilotCompute" title="Permalink to this definition">¶</a></dt>
