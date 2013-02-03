@@ -192,9 +192,9 @@ A CU can have both input and output dependencies to a set of DUs. For this purpo
 
 This introduces the concept of affinity for co-location. 
 
-======================
+----------------------
 Pilot Data Description
-======================
+----------------------
 
 ::
 
@@ -208,9 +208,9 @@ Pilot Data Description
 
 
 
-======================
+----------------------
 Data Unit Description
-======================
+----------------------
 
 ::
 
