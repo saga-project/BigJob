@@ -232,9 +232,8 @@ compute_data_service.cancel()</pre>
 <p>Suppose we are running an application that needs input data and generates output data. The Pilot-API provides a way to effectively manage the data flow between the application and its associated data (Compute Units [CUs] and Data Units [DUs]). This means you can stage data in and out of the application.</p>
 <p>A CU can have both input and output dependencies to a set of DUs. For this purpose, the API declares two fields: <tt class="code docutils literal"><span class="pre">input_data</span></tt> and <tt class="code docutils literal"><span class="pre">output_data</span></tt> that can be populated with a reference to a DU. The runtime system will ensure that these dependencies are met when the CU is executed, i. e. either the DUs are moved to a Pilot that is close to the CU or the CU is executed in a Pilot close to the DU&#8217;s pilot. The input data is made available in the working directory of the CU. As described, depending on the locality of the DUs/CUs, different costs can be associated with this operation. The runtime system relies on an affinity-aware scheduler that ensures that data movements are minimized and that if possible “affine” CUs and DUs in order to co-locate.</p>
 <p>This introduces the concept of affinity for co-location.</p>
-</div>
 <div class="section" id="pilot-data-description">
-<h2>3.1.11. Pilot Data Description<a class="headerlink" href="#pilot-data-description" title="Permalink to this headline">¶</a></h2>
+<h3>3.1.10.1. Pilot Data Description<a class="headerlink" href="#pilot-data-description" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-python"><pre>pilot_data_description =    {
                                 'service_url': "ssh://localhost/tmp/pilotstore/",
                                 'size':100,
@@ -245,11 +244,12 @@ compute_data_service.cancel()</pre>
 </div>
 </div>
 <div class="section" id="data-unit-description">
-<h2>3.1.12. Data Unit Description<a class="headerlink" href="#data-unit-description" title="Permalink to this headline">¶</a></h2>
+<h3>3.1.10.2. Data Unit Description<a class="headerlink" href="#data-unit-description" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">data_unit_description</span> <span class="o">=</span> <span class="p">{</span>
                                 <span class="s">&#39;file_urls&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">file1</span><span class="p">,</span> <span class="n">file2</span><span class="p">,</span> <span class="n">file3</span><span class="p">]</span>
                         <span class="p">}</span>
 </pre></div>
+</div>
 </div>
 </div>
 </div>
@@ -272,9 +272,11 @@ compute_data_service.cancel()</pre>
 <li><a class="reference internal" href="#compute-data-service">3.1.7. Compute Data Service</a></li>
 <li><a class="reference internal" href="#compute-unit-description">3.1.8. Compute Unit Description</a></li>
 <li><a class="reference internal" href="#putting-it-all-together">3.1.9. Putting it all Together</a></li>
-<li><a class="reference internal" href="#pilot-data-optional">3.1.10. Pilot Data (Optional)</a></li>
-<li><a class="reference internal" href="#pilot-data-description">3.1.11. Pilot Data Description</a></li>
-<li><a class="reference internal" href="#data-unit-description">3.1.12. Data Unit Description</a></li>
+<li><a class="reference internal" href="#pilot-data-optional">3.1.10. Pilot Data (Optional)</a><ul>
+<li><a class="reference internal" href="#pilot-data-description">3.1.10.1. Pilot Data Description</a></li>
+<li><a class="reference internal" href="#data-unit-description">3.1.10.2. Data Unit Description</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
