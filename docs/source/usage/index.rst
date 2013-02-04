@@ -16,3 +16,4 @@ Explain different usage modes, etc...
    appwriting.rst
    cmdtools.rst
    logging.rst
+   output.rst
