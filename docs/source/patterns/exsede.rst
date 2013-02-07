@@ -11,7 +11,8 @@ One of the features of BigJob is the ability for application-level programmabili
 The service URL communicates what type of queueing system or middleware you want to use and where it is. The following table shows the machine type and the adaptor to use for that machine.
 
 +-----------------------------+----------------------------------------------------------------------------+ 
-| Machine	              | :code:`service_url`		          				   |+==========================================================================================================+ 
+| Machine	              | :code:`service_url`		          				   |
++=============================+============================================================================+ 
 | All machines                |  *fork://localhost*							   |
 |			      |  *ssh://eric1.loni.org*							   |
 +-----------------------------+----------------------------------------------------------------------------+ 
@@ -26,7 +27,7 @@ The service URL communicates what type of queueing system or middleware you want
 |			      |	**Remote (over SSH):** *pbs+ssh://trestles.sdsc.edu*			   |
 +-----------------------------+----------------------------------------------------------------------------+
 | Kraken		      |	**Local:** *xt5torque://localhost					   |
-			      |	**Remote (over GSISSH):** *xt5torque+gsissh://gsissh.kraken.nics.xsede.org*|	
+|			      |	**Remote (over GSISSH):** *xt5torque+gsissh://gsissh.kraken.nics.xsede.org*|	
 +-----------------------------+----------------------------------------------------------------------------+
 
 

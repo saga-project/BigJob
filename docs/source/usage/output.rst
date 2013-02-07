@@ -1,6 +1,6 @@
-#################
-Output
-################
+#####################
+Interpreting Ouput
+#####################
 
 This section explains how to find and work with the output from your BigJob scripts.
 
