@@ -63,8 +63,8 @@
 <p>The service URL communicates what type of queueing system or middleware you want to use and where it is. The following table shows the machine type and the adaptor to use for that machine.</p>
 <table border="1" class="docutils">
 <colgroup>
-<col width="28%" />
-<col width="72%" />
+<col width="27%" />
+<col width="73%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Machine</th>
@@ -73,25 +73,40 @@
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td>All machines</td>
-<td><em>fork://localhost</em>
-<em>ssh://eric1.loni.org</em></td>
+<td><ul class="first last simple">
+<li><em>fork://localhost</em></li>
+<li><em>ssh://eric1.loni.org</em></li>
+</ul>
+</td>
 </tr>
 <tr class="row-odd"><td>Stampede</td>
-<td><strong>Local:</strong> <em>slurm://localhost</em>
-<strong>Remote:</strong> <em>slurm+ssh://stampede.tacc.utexas.edu</em></td>
+<td><ul class="first last simple">
+<li><strong>Local:</strong> <em>slurm://localhost</em></li>
+<li><strong>Remote:</strong> <em>slurm+ssh://stampede.tacc.utexas.edu</em></li>
+</ul>
+</td>
 </tr>
 <tr class="row-even"><td>Lonestar and Ranger</td>
-<td><strong>Local:</strong> <em>sge://localhost</em>
-<strong>Remote (over SSH):</strong> <em>sge+ssh://lonestar.tacc.utexas.edu</em>
-<strong>Remote (over GSISSH):</strong> <em>sge+gsissh://ranger.tacc.utexas.edu</em></td>
+<td><ul class="first last simple">
+<li><strong>Local:</strong> <em>sge://localhost</em></li>
+<li><strong>Remote (over SSH):</strong> <em>sge+ssh://lonestar.tacc.utexas.edu</em></li>
+<li><strong>Remote (GSISSH):</strong> <em>sge+gsissh://ranger.tacc.utexas.edu</em></li>
+</ul>
+</td>
 </tr>
 <tr class="row-odd"><td>Trestles</td>
-<td><strong>Local:</strong> <em>pbs://localhost</em>
-<strong>Remote (over SSH):</strong> <em>pbs+ssh://trestles.sdsc.edu</em></td>
+<td><ul class="first last simple">
+<li><strong>Local:</strong> <em>pbs://localhost</em></li>
+<li><strong>Remote (over SSH):</strong> <em>pbs+ssh://trestles.sdsc.edu</em></li>
+</ul>
+</td>
 </tr>
 <tr class="row-even"><td>Kraken</td>
-<td><strong>Local:</strong> <em>xt5torque://localhost
-**Remote (over GSISSH):*</em> <em>xt5torque+gsissh://gsissh.kraken.nics.xsede.org</em></td>
+<td><ul class="first last simple">
+<li><strong>Local:</strong> <em>xt5torque://localhost</em></li>
+<li><strong>Remote (GSISSH):</strong> <em>xt5torque+gsissh://gsissh.kraken.nics.xsede.org</em></li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
