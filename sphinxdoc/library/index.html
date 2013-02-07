@@ -57,13 +57,9 @@
 <h1>5. Library Reference<a class="headerlink" href="#library-reference" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="compute-and-data-services">
 <h2>5.1. Compute and Data Services<a class="headerlink" href="#compute-and-data-services" title="Permalink to this headline">¶</a></h2>
-<p>Some proper discussion what compute and data services are and how they are supposed to
-be used needs to go here. The &#8216;aggregate&#8217;
-ComputeDataService needs to be explained here
-as well! And examples! Examples are always good.</p>
 <div class="section" id="pilotcomputeservice">
 <h3>5.1.1. PilotComputeService<a class="headerlink" href="#pilotcomputeservice" title="Permalink to this headline">¶</a></h3>
-<p>The PilotComputeService (PCS) is a factory for creating Pilot-Compute objects, where the latter is the individual handle to the resource. The PCS takes the COORDINATION_URL (as defined above) as an argument. This is for coordination of the compute and data units with the redis database.</p>
+<p>The PilotComputeService (PCS) is a factory for creating Pilot-Compute objects, where the latter is the individual handle to the resource. The PCS takes the COORDINATION_URL (as defined above) as an argument. This is for coordination of the compute units with the redis database.</p>
 <dl class="class">
 <dt id="pilot.impl.pilotcompute_manager.PilotComputeService">
 <em class="property">class </em><tt class="descclassname">pilot.impl.pilotcompute_manager.</tt><tt class="descname">PilotComputeService</tt><big>(</big><em>coordination_url='redis://localhost'</em>, <em>pcs_url=None</em><big>)</big><a class="headerlink" href="#pilot.impl.pilotcompute_manager.PilotComputeService" title="Permalink to this definition">¶</a></dt>
@@ -182,10 +178,7 @@ A list of L{PilotCompute} urls</p>
 <dl class="data">
 <dt id="output">
 <tt class="descname">output</tt><a class="headerlink" href="#output" title="Permalink to this definition">¶</a></dt>
-<dd><div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">DOCUMENT_ME</p>
-</div>
+<dd><p>Controls the location of the Pilot-Agent standard output file.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -199,10 +192,7 @@ A list of L{PilotCompute} urls</p>
 <dl class="data">
 <dt id="error">
 <tt class="descname">error</tt><a class="headerlink" href="#error" title="Permalink to this definition">¶</a></dt>
-<dd><div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">DOCUMENT_ME</p>
-</div>
+<dd><p>Controls the location of the Pilot-Agent standard error file.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -286,6 +276,17 @@ A list of L{PilotCompute} urls</p>
 </dd></dl>
 
 <dl class="data">
+<dt id="service_url">
+<tt class="descname">service_url</tt><a class="headerlink" href="#service_url" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div>Specifies the SAGA-Python job adaptor (often this is based on the batch queuing system) and resource hostname (for instance, lonestar.tacc.utexas.edu) on which jobs can be executed.</div></blockquote>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">For remote hosts, password-less login must be enabled.</p>
+</div>
+</dd></dl>
+
+<dl class="data">
 <dt id="wall_time_limit">
 <tt class="descname">wall_time_limit</tt><a class="headerlink" href="#wall_time_limit" title="Permalink to this definition">¶</a></dt>
 <dd><blockquote>
@@ -321,7 +322,7 @@ A list of L{PilotCompute} urls</p>
 <p>A pilot job, which can execute some compute workload (ComputeUnit).</p>
 <p>This is the object that is returned by the PilotComputeService when a new PilotCompute is created based on a PilotComputeDescription.</p>
 <p>The PilotCompute object can be used by the application to keep track of active pilots.</p>
-<p>A PilotCompute has state, can be queried and cancelled.</p>
+<p>A PilotCompute has state, can be queried, and cancelled.</p>
 <dl class="class">
 <dt id="pilot.impl.pilotcompute_manager.PilotCompute">
 <em class="property">class </em><tt class="descclassname">pilot.impl.pilotcompute_manager.</tt><tt class="descname">PilotCompute</tt><big>(</big><em>pilot_compute_service=None</em>, <em>bigjob_object=None</em>, <em>pilot_compute_description=None</em>, <em>pilot_url=None</em><big>)</big><a class="headerlink" href="#pilot.impl.pilotcompute_manager.PilotCompute" title="Permalink to this definition">¶</a></dt>
@@ -422,10 +423,7 @@ returns immediately.</p>
 </div>
 <div class="section" id="pilotdataservice">
 <h3>5.1.4. PilotDataService<a class="headerlink" href="#pilotdataservice" title="Permalink to this headline">¶</a></h3>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">DOCUMENT_ME</p>
-</div>
+<p>The PilotDataService (PDS) is a factory for creating Pilot-Data objects. The PDS takes the COORDINATION_URL as an argument. This is for coordination of the data units with the redis database.</p>
 <dl class="class">
 <dt id="pilot.impl.pilotdata_manager.PilotDataService">
 <em class="property">class </em><tt class="descclassname">pilot.impl.pilotdata_manager.</tt><tt class="descname">PilotDataService</tt><big>(</big><em>coordination_url='redis://localhost'</em>, <em>pds_url=None</em><big>)</big><a class="headerlink" href="#pilot.impl.pilotdata_manager.PilotDataService" title="Permalink to this definition">¶</a></dt>
@@ -523,7 +521,7 @@ data_pilot = service.create_pilot(pdd)</pre>
 <dl class="data">
 <dt id="userkey">
 <tt class="descname">userkey</tt><a class="headerlink" href="#userkey" title="Permalink to this definition">¶</a></dt>
-<dd><p>DESCRIBE_ME</p>
+<dd><p>The SSH private key &#8211; this is required by some systems by the Pilot-Data in order to ensure that the SSH service can be accessed from worker nodes.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -534,14 +532,14 @@ data_pilot = service.create_pilot(pdd)</pre>
 </table>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">&#8216;userkey&#8217; is only supported by ...</p>
+<p class="last">&#8216;userkey&#8217; is only supported by backends where worker nodes need private key access. An example of this is OSG.</p>
 </div>
 </dd></dl>
 
 <dl class="data">
 <dt id="access_key_id">
 <tt class="descname">access_key_id</tt><a class="headerlink" href="#access_key_id" title="Permalink to this definition">¶</a></dt>
-<dd><p>DESCRIBE_ME</p>
+<dd><p>The &#8216;username&#8217; for Amazon AWS compliant instances. It is an alphanumeric text string that uniquely identifies a user who owns an account. No two accounts can have the same access key.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -552,14 +550,14 @@ data_pilot = service.create_pilot(pdd)</pre>
 </table>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">&#8216;access_key_id&#8217; is only supported by ...</p>
+<p class="last">&#8216;access_key_id&#8217; is only supported by AWS complaint EC2 based connections. This applies to Amazon AWS, Eucalpytus, and OpenStack. Please see Amazon&#8217;s documentation to learn how to obtain your access key id and password.</p>
 </div>
 </dd></dl>
 
 <dl class="data">
 <dt id="secret_access_key">
 <tt class="descname">secret_access_key</tt><a class="headerlink" href="#secret_access_key" title="Permalink to this definition">¶</a></dt>
-<dd><p>DESCRIBE_ME</p>
+<dd><p>The &#8216;password&#8217; for Amazon AWS compliant instances. It&#8217;s called secret because it is assumed to be known to the owner only.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -570,14 +568,14 @@ data_pilot = service.create_pilot(pdd)</pre>
 </table>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">&#8216;secret_access_key&#8217; is only supported by ...</p>
+<p class="last">&#8216;secret_access_key&#8217; is only supported by  AWS complaint EC2 based connections. This applies to Amazon AWS, Eucalpytus, and OpenStack. Please see Amazon&#8217;s documentation to learn how to obtain your access key id and password.</p>
 </div>
 </dd></dl>
 
 <dl class="data">
-<dt id="service_url">
-<tt class="descname">service_url</tt><a class="headerlink" href="#service_url" title="Permalink to this definition">¶</a></dt>
-<dd><p>DESCRIBE_ME</p>
+<dt>
+<tt class="descname">service_url</tt></dt>
+<dd><p>Specifies the file adaptor and resource hostname on which a Pilot-Data will be created.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -586,19 +584,14 @@ data_pilot = service.create_pilot(pdd)</pre>
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">&#8216;service_url&#8217; is only supported by ...</p>
-</div>
 </dd></dl>
 
 </div>
 <div class="section" id="pilotdata">
 <h3>5.1.6. PilotData<a class="headerlink" href="#pilotdata" title="Permalink to this headline">¶</a></h3>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">DOCUMENT_ME</p>
-</div>
+<p>A Pilot-Data, which can store some data (DataUnit).</p>
+<p>This is the object that is returned by the PilotDataService when a new PilotData is created based on a PilotDataDescription.</p>
+<p>The PilotData object can be used by the application to keep track of active pilots.</p>
 <dl class="class">
 <dt id="pilot.impl.pilotdata_manager.PilotData">
 <em class="property">class </em><tt class="descclassname">pilot.impl.pilotdata_manager.</tt><tt class="descname">PilotData</tt><big>(</big><em>pilot_data_service=None</em>, <em>pilot_data_description=None</em>, <em>pd_url=None</em><big>)</big><a class="headerlink" href="#pilot.impl.pilotdata_manager.PilotData" title="Permalink to this definition">¶</a></dt>
@@ -704,10 +697,7 @@ of a pilot. A PilotData has state, can be queried, can be cancelled.</p>
 </div>
 <div class="section" id="computedataservice">
 <h3>5.1.7. ComputeDataService<a class="headerlink" href="#computedataservice" title="Permalink to this headline">¶</a></h3>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">DOCUMENT_ME</p>
-</div>
+<p>The Compute Data Service is created to handle both Pilot Compute and Pilot Data entities in a holistic way. It represents the central entry point for the application workload. The CDS takes care of the placement of Compute and Data Units. The set of Pilot Computes and Pilot Data available to the CDS can be changed during the application&#8217;s runtime. The CDS handles different data-compute affinity and will handle compute/data co-locating for the requested data-compute workload.</p>
 <dl class="class">
 <dt id="pilot.impl.pilot_manager.ComputeDataService">
 <em class="property">class </em><tt class="descclassname">pilot.impl.pilot_manager.</tt><tt class="descname">ComputeDataService</tt><big>(</big><em>cds_url=None</em><big>)</big><a class="headerlink" href="#pilot.impl.pilot_manager.ComputeDataService" title="Permalink to this definition">¶</a></dt>
@@ -813,17 +803,13 @@ the user has cancelled a CU or DU.</p>
 <h2>5.2. Compute and Data Units<a class="headerlink" href="#compute-and-data-units" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="id1">
 <h3>5.2.1. PilotComputeDescription<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">DOCUMENT_ME</p>
-</div>
+<p>The PilotComputeDescription defines the compute resource in which you will be running on and different attributes required for managing jobs on that resource. Recall that a Pilot-Job requests resources required to run all of the jobs (i.e. it&#8217;s like one big job instead of many small jobs). There can be any number of pilotcompute instantiated depending on the compute resources available to the application (using two machines rather than 1 requires 2 pilot compute descriptions).</p>
 </div>
 <div class="section" id="computeunit">
 <h3>5.2.2. ComputeUnit<a class="headerlink" href="#computeunit" title="Permalink to this headline">¶</a></h3>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">DOCUMENT_ME</p>
-</div>
+<p>A ComputeUnit is a work item executed by a PilotCompute. These are what constitute the individual jobs that will run within the Pilot. Oftentimes, this will be an executable, which can have input arguments or environment variables.</p>
+<p>A ComputeUnit is the object that is returned by the ComputeDataService when a new ComputeUnit is submitted based on a ComputeUnitDescription. The ComputeUnit object can be used by the application to keep track of ComputeUnits that are active.</p>
+<p>A ComputeUnit has state, can be queried, and can be cancelled.</p>
 <dl class="class">
 <dt id="pilot.impl.pilotcompute_manager.ComputeUnit">
 <em class="property">class </em><tt class="descclassname">pilot.impl.pilotcompute_manager.</tt><tt class="descname">ComputeUnit</tt><big>(</big><em>compute_unit_description=None</em>, <em>compute_data_service=None</em>, <em>cu_url=None</em><big>)</big><a class="headerlink" href="#pilot.impl.pilotcompute_manager.ComputeUnit" title="Permalink to this definition">¶</a></dt>
