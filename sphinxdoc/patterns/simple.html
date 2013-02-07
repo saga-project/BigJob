@@ -57,6 +57,56 @@
             
   <div class="section" id="simple-ensemble">
 <h1>4.1. Simple Ensemble<a class="headerlink" href="#simple-ensemble" title="Permalink to this headline">¶</a></h1>
+<p>You might be wondering how to create your own BigJob script or how BigJob can be useful for your needs.</p>
+<p>The first example, below, submits N jobs using BigJob. This is very useful if you are running many jobs using the same executable. Rather than submit each job individually to the queuing system and then wait for every job to become active and complete, you submit just one &#8216;Big&#8217; job that reserves the number of cores needed to run all of your jobs. When this BigJob becomes active, your jobs are pulled by BigJob from the Redis server and executed.</p>
+<p>The below examples demonstrates the mapping of a simple job (i.e. executable is /bin/echo) using all of the parameters of a Compute Unit Description. Specifically, it shows how to run 4 jobs on your local machine using fork:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">pilot</span> <span class="kn">import</span> <span class="n">PilotComputeService</span><span class="p">,</span> <span class="n">ComputeDataService</span><span class="p">,</span> <span class="n">State</span>
+
+<span class="c">### This is the number of jobs you want to run</span>
+<span class="n">NUMBER_JOBS</span><span class="o">=</span><span class="mi">4</span>
+<span class="n">COORDINATION_URL</span> <span class="o">=</span> <span class="s">&quot;redis://localhost&quot;</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+
+    <span class="n">pilot_compute_service</span> <span class="o">=</span> <span class="n">PilotComputeService</span><span class="p">(</span><span class="n">COORDINATION_URL</span><span class="p">)</span>
+
+    <span class="n">pilot_compute_description</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&quot;service_url&quot;</span><span class="p">:</span> <span class="s">&quot;fork://localhost&quot;</span><span class="p">,</span>
+                                  <span class="s">&quot;number_of_processes&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                                  <span class="s">&quot;working_directory&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s">&quot;HOME&quot;</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;/agent&quot;</span><span class="p">,</span>
+                                  <span class="s">&quot;walltime&quot;</span><span class="p">:</span><span class="mi">10</span>
+                                <span class="p">}</span>
+
+    <span class="n">pilot_compute_service</span><span class="o">.</span><span class="n">create_pilot</span><span class="p">(</span><span class="n">pilot_compute_description</span><span class="o">=</span><span class="n">pilot_compute_description</span><span class="p">)</span>
+
+    <span class="n">compute_data_service</span> <span class="o">=</span> <span class="n">ComputeDataService</span><span class="p">()</span>
+    <span class="n">compute_data_service</span><span class="o">.</span><span class="n">add_pilot_compute_service</span><span class="p">(</span><span class="n">pilot_compute_service</span><span class="p">)</span>
+
+    <span class="k">print</span> <span class="p">(</span><span class="s">&quot;Finished Pilot-Job setup. Submitting compute units&quot;</span><span class="p">)</span>
+
+    <span class="c"># submit compute units</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NUMBER_JOBS</span><span class="p">):</span>
+        <span class="n">compute_unit_description</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s">&quot;executable&quot;</span><span class="p">:</span> <span class="s">&quot;/bin/echo&quot;</span><span class="p">,</span>
+                <span class="s">&quot;arguments&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s">&quot;Hello&quot;</span><span class="p">,</span><span class="s">&quot;$ENV1&quot;</span><span class="p">,</span><span class="s">&quot;$ENV2&quot;</span><span class="p">],</span>
+                <span class="s">&quot;environment&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;ENV1=env_arg1&#39;</span><span class="p">,</span><span class="s">&#39;ENV2=env_arg2&#39;</span><span class="p">],</span>
+                <span class="s">&quot;number_of_processes&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="s">&quot;spmd_variation&quot;</span><span class="p">:</span><span class="s">&quot;single&quot;</span><span class="p">,</span>
+                <span class="s">&quot;output&quot;</span><span class="p">:</span> <span class="s">&quot;stdout.txt&quot;</span><span class="p">,</span>
+                <span class="s">&quot;error&quot;</span><span class="p">:</span> <span class="s">&quot;stderr.txt&quot;</span><span class="p">,</span>
+                <span class="p">}</span>
+        <span class="n">compute_data_service</span><span class="o">.</span><span class="n">submit_compute_unit</span><span class="p">(</span><span class="n">compute_unit_description</span><span class="p">)</span>
+
+    <span class="k">print</span> <span class="p">(</span><span class="s">&quot;Waiting for compute units to complete&quot;</span><span class="p">)</span>
+    <span class="n">compute_data_service</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+
+    <span class="k">print</span> <span class="p">(</span><span class="s">&quot;Terminate Pilot Jobs&quot;</span><span class="p">)</span>
+    <span class="n">compute_data_service</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
+    <span class="n">pilot_compute_service</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
+</pre></div>
+</div>
 </div>
 
 

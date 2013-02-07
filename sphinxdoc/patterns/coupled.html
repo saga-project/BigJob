@@ -57,6 +57,82 @@
             
   <div class="section" id="coupled-ensembles">
 <h1>4.3. Coupled Ensembles<a class="headerlink" href="#coupled-ensembles" title="Permalink to this headline">¶</a></h1>
+<p>The script provides a simple workflow which submit a set of jobs(A) and jobs(B) and wait until they are completed and then submits set of jobs(C). It demonstrates synchronization mechanisms provided by the Pilot-API. This example is useful if an executable C has dependencies on some of the output generated from jobs A and B.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">pilot</span> <span class="kn">import</span> <span class="n">PilotComputeService</span><span class="p">,</span> <span class="n">ComputeDataService</span><span class="p">,</span> <span class="n">State</span>
+
+<span class="c">### This is the number of jobs you want to run</span>
+<span class="n">NUMBER_JOBS</span><span class="o">=</span><span class="mi">4</span>
+<span class="n">COORDINATION_URL</span> <span class="o">=</span> <span class="s">&quot;redis://localhost&quot;</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+
+    <span class="n">pilot_compute_service</span> <span class="o">=</span> <span class="n">PilotComputeService</span><span class="p">(</span><span class="n">COORDINATION_URL</span><span class="p">)</span>
+
+    <span class="n">pilot_compute_description</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&quot;service_url&quot;</span><span class="p">:</span> <span class="s">&quot;sge://localhost&quot;</span><span class="p">,</span>
+                                  <span class="s">&quot;number_of_processes&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                                  <span class="s">&quot;working_directory&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s">&quot;HOME&quot;</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;/agent&quot;</span><span class="p">,</span>
+                                  <span class="s">&quot;walltime&quot;</span><span class="p">:</span><span class="mi">10</span>
+                                <span class="p">}</span>
+
+    <span class="n">pilot_compute_service</span><span class="o">.</span><span class="n">create_pilot</span><span class="p">(</span><span class="n">pilot_compute_description</span><span class="o">=</span><span class="n">pilot_compute_description</span><span class="p">)</span>
+
+    <span class="n">compute_data_service</span> <span class="o">=</span> <span class="n">ComputeDataService</span><span class="p">()</span>
+    <span class="n">compute_data_service</span><span class="o">.</span><span class="n">add_pilot_compute_service</span><span class="p">(</span><span class="n">pilot_compute_service</span><span class="p">)</span>
+
+    <span class="k">print</span> <span class="p">(</span><span class="s">&quot;Finished Pilot-Job setup. Submitting compute units&quot;</span><span class="p">)</span>
+
+    <span class="c"># submit a set of CUs, call it A</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NUMBER_JOBS</span><span class="p">):</span>
+        <span class="n">compute_unit_description</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&quot;executable&quot;</span><span class="p">:</span> <span class="s">&quot;/bin/echo&quot;</span><span class="p">,</span>
+                                     <span class="s">&quot;arguments&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s">&quot;Hello&quot;</span><span class="p">,</span><span class="s">&quot;$ENV1&quot;</span><span class="p">,</span><span class="s">&quot;$ENV2&quot;</span><span class="p">],</span>
+                                     <span class="s">&quot;environment&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;ENV1=env_arg1&#39;</span><span class="p">,</span><span class="s">&#39;ENV2=env_arg2&#39;</span><span class="p">],</span>
+                                     <span class="s">&quot;number_of_processes&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                                     <span class="s">&quot;spmd_variation&quot;</span><span class="p">:</span><span class="s">&quot;single&quot;</span><span class="p">,</span>
+                                     <span class="s">&quot;output&quot;</span><span class="p">:</span> <span class="s">&quot;A_stdout.txt&quot;</span><span class="p">,</span>
+                                     <span class="s">&quot;error&quot;</span><span class="p">:</span> <span class="s">&quot;A_stderr.txt&quot;</span>
+                                    <span class="p">}</span>
+
+        <span class="n">compute_data_service</span><span class="o">.</span><span class="n">submit_compute_unit</span><span class="p">(</span><span class="n">compute_unit_description</span><span class="p">)</span>
+
+
+<span class="c"># submit a set of CUs, call it B</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NUMBER_JOBS</span><span class="p">):</span>
+        <span class="n">compute_unit_description</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&quot;executable&quot;</span><span class="p">:</span> <span class="s">&quot;/bin/date&quot;</span><span class="p">,</span>
+                                     <span class="s">&quot;arguments&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                                     <span class="s">&quot;environment&quot;</span><span class="p">:</span> <span class="p">{},</span>
+                                     <span class="s">&quot;spmd_variation&quot;</span><span class="p">:</span><span class="s">&quot;single&quot;</span><span class="p">,</span>
+                                     <span class="s">&quot;number_of_processes&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                                     <span class="s">&quot;output&quot;</span><span class="p">:</span> <span class="s">&quot;B_stdout.txt&quot;</span><span class="p">,</span>
+                                     <span class="s">&quot;error&quot;</span><span class="p">:</span> <span class="s">&quot;B_stderr.txt&quot;</span><span class="p">,</span>
+                                   <span class="p">}</span>
+        <span class="n">compute_data_service</span><span class="o">.</span><span class="n">submit_compute_unit</span><span class="p">(</span><span class="n">compute_unit_description</span><span class="p">)</span>
+
+<span class="k">print</span> <span class="p">(</span><span class="s">&quot;Wait for CUs of task set A &amp; B to complete&quot;</span><span class="p">)</span>
+<span class="n">compute_data_service</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+
+<span class="c"># submit a set of CUs, call it C</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NUMBER_JOBS</span><span class="p">):</span>
+        <span class="n">compute_unit_description</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&quot;executable&quot;</span><span class="p">:</span> <span class="s">&quot;/bin/echo&quot;</span><span class="p">,</span>
+                                     <span class="s">&quot;arguments&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s">&quot;Hello&quot;</span><span class="p">,</span><span class="s">&quot;$ENV1&quot;</span><span class="p">,</span><span class="s">&quot;$ENV2&quot;</span><span class="p">],</span>
+                                     <span class="s">&quot;environment&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;ENV1=env_arg1&#39;</span><span class="p">,</span><span class="s">&#39;ENV2=env_arg2&#39;</span><span class="p">],</span>
+                                     <span class="s">&quot;number_of_processes&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                                     <span class="s">&quot;spmd_variation&quot;</span><span class="p">:</span><span class="s">&quot;single&quot;</span><span class="p">,</span>
+                                     <span class="s">&quot;output&quot;</span><span class="p">:</span> <span class="s">&quot;C_stdout.txt&quot;</span><span class="p">,</span>
+                                     <span class="s">&quot;error&quot;</span><span class="p">:</span> <span class="s">&quot;C_stderr.txt&quot;</span><span class="p">,</span>
+                                    <span class="p">}</span>
+        <span class="n">compute_data_service</span><span class="o">.</span><span class="n">submit_compute_unit</span><span class="p">(</span><span class="n">compute_unit_description</span><span class="p">)</span>
+
+ <span class="k">print</span> <span class="p">(</span><span class="s">&quot;Wait for CUs of task set C to complete&quot;</span><span class="p">)</span>
+    <span class="n">compute_data_service</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+
+ <span class="k">print</span> <span class="p">(</span><span class="s">&quot;Terminate Pilot Jobs&quot;</span><span class="p">)</span>
+    <span class="n">compute_data_service</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
+    <span class="n">pilot_compute_service</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
+</pre></div>
+</div>
 </div>
 
 

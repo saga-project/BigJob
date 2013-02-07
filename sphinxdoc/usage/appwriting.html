@@ -191,40 +191,41 @@
 <div class="section" id="putting-it-all-together">
 <h2>3.1.9. Putting it all Together<a class="headerlink" href="#putting-it-all-together" title="Permalink to this headline">¶</a></h2>
 <p>Your first simple BigJob script:</p>
-<div class="highlight-python"><pre>from pilot import PilotComputeService, ComputeDataService, State
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">pilot</span> <span class="kn">import</span> <span class="n">PilotComputeService</span><span class="p">,</span> <span class="n">ComputeDataService</span><span class="p">,</span> <span class="n">State</span>
 
-NUMBER_JOBS = 4
-COORDINATION_URL = redis://localhost
+<span class="n">NUMBER_JOBS</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">COORDINATION_URL</span> <span class="o">=</span> <span class="n">redis</span><span class="p">:</span><span class="o">//</span><span class="n">localhost</span>
 
-pilot_compute_service = PilotComputeService(COORDINATION_URL)
+<span class="n">pilot_compute_service</span> <span class="o">=</span> <span class="n">PilotComputeService</span><span class="p">(</span><span class="n">COORDINATION_URL</span><span class="p">)</span>
 
-# create pilot job service and initiate a pilot job
-pilot_compute_description = {
-                         "service_url": 'fork://localhost',
-                         "number_of_processes": 1,
-                         "working_directory": os.path.join(os.getcwd(),"work"),
-                            }
+<span class="c"># create pilot job service and initiate a pilot job</span>
+<span class="n">pilot_compute_description</span> <span class="o">=</span> <span class="p">{</span>
+                         <span class="s">&quot;service_url&quot;</span><span class="p">:</span> <span class="s">&#39;fork://localhost&#39;</span><span class="p">,</span>
+                         <span class="s">&quot;number_of_processes&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                         <span class="s">&quot;working_directory&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span><span class="s">&quot;work&quot;</span><span class="p">),</span>
+                            <span class="p">}</span>
 
-pilotjob = pilot_compute_service.create_pilot(pilot_compute_description=pilot_compute_description)
+<span class="n">pilotjob</span> <span class="o">=</span> <span class="n">pilot_compute_service</span><span class="o">.</span><span class="n">create_pilot</span><span class="p">(</span><span class="n">pilot_compute_description</span><span class="o">=</span><span class="n">pilot_compute_description</span><span class="p">)</span>
 
-compute_data_service = ComputeDataService()
-compute_data_service.add_pilot_compute_service(pilot_compute_service)
+<span class="n">compute_data_service</span> <span class="o">=</span> <span class="n">ComputeDataService</span><span class="p">()</span>
+<span class="n">compute_data_service</span><span class="o">.</span><span class="n">add_pilot_compute_service</span><span class="p">(</span><span class="n">pilot_compute_service</span><span class="p">)</span>
 
-# start work unit
-compute_unit_description = {
-        "executable": "/bin/date",
-        "arguments": [""],
-        "number_of_processes": 1,
-        "output": "stdout.txt",
-        "error": "stderr.txt",
-}
+<span class="c"># start work unit</span>
+<span class="n">compute_unit_description</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s">&quot;executable&quot;</span><span class="p">:</span> <span class="s">&quot;/bin/date&quot;</span><span class="p">,</span>
+        <span class="s">&quot;arguments&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s">&quot;&quot;</span><span class="p">],</span>
+        <span class="s">&quot;number_of_processes&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s">&quot;output&quot;</span><span class="p">:</span> <span class="s">&quot;stdout.txt&quot;</span><span class="p">,</span>
+        <span class="s">&quot;error&quot;</span><span class="p">:</span> <span class="s">&quot;stderr.txt&quot;</span><span class="p">,</span>
+<span class="p">}</span>
 
-for i in range(NUMBER_JOBS):
-     compute_unit = compute_data_service.submit_compute_unit(compute_unit_description)
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NUMBER_JOBS</span><span class="p">):</span>
+     <span class="n">compute_unit</span> <span class="o">=</span> <span class="n">compute_data_service</span><span class="o">.</span><span class="n">submit_compute_unit</span><span class="p">(</span><span class="n">compute_unit_description</span><span class="p">)</span>
 
-compute_data_service.wait()
+<span class="n">compute_data_service</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
 
-compute_data_service.cancel()</pre>
+<span class="n">compute_data_service</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
+</pre></div>
 </div>
 </div>
 <div class="section" id="pilot-data-optional">

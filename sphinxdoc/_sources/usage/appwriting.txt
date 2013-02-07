@@ -144,7 +144,9 @@ CONGRATULATIONS! You are now ready to write your first BigJob script.
 Putting it all Together
 =======================
 
-Your first simple BigJob script::
+Your first simple BigJob script:
+
+.. code-block:: python
 
    from pilot import PilotComputeService, ComputeDataService, State
 
