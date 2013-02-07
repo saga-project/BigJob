@@ -10,25 +10,25 @@ One of the features of BigJob is the ability for application-level programmabili
 
 The service URL communicates what type of queueing system or middleware you want to use and where it is. The following table shows the machine type and the adaptor to use for that machine.
 
-+-----------------------------+----------------------------------------------------------------------------+ 
-| Machine	              | :code:`service_url`		          				   |
-+=============================+============================================================================+ 
-| All machines                |  *fork://localhost*							   |
-|			      |  *ssh://eric1.loni.org*							   |
-+-----------------------------+----------------------------------------------------------------------------+ 
-| Stampede		      | **Local:** *slurm://localhost*						   |
-|			      |	**Remote:** *slurm+ssh://stampede.tacc.utexas.edu*			   |
-+-----------------------------+----------------------------------------------------------------------------+ 
-| Lonestar and Ranger         | **Local:** *sge://localhost*						   |	
-|			      |	**Remote (over SSH):** *sge+ssh://lonestar.tacc.utexas.edu*		   |
-|			      |	**Remote (over GSISSH):** *sge+gsissh://ranger.tacc.utexas.edu*		   |
-+-----------------------------+----------------------------------------------------------------------------+ 
-| Trestles		      | **Local:** *pbs://localhost*						   |
-|			      |	**Remote (over SSH):** *pbs+ssh://trestles.sdsc.edu*			   |
-+-----------------------------+----------------------------------------------------------------------------+
-| Kraken		      |	**Local:** *xt5torque://localhost					   |
-|			      |	**Remote (over GSISSH):** *xt5torque+gsissh://gsissh.kraken.nics.xsede.org*|	
-+-----------------------------+----------------------------------------------------------------------------+
++-----------------------------+-----------------------------------------------------------------------------+ 
+| Machine	              | :code:`service_url`		          				    |
++=============================+=============================================================================+ 
+| All machines                |* *fork://localhost*							    |
+|			      |* *ssh://eric1.loni.org*							    |
++-----------------------------+-----------------------------------------------------------------------------+ 
+| Stampede		      |* **Local:** *slurm://localhost*						    |
+|			      |* **Remote:** *slurm+ssh://stampede.tacc.utexas.edu*			    |
++-----------------------------+-----------------------------------------------------------------------------+ 
+| Lonestar and Ranger         |* **Local:** *sge://localhost*						    |	
+|			      |* **Remote (over SSH):** *sge+ssh://lonestar.tacc.utexas.edu*		    |
+|			      |* **Remote (GSISSH):** *sge+gsissh://ranger.tacc.utexas.edu*                 |
++-----------------------------+-----------------------------------------------------------------------------+ 
+| Trestles		      |* **Local:** *pbs://localhost*						    |
+|			      |* **Remote (over SSH):** *pbs+ssh://trestles.sdsc.edu*			    |
++-----------------------------+-----------------------------------------------------------------------------+
+| Kraken		      |* **Local:** *xt5torque://localhost*					    |
+|			      |* **Remote (GSISSH):** *xt5torque+gsissh://gsissh.kraken.nics.xsede.org*	    |	
++-----------------------------+-----------------------------------------------------------------------------+
 
 
 ----------------------------
