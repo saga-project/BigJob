@@ -23,16 +23,10 @@ Library Reference
 Compute and Data Services
 *************************
 
-Some proper discussion what compute and data services are and how they are supposed to
-be used needs to go here. The 'aggregate' 
-ComputeDataService needs to be explained here
-as well! And examples! Examples are always good.
-
-
 PilotComputeService
 ===================
 
-The PilotComputeService (PCS) is a factory for creating Pilot-Compute objects, where the latter is the individual handle to the resource. The PCS takes the COORDINATION_URL (as defined above) as an argument. This is for coordination of the compute and data units with the redis database.
+The PilotComputeService (PCS) is a factory for creating Pilot-Compute objects, where the latter is the individual handle to the resource. The PCS takes the COORDINATION_URL (as defined above) as an argument. This is for coordination of the compute units with the redis database.
 
 .. autoclass:: pilot.impl.pilotcompute_manager.PilotComputeService
    :members:
@@ -59,6 +53,7 @@ The PCD defines the compute resource in which you will be running on and differe
    :type: string
 
    .. note:: Data centers and machines are organized in a logical topology tree (similar to the tree spawned by an DNS topology). The further the distance between two resources, the smaller their affinity.
+
 .. data:: file_transfer
 
    .. warning:: DOCUMENT_ME
@@ -73,13 +68,13 @@ The PCD defines the compute resource in which you will be running on and differe
 
 .. data:: output
 
-   .. warning:: DOCUMENT_ME
+   Controls the location of the Pilot-Agent standard output file.
 
    :type: string
 
 .. data:: error
 
-   .. warning:: DOCUMENT_ME
+   Controls the location of the Pilot-Agent standard error file.
 
    :type: string
 
@@ -113,6 +108,12 @@ The PCD defines the compute resource in which you will be running on and differe
 
    .. note:: If you are not submitting to a batch queuing system, remove this parameter.
 
+.. data:: service_url
+	
+	Specifies the SAGA-Python job adaptor (often this is based on the batch queuing system) and resource hostname (for instance, lonestar.tacc.utexas.edu) on which jobs can be executed.
+
+   .. note::  For remote hosts, password-less login must be enabled.
+
 .. data:: wall_time_limit
 
 	The number of minutes the resources are requested for
@@ -134,14 +135,16 @@ This is the object that is returned by the PilotComputeService when a new PilotC
 
 The PilotCompute object can be used by the application to keep track of active pilots.
 
-A PilotCompute has state, can be queried and cancelled.
+A PilotCompute has state, can be queried, and cancelled.
 
 .. autoclass:: pilot.impl.pilotcompute_manager.PilotCompute
    :members:
 
 PilotDataService
 ================
-.. warning:: DOCUMENT_ME 
+
+The PilotDataService (PDS) is a factory for creating Pilot-Data objects. The PDS takes the COORDINATION_URL as an argument. This is for coordination of the data units with the redis database.
+
 
 .. autoclass:: pilot.impl.pilotdata_manager.PilotDataService
    :members:
@@ -168,46 +171,49 @@ backend-specific security / authentication hints. Example::
 
 .. data:: userkey
 
-    DESCRIBE_ME
+    The SSH private key -- this is required by some systems by the Pilot-Data in order to ensure that the SSH service can be accessed from worker nodes.
 
     :type: string
 
-    .. note:: 'userkey' is only supported by ...
+    .. note:: 'userkey' is only supported by backends where worker nodes need private key access. An example of this is OSG.
 
 .. data:: access_key_id
 
-    DESCRIBE_ME
+    The 'username' for Amazon AWS compliant instances. It is an alphanumeric text string that uniquely identifies a user who owns an account. No two accounts can have the same access key.
 
     :type: string
 
-    .. note:: 'access_key_id' is only supported by ...
+    .. note:: 'access_key_id' is only supported by AWS complaint EC2 based connections. This applies to Amazon AWS, Eucalpytus, and OpenStack. Please see Amazon's documentation to learn how to obtain your access key id and password.
 
 .. data:: secret_access_key
 
-    DESCRIBE_ME
+    The 'password' for Amazon AWS compliant instances. It's called secret because it is assumed to be known to the owner only. 
 
     :type: string
 
-    .. note:: 'secret_access_key' is only supported by ...
+    .. note:: 'secret_access_key' is only supported by  AWS complaint EC2 based connections. This applies to Amazon AWS, Eucalpytus, and OpenStack. Please see Amazon's documentation to learn how to obtain your access key id and password.
 
 .. data:: service_url
 
-    DESCRIBE_ME
+    Specifies the file adaptor and resource hostname on which a Pilot-Data will be created.
 
     :type: string
 
-    .. note:: 'service_url' is only supported by ...
-
 PilotData
 =========
-.. warning:: DOCUMENT_ME 
+A Pilot-Data, which can store some data (DataUnit).
+
+This is the object that is returned by the PilotDataService when a new PilotData is created based on a PilotDataDescription.
+
+The PilotData object can be used by the application to keep track of active pilots. 
 
 .. autoclass:: pilot.impl.pilotdata_manager.PilotData
    :members:
 
 ComputeDataService
 ==================
-.. warning:: DOCUMENT_ME 
+
+The Compute Data Service is created to handle both Pilot Compute and Pilot Data entities in a holistic way. It represents the central entry point for the application workload. The CDS takes care of the placement of Compute and Data Units. The set of Pilot Computes and Pilot Data available to the CDS can be changed during the application's runtime. The CDS handles different data-compute affinity and will handle compute/data co-locating for the requested data-compute workload.
 
 .. autoclass:: pilot.impl.pilot_manager.ComputeDataService
    :members:
@@ -217,14 +223,18 @@ Compute and Data Units
 
 PilotComputeDescription
 =======================
-.. warning:: DOCUMENT_ME 
+The PilotComputeDescription defines the compute resource in which you will be running on and different attributes required for managing jobs on that resource. Recall that a Pilot-Job requests resources required to run all of the jobs (i.e. it's like one big job instead of many small jobs). There can be any number of pilotcompute instantiated depending on the compute resources available to the application (using two machines rather than 1 requires 2 pilot compute descriptions).
 
 .. autoclass:: pilot.impl.pilotcompute_manager.PilotComputeDescription
    :members:
 
 ComputeUnit
 ===========
-.. warning:: DOCUMENT_ME 
+A ComputeUnit is a work item executed by a PilotCompute. These are what constitute the individual jobs that will run within the Pilot. Oftentimes, this will be an executable, which can have input arguments or environment variables. 
+
+A ComputeUnit is the object that is returned by the ComputeDataService when a new ComputeUnit is submitted based on a ComputeUnitDescription. The ComputeUnit object can be used by the application to keep track of ComputeUnits that are active.
+
+A ComputeUnit has state, can be queried, and can be cancelled. 
 
 .. autoclass:: pilot.impl.pilotcompute_manager.ComputeUnit
    :members:
