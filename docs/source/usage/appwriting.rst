@@ -188,34 +188,4 @@ Your first simple BigJob script:
 Pilot Data (Optional)
 ======================
 
-Suppose we are running an application that needs input data and generates output data. The Pilot-API provides a way to effectively manage the data flow between the application and its associated data (Compute Units [CUs] and Data Units [DUs]). This means you can stage data in and out of the application.
-
-A CU can have both input and output dependencies to a set of DUs. For this purpose, the API declares two fields: :code:`input_data` and :code:`output_data` that can be populated with a reference to a DU. The runtime system will ensure that these dependencies are met when the CU is executed, i. e. either the DUs are moved to a Pilot that is close to the CU or the CU is executed in a Pilot close to the DU's pilot. The input data is made available in the working directory of the CU. As described, depending on the locality of the DUs/CUs, different costs can be associated with this operation. The runtime system relies on an affinity-aware scheduler that ensures that data movements are minimized and that if possible “affine” CUs and DUs in order to co-locate.
-
-This introduces the concept of affinity for co-location. 
-
-----------------------
-Pilot Data Description
-----------------------
-
-::
-
-	pilot_data_description =    {
-   					'service_url': "ssh://localhost/tmp/pilotstore/",
-   					'size':100,
-   					# Affinity
-					'affinity_datacenter_label',    # pilot stores sharing the same label are located in the same data center          
-					'affinity_machine_label',       # pilot stores sharing the same label are located on the same machine                           
-				    }
-
-
-
-----------------------
-Data Unit Description
-----------------------
-
-::
-
-	data_unit_description = {
-       					'file_urls': [file1, file2, file3]        
-   	 			} 
+For more information on using Pilot Data, please click to the next section.
