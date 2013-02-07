@@ -10,7 +10,7 @@ scenarios, and via the :code:`bigjob.conf` file.
 
 
 .. _env_vars:
-
+---------------------
 Environment Variables
 ---------------------
 
@@ -54,17 +54,30 @@ executing shell and evaluated by BigJob at program startup.
 
        BIGJOB_VERBOSE=DEBUG python mysagaprog.py
 
-
+-------------------------
 BigJob Configuration File
 -------------------------
+
 BigJob utilizes a configuration file named :code:`bigjob.conf` located in the root of the BigJob installation (e.g. :code:`$HOME/.bigjob/python/lib/python2.<PYTHON_MINOR_VERSION>/site-packages/BigJob-<BIGJOB_VERSION>-py2.X.egg/)::
 
 	# logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL
 	logging.level=logging.INFO
 
-
+------------------------
+BigJob Logger
+-------------------------
 The log level can also be set inside the BigJob script that you are running as follows::
 
 	import logging
 	from bigjob import logger
 	logger.setLevel(logging.FATAL)
+
+**Q: How can I control BigJob log messages from the application it is executing?**
+
+BigJob logger can be obtained and handlers can be added to the logger object. For example, with the below set of instructions, the application and BigJob debug messages are written to the :code:`namd_bigwork.log` file::
+
+	logger = logging.getLogger('bigjob')
+	fileHandle = logging.FileHandler('namd_bigwork.log',mode='w')
+	fileHandle.setLevel(logging.DEBUG)
+	logger.addHandler(fileHandle)
+	logger.debug("Logging to namd_bigwork.log at DEBUG level")
