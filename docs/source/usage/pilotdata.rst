@@ -6,9 +6,7 @@ Suppose we are running an application that needs input data and generates output
 
 A CU can have both input and output dependencies to a set of DUs. For this purpose, the API declares two fields: :code:`input_data` and :code:`output_data` that can be populated with a reference to a DU. The runtime system will ensure that these dependencies are met when the CU is executed, i. e. either the DUs are moved to a Pilot that is close to the CU or the CU is executed in a Pilot close to the DU's pilot. The input data is made available in the working directory of the CU. As described, depending on the locality of the DUs/CUs, different costs can be associated with this operation. The runtime system relies on an affinity-aware scheduler that ensures that data movements are minimized and that if possible “affine” CUs and DUs in order to co-locate (affinity).
 
-----------------------
-What is Affinity?
----------------------
+**What is Affinity?**
 
 Affinity describes the relationship between compute and data units. It is used to try to co-locate data and compute resources as close to each other as possible. It is an optional parameter.
 
@@ -49,11 +47,9 @@ Some backends require specific keys to be passed to the resource (i.e. Amazon S3
 					'affinity_machine_label':"mymachine-1",                                
 				    }
 
-
-
-=======================
+======================
 Data Unit Description
-=======================
+======================
 
 The data unit description defines the different files to be moved around.
 
@@ -65,16 +61,15 @@ The data unit description defines the different files to be moved around.
 
 
 
-========================
+======================
 Staging
-========================
+======================
 
 The process of moving the data to the compute or from the compute elsewhere is called staging. There are two types of staging: input staging (e.g. copy the input data to where the compute is executing) or output staging (e.g. copy the output of an executable back to a central location). 
 
-------------------------
+-----------------------
 Input Staging
-------------------------
-
+-----------------------
 
 How do we stage the contents of each data unit to the input? The content of the Data-Unit referenced in the :code:`input_data` field will be moved to the working directory of the Compute Unit.
 
@@ -106,9 +101,9 @@ Finally, we modify our Compute Unit Description. The following stages the conten
             "input_data" : [input_du.get_url()]
     }
 
-------------------------
+-----------------------
 Output Staging
-------------------------
+-----------------------
 
 To stage the output of your executable somewhere, the following process applies:
 
@@ -125,7 +120,7 @@ We must define an output data unit description. Note that we leave the field fil
 
     output_du = compute_data_service.submit_data_unit(output_data_unit_description)
 
-Next, we modify our Compute Unit Description for the :code:`output_data`. The following stages all output data beginning with std* (wildcards are accepted) back to the Pilot-Data described in the PDD (*ssh://localhost/"+os.getenv("HOME")+"/pilotdata*). This means the output and error files (defined as stdout.txt and stderr.txt) will be staged back to the pilot data location.
+Next, we modify our Compute Unit Description for the :code:`output_data`. The following stages all output data beginning with std* (wildcards are accepted) back to the Pilot-Data described in the PDD (*ssh://localhost/"+os.getenv("HOME")+"/pilotdata*). This means the output and error files (defined as stdout.txt and stderr.txt) will be staged back to the pilot data location. ::
 
     compute_unit_description = {
             "executable": "/bin/cat",
@@ -136,11 +131,11 @@ Next, we modify our Compute Unit Description for the :code:`output_data`. The fo
             "output_data":[{ output_du.get_url(): ['std*']} ]
     }
 
-------------------------
+========================
 Putting it All Together
-------------------------
+========================
 
-The following script combines input and output staging. Input DUs and output DUs utilize the same Pilot-Data for storage. This can be modified in your own scripts by making two Pilot-Datas. 
+The following script combines input and output staging. Input DUs and output DUs utilize the same Pilot-Data for storage. This can be modified in your own scripts by making two Pilot-Datas. ::
 
 	import sys
 	import os
