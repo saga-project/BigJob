@@ -1,5 +1,4 @@
 
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -8,9 +7,9 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>3.3. Logging and Debugging &mdash; BigJob 1.0 documentation</title>
+    <title>3.4. Logging and Debugging &mdash; BigJob 1.0 documentation</title>
     
-    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -26,11 +25,10 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <script type="text/javascript" src="../_static/sidebar.js"></script>
     <link rel="top" title="BigJob 1.0 documentation" href="../index.html" />
     <link rel="up" title="3. Working with BigJob" href="index.html" />
-    <link rel="next" title="&lt;no title&gt;" href="output.html" />
-    <link rel="prev" title="3.2. Command-Line Tools" href="cmdtools.html" /> 
+    <link rel="next" title="3.5. Interpreting Output" href="output.html" />
+    <link rel="prev" title="3.3. Command-Line Tools" href="cmdtools.html" /> 
   </head>
   <body>
     <div class="related">
@@ -40,10 +38,10 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="output.html" title="&lt;no title&gt;"
+          <a href="output.html" title="3.5. Interpreting Output"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="cmdtools.html" title="3.2. Command-Line Tools"
+          <a href="cmdtools.html" title="3.3. Command-Line Tools"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">BigJob 1.0 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">3. Working with BigJob</a> &raquo;</li> 
@@ -56,14 +54,14 @@
           <div class="body">
             
   <div class="section" id="logging-and-debugging">
-<h1>3.3. Logging and Debugging<a class="headerlink" href="#logging-and-debugging" title="Permalink to this headline">¶</a></h1>
+<h1>3.4. Logging and Debugging<a class="headerlink" href="#logging-and-debugging" title="Permalink to this headline">¶</a></h1>
 <p>In a distributed environment unified error logging and reporting is a crucial
 capability for debugging and monitoring. BigJob has a configurable logging system
 that  captures debug, info, warning and error messages across its runtime and SAGA&#8217;s middleware adaptors. The logging system can be controlled in two different
 ways: via <em class="xref std std-ref">env_vars</em> variables, which should be sufficient in most
 scenarios, and via the <tt class="code docutils literal"><span class="pre">bigjob.conf</span></tt> file.</p>
 <div class="section" id="environment-variables">
-<h2>3.3.1. Environment Variables<a class="headerlink" href="#environment-variables" title="Permalink to this headline">¶</a></h2>
+<h2>3.4.1. Environment Variables<a class="headerlink" href="#environment-variables" title="Permalink to this headline">¶</a></h2>
 <p>Several environment variables can be used to control SAGA and BigJob&#8217;s logging behavior from  the command line. Obviously, this can come in handy when debugging a problem
 with an existing SAGA/BigJob application. Environment variables are set in the
 executing shell and evaluated by BigJob at program startup.</p>
@@ -123,7 +121,7 @@ you run your program:</p>
 
 </div>
 <div class="section" id="bigjob-configuration-file">
-<h2>3.3.2. BigJob Configuration File<a class="headerlink" href="#bigjob-configuration-file" title="Permalink to this headline">¶</a></h2>
+<h2>3.4.2. BigJob Configuration File<a class="headerlink" href="#bigjob-configuration-file" title="Permalink to this headline">¶</a></h2>
 <p>BigJob utilizes a configuration file named <tt class="code docutils literal"><span class="pre">bigjob.conf</span></tt> located in the root of the BigJob installation (e.g. :code:<a href="#id1"><span class="problematic" id="id2">`</span></a>$HOME/.bigjob/python/lib/python2.&lt;PYTHON_MINOR_VERSION&gt;/site-packages/BigJob-&lt;BIGJOB_VERSION&gt;-py2.X.egg/):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="c"># logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL</span>
 <span class="n">logging</span><span class="o">.</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span>
@@ -155,19 +153,19 @@ you run your program:</p>
         <div class="sphinxsidebarwrapper">
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">3.3. Logging and Debugging</a><ul>
-<li><a class="reference internal" href="#environment-variables">3.3.1. Environment Variables</a></li>
-<li><a class="reference internal" href="#bigjob-configuration-file">3.3.2. BigJob Configuration File</a></li>
+<li><a class="reference internal" href="#">3.4. Logging and Debugging</a><ul>
+<li><a class="reference internal" href="#environment-variables">3.4.1. Environment Variables</a></li>
+<li><a class="reference internal" href="#bigjob-configuration-file">3.4.2. BigJob Configuration File</a></li>
 </ul>
 </li>
 </ul>
 
   <h4>Previous topic</h4>
   <p class="topless"><a href="cmdtools.html"
-                        title="previous chapter">3.2. Command-Line Tools</a></p>
+                        title="previous chapter">3.3. Command-Line Tools</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="output.html"
-                        title="next chapter">&lt;no title&gt;</a></p>
+                        title="next chapter">3.5. Interpreting Output</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/usage/logging.txt"
@@ -197,10 +195,10 @@ you run your program:</p>
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="output.html" title="&lt;no title&gt;"
+          <a href="output.html" title="3.5. Interpreting Output"
              >next</a> |</li>
         <li class="right" >
-          <a href="cmdtools.html" title="3.2. Command-Line Tools"
+          <a href="cmdtools.html" title="3.3. Command-Line Tools"
              >previous</a> |</li>
         <li><a href="../index.html">BigJob 1.0 documentation</a> &raquo;</li>
           <li><a href="index.html" >3. Working with BigJob</a> &raquo;</li> 

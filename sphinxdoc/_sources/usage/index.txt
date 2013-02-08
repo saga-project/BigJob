@@ -11,6 +11,7 @@ and configuration of BigJob and things that make working with BigJob easier.
 .. toctree::
 
    appwriting.rst
+   pilotdata.rst
    cmdtools.rst
    logging.rst
    output.rst
