@@ -885,12 +885,18 @@ class bigjob_agent:
 
     def __ibrun_available(self):
         " TACC resources use ibrun for MPI startup "
+        logger.debug("IBRUN and SRUN Test")
         ibrun_available = False
+        srun_available = False
         try:
-            ibrun_available = (subprocess.call("ibrun -n 1 -o 0 /bin/date", shell=True)==0)
+            ibrun_available = (subprocess.call("ibrun -h", shell=True)==0)
+            srun_available = (subprocess.call("srun -V", shell=True)==0)
+            if ibrun_available and srun_available:
+                return True
         except:
             pass
-        return ibrun_available
+        return False 
+
     
     def __get_launch_method(self, requested_method):
         """ returns desired execution method: ssh, aprun """
