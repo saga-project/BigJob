@@ -530,6 +530,7 @@ class bigjob(api.base.bigjob):
         self.coordination.delete_job(job_url) 
     
     def _get_subjob_state(self, job_url):
+        logger.debug("Get subjob state: " + str(job_url))
         return self.coordination.get_job_state(job_url) 
     
     def _get_subjob_details(self, job_url):
