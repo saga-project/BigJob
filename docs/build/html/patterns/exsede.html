@@ -1,0 +1,273 @@
+
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>4.4. XSEDE Simple Ensemble Example &mdash; BigJob 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-2.3.0/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-2.3.0/css/bootstrap-responsive.min.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-2.3.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="BigJob 1.0 documentation" href="../index.html" />
+    <link rel="up" title="4. Common Usage Patterns" href="index.html" />
+    <link rel="next" title="5. Library Reference" href="../library/index.html" />
+    <link rel="prev" title="4.3. Coupled Ensembles" href="coupled.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body>
+<div class="container">
+  
+  <div id="navbar" class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+      <button class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+
+      <a class="brand" href="../index.html">BigJob</a>
+      <span class="navbar-text pull-left"><b>1.0</b></span>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+          <li class="divider-vertical"></li>
+          
+            <li class="dropdown globaltoc-container">
+  <a href="../index.html"
+     class="dropdown-toggle"
+     data-toggle="dropdown">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+    ><ul>
+<li class="toctree-l1"><a class="reference internal" href="../intro/index.html">1. Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../install/index.html">2. Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage/index.html">3. Working with BigJob</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">4. Common Usage Patterns</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../library/index.html">5. Library Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/index.html">6. Tutorial</a></li>
+</ul>
+</ul>
+</li>
+            <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"><ul>
+<li><a class="reference internal" href="#">4.4. XSEDE Simple Ensemble Example</a><ul>
+<li><a class="reference internal" href="#service-url">4.4.1. <tt class="code docutils literal"><span class="pre">service_url</span></tt></a></li>
+<li><a class="reference internal" href="#project">4.4.2. <tt class="code docutils literal"><span class="pre">project</span></tt></a></li>
+<li><a class="reference internal" href="#number-of-processes">4.4.3. <tt class="code docutils literal"><span class="pre">number_of_processes</span></tt></a></li>
+<li><a class="reference internal" href="#queue">4.4.4. <tt class="code docutils literal"><span class="pre">queue</span></tt></a></li>
+<li><a class="reference internal" href="#example-pilotcomputedescription">4.4.5. Example PilotComputeDescription</a></li>
+<li><a class="reference internal" href="#simple-ensembles-stampede-example">4.4.6. Simple Ensembles Stampede Example</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+          
+          
+            
+  <li><a href="coupled.html"
+         title="previous chapter">&laquo; 4.3. Coupled Ensembles</a></li>
+  <li><a href="../library/index.html"
+         title="next chapter">5. Library Reference &raquo;</a></li>
+          
+          
+            <li>
+  <a href="../_sources/patterns/exsede.txt"
+     rel="nofollow">Source</a></li>
+          
+        </ul>
+
+        
+          
+<form class="navbar-search pull-right" style="margin-bottom:-3px;" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+        
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="section" id="xsede-simple-ensemble-example">
+<h1>4.4. XSEDE Simple Ensemble Example<a class="headerlink" href="#xsede-simple-ensemble-example" title="Permalink to this headline">¶</a></h1>
+<p>One of the features of BigJob is the ability for application-level programmability by users. Many of the parameters in each script are customizable and configurable. There are several parameters that must be added to the PilotComputeDescription in order to run on XSEDE.</p>
+<div class="section" id="service-url">
+<h2>4.4.1. <tt class="code docutils literal"><span class="pre">service_url</span></tt><a class="headerlink" href="#service-url" title="Permalink to this headline">¶</a></h2>
+<p>The service URL communicates what type of queueing system or middleware you want to use and where it is. The following table shows the machine type and the adaptor to use for that machine.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="27%" />
+<col width="73%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Machine</th>
+<th class="head"><tt class="code docutils literal"><span class="pre">service_url</span></tt></th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>All machines</td>
+<td><ul class="first last simple">
+<li><em>fork://localhost</em></li>
+<li><em>ssh://eric1.loni.org</em></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td>Stampede</td>
+<td><ul class="first last simple">
+<li><strong>Local:</strong> <em>slurm://localhost</em></li>
+<li><strong>Remote:</strong> <em>slurm+ssh://stampede.tacc.utexas.edu</em></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td>Lonestar and Ranger</td>
+<td><ul class="first last simple">
+<li><strong>Local:</strong> <em>sge://localhost</em></li>
+<li><strong>Remote (over SSH):</strong> <em>sge+ssh://lonestar.tacc.utexas.edu</em></li>
+<li><strong>Remote (GSISSH):</strong> <em>sge+gsissh://ranger.tacc.utexas.edu</em></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td>Trestles</td>
+<td><ul class="first last simple">
+<li><strong>Local:</strong> <em>pbs://localhost</em></li>
+<li><strong>Remote (over SSH):</strong> <em>pbs+ssh://trestles.sdsc.edu</em></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td>Kraken</td>
+<td><ul class="first last simple">
+<li><strong>Local:</strong> <em>xt5torque://localhost</em></li>
+<li><strong>Remote (GSISSH):</strong> <em>xt5torque+gsissh://gsissh.kraken.nics.xsede.org</em></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="project">
+<h2>4.4.2. <tt class="code docutils literal"><span class="pre">project</span></tt><a class="headerlink" href="#project" title="Permalink to this headline">¶</a></h2>
+<p>When running on XSEDE, the project parameter must be changed to your project&#8217;s allocation number.</p>
+</div>
+<div class="section" id="number-of-processes">
+<h2>4.4.3. <tt class="code docutils literal"><span class="pre">number_of_processes</span></tt><a class="headerlink" href="#number-of-processes" title="Permalink to this headline">¶</a></h2>
+<p>This refers to the number of cores used. If your machine does not have 12 cores per node, you will have to change this parameter.</p>
+</div>
+<div class="section" id="queue">
+<h2>4.4.4. <tt class="code docutils literal"><span class="pre">queue</span></tt><a class="headerlink" href="#queue" title="Permalink to this headline">¶</a></h2>
+<p>This refers to the name of the queue on the submission machine. For example, two queue names on Lonestar are &#8216;normal&#8217; and &#8216;development&#8217;. Please refer to the machine-specific documentation to find out the names of the queues on the machines.</p>
+</div>
+<div class="section" id="example-pilotcomputedescription">
+<h2>4.4.5. Example PilotComputeDescription<a class="headerlink" href="#example-pilotcomputedescription" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">pilot_compute_description</span> <span class="o">=</span> <span class="p">{</span>
+                 <span class="s">&quot;service_url&quot;</span><span class="p">:</span> <span class="s">&#39;slurm+ssh://stampede.tacc.utexas.edu&#39;</span><span class="p">,</span>
+                 <span class="s">&quot;number_of_processes&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
+                 <span class="s">&quot;queue&quot;</span><span class="p">:</span><span class="s">&quot;normal&quot;</span><span class="p">,</span>
+                 <span class="s">&quot;project&quot;</span><span class="p">:</span><span class="s">&quot;TG-MCBXXXXXX&quot;</span><span class="p">,</span> <span class="c"># if None default allocation is used</span>
+                 <span class="s">&quot;walltime&quot;</span><span class="p">:</span><span class="mi">10</span><span class="p">,</span>
+                 <span class="s">&quot;working_directory&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+                <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="simple-ensembles-stampede-example">
+<h2>4.4.6. Simple Ensembles Stampede Example<a class="headerlink" href="#simple-ensembles-stampede-example" title="Permalink to this headline">¶</a></h2>
+<p>Now that we have modified the Pilot Compute Description, we can put this together with our simple ensemble pattern to build a script that executes on Stampede. Note that the PCD is the only thing that changes in this example.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">pilot</span> <span class="kn">import</span> <span class="n">PilotComputeService</span><span class="p">,</span> <span class="n">ComputeDataService</span><span class="p">,</span> <span class="n">State</span>
+
+<span class="c">### This is the number of jobs you want to run</span>
+<span class="n">NUMBER_JOBS</span><span class="o">=</span><span class="mi">4</span>
+<span class="n">COORDINATION_URL</span> <span class="o">=</span> <span class="s">&quot;redis://localhost&quot;</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+
+    <span class="n">pilot_compute_service</span> <span class="o">=</span> <span class="n">PilotComputeService</span><span class="p">(</span><span class="n">COORDINATION_URL</span><span class="p">)</span>
+
+    <span class="n">pilot_compute_description</span> <span class="o">=</span> <span class="p">{</span>
+                                        <span class="s">&quot;service_url&quot;</span><span class="p">:</span> <span class="s">&#39;slurm+ssh://stampede.tacc.utexas.edu&#39;</span><span class="p">,</span>
+                                        <span class="s">&quot;number_of_processes&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
+                                        <span class="s">&quot;queue&quot;</span><span class="p">:</span><span class="s">&quot;normal&quot;</span><span class="p">,</span>
+                                        <span class="s">&quot;project&quot;</span><span class="p">:</span><span class="s">&quot;TG-MCBXXXXXX&quot;</span><span class="p">,</span> <span class="c"># if None default allocation is used</span>
+                                        <span class="s">&quot;walltime&quot;</span><span class="p">:</span><span class="mi">10</span><span class="p">,</span>
+                                        <span class="s">&quot;working_directory&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+                                <span class="p">}</span>
+
+    <span class="n">pilot_compute_service</span><span class="o">.</span><span class="n">create_pilot</span><span class="p">(</span><span class="n">pilot_compute_description</span><span class="o">=</span><span class="n">pilot_compute_description</span><span class="p">)</span>
+
+    <span class="n">compute_data_service</span> <span class="o">=</span> <span class="n">ComputeDataService</span><span class="p">()</span>
+    <span class="n">compute_data_service</span><span class="o">.</span><span class="n">add_pilot_compute_service</span><span class="p">(</span><span class="n">pilot_compute_service</span><span class="p">)</span>
+
+    <span class="k">print</span> <span class="p">(</span><span class="s">&quot;Finished Pilot-Job setup. Submitting compute units&quot;</span><span class="p">)</span>
+
+    <span class="c"># submit compute units</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NUMBER_JOBS</span><span class="p">):</span>
+        <span class="n">compute_unit_description</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s">&quot;executable&quot;</span><span class="p">:</span> <span class="s">&quot;/bin/echo&quot;</span><span class="p">,</span>
+                <span class="s">&quot;arguments&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s">&quot;Hello&quot;</span><span class="p">,</span><span class="s">&quot;$ENV1&quot;</span><span class="p">,</span><span class="s">&quot;$ENV2&quot;</span><span class="p">],</span>
+                <span class="s">&quot;environment&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;ENV1=env_arg1&#39;</span><span class="p">,</span><span class="s">&#39;ENV2=env_arg2&#39;</span><span class="p">],</span>
+                <span class="s">&quot;number_of_processes&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="s">&quot;spmd_variation&quot;</span><span class="p">:</span><span class="s">&quot;single&quot;</span><span class="p">,</span>
+                <span class="s">&quot;output&quot;</span><span class="p">:</span> <span class="s">&quot;stdout.txt&quot;</span><span class="p">,</span>
+                <span class="s">&quot;error&quot;</span><span class="p">:</span> <span class="s">&quot;stderr.txt&quot;</span><span class="p">,</span>
+                <span class="p">}</span>
+        <span class="n">compute_data_service</span><span class="o">.</span><span class="n">submit_compute_unit</span><span class="p">(</span><span class="n">compute_unit_description</span><span class="p">)</span>
+
+    <span class="k">print</span> <span class="p">(</span><span class="s">&quot;Waiting for compute units to complete&quot;</span><span class="p">)</span>
+    <span class="n">compute_data_service</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+
+    <span class="k">print</span> <span class="p">(</span><span class="s">&quot;Terminate Pilot Jobs&quot;</span><span class="p">)</span>
+    <span class="n">compute_data_service</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
+    <span class="n">pilot_compute_service</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2012, The BigJob Project.<br/>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>
