@@ -122,10 +122,10 @@ class PilotComputeService(PilotComputeService):
         else:
             resource_description["queue"] = None
             
-        if pilot_compute_description.has_key("allocation"):
-            resource_description["allocation"] = pilot_compute_description["allocation"] 
+        if pilot_compute_description.has_key("project"):
+            resource_description["project"] = pilot_compute_description["project"] 
         else:
-            resource_description["allocation"] = None
+            resource_description["project"] = None
         
         for i in pilot_compute_description.keys():
             resource_description[i] = pilot_compute_description[i] 
@@ -162,7 +162,7 @@ class PilotComputeService(PilotComputeService):
         bj.start_pilot_job(lrms_url = gram_url,
                            number_nodes = bj_dict["number_of_processes"],
                            queue = bj_dict["queue"],
-                           project = bj_dict["allocation"],
+                           project = bj_dict["project"],
                            working_directory = working_directory, 
                            walltime = walltime,
                            processes_per_node = ppn,
