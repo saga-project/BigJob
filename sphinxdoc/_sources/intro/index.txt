@@ -55,7 +55,8 @@ Once the Pilot-Compute is submitted to the batch queuing system of the remote re
 
 The overall BigJob architecture is shown below. BigJob utilizes a Master-Worker coordination model.
 
-.. image:: ../images/bigjob-architecture.png
+.. figure:: ../images/bigjob-architecture.png
+   	:align: center
 
 -------------------
 Supported Adaptors
