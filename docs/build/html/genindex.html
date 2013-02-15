@@ -42,6 +42,7 @@
   </head>
   <body>
 <div class="container">
+<a href="https://github.com/saga-project/BigJob"><img style="position: absolute; top: 100; left: 10; right: 0; border: 10;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
   
   <div id="navbar" class="navbar navbar-inverse navbar-fixed-top">
     <div class="navbar-inner">
@@ -65,12 +66,42 @@
      data-toggle="dropdown">Site <b class="caret"></b></a>
   <ul class="dropdown-menu globaltoc"
     ><ul>
-<li class="toctree-l1"><a class="reference internal" href="intro/index.html">1. Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="install/index.html">2. Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage/index.html">3. Working with BigJob</a></li>
-<li class="toctree-l1"><a class="reference internal" href="patterns/index.html">4. Common Usage Patterns</a></li>
-<li class="toctree-l1"><a class="reference internal" href="library/index.html">5. Library Reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial/index.html">6. Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro/index.html">1. Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="intro/index.html#introduction-to-pilot-jobs">1.1. Introduction to Pilot-Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intro/index.html#why-do-you-need-pilot-jobs">1.2. Why do you need Pilot-Jobs?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intro/index.html#what-makes-bigjob-different">1.3. What makes BigJob different?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intro/index.html#what-can-i-use-bigjob-for">1.4. What can I use BigJob for?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intro/index.html#bigjob-overview">1.5. BigJob Overview</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="install/index.html">2. Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="install/install.html">2.1. Installing BigJob</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install/redis.html">2.2. Setting Up a Redis Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install/xsede.html">2.3. XSEDE Specific Tips</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install/trouble.html">2.4. Troubleshooting</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="usage/index.html">3. Working with BigJob</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="usage/appwriting.html">3.1. Writing BigJob Scripts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage/pilotdata.html">3.2. Introduction to Pilot-Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage/cmdtools.html">3.3. Command-Line Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage/logging.html">3.4. Logging and Debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage/output.html">3.5. Interpreting Output</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="patterns/index.html">4. Common Usage Patterns</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="patterns/simple.html">4.1. Simple Ensemble</a></li>
+<li class="toctree-l2"><a class="reference internal" href="patterns/chained.html">4.2. Chained Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="patterns/coupled.html">4.3. Coupled Ensembles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="patterns/exsede.html">4.4. XSEDE Simple Ensemble Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="library/index.html">5. Library Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="library/index.html#compute-and-data-services">5.1. Compute and Data Services</a></li>
+<li class="toctree-l2"><a class="reference internal" href="library/index.html#compute-and-data-units">5.2. Compute and Data Units</a></li>
+<li class="toctree-l2"><a class="reference internal" href="library/index.html#state-enumeration">5.3. State Enumeration</a></li>
+</ul>
+</li>
 </ul>
 </ul>
 </li>
@@ -85,8 +116,6 @@
             
           
 
-          
-            <li></li>
           
         </ul>
 
@@ -153,11 +182,15 @@
   </dt>
 
       
-  <dt><a href="library/index.html#affinity_datacenter_label">affinity_datacenter_label (built-in variable)</a>
+  <dt><a href="library/index.html#affinity_datacenter_label">affinity_datacenter_label (built-in variable)</a>, <a href="library/index.html#affinity_datacenter_label">[1]</a>, <a href="library/index.html#affinity_datacenter_label">[2]</a>
   </dt>
 
       
-  <dt><a href="library/index.html#affinity_machine_label">affinity_machine_label (built-in variable)</a>
+  <dt><a href="library/index.html#affinity_machine_label">affinity_machine_label (built-in variable)</a>, <a href="library/index.html#affinity_machine_label">[1]</a>, <a href="library/index.html#affinity_machine_label">[2]</a>
+  </dt>
+
+      
+  <dt><a href="library/index.html#arguments">arguments (built-in variable)</a>
   </dt>
 
   </dl></td>
@@ -215,11 +248,15 @@
   </dt>
 
       
-  <dt><a href="library/index.html#pilot.impl.pilotdata_manager.PilotData.copy_du">copy_du() (pilot.impl.pilotdata_manager.PilotData method)</a>
+  <dt><a href="library/index.html#ComputeUnitDescription">ComputeUnitDescription (built-in class)</a>
   </dt>
 
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="library/index.html#pilot.impl.pilotdata_manager.PilotData.copy_du">copy_du() (pilot.impl.pilotdata_manager.PilotData method)</a>
+  </dt>
+
       
   <dt><a href="library/index.html#pilot.impl.pilotdata_manager.PilotData.create_du">create_du() (pilot.impl.pilotdata_manager.PilotData method)</a>
   </dt>
@@ -249,11 +286,21 @@
   </dt>
 
   </dl></td>
+  <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="library/index.html#DataUnitDescription">DataUnitDescription (built-in class)</a>
+  </dt>
+
+  </dl></td>
 </tr></table>
 
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="library/index.html#environment">environment (built-in variable)</a>
+  </dt>
+
       
   <dt>
     environment variable
@@ -266,11 +313,15 @@
 
       </dl></dd>
       
-  <dt><a href="library/index.html#error">error (built-in variable)</a>
+  <dt><a href="library/index.html#error">error (built-in variable)</a>, <a href="library/index.html#error">[1]</a>
   </dt>
 
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="library/index.html#executable">executable (built-in variable)</a>
+  </dt>
+
       
   <dt><a href="library/index.html#pilot.impl.pilotdata_manager.DataUnit.export">export() (pilot.impl.pilotdata_manager.DataUnit method)</a>
   </dt>
@@ -286,7 +337,7 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="library/index.html#file_transfer">file_transfer (built-in variable)</a>
+  <dt><a href="library/index.html#file_urls">file_urls (built-in variable)</a>
   </dt>
 
   </dl></td>
@@ -388,6 +439,12 @@
   </dt>
 
   </dl></td>
+  <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="library/index.html#input_data">input_data (built-in variable)</a>
+  </dt>
+
+  </dl></td>
 </tr></table>
 
 <h2 id="L">L</h2>
@@ -438,7 +495,7 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="library/index.html#number_of_processes">number_of_processes (built-in variable)</a>
+  <dt><a href="library/index.html#number_of_processes">number_of_processes (built-in variable)</a>, <a href="library/index.html#number_of_processes">[1]</a>
   </dt>
 
   </dl></td>
@@ -448,7 +505,13 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="library/index.html#output">output (built-in variable)</a>
+  <dt><a href="library/index.html#output">output (built-in variable)</a>, <a href="library/index.html#output">[1]</a>
+  </dt>
+
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="library/index.html#output_data">output_data (built-in variable)</a>
   </dt>
 
   </dl></td>
@@ -543,8 +606,16 @@
   <dt><a href="library/index.html#size">size (built-in variable)</a>
   </dt>
 
+      
+  <dt><a href="library/index.html#spmd_variation">spmd_variation (built-in variable)</a>
+  </dt>
+
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="library/index.html#State">State (built-in class)</a>
+  </dt>
+
       
   <dt><a href="library/index.html#pilot.impl.pilot_manager.ComputeDataService.submit_compute_unit">submit_compute_unit() (pilot.impl.pilot_manager.ComputeDataService method)</a>
   </dt>
@@ -640,7 +711,7 @@
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="library/index.html#working_directory">working_directory (built-in variable)</a>
+  <dt><a href="library/index.html#working_directory">working_directory (built-in variable)</a>, <a href="library/index.html#working_directory">[1]</a>
   </dt>
 
   </dl></td>
@@ -653,6 +724,9 @@
   <div class="container">
     <p class="pull-right">
       <a href="#">Back to top</a>
+      
+        <br/>
+        
       
     </p>
     <p>
