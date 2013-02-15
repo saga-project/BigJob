@@ -102,7 +102,9 @@ html_theme = 'bootstrap'
 # further.  For a list of options available for each theme, see the
 # documentation.
 html_theme_options = {
+	'globaltoc_depth':2,
 	'navbar_class': "navbar navbar-inverse",
+	'source_link_position':"footer",
 }
 
 # Add any paths that contain custom themes here, relative to this directory.

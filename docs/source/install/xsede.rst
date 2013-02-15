@@ -16,13 +16,13 @@ Where to Run
 
 In general, on XSEDE machines, production-grade science should be done in either the :code:`$SCRATCH` or `$WORK` directories on the machine. This means you will run your BigJob script and make your BigJob :code:`agent` directory in either $SCRATCH or $WORK and **not** in $HOME.
 
-----------------------
-Adding your Allocation
-----------------------
+------------------------------
+Adding your Project Allocation
+------------------------------
 
-When creating BigJob scripts for XSEDE machines, it is necessary to add the :code:`allocation` field to the :code:`pilot_compute_description`. ::
+When creating BigJob scripts for XSEDE machines, it is necessary to add the :code:`project` field to the :code:`pilot_compute_description`. ::
 
-	"allocation": "TG-XXXXXXXXX"
+	"project": "TG-XXXXXXXXX"
 
 TG-XXXXX must be replaced with your individual allocation SU number as provided to you by XSEDE.
 
