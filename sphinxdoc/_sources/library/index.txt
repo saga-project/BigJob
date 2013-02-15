@@ -17,11 +17,41 @@ Library Reference
 
 .. pilot/api/compute/api.py defines
 ..    class PilotComputeDescription 
-..    class 
+..    class State
 
+.. pilot/api/data/api.py defines
+..    class PilotDataDescription
 
 Compute and Data Services
 *************************
+
+This section is meant to provide a hierarchical overview of the various library components and their interaction. The subsections then provide the API details associated with each component.
+
+The main concepts and classes exposed by the Compute part of the API are:
+
+* **PilotCompute (PC):** a pilot job, which can execute some compute workload (ComputeUnit).
+* **PilotComputeDescription (PCD):** description for specifying the requirements of a PilotCompute.
+* **PilotComputeService (PCS):** a factory for creating \PilotComputes.
+
+The data side of the Pilot API is symmetric to the compute side. The exposed classes for managing Pilot Data are:
+
+* **PilotData (PD):** a pilot that manages some data workload (DataUnit)
+* **PilotDataDescription (PDD):** a abstract description of the requirements of the PD
+* **PilotDataService (PDS):** a factory (service) which can create PilotDatas according to some specification
+
+The application workload is represented by so called ComputeUnits and DataUnits:
+
+* **ComputeUnit (CU):** a work item executed on a PilotCompute.
+* **DataUnit (DU):** a data item managed by a PilotData
+
+Both Compute and Data Units are specified using an abstract description object:
+
+* **ComputeUnitDescription (CUD):** abstract description of a ComputeUnit.
+* **DataUnitDescription (DUD):** abstract description of a DataUnit.
+
+The ComputeDataService represents the central entry point for the application workload:
+
+* **ComputeDataService (CDS):** a service which can map CUs and DUs to a set of Pilot Compute and Pilot Data. The ComputeDataService (CDS) takes care of the placement of Compute and Data Units. The set of PilotComputes and PilotData available to the CDS can be changed during the application's runtime. The CDS different data-compute affinity and will handle compute/data co-locating for the requested data-compute workload.
 
 PilotComputeService
 ===================
@@ -31,100 +61,102 @@ The PilotComputeService (PCS) is a factory for creating Pilot-Compute objects, w
 .. autoclass:: pilot.impl.pilotcompute_manager.PilotComputeService
    :members:
 
+
 PilotComputeDescription
 =======================
 
 The PCD defines the compute resource in which you will be running on and different attributes required for managing jobs on that resource. Recall that a Pilot-Job requests resources required to run all of the jobs. There can be any number of Pilot-Computes instantiated depending on the compute resources available to the application (using two machines rather than 1 requires 2 pilot compute descriptions).
 
+An example of a Pilot Compute Description is shown below::
+
+     pilot_compute_description = {
+                    "service_url": 'pbs+ssh://india.futuregrid.org',
+                    "number_of_processes": 8,
+                    "processes_per_node":8,                     
+                    "working_directory": "/N/u/<username>",
+                    'affinity_datacenter_label': "us-east-indiana",              
+                    'affinity_machine_label': "india" 
+                   }
+
 .. class:: PilotComputeDescription
 
 .. data:: affinity_datacenter_label
 
-   The data center label used for affinity topology.
+The data center label used for affinity topology. 
 
-   :type: string
+:type: string
 
-   .. note:: Data centers and machines are organized in a logical topology tree (similar to the tree spawned by an DNS topology). The further the distance between two resources, the smaller their affinity.
+	.. note:: Data centers and machines are organized in a logical topology tree (similar to the tree spawned by an DNS topology). The further the distance between two resources, the smaller their affinity.
 
 .. data:: affinity_machine_label
 
-   The machine (resource) label used for affinity topology. 
+The machine (resource) label used for affinity topology. 
 
-   :type: string
+:type: string
 
-   .. note:: Data centers and machines are organized in a logical topology tree (similar to the tree spawned by an DNS topology). The further the distance between two resources, the smaller their affinity.
-
-.. data:: file_transfer
-
-   .. warning:: DOCUMENT_ME
-
-   :type: string
-
-.. data:: input
-
-   .. warning:: DOCUMENT_ME
-
-   :type: string
+   	.. note:: Data centers and machines are organized in a logical topology tree (similar to the tree spawned by an DNS topology). The further the distance between two resources, the smaller their affinity.
 
 .. data:: output
 
-   Controls the location of the Pilot-Agent standard output file.
+Controls the location of the Pilot-Agent standard output file.
 
-   :type: string
+:type: string
 
 .. data:: error
 
-   Controls the location of the Pilot-Agent standard error file.
+Controls the location of the Pilot-Agent standard error file.
 
-   :type: string
+:type: string
 
 .. data:: number_of_processes
 
-	The number of cores that need to be allocated to run the jobs
+The number of cores that need to be allocated to run the jobs
 
-   :type: string
+:type: string
 
 .. data:: processes_per_host
 
-   	The number of cores per host node. 
+The number of cores per host node. 
 
-   :type: string
+:type: string
 
-   .. note:: This field is required by some XSEDE/Torque clusters. If you have to specify ppn when running an MPI job on command line, then you must likely need this field in your BigJob script.
+   	.. note:: This field is required by some XSEDE/Torque clusters. If you have to specify ppn when running an MPI job on command line, then you must likely need this field in your BigJob script.
 
 .. data:: project
 
-   	The project allocation, if running on an XSEDE resource.
+The project allocation, if running on an XSEDE resource.
  
-   :type: string
+:type: string
 
-   .. note:: This field must be removed if you are running somewhere that does not require an allocation.
+   	.. note:: This field must be removed if you are running somewhere that does not require an allocation.
 
 .. data:: queue
 
-	The job queue to be used.
+The job queue to be used.
 
-   :type: string
+:type: string
 
-   .. note:: If you are not submitting to a batch queuing system, remove this parameter.
+   	.. note:: If you are not submitting to a batch queuing system, remove this parameter.
 
 .. data:: service_url
 	
-	Specifies the SAGA-Python job adaptor (often this is based on the batch queuing system) and resource hostname (for instance, lonestar.tacc.utexas.edu) on which jobs can be executed.
+Specifies the SAGA-Python job adaptor (often this is based on the batch queuing system) and resource hostname (for instance, lonestar.tacc.utexas.edu) on which jobs can be executed.
 
-   .. note::  For remote hosts, password-less login must be enabled.
+:type: string
+
+   	.. note::  For remote hosts, password-less login must be enabled.
 
 .. data:: wall_time_limit
 
-	The number of minutes the resources are requested for
+The number of minutes the resources are requested for
 
-   :type: string
+:type: string
 
 .. data:: working_directory
 
-	The directory in which the Pilot-Job agent executes
+The directory in which the Pilot-Job agent executes
 
-   :type: string
+:type: string
 
 
 PilotCompute
@@ -140,6 +172,7 @@ A PilotCompute has state, can be queried, and cancelled.
 .. autoclass:: pilot.impl.pilotcompute_manager.PilotCompute
    :members:
 
+
 PilotDataService
 ================
 
@@ -148,6 +181,7 @@ The PilotDataService (PDS) is a factory for creating Pilot-Data objects. The PDS
 
 .. autoclass:: pilot.impl.pilotdata_manager.PilotDataService
    :members:
+
 
 PilotDataDescription
 =======================
@@ -218,15 +252,118 @@ The Compute Data Service is created to handle both Pilot Compute and Pilot Data 
 .. autoclass:: pilot.impl.pilot_manager.ComputeDataService
    :members:
 
+
 Compute and Data Units
 **********************
 
-PilotComputeDescription
+ComputeUnitDescription
 =======================
-The PilotComputeDescription defines the compute resource in which you will be running on and different attributes required for managing jobs on that resource. Recall that a Pilot-Job requests resources required to run all of the jobs (i.e. it's like one big job instead of many small jobs). There can be any number of pilotcompute instantiated depending on the compute resources available to the application (using two machines rather than 1 requires 2 pilot compute descriptions).
 
-.. autoclass:: pilot.impl.pilotcompute_manager.PilotComputeDescription
-   :members:
+The ComputeUnitDescription defines the actual compute unit will be run. The executable specified here is what constitutes the individual jobs that will run within the Pilot. This executable can have input arguments or environment variables that must be passed with it in order for it to execute properly.
+
+Example::
+
+           compute_unit_description = {
+                   "executable": "/bin/cat",
+                   "arguments": ["test.txt"],
+                   "number_of_processes": 1,
+                   "output": "stdout.txt",
+                   "error": "stderr.txt",   
+                   "input_data" : [data_unit.get_url()], # this stages the content of the data unit to the working directory of the compute unit
+                   "affinity_datacenter_label": "eu-de-south",              
+                   "affinity_machine_label": "mymachine-1" 
+               }     
+
+
+.. class:: ComputeUnitDescription
+
+.. data:: executable
+
+Specifies the path to the executable that will be run
+
+    :type: string
+
+.. data:: arguments
+
+Specifies any arguments that the executable needs. For instance, if running an executable from the command line requires a -p flag, then this -p flag can be added in this section.
+
+    :type: string
+
+.. data:: environment
+
+Specifies any environment variables that need to be passed with the compute unit in order for the executable to work.
+
+    :type: string
+
+.. data:: working_directory
+
+The working directory for the executable
+
+    :type: string
+
+	.. note:: Recommendation: Do not set the working directory! If none, working directory is a sandbox directory of the CU (automatically created by BigJob)
+
+.. data:: input
+
+Specifies the capture of <stdin>
+
+    :type: string
+
+.. data:: output
+
+Specifies the name of the file who captures the output from <stdout>. Default is stdout.txt
+
+    :type: string
+
+.. data:: error
+
+Specifies the name of the file who captures the output from <stderr>. Default is stderr.txt
+
+    :type: string
+
+.. data:: number_of_processes
+
+Defines how many CPU cores are reserved for the application process. 
+
+For instance, if you need 4 cores for 1 MPI executable, this value would be 4.
+
+    :type: string
+
+.. data:: spmd_variation
+
+Defines how the application process is launched. Valid strings for this field are 'single' or 'mpi'. If your executable is :code:`a.out`, "single" executes it as :code:`./a.out`, while "mpi" executes :code:`mpirun -np <number_of_processes> ./a.out` (note: :code:`aprun` is used for Kraken, and :code:`srun/ibrun` is used for Stampede).
+
+    :type: string
+
+.. data:: input_data
+
+Specifies the input data flow for a ComputeUnit. This is used in conjunction with PilotData. The format is :code:`[<data unit url>, … ]`
+
+    :type: string
+
+.. data:: output_data
+
+Specifies the output data flow for a ComputeUnit. This is used in conjunction with PilotData. The format is :code:`[<data unit url>, … ]`
+
+    :type: string
+
+.. data:: affinity_datacenter_label
+
+The data center label used for affinity topology. 
+
+:type: string
+
+	.. note:: Data centers and machines are organized in a logical topology tree (similar to the tree spawned by an DNS topology). The further the distance between two resources, the smaller their affinity.
+
+.. data:: affinity_machine_label
+
+The machine (resource) label used for affinity topology. 
+
+:type: string
+
+   	.. note:: Data centers and machines are organized in a logical topology tree (similar to the tree spawned by an DNS topology). The further the distance between two resources, the smaller their affinity.
+
+ComputeUnitDescription objects are loosely typed. A dictionary containing the respective keys can be passed instead to the ComputeDataService.
 
 ComputeUnit
 ===========
@@ -239,18 +376,73 @@ A ComputeUnit has state, can be queried, and can be cancelled.
 .. autoclass:: pilot.impl.pilotcompute_manager.ComputeUnit
    :members:
 
-PilotDataDescription
-====================
-.. warning:: DOCUMENT_ME 
 
-.. autoclass:: pilot.impl.pilotdata_manager.PilotDataDescription
-   :members:
+DataUnitDescription
+=======================
+
+The data unit description defines the different files to be moved around. There is currently no support for directories. ::
+
+	data_unit_description = {
+        	                        'file_urls': [file1, file2, file3]
+                	        }
+
+.. class:: DataUnitDescription
+
+.. data:: file_urls
+
+:type: string
+
+.. data:: affinity_datacenter_label
+
+The data center label used for affinity topology. 
+
+:type: string
+
+	.. note:: Data centers and machines are organized in a logical topology tree (similar to the tree spawned by an DNS topology). The further the distance between two resources, the smaller their affinity.
+
+.. data:: affinity_machine_label
+
+The machine (resource) label used for affinity topology. 
+
+:type: string
+
+   	.. note:: Data centers and machines are organized in a logical topology tree (similar to the tree spawned by an DNS topology). The further the distance between two resources, the smaller their affinity.
+
 
 DataUnit
 ========
-.. warning:: DOCUMENT_ME 
+A DataUnit is a container for a logical group of data that is often accessed together or comprises a larger set of data; e.g. a data file or chunk.  
+
+A DataUnit is the object that is returned by the ComputeDataService when a new DataUnit is submitted based on a DataUnitDescription. The DataUnit object can be used by the application to keep track of DataUnits that are active.
+
+A DataUnit has state, can be queried, and can be cancelled.
 
 .. autoclass:: pilot.impl.pilotdata_manager.DataUnit
    :members:
 
 
+State Enumeration
+******************
+
+Pilots and Compute Units can have state. These states can be queried using the :code:`get_state()` function. States are used for PilotCompute, PilotData, ComputeUnit, DataUnit and ComputeDataService. The following table describes the values that states can have.
+
+.. class:: State
+
+.. cssclass:: table-hover
++------------------------------+
+| **State**                    |
++------------------------------+
+| .. data:: Unknown='Unknown'  |
++------------------------------+
+| .. data:: New='New' 	       |
++------------------------------+
+| .. data:: Running=`Running'  |
++------------------------------+
+| .. data:: Done=`Done'	       | 
++------------------------------+
+| .. data:: Canceled=`Canceled'|
++------------------------------+
+| .. data:: Failed=`Failed'    | 
++------------------------------+
+| .. data:: Pending=`Pending'  |
++------------------------------+

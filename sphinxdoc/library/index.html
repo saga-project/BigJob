@@ -42,6 +42,7 @@
   </head>
   <body>
 <div class="container">
+<a href="https://github.com/saga-project/BigJob"><img style="position: absolute; top: 100; left: 10; right: 0; border: 10;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
   
   <div id="navbar" class="navbar navbar-inverse navbar-fixed-top">
     <div class="navbar-inner">
@@ -65,11 +66,42 @@
      data-toggle="dropdown">Site <b class="caret"></b></a>
   <ul class="dropdown-menu globaltoc"
     ><ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../intro/index.html">1. Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../install/index.html">2. Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage/index.html">3. Working with BigJob</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../patterns/index.html">4. Common Usage Patterns</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">5. Library Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro/index.html">1. Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../intro/index.html#introduction-to-pilot-jobs">1.1. Introduction to Pilot-Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../intro/index.html#why-do-you-need-pilot-jobs">1.2. Why do you need Pilot-Jobs?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../intro/index.html#what-makes-bigjob-different">1.3. What makes BigJob different?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../intro/index.html#what-can-i-use-bigjob-for">1.4. What can I use BigJob for?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../intro/index.html#bigjob-overview">1.5. BigJob Overview</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../install/index.html">2. Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../install/install.html">2.1. Installing BigJob</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../install/redis.html">2.2. Setting Up a Redis Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../install/xsede.html">2.3. XSEDE Specific Tips</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../install/trouble.html">2.4. Troubleshooting</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../usage/index.html">3. Working with BigJob</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../usage/appwriting.html">3.1. Writing BigJob Scripts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage/pilotdata.html">3.2. Introduction to Pilot-Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage/cmdtools.html">3.3. Command-Line Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage/logging.html">3.4. Logging and Debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage/output.html">3.5. Interpreting Output</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../patterns/index.html">4. Common Usage Patterns</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../patterns/simple.html">4.1. Simple Ensemble</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../patterns/chained.html">4.2. Chained Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../patterns/coupled.html">4.3. Coupled Ensembles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../patterns/exsede.html">4.4. XSEDE Simple Ensemble Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">5. Library Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#compute-and-data-services">5.1. Compute and Data Services</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#compute-and-data-units">5.2. Compute and Data Units</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#state-enumeration">5.3. State Enumeration</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial/index.html">6. Tutorial</a></li>
 </ul>
 </ul>
@@ -89,12 +121,13 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#compute-and-data-units">5.2. Compute and Data Units</a><ul>
-<li><a class="reference internal" href="#id1">5.2.1. PilotComputeDescription</a></li>
+<li><a class="reference internal" href="#computeunitdescription">5.2.1. ComputeUnitDescription</a></li>
 <li><a class="reference internal" href="#computeunit">5.2.2. ComputeUnit</a></li>
-<li><a class="reference internal" href="#id2">5.2.3. PilotDataDescription</a></li>
+<li><a class="reference internal" href="#dataunitdescription">5.2.3. DataUnitDescription</a></li>
 <li><a class="reference internal" href="#dataunit">5.2.4. DataUnit</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#state-enumeration">5.3. State Enumeration</a></li>
 </ul>
 </li>
 </ul>
@@ -108,10 +141,6 @@
   <li><a href="../tutorial/index.html"
          title="next chapter">6. Tutorial &raquo;</a></li>
           
-          
-            <li>
-  <a href="../_sources/library/index.txt"
-     rel="nofollow">Source</a></li>
           
         </ul>
 
@@ -132,6 +161,33 @@
 <h1>5. Library Reference<a class="headerlink" href="#library-reference" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="compute-and-data-services">
 <h2>5.1. Compute and Data Services<a class="headerlink" href="#compute-and-data-services" title="Permalink to this headline">¶</a></h2>
+<p>This section is meant to provide a hierarchical overview of the various library components and their interaction. The subsections then provide the API details associated with each component.</p>
+<p>The main concepts and classes exposed by the Compute part of the API are:</p>
+<ul class="simple">
+<li><strong>PilotCompute (PC):</strong> a pilot job, which can execute some compute workload (ComputeUnit).</li>
+<li><strong>PilotComputeDescription (PCD):</strong> description for specifying the requirements of a PilotCompute.</li>
+<li><strong>PilotComputeService (PCS):</strong> a factory for creating PilotComputes.</li>
+</ul>
+<p>The data side of the Pilot API is symmetric to the compute side. The exposed classes for managing Pilot Data are:</p>
+<ul class="simple">
+<li><strong>PilotData (PD):</strong> a pilot that manages some data workload (DataUnit)</li>
+<li><strong>PilotDataDescription (PDD):</strong> a abstract description of the requirements of the PD</li>
+<li><strong>PilotDataService (PDS):</strong> a factory (service) which can create PilotDatas according to some specification</li>
+</ul>
+<p>The application workload is represented by so called ComputeUnits and DataUnits:</p>
+<ul class="simple">
+<li><strong>ComputeUnit (CU):</strong> a work item executed on a PilotCompute.</li>
+<li><strong>DataUnit (DU):</strong> a data item managed by a PilotData</li>
+</ul>
+<p>Both Compute and Data Units are specified using an abstract description object:</p>
+<ul class="simple">
+<li><strong>ComputeUnitDescription (CUD):</strong> abstract description of a ComputeUnit.</li>
+<li><strong>DataUnitDescription (DUD):</strong> abstract description of a DataUnit.</li>
+</ul>
+<p>The ComputeDataService represents the central entry point for the application workload:</p>
+<ul class="simple">
+<li><strong>ComputeDataService (CDS):</strong> a service which can map CUs and DUs to a set of Pilot Compute and Pilot Data. The ComputeDataService (CDS) takes care of the placement of Compute and Data Units. The set of PilotComputes and PilotData available to the CDS can be changed during the application&#8217;s runtime. The CDS different data-compute affinity and will handle compute/data co-locating for the requested data-compute workload.</li>
+</ul>
 <div class="section" id="pilotcomputeservice">
 <h3>5.1.1. PilotComputeService<a class="headerlink" href="#pilotcomputeservice" title="Permalink to this headline">¶</a></h3>
 <p>The PilotComputeService (PCS) is a factory for creating Pilot-Compute objects, where the latter is the individual handle to the resource. The PCS takes the COORDINATION_URL (as defined above) as an argument. This is for coordination of the compute units with the redis database.</p>
@@ -175,6 +231,17 @@ A list of L{PilotCompute} urls</p>
 <div class="section" id="pilotcomputedescription">
 <h3>5.1.2. PilotComputeDescription<a class="headerlink" href="#pilotcomputedescription" title="Permalink to this headline">¶</a></h3>
 <p>The PCD defines the compute resource in which you will be running on and different attributes required for managing jobs on that resource. Recall that a Pilot-Job requests resources required to run all of the jobs. There can be any number of Pilot-Computes instantiated depending on the compute resources available to the application (using two machines rather than 1 requires 2 pilot compute descriptions).</p>
+<p>An example of a Pilot Compute Description is shown below:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">pilot_compute_description</span> <span class="o">=</span> <span class="p">{</span>
+               <span class="s">&quot;service_url&quot;</span><span class="p">:</span> <span class="s">&#39;pbs+ssh://india.futuregrid.org&#39;</span><span class="p">,</span>
+               <span class="s">&quot;number_of_processes&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+               <span class="s">&quot;processes_per_node&quot;</span><span class="p">:</span><span class="mi">8</span><span class="p">,</span>
+               <span class="s">&quot;working_directory&quot;</span><span class="p">:</span> <span class="s">&quot;/N/u/&lt;username&gt;&quot;</span><span class="p">,</span>
+               <span class="s">&#39;affinity_datacenter_label&#39;</span><span class="p">:</span> <span class="s">&quot;us-east-indiana&quot;</span><span class="p">,</span>
+               <span class="s">&#39;affinity_machine_label&#39;</span><span class="p">:</span> <span class="s">&quot;india&quot;</span>
+              <span class="p">}</span>
+</pre></div>
+</div>
 <dl class="class">
 <dt id="PilotComputeDescription">
 <em class="property">class </em><tt class="descname">PilotComputeDescription</tt><a class="headerlink" href="#PilotComputeDescription" title="Permalink to this definition">¶</a></dt>
@@ -183,214 +250,187 @@ A list of L{PilotCompute} urls</p>
 <dl class="data">
 <dt id="affinity_datacenter_label">
 <tt class="descname">affinity_datacenter_label</tt><a class="headerlink" href="#affinity_datacenter_label" title="Permalink to this definition">¶</a></dt>
-<dd><p>The data center label used for affinity topology.</p>
+<dd></dd></dl>
+
+<p>The data center label used for affinity topology.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type :</th><td class="field-body">string</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition note">
+<tr class="field-odd field"><th class="field-name">type:</th><td class="field-body"><p class="first">string</p>
+<div class="last admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">Data centers and machines are organized in a logical topology tree (similar to the tree spawned by an DNS topology). The further the distance between two resources, the smaller their affinity.</p>
 </div>
-</dd></dl>
-
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="data">
 <dt id="affinity_machine_label">
 <tt class="descname">affinity_machine_label</tt><a class="headerlink" href="#affinity_machine_label" title="Permalink to this definition">¶</a></dt>
-<dd><p>The machine (resource) label used for affinity topology.</p>
+<dd></dd></dl>
+
+<p>The machine (resource) label used for affinity topology.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type :</th><td class="field-body">string</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition note">
+<tr class="field-odd field"><th class="field-name">type:</th><td class="field-body"><p class="first">string</p>
+<div class="last admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">Data centers and machines are organized in a logical topology tree (similar to the tree spawned by an DNS topology). The further the distance between two resources, the smaller their affinity.</p>
 </div>
-</dd></dl>
-
-<dl class="data">
-<dt id="file_transfer">
-<tt class="descname">file_transfer</tt><a class="headerlink" href="#file_transfer" title="Permalink to this definition">¶</a></dt>
-<dd><div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">DOCUMENT_ME</p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type :</th><td class="field-body">string</td>
+</td>
 </tr>
 </tbody>
 </table>
-</dd></dl>
-
-<dl class="data">
-<dt id="input">
-<tt class="descname">input</tt><a class="headerlink" href="#input" title="Permalink to this definition">¶</a></dt>
-<dd><div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">DOCUMENT_ME</p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type :</th><td class="field-body">string</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
 <dl class="data">
 <dt id="output">
 <tt class="descname">output</tt><a class="headerlink" href="#output" title="Permalink to this definition">¶</a></dt>
-<dd><p>Controls the location of the Pilot-Agent standard output file.</p>
+<dd></dd></dl>
+
+<p>Controls the location of the Pilot-Agent standard output file.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type :</th><td class="field-body">string</td>
+<tr class="field-odd field"><th class="field-name">type:</th><td class="field-body">string</td>
 </tr>
 </tbody>
 </table>
-</dd></dl>
-
 <dl class="data">
 <dt id="error">
 <tt class="descname">error</tt><a class="headerlink" href="#error" title="Permalink to this definition">¶</a></dt>
-<dd><p>Controls the location of the Pilot-Agent standard error file.</p>
+<dd></dd></dl>
+
+<p>Controls the location of the Pilot-Agent standard error file.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type :</th><td class="field-body">string</td>
+<tr class="field-odd field"><th class="field-name">type:</th><td class="field-body">string</td>
 </tr>
 </tbody>
 </table>
-</dd></dl>
-
 <dl class="data">
 <dt id="number_of_processes">
 <tt class="descname">number_of_processes</tt><a class="headerlink" href="#number_of_processes" title="Permalink to this definition">¶</a></dt>
-<dd><blockquote>
-<div>The number of cores that need to be allocated to run the jobs</div></blockquote>
+<dd></dd></dl>
+
+<p>The number of cores that need to be allocated to run the jobs</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type :</th><td class="field-body">string</td>
+<tr class="field-odd field"><th class="field-name">type:</th><td class="field-body">string</td>
 </tr>
 </tbody>
 </table>
-</dd></dl>
-
 <dl class="data">
 <dt id="processes_per_host">
 <tt class="descname">processes_per_host</tt><a class="headerlink" href="#processes_per_host" title="Permalink to this definition">¶</a></dt>
-<dd><blockquote>
-<div>The number of cores per host node.</div></blockquote>
+<dd></dd></dl>
+
+<p>The number of cores per host node.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type :</th><td class="field-body">string</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition note">
+<tr class="field-odd field"><th class="field-name">type:</th><td class="field-body"><p class="first">string</p>
+<div class="last admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">This field is required by some XSEDE/Torque clusters. If you have to specify ppn when running an MPI job on command line, then you must likely need this field in your BigJob script.</p>
 </div>
-</dd></dl>
-
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="data">
 <dt id="project">
 <tt class="descname">project</tt><a class="headerlink" href="#project" title="Permalink to this definition">¶</a></dt>
-<dd><blockquote>
-<div>The project allocation, if running on an XSEDE resource.</div></blockquote>
+<dd></dd></dl>
+
+<p>The project allocation, if running on an XSEDE resource.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type :</th><td class="field-body">string</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition note">
+<tr class="field-odd field"><th class="field-name">type:</th><td class="field-body"><p class="first">string</p>
+<div class="last admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">This field must be removed if you are running somewhere that does not require an allocation.</p>
 </div>
-</dd></dl>
-
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="data">
 <dt id="queue">
 <tt class="descname">queue</tt><a class="headerlink" href="#queue" title="Permalink to this definition">¶</a></dt>
-<dd><blockquote>
-<div>The job queue to be used.</div></blockquote>
+<dd></dd></dl>
+
+<p>The job queue to be used.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type :</th><td class="field-body">string</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition note">
+<tr class="field-odd field"><th class="field-name">type:</th><td class="field-body"><p class="first">string</p>
+<div class="last admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">If you are not submitting to a batch queuing system, remove this parameter.</p>
 </div>
-</dd></dl>
-
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="data">
 <dt id="service_url">
 <tt class="descname">service_url</tt><a class="headerlink" href="#service_url" title="Permalink to this definition">¶</a></dt>
-<dd><blockquote>
-<div>Specifies the SAGA-Python job adaptor (often this is based on the batch queuing system) and resource hostname (for instance, lonestar.tacc.utexas.edu) on which jobs can be executed.</div></blockquote>
-<div class="admonition note">
+<dd></dd></dl>
+
+<p>Specifies the SAGA-Python job adaptor (often this is based on the batch queuing system) and resource hostname (for instance, lonestar.tacc.utexas.edu) on which jobs can be executed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">type:</th><td class="field-body"><p class="first">string</p>
+<div class="last admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">For remote hosts, password-less login must be enabled.</p>
 </div>
-</dd></dl>
-
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="data">
 <dt id="wall_time_limit">
 <tt class="descname">wall_time_limit</tt><a class="headerlink" href="#wall_time_limit" title="Permalink to this definition">¶</a></dt>
-<dd><blockquote>
-<div>The number of minutes the resources are requested for</div></blockquote>
+<dd></dd></dl>
+
+<p>The number of minutes the resources are requested for</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type :</th><td class="field-body">string</td>
+<tr class="field-odd field"><th class="field-name">type:</th><td class="field-body">string</td>
 </tr>
 </tbody>
 </table>
-</dd></dl>
-
 <dl class="data">
 <dt id="working_directory">
 <tt class="descname">working_directory</tt><a class="headerlink" href="#working_directory" title="Permalink to this definition">¶</a></dt>
-<dd><blockquote>
-<div>The directory in which the Pilot-Job agent executes</div></blockquote>
+<dd></dd></dl>
+
+<p>The directory in which the Pilot-Job agent executes</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type :</th><td class="field-body">string</td>
+<tr class="field-odd field"><th class="field-name">type:</th><td class="field-body">string</td>
 </tr>
 </tbody>
 </table>
-</dd></dl>
-
 </div>
 <div class="section" id="pilotcompute">
 <h3>5.1.3. PilotCompute<a class="headerlink" href="#pilotcompute" title="Permalink to this headline">¶</a></h3>
@@ -876,9 +916,248 @@ the user has cancelled a CU or DU.</p>
 </div>
 <div class="section" id="compute-and-data-units">
 <h2>5.2. Compute and Data Units<a class="headerlink" href="#compute-and-data-units" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="id1">
-<h3>5.2.1. PilotComputeDescription<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
-<p>The PilotComputeDescription defines the compute resource in which you will be running on and different attributes required for managing jobs on that resource. Recall that a Pilot-Job requests resources required to run all of the jobs (i.e. it&#8217;s like one big job instead of many small jobs). There can be any number of pilotcompute instantiated depending on the compute resources available to the application (using two machines rather than 1 requires 2 pilot compute descriptions).</p>
+<div class="section" id="computeunitdescription">
+<h3>5.2.1. ComputeUnitDescription<a class="headerlink" href="#computeunitdescription" title="Permalink to this headline">¶</a></h3>
+<p>The ComputeUnitDescription defines the actual compute unit will be run. The executable specified here is what constitutes the individual jobs that will run within the Pilot. This executable can have input arguments or environment variables that must be passed with it in order for it to execute properly.</p>
+<p>Example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">compute_unit_description</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s">&quot;executable&quot;</span><span class="p">:</span> <span class="s">&quot;/bin/cat&quot;</span><span class="p">,</span>
+        <span class="s">&quot;arguments&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s">&quot;test.txt&quot;</span><span class="p">],</span>
+        <span class="s">&quot;number_of_processes&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s">&quot;output&quot;</span><span class="p">:</span> <span class="s">&quot;stdout.txt&quot;</span><span class="p">,</span>
+        <span class="s">&quot;error&quot;</span><span class="p">:</span> <span class="s">&quot;stderr.txt&quot;</span><span class="p">,</span>
+        <span class="s">&quot;input_data&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="n">data_unit</span><span class="o">.</span><span class="n">get_url</span><span class="p">()],</span> <span class="c"># this stages the content of the data unit to the working directory of the compute unit</span>
+        <span class="s">&quot;affinity_datacenter_label&quot;</span><span class="p">:</span> <span class="s">&quot;eu-de-south&quot;</span><span class="p">,</span>
+        <span class="s">&quot;affinity_machine_label&quot;</span><span class="p">:</span> <span class="s">&quot;mymachine-1&quot;</span>
+    <span class="p">}</span>
+</pre></div>
+</div>
+<dl class="class">
+<dt id="ComputeUnitDescription">
+<em class="property">class </em><tt class="descname">ComputeUnitDescription</tt><a class="headerlink" href="#ComputeUnitDescription" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="data">
+<dt id="executable">
+<tt class="descname">executable</tt><a class="headerlink" href="#executable" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Specifies the path to the executable that will be run</p>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">type:</th><td class="field-body">string</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<dl class="data">
+<dt id="arguments">
+<tt class="descname">arguments</tt><a class="headerlink" href="#arguments" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Specifies any arguments that the executable needs. For instance, if running an executable from the command line requires a -p flag, then this -p flag can be added in this section.</p>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">type:</th><td class="field-body">string</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<dl class="data">
+<dt id="environment">
+<tt class="descname">environment</tt><a class="headerlink" href="#environment" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Specifies any environment variables that need to be passed with the compute unit in order for the executable to work.</p>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">type:</th><td class="field-body">string</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<dl class="data">
+<dt>
+<tt class="descname">working_directory</tt></dt>
+<dd></dd></dl>
+
+<p>The working directory for the executable</p>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">type:</th><td class="field-body"><p class="first">string</p>
+<div class="last admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Recommendation: Do not set the working directory! If none, working directory is a sandbox directory of the CU (automatically created by BigJob)</p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<dl class="data">
+<dt id="input">
+<tt class="descname">input</tt><a class="headerlink" href="#input" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Specifies the capture of &lt;stdin&gt;</p>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">type:</th><td class="field-body">string</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<dl class="data">
+<dt>
+<tt class="descname">output</tt></dt>
+<dd></dd></dl>
+
+<p>Specifies the name of the file who captures the output from &lt;stdout&gt;. Default is stdout.txt</p>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">type:</th><td class="field-body">string</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<dl class="data">
+<dt>
+<tt class="descname">error</tt></dt>
+<dd></dd></dl>
+
+<p>Specifies the name of the file who captures the output from &lt;stderr&gt;. Default is stderr.txt</p>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">type:</th><td class="field-body">string</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<dl class="data">
+<dt>
+<tt class="descname">number_of_processes</tt></dt>
+<dd></dd></dl>
+
+<p>Defines how many CPU cores are reserved for the application process.</p>
+<p>For instance, if you need 4 cores for 1 MPI executable, this value would be 4.</p>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">type:</th><td class="field-body">string</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<dl class="data">
+<dt id="spmd_variation">
+<tt class="descname">spmd_variation</tt><a class="headerlink" href="#spmd_variation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Defines how the application process is launched. Valid strings for this field are &#8216;single&#8217; or &#8216;mpi&#8217;. If your executable is <tt class="code docutils literal"><span class="pre">a.out</span></tt>, &#8220;single&#8221; executes it as <tt class="code docutils literal"><span class="pre">./a.out</span></tt>, while &#8220;mpi&#8221; executes <tt class="code docutils literal"><span class="pre">mpirun</span> <span class="pre">-np</span> <span class="pre">&lt;number_of_processes&gt;</span> <span class="pre">./a.out</span></tt> (note: <tt class="code docutils literal"><span class="pre">aprun</span></tt> is used for Kraken, and <tt class="code docutils literal"><span class="pre">srun/ibrun</span></tt> is used for Stampede).</p>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">type:</th><td class="field-body">string</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<dl class="data">
+<dt id="input_data">
+<tt class="descname">input_data</tt><a class="headerlink" href="#input_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Specifies the input data flow for a ComputeUnit. This is used in conjunction with PilotData. The format is <tt class="code docutils literal"><span class="pre">[&lt;data</span> <span class="pre">unit</span> <span class="pre">url&gt;,</span> <span class="pre">…</span> <span class="pre">]</span></tt></p>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">type:</th><td class="field-body">string</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<dl class="data">
+<dt id="output_data">
+<tt class="descname">output_data</tt><a class="headerlink" href="#output_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Specifies the output data flow for a ComputeUnit. This is used in conjunction with PilotData. The format is <tt class="code docutils literal"><span class="pre">[&lt;data</span> <span class="pre">unit</span> <span class="pre">url&gt;,</span> <span class="pre">…</span> <span class="pre">]</span></tt></p>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">type:</th><td class="field-body">string</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<dl class="data">
+<dt>
+<tt class="descname">affinity_datacenter_label</tt></dt>
+<dd></dd></dl>
+
+<p>The data center label used for affinity topology.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">type:</th><td class="field-body"><p class="first">string</p>
+<div class="last admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Data centers and machines are organized in a logical topology tree (similar to the tree spawned by an DNS topology). The further the distance between two resources, the smaller their affinity.</p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="data">
+<dt>
+<tt class="descname">affinity_machine_label</tt></dt>
+<dd></dd></dl>
+
+<p>The machine (resource) label used for affinity topology.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">type:</th><td class="field-body"><p class="first">string</p>
+<div class="last admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Data centers and machines are organized in a logical topology tree (similar to the tree spawned by an DNS topology). The further the distance between two resources, the smaller their affinity.</p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<p>ComputeUnitDescription objects are loosely typed. A dictionary containing the respective keys can be passed instead to the ComputeDataService.</p>
 </div>
 <div class="section" id="computeunit">
 <h3>5.2.2. ComputeUnit<a class="headerlink" href="#computeunit" title="Permalink to this headline">¶</a></h3>
@@ -934,19 +1213,76 @@ of ComputeUnits that are active.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="id2">
-<h3>5.2.3. PilotDataDescription<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">DOCUMENT_ME</p>
+<div class="section" id="dataunitdescription">
+<h3>5.2.3. DataUnitDescription<a class="headerlink" href="#dataunitdescription" title="Permalink to this headline">¶</a></h3>
+<p>The data unit description defines the different files to be moved around. There is currently no support for directories.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">data_unit_description</span> <span class="o">=</span> <span class="p">{</span>
+                                <span class="s">&#39;file_urls&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">file1</span><span class="p">,</span> <span class="n">file2</span><span class="p">,</span> <span class="n">file3</span><span class="p">]</span>
+                        <span class="p">}</span>
+</pre></div>
 </div>
+<dl class="class">
+<dt id="DataUnitDescription">
+<em class="property">class </em><tt class="descname">DataUnitDescription</tt><a class="headerlink" href="#DataUnitDescription" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="data">
+<dt id="file_urls">
+<tt class="descname">file_urls</tt><a class="headerlink" href="#file_urls" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">type:</th><td class="field-body">string</td>
+</tr>
+</tbody>
+</table>
+<dl class="data">
+<dt>
+<tt class="descname">affinity_datacenter_label</tt></dt>
+<dd></dd></dl>
+
+<p>The data center label used for affinity topology.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">type:</th><td class="field-body"><p class="first">string</p>
+<div class="last admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Data centers and machines are organized in a logical topology tree (similar to the tree spawned by an DNS topology). The further the distance between two resources, the smaller their affinity.</p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="data">
+<dt>
+<tt class="descname">affinity_machine_label</tt></dt>
+<dd></dd></dl>
+
+<p>The machine (resource) label used for affinity topology.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">type:</th><td class="field-body"><p class="first">string</p>
+<div class="last admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Data centers and machines are organized in a logical topology tree (similar to the tree spawned by an DNS topology). The further the distance between two resources, the smaller their affinity.</p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="section" id="dataunit">
 <h3>5.2.4. DataUnit<a class="headerlink" href="#dataunit" title="Permalink to this headline">¶</a></h3>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">DOCUMENT_ME</p>
-</div>
+<p>A DataUnit is a container for a logical group of data that is often accessed together or comprises a larger set of data; e.g. a data file or chunk.</p>
+<p>A DataUnit is the object that is returned by the ComputeDataService when a new DataUnit is submitted based on a DataUnitDescription. The DataUnit object can be used by the application to keep track of DataUnits that are active.</p>
+<p>A DataUnit has state, can be queried, and can be cancelled.</p>
 <dl class="class">
 <dt id="pilot.impl.pilotdata_manager.DataUnit">
 <em class="property">class </em><tt class="descclassname">pilot.impl.pilotdata_manager.</tt><tt class="descname">DataUnit</tt><big>(</big><em>pilot_data=None</em>, <em>data_unit_description=None</em>, <em>du_url=None</em><big>)</big><a class="headerlink" href="#pilot.impl.pilotdata_manager.DataUnit" title="Permalink to this definition">¶</a></dt>
@@ -1050,6 +1386,73 @@ copies file from first pilot data to local machine</p>
 
 </div>
 </div>
+<div class="section" id="state-enumeration">
+<h2>5.3. State Enumeration<a class="headerlink" href="#state-enumeration" title="Permalink to this headline">¶</a></h2>
+<p>Pilots and Compute Units can have state. These states can be queried using the <tt class="code docutils literal"><span class="pre">get_state()</span></tt> function. States are used for PilotCompute, PilotData, ComputeUnit, DataUnit and ComputeDataService. The following table describes the values that states can have.</p>
+<dl class="class">
+<dt id="State">
+<em class="property">class </em><tt class="descname">State</tt><a class="headerlink" href="#State" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<table border="1" class="table-hover docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><strong>State</strong></td>
+</tr>
+<tr class="row-even"><td><dl class="first last data">
+<dt>
+<tt class="descname">Unknown='Unknown'</tt></dt>
+<dd></dd></dl>
+
+</td>
+</tr>
+<tr class="row-odd"><td><dl class="first last data">
+<dt>
+<tt class="descname">New='New'</tt></dt>
+<dd></dd></dl>
+
+</td>
+</tr>
+<tr class="row-even"><td><dl class="first last data">
+<dt>
+<tt class="descname">Running=`Running'</tt></dt>
+<dd></dd></dl>
+
+</td>
+</tr>
+<tr class="row-odd"><td><dl class="first last data">
+<dt>
+<tt class="descname">Done=`Done'</tt></dt>
+<dd></dd></dl>
+
+</td>
+</tr>
+<tr class="row-even"><td><dl class="first last data">
+<dt>
+<tt class="descname">Canceled=`Canceled'</tt></dt>
+<dd></dd></dl>
+
+</td>
+</tr>
+<tr class="row-odd"><td><dl class="first last data">
+<dt>
+<tt class="descname">Failed=`Failed'</tt></dt>
+<dd></dd></dl>
+
+</td>
+</tr>
+<tr class="row-even"><td><dl class="first last data">
+<dt>
+<tt class="descname">Pending=`Pending'</tt></dt>
+<dd></dd></dl>
+
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 
 
@@ -1058,6 +1461,11 @@ copies file from first pilot data to local machine</p>
   <div class="container">
     <p class="pull-right">
       <a href="#">Back to top</a>
+      
+        <br/>
+        
+  <a href="../_sources/library/index.txt"
+     rel="nofollow">Source</a>
       
     </p>
     <p>
