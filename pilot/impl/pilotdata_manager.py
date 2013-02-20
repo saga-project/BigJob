@@ -134,9 +134,12 @@ class PilotData(PilotData):
         return self.service_url + "/" + str(du.id)
         
 
-    def submit_data_unit(self, data_unit_description):
+    def submit_data_unit(self, data_unit_description=None, data_unit=None):
         """ creates a data unit object and initially imports data specified in data_unit_description """
-        du = DataUnit(pilot_data=self, 
+        if data_unit!=None:
+            du = data_unit
+        else:
+            du = DataUnit(pilot_data=self, 
                       data_unit_description=data_unit_description)
         self.data_unit_urls.append(du.get_url())
         du.add_pilot_data(self)
@@ -521,7 +524,14 @@ class DataUnit(DataUnit):
         if len(self.pilot_data) > 0:
             CoordinationAdaptor.update_du(self)
 
-        
+    
+    def list_pilot_data(self):
+        pd_urls = []
+        for i in self.pilot_data:
+            pd_urls.append(i.get_url())
+        return pd_urls
+    
+    
     def list(self):
         """ List all items contained in DU 
             {
@@ -574,6 +584,7 @@ class DataUnit(DataUnit):
         """ add this DU (self) to a certain pilot data 
             data will be moved into this data
         """
+        self.state=State.Pending
         transfer_thread=threading.Thread(target=self.__add_pilot_data, args=[pilot_data])
         transfer_thread.start()        
         self.transfer_threads.append(transfer_thread)
@@ -622,6 +633,7 @@ class DataUnit(DataUnit):
     
     def __add_pilot_data(self, pilot_data):
         logger.debug("add du to pilot data")
+        
         if len(self.pilot_data) > 0: # copy files from other pilot data
             self.pilot_data[0].copy_du(self, pilot_data)
         else: # copy files from original location
