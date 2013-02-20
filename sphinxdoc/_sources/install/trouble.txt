@@ -6,9 +6,9 @@ Having trouble with your BigJob installation? We're here to help! Below is a lis
 
 If you are encountering errors that aren't listed below, set the environment variable :code:`$BIGJOB_VERBOSE=100` in your :code:`.bashrc`.
 
-=================
+======================
 Common Error Messages
-=================
+======================
 
 1. The most common problems we encounter are with incorrect python version. 
 
@@ -36,9 +36,9 @@ If this does not give the correct python version, check your :code:`.bashrc` at 
 
 BigJob utilizes ssh for the execution of sub-jobs. Please ensure that your local SSH daemon is up and running and that you can login without password.
 
-=================
+==========================
 Frequently Asked Questions
-=================
+==========================
 
 **Q: How can I update my existing BigJob package?**::
 
@@ -49,6 +49,13 @@ Frequently Asked Questions
 The UNIX :code:`screen` tool can / should be used to re-connect to a running BigJob session on a remote machine. For documentation on screen, please see `Screen Manpage <http://www.slac.stanford.edu/comp/unix/package/epics/extensions/iocConsole/screen.1.html>`_.
 
 You should not just submit a BigJob from your local machine to a remote host and then close the terminal without the use of screen.
+
+**Q: Can I reconnect to a current running BigJob?**
+
+Yes, if your BigJob manager (or application) terminates before all ComputeUnits terminate, you can reconnect to a running pilot by providing a :code:`pilot_url` to the PilotCompute constructor. For example::
+
+
+	pilot = PilotCompute(pilot_url="redis://localhost:6379/bigjob:bj-a7bfae68-25a0-11e2-bd6c-705681b3df0f:localhost")
 
 **Q: Why is BigJob downloading an installation package?**
 
