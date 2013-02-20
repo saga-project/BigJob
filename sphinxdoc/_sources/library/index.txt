@@ -110,13 +110,15 @@ Controls the location of the Pilot-Agent standard error file.
 
 .. data:: number_of_processes
 
-The number of cores that need to be allocated to run the jobs
+The number of cores that need to be allocated to run the jobs.
 
 :type: string
 
 .. data:: processes_per_host
 
-The number of cores per host node. 
+The number of cores per node. 
+
+This argument does not actually limit the number of processes that can run on a node but specifies the order in which processes are assigned to nodes. You can think of :code:`-ppn 2` as repeating each line of the :code:`$PBS_NODEFILE` 2 times.  
 
 :type: string
 
