@@ -142,98 +142,99 @@
 <h1>4.5. Remote Pilot Data Example<a class="headerlink" href="#remote-pilot-data-example" title="Permalink to this headline">¶</a></h1>
 <p>This example illustrates how to move the files (contained in a DU) associated with your compute workload from one machine to another machine using the concept of &#8220;Pilot Data.&#8221; This is achieved by creating two Pilot Data entities and moving the output DU from the local Pilot Data entity to the remote Pilot Data entity.</p>
 <p>As an example, we are running a computational workload on Stampede, an XSEDE machine (see <tt class="code docutils literal"><span class="pre">pilot_compute_description</span></tt>). We want our input Data Unit to be available on Stampede, because our Compute Unit (which requires the file in the input Data Unit) runs on Stampede. The CU needs the input DU to be transferred to the compute node where the computation will be done. However, we want our output data to be available on india, a FutureGrid machine. Note that we have set up our ssh keys to allow for password-less login to <tt class="code docutils literal"><span class="pre">india.futuregrid.org</span></tt> from <tt class="code docutils literal"><span class="pre">stampede.tacc.utexas.edu</span></tt>.</p>
-<p>Be sure to change the :code`&#8221;project&#8221;` field to your allocation on the machine you are running on. You will also need to change the <tt class="code docutils literal"><span class="pre">service_url`s</span> <span class="pre">to</span> <span class="pre">your</span> <span class="pre">home</span> <span class="pre">directory</span> <span class="pre">on</span> <span class="pre">india.</span> <span class="pre">You</span> <span class="pre">may</span> <span class="pre">also</span> <span class="pre">wish</span> <span class="pre">to</span> <span class="pre">create</span> <span class="pre">a</span> <span class="pre">folder</span> <span class="pre">to</span> <span class="pre">contain</span> <span class="pre">the</span> <span class="pre">DUs</span> <span class="pre">such</span> <span class="pre">as</span> <span class="pre">&quot;pilotdata&quot;.</span> <span class="pre">This</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">a</span> <span class="pre">necessary</span> <span class="pre">step,</span> <span class="pre">but</span> <span class="pre">is</span> <span class="pre">a</span> <span class="pre">suggested</span> <span class="pre">step.</span> <span class="pre">Your</span> <span class="pre">output</span> <span class="pre">on</span> <span class="pre">india.futuregrid.org</span> <span class="pre">will</span> <span class="pre">be</span> <span class="pre">available</span> <span class="pre">in</span> <span class="pre">the</span> <span class="pre">directory</span> <span class="pre">you</span> <span class="pre">specify,</span> <span class="pre">in</span> <span class="pre">this</span> <span class="pre">case,</span> <span class="pre">:code:</span></tt>/N/u/&lt;your username&gt;/pilotdata` in subdirectories that start with <tt class="code docutils literal"><span class="pre">DU-&lt;uid&gt;</span></tt> where uid is a unique identifier to your output data.</p>
-<div class="highlight-python"><pre>import sys
-import os
-import time
-import logging
-from pilot import PilotComputeService, PilotDataService,ComputeDataService, State
+<p>Be sure to change the :code`project` field to your allocation on the machine you are running on. You will also need to change the <tt class="code docutils literal"><span class="pre">service_url</span></tt> to your home directory on india. You may also wish to create a folder to contain the DUs such as &#8220;pilotdata&#8221;. This is not a necessary step, but is a suggested step. Your output on india.futuregrid.org will be available in the directory you specify, in this case, <tt class="code docutils literal"><span class="pre">/N/u/&lt;your</span> <span class="pre">username&gt;/pilotdata</span></tt> in subdirectories that start with <tt class="code docutils literal"><span class="pre">DU-&lt;uid&gt;</span></tt> where uid is a unique identifier to your output data.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">pilot</span> <span class="kn">import</span> <span class="n">PilotComputeService</span><span class="p">,</span> <span class="n">PilotDataService</span><span class="p">,</span><span class="n">ComputeDataService</span><span class="p">,</span> <span class="n">State</span>
 
-COORDINATION_URL = "redis://localhost:6379"
+<span class="n">COORDINATION_URL</span> <span class="o">=</span> <span class="s">&quot;redis://localhost:6379&quot;</span>
 
-if __name__ == "__main__":
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
 
-    pilot_compute_service = PilotComputeService(coordination_url=COORDINATION_URL)
+    <span class="n">pilot_compute_service</span> <span class="o">=</span> <span class="n">PilotComputeService</span><span class="p">(</span><span class="n">coordination_url</span><span class="o">=</span><span class="n">COORDINATION_URL</span><span class="p">)</span>
 
-    # create pilot job service and initiate a pilot job
-    pilot_compute_description = {
-                             "service_url": 'slurm+ssh://stampede.tacc.utexas.edu',
-                             "number_of_processes": 32,
-                             "working_directory": os.getenv("HOME")+"/agent",
-                             "queue": "normal",
-                             "project": 'YourAllocation',       #CHANGE ME
-                             "walltime":10
-                                }
+    <span class="c"># create pilot job service and initiate a pilot job</span>
+    <span class="n">pilot_compute_description</span> <span class="o">=</span> <span class="p">{</span>
+                             <span class="s">&quot;service_url&quot;</span><span class="p">:</span> <span class="s">&#39;slurm+ssh://stampede.tacc.utexas.edu&#39;</span><span class="p">,</span>
+                             <span class="s">&quot;number_of_processes&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
+                             <span class="s">&quot;working_directory&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s">&quot;HOME&quot;</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;/agent&quot;</span><span class="p">,</span>
+                             <span class="s">&quot;queue&quot;</span><span class="p">:</span> <span class="s">&quot;normal&quot;</span><span class="p">,</span>
+                             <span class="s">&quot;project&quot;</span><span class="p">:</span> <span class="s">&#39;YourAllocation&#39;</span><span class="p">,</span>       <span class="c">#CHANGE ME</span>
+                             <span class="s">&quot;walltime&quot;</span><span class="p">:</span><span class="mi">10</span>
+                                <span class="p">}</span>
 
-    pilotjob = pilot_compute_service.create_pilot(pilot_compute_description=pilot_compute_description)
-    # create pilot data service (factory for data pilots (physical,distributed storage))
-    # and pilot data
-    pilot_data_service = PilotDataService(coordination_url=COORDINATION_URL)
+    <span class="n">pilotjob</span> <span class="o">=</span> <span class="n">pilot_compute_service</span><span class="o">.</span><span class="n">create_pilot</span><span class="p">(</span><span class="n">pilot_compute_description</span><span class="o">=</span><span class="n">pilot_compute_description</span><span class="p">)</span>
+    <span class="c"># create pilot data service (factory for data pilots (physical,distributed storage))</span>
+    <span class="c"># and pilot data</span>
+    <span class="n">pilot_data_service</span> <span class="o">=</span> <span class="n">PilotDataService</span><span class="p">(</span><span class="n">coordination_url</span><span class="o">=</span><span class="n">COORDINATION_URL</span><span class="p">)</span>
 
-   #Define our local Pilot Data entity
-    pilot_data_description_1={
-                                "service_url":"ssh://localhost"+os.getenv("HOME")+"/pilotdata/",
-                                "size":100,
-                            }
+   <span class="c">#Define our local Pilot Data entity</span>
+    <span class="n">pilot_data_description_1</span><span class="o">=</span><span class="p">{</span>
+                                <span class="s">&quot;service_url&quot;</span><span class="p">:</span><span class="s">&quot;ssh://localhost&quot;</span><span class="o">+</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s">&quot;HOME&quot;</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;/pilotdata/&quot;</span><span class="p">,</span>
+                                <span class="s">&quot;size&quot;</span><span class="p">:</span><span class="mi">100</span><span class="p">,</span>
+                            <span class="p">}</span>
 
-    #Define our remote Pilot Data entity on india.futuregrid.org
-     pilot_data_description_2={
-                                "service_url":"ssh://india.futuregrid.org/N/u/&lt;your username&gt;/pilotdata", # CHANGE ME
-                                "size":100,
-        }
+    <span class="c">#Define our remote Pilot Data entity on india.futuregrid.org</span>
+     <span class="n">pilot_data_description_2</span><span class="o">=</span><span class="p">{</span>
+                                <span class="s">&quot;service_url&quot;</span><span class="p">:</span><span class="s">&quot;ssh://india.futuregrid.org/N/u/&lt;your username&gt;/pilotdata&quot;</span><span class="p">,</span> <span class="c"># CHANGE ME</span>
+                                <span class="s">&quot;size&quot;</span><span class="p">:</span><span class="mi">100</span><span class="p">,</span>
+        <span class="p">}</span>
 
-    ps1 = pilot_data_service.create_pilot(pilot_data_description=pilot_data_description_1)
-    ps2 = pilot_data_service.create_pilot(pilot_data_description=pilot_data_description_2)
+    <span class="n">ps1</span> <span class="o">=</span> <span class="n">pilot_data_service</span><span class="o">.</span><span class="n">create_pilot</span><span class="p">(</span><span class="n">pilot_data_description</span><span class="o">=</span><span class="n">pilot_data_description_1</span><span class="p">)</span>
+    <span class="n">ps2</span> <span class="o">=</span> <span class="n">pilot_data_service</span><span class="o">.</span><span class="n">create_pilot</span><span class="p">(</span><span class="n">pilot_data_description</span><span class="o">=</span><span class="n">pilot_data_description_2</span><span class="p">)</span>
 
-    compute_data_service = ComputeDataService()
-    compute_data_service.add_pilot_compute_service(pilot_compute_service)
-    compute_data_service.add_pilot_data_service(pilot_data_service)
-
-
-
-    input_data_unit_description = { "file_urls": ["ssh://localhost" +os.path.join(os.getcwd(), "test.txt")],
-                                  }
-
-   # submit pilot data to a pilot store
-   # Note that we are using the Local Pilot Data storage
-   input_du = ps1.submit_data_unit(input_data_unit_description)
-   input_du.wait()
+    <span class="n">compute_data_service</span> <span class="o">=</span> <span class="n">ComputeDataService</span><span class="p">()</span>
+    <span class="n">compute_data_service</span><span class="o">.</span><span class="n">add_pilot_compute_service</span><span class="p">(</span><span class="n">pilot_compute_service</span><span class="p">)</span>
+    <span class="n">compute_data_service</span><span class="o">.</span><span class="n">add_pilot_data_service</span><span class="p">(</span><span class="n">pilot_data_service</span><span class="p">)</span>
 
 
-    ### Create Output DU to store the output files.
-    output_data_unit_description = { "file_urls": [],
-                                   }
 
-   # submit pilot data to a pilot store
-   # Note that we are using the Remote Data storage
-   output_du = ps2.submit_data_unit(output_data_unit_description)
-   output_du.wait()
+    <span class="n">input_data_unit_description</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&quot;file_urls&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s">&quot;ssh://localhost&quot;</span> <span class="o">+</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="s">&quot;test.txt&quot;</span><span class="p">)],</span>
+                                  <span class="p">}</span>
 
-
-    # start compute unit
-    compute_unit_description = {
-            "executable": "/bin/cat",
-            "arguments": ["test.txt"],
-            "number_of_processes": 1,
-            "output": "stdout.txt",
-            "error": "stderr.txt",
-            "input_data" : [input_du.get_url()], # this stages the content of the data unit to the working directory of the compute unit
-            "output_data":[{ output_du.get_url(): ['std*']} ]
-        }
+   <span class="c"># submit pilot data to a pilot store</span>
+   <span class="c"># Note that we are using the Local Pilot Data storage</span>
+   <span class="n">input_du</span> <span class="o">=</span> <span class="n">ps1</span><span class="o">.</span><span class="n">submit_data_unit</span><span class="p">(</span><span class="n">input_data_unit_description</span><span class="p">)</span>
+   <span class="n">input_du</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
 
 
-    compute_unit = compute_data_service.submit_compute_unit(compute_unit_description)
+    <span class="c">### Create Output DU to store the output files.</span>
+    <span class="n">output_data_unit_description</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&quot;file_urls&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                                   <span class="p">}</span>
 
-    logging.debug("Finished setup of PSS and PDS. Waiting for scheduling of PD")
-    compute_data_service.wait()
+   <span class="c"># submit pilot data to a pilot store</span>
+   <span class="c"># Note that we are using the Remote Data storage</span>
+   <span class="n">output_du</span> <span class="o">=</span> <span class="n">ps2</span><span class="o">.</span><span class="n">submit_data_unit</span><span class="p">(</span><span class="n">output_data_unit_description</span><span class="p">)</span>
+   <span class="n">output_du</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
 
-    ## export the output files to local directory.
-    # output_du.export(os.getcwd())
 
-   logging.debug("Terminate Pilot Compute/Data Service")
-   compute_data_service.cancel()
-   pilot_data_service.cancel()
-   pilot_compute_service.cancel()</pre>
+    <span class="c"># start compute unit</span>
+    <span class="n">compute_unit_description</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&quot;executable&quot;</span><span class="p">:</span> <span class="s">&quot;/bin/cat&quot;</span><span class="p">,</span>
+            <span class="s">&quot;arguments&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s">&quot;test.txt&quot;</span><span class="p">],</span>
+            <span class="s">&quot;number_of_processes&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s">&quot;output&quot;</span><span class="p">:</span> <span class="s">&quot;stdout.txt&quot;</span><span class="p">,</span>
+            <span class="s">&quot;error&quot;</span><span class="p">:</span> <span class="s">&quot;stderr.txt&quot;</span><span class="p">,</span>
+            <span class="s">&quot;input_data&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="n">input_du</span><span class="o">.</span><span class="n">get_url</span><span class="p">()],</span> <span class="c"># this stages the content of the data unit to the working directory of the compute unit</span>
+            <span class="s">&quot;output_data&quot;</span><span class="p">:[{</span> <span class="n">output_du</span><span class="o">.</span><span class="n">get_url</span><span class="p">():</span> <span class="p">[</span><span class="s">&#39;std*&#39;</span><span class="p">]}</span> <span class="p">]</span>
+        <span class="p">}</span>
+
+
+    <span class="n">compute_unit</span> <span class="o">=</span> <span class="n">compute_data_service</span><span class="o">.</span><span class="n">submit_compute_unit</span><span class="p">(</span><span class="n">compute_unit_description</span><span class="p">)</span>
+
+    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Finished setup of PSS and PDS. Waiting for scheduling of PD&quot;</span><span class="p">)</span>
+    <span class="n">compute_data_service</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+
+    <span class="c">## export the output files to local directory.</span>
+    <span class="c"># output_du.export(os.getcwd())</span>
+
+   <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Terminate Pilot Compute/Data Service&quot;</span><span class="p">)</span>
+   <span class="n">compute_data_service</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
+   <span class="n">pilot_data_service</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
+   <span class="n">pilot_compute_service</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
+</pre></div>
 </div>
 </div>
 
