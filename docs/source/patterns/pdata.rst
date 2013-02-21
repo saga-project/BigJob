@@ -1,6 +1,6 @@
 ###########################
 Remote Pilot Data Example
-##########################
+###########################
 
 This example illustrates how to move the files (contained in a DU) associated with your compute workload from one machine to another machine using the concept of "Pilot Data." This is achieved by creating two Pilot Data entities and moving the output DU from the local Pilot Data entity to the remote Pilot Data entity.
 
