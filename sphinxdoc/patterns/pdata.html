@@ -1,0 +1,260 @@
+
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>4.5. Remote Pilot Data Example &mdash; BigJob 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-2.3.0/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-2.3.0/css/bootstrap-responsive.min.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-2.3.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="BigJob 1.0 documentation" href="../index.html" />
+    <link rel="up" title="4. Common Usage Patterns" href="index.html" />
+    <link rel="next" title="5. Library Reference" href="../library/index.html" />
+    <link rel="prev" title="4.4. XSEDE Simple Ensemble Example" href="exsede.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body>
+<div class="container">
+<a href="https://github.com/saga-project/BigJob"><img style="position: absolute; top: 100; left: 10; right: 0; border: 10;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
+  
+  <div id="navbar" class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+      <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+      <button class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+
+      <a class="brand" href="../index.html">BigJob</a>
+      <span class="navbar-text pull-left"><b>1.0</b></span>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+          <li class="divider-vertical"></li>
+          
+            <li class="dropdown globaltoc-container">
+  <a href="../index.html"
+     class="dropdown-toggle"
+     data-toggle="dropdown">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+    ><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../intro/index.html">1. Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../intro/index.html#introduction-to-pilot-jobs">1.1. Introduction to Pilot-Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../intro/index.html#why-do-you-need-pilot-jobs">1.2. Why do you need Pilot-Jobs?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../intro/index.html#what-makes-bigjob-different">1.3. What makes BigJob different?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../intro/index.html#what-can-i-use-bigjob-for">1.4. What can I use BigJob for?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../intro/index.html#bigjob-overview">1.5. BigJob Overview</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../install/index.html">2. Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../install/install.html">2.1. Installing BigJob</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../install/redis.html">2.2. Setting Up a Redis Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../install/xsede.html">2.3. XSEDE Specific Tips</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../install/trouble.html">2.4. Troubleshooting</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../usage/index.html">3. Working with BigJob</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../usage/appwriting.html">3.1. Writing BigJob Scripts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage/pilotdata.html">3.2. Introduction to Pilot-Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage/cmdtools.html">3.3. Command-Line Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage/logging.html">3.4. Logging and Debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage/output.html">3.5. Interpreting Output</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">4. Common Usage Patterns</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="simple.html">4.1. Simple Ensemble</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chained.html">4.2. Chained Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="coupled.html">4.3. Coupled Ensembles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="exsede.html">4.4. XSEDE Simple Ensemble Example</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">4.5. Remote Pilot Data Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../library/index.html">5. Library Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../library/index.html#compute-and-data-services">5.1. Compute and Data Services</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../library/index.html#compute-and-data-units">5.2. Compute and Data Units</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../library/index.html#state-enumeration">5.3. State Enumeration</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+            <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"><ul>
+<li><a class="reference internal" href="#">4.5. Remote Pilot Data Example</a></li>
+</ul>
+</ul>
+</li>
+          
+          
+            
+  <li><a href="exsede.html"
+         title="previous chapter">&laquo; 4.4. XSEDE Simple Ensemble Example</a></li>
+  <li><a href="../library/index.html"
+         title="next chapter">5. Library Reference &raquo;</a></li>
+          
+          
+        </ul>
+
+        
+          
+<form class="navbar-search pull-right" style="margin-bottom:-3px;" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+        
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="section" id="remote-pilot-data-example">
+<h1>4.5. Remote Pilot Data Example<a class="headerlink" href="#remote-pilot-data-example" title="Permalink to this headline">¶</a></h1>
+<p>This example illustrates how to move the files (contained in a DU) associated with your compute workload from one machine to another machine using the concept of &#8220;Pilot Data.&#8221; This is achieved by creating two Pilot Data entities and moving the output DU from the local Pilot Data entity to the remote Pilot Data entity.</p>
+<p>As an example, we are running a computational workload on Stampede, an XSEDE machine (see <tt class="code docutils literal"><span class="pre">pilot_compute_description</span></tt>). We want our input Data Unit to be available on Stampede, because our Compute Unit (which requires the file in the input Data Unit) runs on Stampede. The CU needs the input DU to be transferred to the compute node where the computation will be done. However, we want our output data to be available on india, a FutureGrid machine. Note that we have set up our ssh keys to allow for password-less login to <tt class="code docutils literal"><span class="pre">india.futuregrid.org</span></tt> from <tt class="code docutils literal"><span class="pre">stampede.tacc.utexas.edu</span></tt>.</p>
+<p>Be sure to change the :code`&#8221;project&#8221;` field to your allocation on the machine you are running on. You will also need to change the <tt class="code docutils literal"><span class="pre">service_url`s</span> <span class="pre">to</span> <span class="pre">your</span> <span class="pre">home</span> <span class="pre">directory</span> <span class="pre">on</span> <span class="pre">india.</span> <span class="pre">You</span> <span class="pre">may</span> <span class="pre">also</span> <span class="pre">wish</span> <span class="pre">to</span> <span class="pre">create</span> <span class="pre">a</span> <span class="pre">folder</span> <span class="pre">to</span> <span class="pre">contain</span> <span class="pre">the</span> <span class="pre">DUs</span> <span class="pre">such</span> <span class="pre">as</span> <span class="pre">&quot;pilotdata&quot;.</span> <span class="pre">This</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">a</span> <span class="pre">necessary</span> <span class="pre">step,</span> <span class="pre">but</span> <span class="pre">is</span> <span class="pre">a</span> <span class="pre">suggested</span> <span class="pre">step.</span> <span class="pre">Your</span> <span class="pre">output</span> <span class="pre">on</span> <span class="pre">india.futuregrid.org</span> <span class="pre">will</span> <span class="pre">be</span> <span class="pre">available</span> <span class="pre">in</span> <span class="pre">the</span> <span class="pre">directory</span> <span class="pre">you</span> <span class="pre">specify,</span> <span class="pre">in</span> <span class="pre">this</span> <span class="pre">case,</span> <span class="pre">:code:</span></tt>/N/u/&lt;your username&gt;/pilotdata` in subdirectories that start with <tt class="code docutils literal"><span class="pre">DU-&lt;uid&gt;</span></tt> where uid is a unique identifier to your output data.</p>
+<div class="highlight-python"><pre>import sys
+import os
+import time
+import logging
+from pilot import PilotComputeService, PilotDataService,ComputeDataService, State
+
+COORDINATION_URL = "redis://localhost:6379"
+
+if __name__ == "__main__":
+
+    pilot_compute_service = PilotComputeService(coordination_url=COORDINATION_URL)
+
+    # create pilot job service and initiate a pilot job
+    pilot_compute_description = {
+                             "service_url": 'slurm+ssh://stampede.tacc.utexas.edu',
+                             "number_of_processes": 32,
+                             "working_directory": os.getenv("HOME")+"/agent",
+                             "queue": "normal",
+                             "project": 'YourAllocation',       #CHANGE ME
+                             "walltime":10
+                                }
+
+    pilotjob = pilot_compute_service.create_pilot(pilot_compute_description=pilot_compute_description)
+    # create pilot data service (factory for data pilots (physical,distributed storage))
+    # and pilot data
+    pilot_data_service = PilotDataService(coordination_url=COORDINATION_URL)
+
+   #Define our local Pilot Data entity
+    pilot_data_description_1={
+                                "service_url":"ssh://localhost"+os.getenv("HOME")+"/pilotdata/",
+                                "size":100,
+                            }
+
+    #Define our remote Pilot Data entity on india.futuregrid.org
+     pilot_data_description_2={
+                                "service_url":"ssh://india.futuregrid.org/N/u/&lt;your username&gt;/pilotdata", # CHANGE ME
+                                "size":100,
+        }
+
+    ps1 = pilot_data_service.create_pilot(pilot_data_description=pilot_data_description_1)
+    ps2 = pilot_data_service.create_pilot(pilot_data_description=pilot_data_description_2)
+
+    compute_data_service = ComputeDataService()
+    compute_data_service.add_pilot_compute_service(pilot_compute_service)
+    compute_data_service.add_pilot_data_service(pilot_data_service)
+
+
+
+    input_data_unit_description = { "file_urls": ["ssh://localhost" +os.path.join(os.getcwd(), "test.txt")],
+                                  }
+
+   # submit pilot data to a pilot store
+   # Note that we are using the Local Pilot Data storage
+   input_du = ps1.submit_data_unit(input_data_unit_description)
+   input_du.wait()
+
+
+    ### Create Output DU to store the output files.
+    output_data_unit_description = { "file_urls": [],
+                                   }
+
+   # submit pilot data to a pilot store
+   # Note that we are using the Remote Data storage
+   output_du = ps2.submit_data_unit(output_data_unit_description)
+   output_du.wait()
+
+
+    # start compute unit
+    compute_unit_description = {
+            "executable": "/bin/cat",
+            "arguments": ["test.txt"],
+            "number_of_processes": 1,
+            "output": "stdout.txt",
+            "error": "stderr.txt",
+            "input_data" : [input_du.get_url()], # this stages the content of the data unit to the working directory of the compute unit
+            "output_data":[{ output_du.get_url(): ['std*']} ]
+        }
+
+
+    compute_unit = compute_data_service.submit_compute_unit(compute_unit_description)
+
+    logging.debug("Finished setup of PSS and PDS. Waiting for scheduling of PD")
+    compute_data_service.wait()
+
+    ## export the output files to local directory.
+    # output_du.export(os.getcwd())
+
+   logging.debug("Terminate Pilot Compute/Data Service")
+   compute_data_service.cancel()
+   pilot_data_service.cancel()
+   pilot_compute_service.cancel()</pre>
+</div>
+</div>
+
+
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+  <a href="../_sources/patterns/pdata.txt"
+     rel="nofollow">Source</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2012, The BigJob Project.<br/>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>
