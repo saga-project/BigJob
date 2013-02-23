@@ -869,7 +869,7 @@ except:
                 from pilot.filemanagement.ssh_adaptor import SSHFileAdaptor
                 self.__filemanager = SSHFileAdaptor(service_url) 
             except:
-                logger.debug("SSH/Paramiko package not found.")            
+                logger.debug("SSH package not found.")            
                 self.__print_traceback()
         elif service_url.startswith("http:"):
             logger.debug("Use WebHDFS backend")
