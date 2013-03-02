@@ -489,7 +489,7 @@ class bigjob_agent:
                     command ="cd " + workingdirectory + "; " + command
                 else: # ssh launch is default
                     if (spmdvariation.lower( )=="mpi"):
-                        command = "cd " + workingdirectory + "; " + envi +  self.MPIRUN + " -np " + numberofprocesses + " -machinefile " + machinefile + " " + command
+                        command = "cd " + workingdirectory + "; " + envi +  self.MPIRUN + " -np " + numberofprocesses + " -machinefile " + machinefile + " " + executable + " " + arguments
                     elif host == "localhost":
                         command ="cd " + workingdirectory + "; " + command
                     else:    
