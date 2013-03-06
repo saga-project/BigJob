@@ -7,11 +7,11 @@
 import os
 from setuptools import setup
 
-try:
-    import saga
-except:
-    print "SAGA C++ and SAGA Python Bindings not found. Using Bliss/SAGA."
-    #sys.exit(1)
+#try:
+#    import saga
+#except:
+#    print "SAGA C++ and SAGA Python Bindings not found. Using Bliss/SAGA."
+#    #sys.exit(1)
     
 fn = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'VERSION')
 version = open(fn).read().strip()
@@ -39,7 +39,7 @@ setup(name='BigJob',
       
       # data files for pip
       package_data = {'': ['*.conf']},
-      install_requires=['uuid', 'threadpool', 'virtualenv', 'redis==2.2.4', 'bliss', 'google-api-python-client', 'python-hostlist',
+      install_requires=['uuid', 'threadpool', 'virtualenv', 'redis==2.2.4', 'saga-python', 'google-api-python-client', 'python-hostlist',
                         'globusonline-transfer-api-client', 'boto>=2.2,<2.3', 'simplejson<2.1', 'pexpect'],
       entry_points = {
         'console_scripts': [
