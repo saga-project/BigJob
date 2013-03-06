@@ -389,6 +389,7 @@ class bigjob(api.base.bigjob):
         """ duck typing for get_state of saga.job.job  
             state of saga job that is used to spawn the pilot agent
         """
+        print "get state?"
         return self.get_state_detail()
         
     
@@ -1124,21 +1125,31 @@ def output_data():
      
 class description(SAGAJobDescription):
     """ Sub-job description """
-    environment = property(**environment())   
-    input_data = property(**input_data())
+    input_data  = property(**input_data())
     output_data = property(**output_data())   
+    environment = property(**environment())   
     
     
     def __init__(self):
-        bliss.saga.job.Description.__init__(self)
+        saga.job.Description.__init__(self)
         #self.attributes_extensible_ (True)
         
         # Extend description class by Pilot-Data relevant attributes
         self._output_data = None
         self._input_data = None
         
-        self._register_rw_vec_attribute(name="InputData", 
-                                        accessor=self.__class__.input_data) 
-        self._register_rw_vec_attribute(name="OutputData", 
-                                        accessor=self.__class__.output_data) 
+        import saga.attributes as sa
+
+        self._attributes_extensible  (True)
+
+        self._attributes_register   ("InputData",  None, sa.ANY, sa.VECTOR, sa.WRITEABLE)
+        self._attributes_register   ("OutputData", None, sa.ANY, sa.VECTOR, sa.WRITEABLE)
+
+        self._attributes_set_getter ("InputData",  self.__class__.input_data )
+        self._attributes_set_getter ("OutputData", self.__class__.output_data)
+
+        # self._register_rw_vec_attribute(name="InputData", 
+        #                                 accessor=self.__class__.input_data) 
+        # self._register_rw_vec_attribute(name="OutputData", 
+        #                                 accessor=self.__class__.output_data) 
         
