@@ -1,0 +1,239 @@
+
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>1. Introduction &mdash; BigJob 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-2.3.0/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-2.3.0/css/bootstrap-responsive.min.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-2.3.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="BigJob 1.0 documentation" href="../index.html" />
+    <link rel="next" title="2. Installation" href="../install/index.html" />
+    <link rel="prev" title="BigJob 1.0 Documentation" href="../index.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body>
+<div class="container">
+<a href="https://github.com/saga-project/BigJob"><img style="position: absolute; top: 100; left: 10; right: 0; border: 10;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
+  
+  <div id="navbar" class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+      <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+      <button class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+
+      <a class="brand" href="../index.html">BigJob</a>
+      <span class="navbar-text pull-left"><b>1.0</b></span>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+          <li class="divider-vertical"></li>
+          
+            <li class="dropdown globaltoc-container">
+  <a href="../index.html"
+     class="dropdown-toggle"
+     data-toggle="dropdown">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+    ><ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="">1. Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#introduction-to-pilot-jobs">1.1. Introduction to Pilot-Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#why-do-you-need-pilot-jobs">1.2. Why do you need Pilot-Jobs?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#what-makes-bigjob-different">1.3. What makes BigJob different?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#what-can-i-use-bigjob-for">1.4. What can I use BigJob for?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bigjob-overview">1.5. BigJob Overview</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../install/index.html">2. Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../install/install.html">2.1. Installing BigJob</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../install/redis.html">2.2. Setting Up a Redis Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../install/xsede.html">2.3. XSEDE Specific Tips</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../install/trouble.html">2.4. Troubleshooting</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../usage/index.html">3. Working with BigJob</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../usage/appwriting.html">3.1. Writing BigJob Scripts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage/pilotdata.html">3.2. Introduction to Pilot-Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage/cmdtools.html">3.3. Command-Line Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage/logging.html">3.4. Logging and Debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage/output.html">3.5. Interpreting Output</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../patterns/index.html">4. Common Usage Patterns</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../patterns/simple.html">4.1. Simple Ensemble</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../patterns/chained.html">4.2. Chained Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../patterns/coupled.html">4.3. Coupled Ensembles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../patterns/exsede.html">4.4. XSEDE Simple Ensemble Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../library/index.html">5. Library Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../library/index.html#compute-and-data-services">5.1. Compute and Data Services</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../library/index.html#compute-and-data-units">5.2. Compute and Data Units</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../library/index.html#state-enumeration">5.3. State Enumeration</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+            <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"><ul>
+<li><a class="reference internal" href="#">1. Introduction</a><ul>
+<li><a class="reference internal" href="#introduction-to-pilot-jobs">1.1. Introduction to Pilot-Jobs</a></li>
+<li><a class="reference internal" href="#why-do-you-need-pilot-jobs">1.2. Why do you need Pilot-Jobs?</a></li>
+<li><a class="reference internal" href="#what-makes-bigjob-different">1.3. What makes BigJob different?</a></li>
+<li><a class="reference internal" href="#what-can-i-use-bigjob-for">1.4. What can I use BigJob for?</a></li>
+<li><a class="reference internal" href="#bigjob-overview">1.5. BigJob Overview</a><ul>
+<li><a class="reference internal" href="#supported-adaptors">1.5.1. Supported Adaptors</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+          
+          
+            
+  <li><a href="../index.html"
+         title="previous chapter">&laquo; BigJob 1.0 Documentation</a></li>
+  <li><a href="../install/index.html"
+         title="next chapter">2. Installation &raquo;</a></li>
+          
+          
+        </ul>
+
+        
+          
+<form class="navbar-search pull-right" style="margin-bottom:-3px;" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+        
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="section" id="introduction">
+<h1>1. Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<p>BigJob is a Pilot-Job framework built on top of <a class="reference external" href="http://saga-project.github.com">The Simple API for Grid Applications (SAGA)</a>, a high-level, easy-to-use API for accessing distributed resources. BigJob supports a wide range of application types and is usable over a broad range of infrastructures, i.e., it is general-purpose, extensible, and interoperable. It is written in the python programming language.</p>
+<div class="section" id="introduction-to-pilot-jobs">
+<h2>1.1. Introduction to Pilot-Jobs<a class="headerlink" href="#introduction-to-pilot-jobs" title="Permalink to this headline">¶</a></h2>
+<p>Pilot-Jobs support the decoupling of workload submission from resource assignment. This results in a flexible execution model, which in turn enables the distributed scale-out of applications on multiple and possibly heterogeneous resources. Pilot-Jobs support the use of container jobs with sophisticated workflow management to coordinate the launch and interaction of actual computational tasks within the container. It allows the execution of jobs without the necessity to queue each individual job.</p>
+</div>
+<div class="section" id="why-do-you-need-pilot-jobs">
+<h2>1.2. Why do you need Pilot-Jobs?<a class="headerlink" href="#why-do-you-need-pilot-jobs" title="Permalink to this headline">¶</a></h2>
+<p>Production-grade distributed cyberinfrastructure almost always has a local resource manager installed, such as a batch queuing system. A distributed application often requires many jobs to produce useful output data; these jobs often have the same executable. A traditional way of submitting these jobs would be to submit an individual job for each executable. These jobs (often hundreds) sit in the batch queuing system and may not become active at the same time. Overall, time-to-completion can take many hours due to load and scheduling variations.</p>
+<p>A Pilot-Job provides an alternative approach. It can be thought of as a container job for many sub-jobs. A Pilot-Job acquires the resources necessary to execute the sub-jobs (thus, it asks for all of the resources required to run the sub-jobs, rather than just one sub-job). If a system has a batch queue, the Pilot-Job is submitted to this queue. Once it becomes active, it can run the sub-jobs directly, instead of having to wait for each sub-job to queue. This eliminates the need to submit a different job for every executable, and significantly reduces the time-to-completion.</p>
+</div>
+<div class="section" id="what-makes-bigjob-different">
+<h2>1.3. What makes BigJob different?<a class="headerlink" href="#what-makes-bigjob-different" title="Permalink to this headline">¶</a></h2>
+<p>Unlike other common Pilot-Job systems, SAGA BigJob:</p>
+<ol class="arabic simple">
+<li>Natively supports MPI jobs</li>
+<li>Works on a variety of back-end systems</li>
+</ol>
+</div>
+<div class="section" id="what-can-i-use-bigjob-for">
+<h2>1.4. What can I use BigJob for?<a class="headerlink" href="#what-can-i-use-bigjob-for" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p class="first">Parameter sweeps</p>
+</li>
+<li><p class="first">Many instances of the same task (ensemble)</p>
+</li>
+<li><p class="first">Chained tasks</p>
+</li>
+<li><p class="first">Loosely coupled but distinct tasks</p>
+</li>
+<li><dl class="first docutils">
+<dt>Dependent tasks</dt>
+<dd><ul class="first last simple">
+<li>Tasks with Data Dependencies</li>
+<li>Tasks with Compute Dependencies</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div>
+<div class="section" id="bigjob-overview">
+<h2>1.5. BigJob Overview<a class="headerlink" href="#bigjob-overview" title="Permalink to this headline">¶</a></h2>
+<p>BigJob is comprised of three major components: (1) The Pilot-Manager, (2) The Pilot-Agent, and (3) The distributed coordination service. In order to understand what each component is responsible for, we must first describe the break down of a distributed application.</p>
+<p>An application is comprised of compute units (the application kernel) and data units (i.e. input/output files or data). Using the Pilot-API, an application can create a Pilot (Pilot-Compute [aka: Pilot-Job] or Pilot-Data) in order to acquire resources (computational or storage, respectively). The Pilot-Compute is the entity that actually gets submitted and scheduled on a resource using the resource management system. Once the resources are acquired, the application can submit compute units and data units via the Pilot-Manager.</p>
+<p>The Pilot-Manager is responsible for the orchestration and scheduling of Pilots. It runs locally on the machine used to run the distributed application. For submission of Pilots, BigJob relies on the SAGA Job API, and thus can be used in conjunction with different SAGA adaptors, e. g. the Globus, PBS, Condor, and Amazon Web Service adaptors. The Pilot-Manager ensures that the tasks are launched onto the correct resource based upon the specified jobID using the correct number of processes.</p>
+<p>The Pilot-Manager then stores information into the distributed coordination service (usually a redis database). For each new job (or chunk of data), an entry is created in the database by the BigJob manager. This database can be located on any resource, including the localhost. It is used for communication between the Pilot-Manager and the Pilot-Agent.</p>
+<p>Once the Pilot-Compute is submitted to the batch queuing system of the remote resource and becomes active, the Pilot-Agent comes into play. The Pilot-Agent is responsible for gathering local information and for executing the actual tasks (compute units) on its local resource. It achieves this by periodically polling for new jobs. If a new job is found and resources are available, the job is dispatched, otherwise it is queued. If multiple resources (machines) are acquired, there will be multiple Pilot-Agents.</p>
+<p>The overall BigJob architecture is shown below. BigJob utilizes a Master-Worker coordination model.</p>
+<div class="figure align-center">
+<img alt="../_images/bigjob-architecture.png" src="../_images/bigjob-architecture.png" />
+</div>
+<div class="section" id="supported-adaptors">
+<h3>1.5.1. Supported Adaptors<a class="headerlink" href="#supported-adaptors" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><strong>fork</strong> - Allows job execution and file handling on the local machine</li>
+<li><strong>SSH</strong> - Allows job execution on remote hosts via SSH</li>
+<li><strong>GSISSH</strong> - Allows job execution on remote hosts via GSISSH</li>
+<li><strong>PBS(+SSH,+GSISSH)</strong> - Provides local and remote access (SSH+GSISSH) to PBS/Torque clusters</li>
+<li><strong>SGE(+SSH,+GSISSH)</strong> - Provides local and remote access (SSH+GSISSH) Sun (Oracle) Grid Engine Clusters</li>
+<li><strong>SLURM(+SSH)</strong> - Provides local and remote access (SSH) to SLURM clusters</li>
+<li><strong>GRAM</strong> - Uses Globus to submit jobs. Globus certificates are required.</li>
+<li><strong>Amazon EC2(+SSH)</strong> - Start Virtual Machines and submit jobs to AWS clouds</li>
+<li><strong>Eucalyptus(+SSH)</strong> - Start Virtual Machines and submit jobs to Eucalyptus clouds</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+  <a href="../_sources/intro/index.txt"
+     rel="nofollow">Source</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2012, The BigJob Project.<br/>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

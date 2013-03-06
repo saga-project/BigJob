@@ -330,13 +330,9 @@ class ComputeUnitDescription(dict):
                     'environment': <environment>,          # environment variables 
                     
                     # Working directory
-                    # A pilot data url will be translated to the local pilot store url, e.g.
-                    #     pilotdata://localhost/c2fafeae-03a9-11e1-9934-109addae22a3' 
-                    #     =>           
-                    #     ssh://localhost/tmp/pilotdata/c2fafeae-03a9-11e1-9934-109addae22a3
-                    #
-                    #     i.e. job is executed in /tmp/pilotdata/c2fafeae-03a9-11e1-9934-109addae22a3
-                    #     where file can be accessed using relative paths
+                    # Recommendation: Do not set working directory!
+                    #     if None working directory is sandbox directory of this CU (automatically
+                    #     created by BigJob)
                     'working_directory': <working directory>,  
                     
                     # I/O
@@ -345,19 +341,16 @@ class ComputeUnitDescription(dict):
                     'output': <stdout>,
                                 
                     # Parallelism
-                    'number_of_processes': <Total number of processes to start>,
-                    'processes_per_host':  <Nr of processes per host>,
-                    'threads_per_process': <Nr of threads to start per process>,
-                    'total_core_count':    <Total number of cores requested>,
-                    'spmd_variation':      <Type and startup mechanism>,
                     
-                    # Requirements
-                    'candidate_hosts': [<url>, ...],
-                    'cpu_architecture': <architecture, e.g. x86_64>,
-                    'total_physical_memory': <memory, e.g. 2000>,
-                    'operating_system_type': <os, e.g. Linux>,
-                    'total_cpu_time': <cpu time>,
-                    'wall_time_limit': <walltime in sec, e.g. 600 (sec)>,            
+                    # Defines how many CPU cores are reserved for the application process.
+                    'number_of_processes': <Total number of processes to start>,
+                    
+                    # Defines how the application process is launched:
+                    #     "single": ./a.out
+                    #     "mpi": mpirun -np <number_of_processes> ./a.out
+                    # In the MPI case BJ generates an appropriate machinefile
+                    'spmd_variation':      <Type and startup mechanism. Supported Values: [single, mpi]>,
+                    
                     
                     # Data - input/output data flow for ComputeUnit
                     'input_data': [<data unit url>, ... ],      

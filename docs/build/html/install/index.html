@@ -1,0 +1,224 @@
+
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>2. Installation &mdash; BigJob 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-2.3.0/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-2.3.0/css/bootstrap-responsive.min.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-2.3.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="BigJob 1.0 documentation" href="../index.html" />
+    <link rel="next" title="2.1. Installing BigJob" href="install.html" />
+    <link rel="prev" title="1. Introduction" href="../intro/index.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body>
+<div class="container">
+<a href="https://github.com/saga-project/BigJob"><img style="position: absolute; top: 100; left: 10; right: 0; border: 10;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
+  
+  <div id="navbar" class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+      <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+      <button class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+
+      <a class="brand" href="../index.html">BigJob</a>
+      <span class="navbar-text pull-left"><b>1.0</b></span>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+          <li class="divider-vertical"></li>
+          
+            <li class="dropdown globaltoc-container">
+  <a href="../index.html"
+     class="dropdown-toggle"
+     data-toggle="dropdown">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+    ><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../intro/index.html">1. Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../intro/index.html#introduction-to-pilot-jobs">1.1. Introduction to Pilot-Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../intro/index.html#why-do-you-need-pilot-jobs">1.2. Why do you need Pilot-Jobs?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../intro/index.html#what-makes-bigjob-different">1.3. What makes BigJob different?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../intro/index.html#what-can-i-use-bigjob-for">1.4. What can I use BigJob for?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../intro/index.html#bigjob-overview">1.5. BigJob Overview</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">2. Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="install.html">2.1. Installing BigJob</a></li>
+<li class="toctree-l2"><a class="reference internal" href="redis.html">2.2. Setting Up a Redis Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xsede.html">2.3. XSEDE Specific Tips</a></li>
+<li class="toctree-l2"><a class="reference internal" href="trouble.html">2.4. Troubleshooting</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../usage/index.html">3. Working with BigJob</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../usage/appwriting.html">3.1. Writing BigJob Scripts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage/pilotdata.html">3.2. Introduction to Pilot-Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage/cmdtools.html">3.3. Command-Line Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage/logging.html">3.4. Logging and Debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage/output.html">3.5. Interpreting Output</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../patterns/index.html">4. Common Usage Patterns</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../patterns/simple.html">4.1. Simple Ensemble</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../patterns/chained.html">4.2. Chained Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../patterns/coupled.html">4.3. Coupled Ensembles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../patterns/exsede.html">4.4. XSEDE Simple Ensemble Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../library/index.html">5. Library Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../library/index.html#compute-and-data-services">5.1. Compute and Data Services</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../library/index.html#compute-and-data-units">5.2. Compute and Data Units</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../library/index.html#state-enumeration">5.3. State Enumeration</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+            <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"><ul>
+<li><a class="reference internal" href="#">2. Installation</a><ul>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+          
+          
+            
+  <li><a href="../intro/index.html"
+         title="previous chapter">&laquo; 1. Introduction</a></li>
+  <li><a href="install.html"
+         title="next chapter">2.1. Installing BigJob &raquo;</a></li>
+          
+          
+        </ul>
+
+        
+          
+<form class="navbar-search pull-right" style="margin-bottom:-3px;" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+        
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="section" id="installation">
+<span id="using-index"></span><h1>2. Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<p>This part of the documentation is devoted to general information on the setup
+and configuration of BigJob and things that make working with BigJob easier.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">2.1. Installing BigJob</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="install.html#environment-setup">2.1.1. Environment Setup</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="install.html#prerequisites">2.1.1.1. Prerequisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="install.html#bootstrap-your-local-python-environment">2.1.1.2. Bootstrap your Local Python Environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="install.html#activate-your-local-python-environment">2.1.1.3. Activate your Local Python Environment</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#install-bigjob">2.1.2. Install BigJob</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#execution-setup">2.1.3. Execution Setup</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="install.html#create-your-agent-directory">2.1.3.1. Create your Agent Directory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="install.html#ssh-password-less-login">2.1.3.2. SSH Password-Less Login</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="install.html#id1">2.1.3.2.1. Prerequisites</a></li>
+<li class="toctree-l4"><a class="reference internal" href="install.html#key-generation-and-installation">2.1.3.2.2. Key Generation and Installation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="redis.html">2.2. Setting Up a Redis Server</a></li>
+<li class="toctree-l1"><a class="reference internal" href="xsede.html">2.3. XSEDE Specific Tips</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="xsede.html#general">2.3.1. General</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="xsede.html#where-to-run">2.3.1.1. Where to Run</a></li>
+<li class="toctree-l3"><a class="reference internal" href="xsede.html#adding-your-project-allocation">2.3.1.2. Adding your Project Allocation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="xsede.html#stampede">2.3.2. Stampede</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="xsede.html#service-url">2.3.2.1. service_url</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="xsede.html#lonestar">2.3.3. Lonestar</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="xsede.html#id1">2.3.3.1. service_url</a></li>
+<li class="toctree-l3"><a class="reference internal" href="xsede.html#queues">2.3.3.2. queues</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="xsede.html#kraken">2.3.4. Kraken</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="xsede.html#load-proper-python-environment">2.3.4.1. Load Proper Python Environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="xsede.html#using-lustre-scratch">2.3.4.2. Using Lustre Scratch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="xsede.html#activate-your-credentials">2.3.4.3. Activate your Credentials</a></li>
+<li class="toctree-l3"><a class="reference internal" href="xsede.html#id2">2.3.4.4. service_url</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="xsede.html#trestles">2.3.5. Trestles</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="xsede.html#id3">2.3.5.1. service_url</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="trouble.html">2.4. Troubleshooting</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="trouble.html#common-error-messages">2.4.1. Common Error Messages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="trouble.html#frequently-asked-questions">2.4.2. Frequently Asked Questions</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+  <a href="../_sources/install/index.txt"
+     rel="nofollow">Source</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2012, The BigJob Project.<br/>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

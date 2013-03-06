@@ -1,0 +1,256 @@
+
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>3.4. Logging and Debugging &mdash; BigJob 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-2.3.0/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-2.3.0/css/bootstrap-responsive.min.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-2.3.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="BigJob 1.0 documentation" href="../index.html" />
+    <link rel="up" title="3. Working with BigJob" href="index.html" />
+    <link rel="next" title="3.5. Interpreting Output" href="output.html" />
+    <link rel="prev" title="3.3. Command-Line Tools" href="cmdtools.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body>
+<div class="container">
+<a href="https://github.com/saga-project/BigJob"><img style="position: absolute; top: 100; left: 10; right: 0; border: 10;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
+  
+  <div id="navbar" class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+      <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+      <button class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+
+      <a class="brand" href="../index.html">BigJob</a>
+      <span class="navbar-text pull-left"><b>1.0</b></span>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+          <li class="divider-vertical"></li>
+          
+            <li class="dropdown globaltoc-container">
+  <a href="../index.html"
+     class="dropdown-toggle"
+     data-toggle="dropdown">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+    ><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../intro/index.html">1. Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../intro/index.html#introduction-to-pilot-jobs">1.1. Introduction to Pilot-Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../intro/index.html#why-do-you-need-pilot-jobs">1.2. Why do you need Pilot-Jobs?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../intro/index.html#what-makes-bigjob-different">1.3. What makes BigJob different?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../intro/index.html#what-can-i-use-bigjob-for">1.4. What can I use BigJob for?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../intro/index.html#bigjob-overview">1.5. BigJob Overview</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../install/index.html">2. Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../install/install.html">2.1. Installing BigJob</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../install/redis.html">2.2. Setting Up a Redis Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../install/xsede.html">2.3. XSEDE Specific Tips</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../install/trouble.html">2.4. Troubleshooting</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">3. Working with BigJob</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="appwriting.html">3.1. Writing BigJob Scripts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pilotdata.html">3.2. Introduction to Pilot-Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmdtools.html">3.3. Command-Line Tools</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">3.4. Logging and Debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="output.html">3.5. Interpreting Output</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../patterns/index.html">4. Common Usage Patterns</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../patterns/simple.html">4.1. Simple Ensemble</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../patterns/chained.html">4.2. Chained Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../patterns/coupled.html">4.3. Coupled Ensembles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../patterns/exsede.html">4.4. XSEDE Simple Ensemble Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../library/index.html">5. Library Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../library/index.html#compute-and-data-services">5.1. Compute and Data Services</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../library/index.html#compute-and-data-units">5.2. Compute and Data Units</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/index.html">6. Tutorial</a></li>
+</ul>
+</ul>
+</li>
+            <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"><ul>
+<li><a class="reference internal" href="#">3.4. Logging and Debugging</a><ul>
+<li><a class="reference internal" href="#environment-variables">3.4.1. Environment Variables</a></li>
+<li><a class="reference internal" href="#bigjob-configuration-file">3.4.2. BigJob Configuration File</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+          
+          
+            
+  <li><a href="cmdtools.html"
+         title="previous chapter">&laquo; 3.3. Command-Line Tools</a></li>
+  <li><a href="output.html"
+         title="next chapter">3.5. Interpreting Output &raquo;</a></li>
+          
+          
+        </ul>
+
+        
+          
+<form class="navbar-search pull-right" style="margin-bottom:-3px;" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+        
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="section" id="logging-and-debugging">
+<h1>3.4. Logging and Debugging<a class="headerlink" href="#logging-and-debugging" title="Permalink to this headline">¶</a></h1>
+<p>In a distributed environment unified error logging and reporting is a crucial
+capability for debugging and monitoring. BigJob has a configurable logging system
+that  captures debug, info, warning and error messages across its runtime and SAGA&#8217;s middleware adaptors. The logging system can be controlled in two different
+ways: via <em class="xref std std-ref">env_vars</em> variables, which should be sufficient in most
+scenarios, and via the <tt class="code docutils literal"><span class="pre">bigjob.conf</span></tt> file.</p>
+<div class="section" id="environment-variables">
+<h2>3.4.1. Environment Variables<a class="headerlink" href="#environment-variables" title="Permalink to this headline">¶</a></h2>
+<p>Several environment variables can be used to control SAGA and BigJob&#8217;s logging behavior from  the command line. Obviously, this can come in handy when debugging a problem
+with an existing SAGA/BigJob application. Environment variables are set in the
+executing shell and evaluated by BigJob at program startup.</p>
+<dl class="envvar">
+<dt id="envvar-BIGJOB_VERBOSE">
+<tt class="descname">BIGJOB_VERBOSE</tt><a class="headerlink" href="#envvar-BIGJOB_VERBOSE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Controls the log level. This controls the amount of output generated by the
+logging system. <tt class="docutils literal"><span class="pre">BIGJOB_VERBOSE</span></tt> expects either a numeric (0-4) value or a
+string (case insensitive) representing the log level:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="21%" />
+<col width="29%" />
+<col width="50%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Numeric Value</th>
+<th class="head">Log Level</th>
+<th class="head">Type of Messages Displayed</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>0
+(default)</td>
+<td><tt class="docutils literal"><span class="pre">CRITICAL</span></tt></td>
+<td>Only fatal events that will cause
+BigJob to abort.</td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td><tt class="docutils literal"><span class="pre">ERROR</span></tt></td>
+<td>Errors that will not necessarily
+cause BigJob to abort.</td>
+</tr>
+<tr class="row-even"><td>2</td>
+<td><tt class="docutils literal"><span class="pre">WARNING</span></tt></td>
+<td>Warnings that are generated by
+BigJob</td>
+</tr>
+<tr class="row-odd"><td>3</td>
+<td><tt class="docutils literal"><span class="pre">INFO</span></tt></td>
+<td>Useful runtime information
+that is generated by BigJob</td>
+</tr>
+<tr class="row-even"><td>4</td>
+<td><tt class="docutils literal"><span class="pre">DEBUG</span></tt></td>
+<td>Debug message added to the code
+by the developers. (Lots of output)</td>
+</tr>
+</tbody>
+</table>
+<p>For example, if you want to see the debug messages that BigJob generates during
+program execution, you would set <span class="target" id="index-0"></span><a class="reference internal" href="#envvar-BIGJOB_VERBOSE"><tt class="xref std std-envvar docutils literal"><span class="pre">BIGJOB_VERBOSE</span></tt></a> to <tt class="docutils literal"><span class="pre">DEBUG</span></tt> before
+you run your program:</p>
+<div class="highlight-python"><pre>BIGJOB_VERBOSE=DEBUG python mysagaprog.py</pre>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="bigjob-configuration-file">
+<h2>3.4.2. BigJob Configuration File<a class="headerlink" href="#bigjob-configuration-file" title="Permalink to this headline">¶</a></h2>
+<p>BigJob utilizes a configuration file named <tt class="code docutils literal"><span class="pre">bigjob.conf</span></tt> located in the root of the BigJob installation (e.g. :code:<a href="#id1"><span class="problematic" id="id2">`</span></a>$HOME/.bigjob/python/lib/python2.&lt;PYTHON_MINOR_VERSION&gt;/site-packages/BigJob-&lt;BIGJOB_VERSION&gt;-py2.X.egg/):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span>
+</pre></div>
+</div>
+<p>The log level can also be set inside the BigJob script that you are running as follows:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">bigjob</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">FATAL</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Q: How can I control BigJob log messages from the application it is executing?</strong></p>
+<p>BigJob logger can be obtained and handlers can be added to the logger object. For example, with the below set of instructions, the application and BigJob debug messages are written to the <tt class="code docutils literal"><span class="pre">namd_bigwork.log</span></tt> file:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;bigjob&#39;</span><span class="p">)</span>
+<span class="n">fileHandle</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="s">&#39;namd_bigwork.log&#39;</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s">&#39;w&#39;</span><span class="p">)</span>
+<span class="n">fileHandle</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">fileHandle</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Logging to namd_bigwork.log at DEBUG level&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+  <a href="../_sources/usage/logging.txt"
+     rel="nofollow">Source</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2012, The BigJob Project.<br/>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

@@ -34,7 +34,7 @@ def main():
 
     ##########################################################################################
     # Edit parameters for BigJob
-    queue=None # if None default queue is used
+    queue="normal" # if None default queue is used
     project=None # if None default allocation is used 
     walltime=10
     processes_per_node=4
@@ -57,6 +57,7 @@ def main():
     Please ensure that the respective SAGA adaptor is installed and working
     """
     lrms_url = "fork://localhost" # resource url to run the jobs on localhost
+    #lrms_url = "sge://localhost" # resource url to run the jobs on localhost
     #lrms_url = "ssh://localhost" # resource url to run the jobs on localhost
    
     ##########################################################################################
@@ -82,6 +83,7 @@ def main():
     jd.number_of_processes = "1"
     jd.arguments = ["$HELLOWORLD"]
     jd.environment = ['HELLOWORLD=hello_world']
+    #jd.spmd_variation = "mpi"
     
     # specify an optinal working directory if sub-job should be executed outside of bigjob sandbox
     #jd.working_directory = "/tmp" 
