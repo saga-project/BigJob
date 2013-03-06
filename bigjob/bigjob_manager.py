@@ -365,8 +365,15 @@ class bigjob(api.base.bigjob):
         # Create and submit pilot job to job service
         logger.debug("Creating pilot job with description: %s" % str(jd))
         self.job = self.js.create_job(jd)
-        logger.debug("Submit pilot job to: " + str(lrms_saga_url))
+        logger.debug("Trying to submit pilot job to: " + str(lrms_saga_url))
         self.job.run()
+
+        if self.job.state == saga.job.FAILED:
+            logger.debug("SUBMISSION FAILED. Exiting... ")
+            sys.exit(-1)
+        else:
+            logger.debug("Submission succeeded. Job ID: %s " % self.job.id)
+
         return self.pilot_url
 
      
