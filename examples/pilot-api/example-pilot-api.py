@@ -17,13 +17,11 @@ if __name__ == "__main__":
     pilot_compute_description = {
                              "service_url": 'fork://localhost',
                              "number_of_processes": 1,                             
-                             "working_directory": os.path.join(os.getcwd(),"work"),
-                             'affinity_datacenter_label': "eu-de-south",              
-                             'affinity_machine_label': "mymachine" 
+                             "working_directory": "/tmp",
                             }
     
     pilotjob = pilot_compute_service.create_pilot(pilot_compute_description=pilot_compute_description)
-    pilotjob2 = pilot_compute_service.create_pilot(pilot_compute_description=pilot_compute_description)
+    #pilotjob2 = pilot_compute_service.create_pilot(pilot_compute_description=pilot_compute_description)
          
     compute_data_service = ComputeDataService()
     compute_data_service.add_pilot_compute_service(pilot_compute_service)
@@ -35,8 +33,6 @@ if __name__ == "__main__":
             "number_of_processes": 1,            
             "output": "stdout.txt",
             "error": "stderr.txt",   
-            "affinity_datacenter_label": "eu-de-south",              
-            "affinity_machine_label": "mymachine" 
     }   
     
     compute_unit = compute_data_service.submit_compute_unit(compute_unit_description)
