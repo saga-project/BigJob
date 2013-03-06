@@ -19,8 +19,16 @@ import urlparse
 import types
 import subprocess
 import pdb
+ 
+# the one and only saga
+import saga
+from saga.job import Description
+from saga import Url as SAGAUrl
+from saga.job import Description as SAGAJobDescription
+from saga.job import Service as SAGAJobService
+from saga import Session as SAGASession
+from saga import Context as SAGAContext
 
-from bigjob import SAGA_BLISS 
 from bigjob.state import Running, New, Failed, Done, Unknown
 
 # Optional Job Plugins
@@ -44,48 +52,7 @@ except:
 import api.base
 sys.path.append(os.path.dirname(__file__))
 
-
-if SAGA_BLISS == False:
-    try:
-        import saga
-        logger.info("Using SAGA C++/Python.")
-        is_bliss=False
-    except:
-        logger.warn("SAGA C++ and Python bindings not found. Using Bliss.")
-        try:
-            import bliss.saga as saga
-            is_bliss=True
-        except:
-            logger.warn("SAGA Bliss not found")
-else:
-    logger.info("Using SAGA Bliss.")
-    try:
-        import bliss.saga as saga
-        is_bliss=True 
-    except:
-        logger.warn("SAGA Bliss not found")
-
-
-"""BigJob Job Description is always derived from BLISS Job Description
-   BLISS Job Description behaves compatible to SAGA C++ job description
-"""
-import bliss.saga.job.Description
-
-"""BLISS / SAGA C++ detection """
-if is_bliss:
-    import bliss.saga as saga
-    from bliss.saga import Url as SAGAUrl
-    from bliss.saga.job import Description as SAGAJobDescription
-    from bliss.saga.job import Service as SAGAJobService
-    from bliss.saga import Session as SAGASession
-    from bliss.saga import Context as SAGAContext
-else:
-    from saga import url as SAGAUrl
-    from saga.job import description as SAGAJobDescription
-    from saga.job import service as SAGAJobService
-    from saga import session as SAGASession
-    from saga import context as SAGAContext 
-
+# Some python version detection
 if sys.version_info < (2, 5):
     sys.path.append(os.path.dirname( __file__ ) + "/ext/uuid-1.30/")
     sys.stderr.write("Warning: Using unsupported Python version\n")
@@ -267,10 +234,8 @@ class bigjob(api.base.bigjob):
             jd.project=project       
         if walltime!=None:
             logger.debug("setting walltime to: " + str(walltime))
-            if is_bliss:
-                jd.wall_time_limit=int(walltime)
-            else:
-                jd.wall_time_limit=str(walltime)
+            jd.wall_time_limit=int(walltime)
+
     
         
         ##############################################################################
@@ -335,7 +300,7 @@ class bigjob(api.base.bigjob):
                                                           )
         logger.debug("Adaptor specific modifications: "  + str(lrms_saga_url.scheme))
 
-        if is_bliss and lrms_saga_url.scheme.startswith("condor")==False:
+        if lrms_saga_url.scheme.startswith("condor") == False:
             bootstrap_script = self.__escape_bliss(bootstrap_script)
         else:
             if lrms_saga_url.scheme == "gram":
@@ -385,11 +350,8 @@ class bigjob(api.base.bigjob):
             logger.debug("Condor file transfers: " + str(bj_file_transfers))
             jd.file_transfer = bj_file_transfers
         else:
-            if is_bliss:
-                jd.total_cpu_count=int(number_nodes)                   
-            else:
-                jd.number_of_processes=str(number_nodes)
-                jd.processes_per_host=str(processes_per_node)
+            jd.total_cpu_count=int(number_nodes)                   
+
             jd.spmd_variation = "single"
             jd.arguments = ["python", "-c", bootstrap_script]
             jd.executable = "/usr/bin/env"           
@@ -1160,7 +1122,7 @@ def output_data():
     return locals()
 
      
-class description(bliss.saga.job.Description):
+class description(SAGAJobDescription):
     """ Sub-job description """
     environment = property(**environment())   
     input_data = property(**input_data())
