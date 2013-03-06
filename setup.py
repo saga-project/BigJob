@@ -11,8 +11,8 @@ import subprocess
 try:
     import saga
 except:
-    print "SAGA C++ and SAGA Python Bindings not found. Using Bliss/SAGA."
-    #sys.exit(1)
+    print "saga-python not found. Please verify that saga-python is installed."
+    sys.exit(1)
 
 VERSION_FILE="VERSION"    
     
@@ -51,6 +51,13 @@ def get_version():
     except EnvironmentError:
         return "-1"
     return version    
+=======
+#try:
+#    import saga
+#except:
+#    print "SAGA C++ and SAGA Python Bindings not found. Using Bliss/SAGA."
+#    #sys.exit(1)
+>>>>>>> saga integration
     
 update_version()
     
@@ -77,8 +84,9 @@ setup(name='BigJob',
       
       # data files for pip
       package_data = {'': ['*.conf']},
-      install_requires=['uuid', 'threadpool', 'redis', 'bliss', 'google-api-python-client', 'python-hostlist',
-                        'globusonline-transfer-api-client', 'boto>=2.2,<2.3', 'simplejson<2.1', 'pexpect', 'tldextract'],
+
+      install_requires=['uuid', 'threadpool', 'virtualenv', 'redis==2.2.4', 'saga-python', 'google-api-python-client', 'python-hostlist','globusonline-transfer-api-client', 'boto>=2.2,<2.3', 'simplejson<2.1', 'pexpect'],
+      
       entry_points = {
         'console_scripts': [
             'test-bigjob = examples.example_local_single:main',
