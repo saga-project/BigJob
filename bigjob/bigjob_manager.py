@@ -389,7 +389,6 @@ class bigjob(api.base.bigjob):
         """ duck typing for get_state of saga.job.job  
             state of saga job that is used to spawn the pilot agent
         """
-        print "get state?"
         return self.get_state_detail()
         
     
