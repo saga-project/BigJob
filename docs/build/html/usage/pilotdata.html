@@ -1,0 +1,371 @@
+
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>3.2. Introduction to Pilot-Data &mdash; BigJob 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-2.3.0/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-2.3.0/css/bootstrap-responsive.min.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-2.3.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="BigJob 1.0 documentation" href="../index.html" />
+    <link rel="up" title="3. Working with BigJob" href="index.html" />
+    <link rel="next" title="3.3. Command-Line Tools" href="cmdtools.html" />
+    <link rel="prev" title="3.1. Writing BigJob Scripts" href="appwriting.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body>
+<div class="container">
+<a href="https://github.com/saga-project/BigJob"><img style="position: absolute; top: 100; left: 10; right: 0; border: 10;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
+  
+  <div id="navbar" class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+      <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+      <button class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+
+      <a class="brand" href="../index.html">BigJob</a>
+      <span class="navbar-text pull-left"><b>1.0</b></span>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+          <li class="divider-vertical"></li>
+          
+            <li class="dropdown globaltoc-container">
+  <a href="../index.html"
+     class="dropdown-toggle"
+     data-toggle="dropdown">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+    ><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../intro/index.html">1. Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../intro/index.html#introduction-to-pilot-jobs">1.1. Introduction to Pilot-Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../intro/index.html#why-do-you-need-pilot-jobs">1.2. Why do you need Pilot-Jobs?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../intro/index.html#what-makes-bigjob-different">1.3. What makes BigJob different?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../intro/index.html#what-can-i-use-bigjob-for">1.4. What can I use BigJob for?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../intro/index.html#bigjob-overview">1.5. BigJob Overview</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../install/index.html">2. Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../install/install.html">2.1. Installing BigJob</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../install/redis.html">2.2. Setting Up a Redis Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../install/xsede.html">2.3. XSEDE Specific Tips</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../install/trouble.html">2.4. Troubleshooting</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">3. Working with BigJob</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="appwriting.html">3.1. Writing BigJob Scripts</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">3.2. Introduction to Pilot-Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmdtools.html">3.3. Command-Line Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="logging.html">3.4. Logging and Debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="output.html">3.5. Interpreting Output</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../patterns/index.html">4. Common Usage Patterns</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../patterns/simple.html">4.1. Simple Ensemble</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../patterns/chained.html">4.2. Chained Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../patterns/coupled.html">4.3. Coupled Ensembles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../patterns/exsede.html">4.4. XSEDE Simple Ensemble Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../library/index.html">5. Library Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../library/index.html#compute-and-data-services">5.1. Compute and Data Services</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../library/index.html#compute-and-data-units">5.2. Compute and Data Units</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/index.html">6. Tutorial</a></li>
+</ul>
+</ul>
+</li>
+            <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"><ul>
+<li><a class="reference internal" href="#">3.2. Introduction to Pilot-Data</a><ul>
+<li><a class="reference internal" href="#pilot-data-service">3.2.1. Pilot Data Service</a></li>
+<li><a class="reference internal" href="#pilot-data-description">3.2.2. Pilot Data Description</a></li>
+<li><a class="reference internal" href="#data-unit-description">3.2.3. Data Unit Description</a></li>
+<li><a class="reference internal" href="#staging">3.2.4. Staging</a><ul>
+<li><a class="reference internal" href="#input-staging">3.2.4.1. Input Staging</a></li>
+<li><a class="reference internal" href="#output-staging">3.2.4.2. Output Staging</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#putting-it-all-together">3.2.5. Putting it All Together</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+          
+          
+            
+  <li><a href="appwriting.html"
+         title="previous chapter">&laquo; 3.1. Writing BigJob Scripts</a></li>
+  <li><a href="cmdtools.html"
+         title="next chapter">3.3. Command-Line Tools &raquo;</a></li>
+          
+          
+        </ul>
+
+        
+          
+<form class="navbar-search pull-right" style="margin-bottom:-3px;" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+        
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="section" id="introduction-to-pilot-data">
+<h1>3.2. Introduction to Pilot-Data<a class="headerlink" href="#introduction-to-pilot-data" title="Permalink to this headline">¶</a></h1>
+<p>Suppose we are running an application that needs input data and generates output data. The Pilot-API provides a way to effectively manage the data flow between the application and its associated data (Compute Units [CUs] and Data Units [DUs]). This means you can stage data in and out of the application.</p>
+<p>A CU can have both input and output dependencies to a set of DUs. For this purpose, the API declares two fields: <tt class="code docutils literal"><span class="pre">input_data</span></tt> and <tt class="code docutils literal"><span class="pre">output_data</span></tt> that can be populated with a reference to a DU. The runtime system will ensure that these dependencies are met when the CU is executed, i. e. either the DUs are moved to a Pilot that is close to the CU or the CU is executed in a Pilot close to the DU&#8217;s pilot. The input data is made available in the working directory of the CU. As described, depending on the locality of the DUs/CUs, different costs can be associated with this operation. The runtime system relies on an affinity-aware scheduler that ensures that data movements are minimized and that if possible “affine” CUs and DUs in order to co-locate (affinity).</p>
+<p><strong>What is Affinity?</strong></p>
+<p>Affinity describes the relationship between compute and data units. It is used to try to co-locate data and compute resources as close to each other as possible. It is an optional parameter.</p>
+<p>There are two ways of defining affinity using the Pilot API: <tt class="code docutils literal"><span class="pre">affinity_datacenter_label</span></tt> and <tt class="code docutils literal"><span class="pre">affinity_machine_label</span></tt>. As the names suggest, the affinity data center label is used to affine machines in the same data center (i.e. for Amazon S3, you can try to have the storage and compute occur in us-east-1) and the affinity machine label is used to affine units to a certain resource. A logical topology tree is used (similar to the tree spawned by a DNS topology). The further the distance between two resources, the smaller their affinity.</p>
+<div class="section" id="pilot-data-service">
+<h2>3.2.1. Pilot Data Service<a class="headerlink" href="#pilot-data-service" title="Permalink to this headline">¶</a></h2>
+<p>The PilotDataService (PDS) is a factory for creating Pilot-Data objects, where the latter is an individual handle to the storage resource. The PDS takes the COORDINATION_URL as an argument. This is for the coordination of data units with the redis database.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">pilot_data_service</span> <span class="o">=</span> <span class="n">PilotDataService</span><span class="p">(</span><span class="n">COORDINATION_URL</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="pilot-data-description">
+<h2>3.2.2. Pilot Data Description<a class="headerlink" href="#pilot-data-description" title="Permalink to this headline">¶</a></h2>
+<p>The Pilot Data Description (PDS) simply defines the storage resource in which you will be moving the data from or to.</p>
+<p>The following are the resource specifications that need to be provided:</p>
+<ul class="simple">
+<li><tt class="code docutils literal"><span class="pre">service_url</span></tt> - Specifies the file-adaptor and storage hostname</li>
+<li><tt class="code docutils literal"><span class="pre">size</span></tt> - Specifies the storage space required (in MB) on the storage resource</li>
+</ul>
+<p>The following affinity parameters are optional:</p>
+<ul class="simple">
+<li><tt class="code docutils literal"><span class="pre">affinity_datacenter_label</span></tt> - The data center label used for affinity topology. Pilot stores sharing the same label are located in the same data center</li>
+<li><tt class="code docutils literal"><span class="pre">affinity_machine_label</span></tt> - The machine label used for affinity topology. Pilot stores sharing the same label are located on the same machine</li>
+</ul>
+<p>Some backends require specific keys to be passed to the resource (i.e. Amazon S3 storage requires a access key and password). Parameters for passing these keys are provided in the <a class="reference external" href="../library/index.html">Library Documentation</a>.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">pilot_data_description</span> <span class="o">=</span>    <span class="p">{</span>
+                                <span class="s">&#39;service_url&#39;</span><span class="p">:</span> <span class="s">&quot;ssh://localhost/tmp/pilotstore/&quot;</span><span class="p">,</span>
+                                <span class="s">&#39;size&#39;</span><span class="p">:</span><span class="mi">100</span><span class="p">,</span>
+                                <span class="c"># Affinity</span>
+                                <span class="s">&#39;affinity_datacenter_label&#39;</span><span class="p">:</span><span class="s">&quot;eu-de-south&quot;</span><span class="p">,</span>
+                                <span class="s">&#39;affinity_machine_label&#39;</span><span class="p">:</span><span class="s">&quot;mymachine-1&quot;</span><span class="p">,</span>
+                            <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="data-unit-description">
+<h2>3.2.3. Data Unit Description<a class="headerlink" href="#data-unit-description" title="Permalink to this headline">¶</a></h2>
+<p>The data unit description defines the different files to be moved around.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">data_unit_description</span> <span class="o">=</span> <span class="p">{</span>
+                                <span class="s">&#39;file_urls&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">file1</span><span class="p">,</span> <span class="n">file2</span><span class="p">,</span> <span class="n">file3</span><span class="p">]</span>
+                        <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="staging">
+<h2>3.2.4. Staging<a class="headerlink" href="#staging" title="Permalink to this headline">¶</a></h2>
+<p>The process of moving the data to the compute or from the compute elsewhere is called staging. There are two types of staging: input staging (e.g. copy the input data to where the compute is executing) or output staging (e.g. copy the output of an executable back to a central location).</p>
+<div class="section" id="input-staging">
+<h3>3.2.4.1. Input Staging<a class="headerlink" href="#input-staging" title="Permalink to this headline">¶</a></h3>
+<p>How do we stage the contents of each data unit to the input? The content of the Data-Unit referenced in the <tt class="code docutils literal"><span class="pre">input_data</span></tt> field will be moved to the working directory of the Compute Unit.</p>
+<p>First, we define our Pilot-Data using a Pilot-Data Description as follows:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">pilot_data_description</span><span class="o">=</span><span class="p">{</span>
+                            <span class="s">&quot;service_url&quot;</span><span class="p">:</span><span class="s">&quot;ssh://localhost/&quot;</span><span class="o">+</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s">&quot;HOME&quot;</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;/pilotdata&quot;</span><span class="p">,</span>
+                            <span class="s">&quot;size&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+                            <span class="s">&quot;affinity_datacenter_label&quot;</span><span class="p">:</span><span class="s">&quot;eu-de-south&quot;</span><span class="p">,</span>
+                            <span class="s">&quot;affinity_machine_label&quot;</span><span class="p">:</span><span class="s">&quot;mymachine-1&quot;</span>
+                       <span class="p">}</span>
+</pre></div>
+</div>
+<p>Next, we define the description for our input data unit (note that we use the affinity labels that match the Pilot-Data in this case):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">input_data_unit_description</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&quot;file_urls&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s">&quot;ssh://localhost&quot;</span> <span class="o">+</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="s">&quot;test.txt&quot;</span><span class="p">)],</span>
+                                <span class="s">&quot;affinity_datacenter_label&quot;</span><span class="p">:</span><span class="s">&quot;eu-de-south&quot;</span><span class="p">,</span>
+                                <span class="s">&quot;affinity_machine_label&quot;</span><span class="p">:</span> <span class="s">&quot;mymachine-1&quot;</span><span class="p">}</span>
+
+<span class="n">input_du</span> <span class="o">=</span> <span class="n">compute_data_service</span><span class="o">.</span><span class="n">submit_data_unit</span><span class="p">(</span><span class="n">input_data_unit_description</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Finally, we modify our Compute Unit Description. The following stages the content of the input data unit into the working directory of the compute unit:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">compute_unit_description</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s">&quot;executable&quot;</span><span class="p">:</span> <span class="s">&quot;/bin/cat&quot;</span><span class="p">,</span>
+        <span class="s">&quot;arguments&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s">&quot;test.txt&quot;</span><span class="p">],</span>
+        <span class="s">&quot;number_of_processes&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s">&quot;output&quot;</span><span class="p">:</span> <span class="s">&quot;stdout.txt&quot;</span><span class="p">,</span>
+        <span class="s">&quot;error&quot;</span><span class="p">:</span> <span class="s">&quot;stderr.txt&quot;</span><span class="p">,</span>
+        <span class="s">&quot;input_data&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="n">input_du</span><span class="o">.</span><span class="n">get_url</span><span class="p">()]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="output-staging">
+<h3>3.2.4.2. Output Staging<a class="headerlink" href="#output-staging" title="Permalink to this headline">¶</a></h3>
+<p>To stage the output of your executable somewhere, the following process applies:</p>
+<ol class="arabic simple">
+<li>Create a Pilot-Data at the location where you want to move the files to</li>
+<li>Create an empty Data-Unit and bind it to your Pilot-Data. A Data-Unit is a logical container for a set of data; while a Pilot-Data is a physical store for a set of DUs. That means that you can simply create another DU in the Pilot-Data where your input DU resides.</li>
+</ol>
+<p>There is no need to repeat the pilot data description, since in this example, we are going to stage the data back to the same location.</p>
+<p>We must define an output data unit description. Note that we leave the field file_urls blank, since we are manipulated output data:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">output_data_unit_description</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&quot;file_urls&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                                 <span class="s">&quot;affinity_datacenter_label&quot;</span><span class="p">:</span><span class="n">input_du</span><span class="o">.</span><span class="n">data_unit_description</span><span class="p">[</span><span class="s">&#39;affinity_datacenter_label&#39;</span><span class="p">],</span>
+                                 <span class="s">&quot;affinity_machine_label&quot;</span><span class="p">:</span><span class="n">input_du</span><span class="o">.</span><span class="n">data_unit_description</span><span class="p">[</span><span class="s">&#39;affinity_machine_label&#39;</span><span class="p">]}</span>
+
+<span class="n">output_du</span> <span class="o">=</span> <span class="n">compute_data_service</span><span class="o">.</span><span class="n">submit_data_unit</span><span class="p">(</span><span class="n">output_data_unit_description</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Next, we modify our Compute Unit Description for the <tt class="code docutils literal"><span class="pre">output_data</span></tt>. The following stages all output data beginning with std* (wildcards are accepted) back to the Pilot-Data described in the PDD (<em>ssh://localhost/&#8221;+os.getenv(&#8220;HOME&#8221;)+&#8221;/pilotdata</em>). This means the output and error files (defined as stdout.txt and stderr.txt) will be staged back to the pilot data location.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">compute_unit_description</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s">&quot;executable&quot;</span><span class="p">:</span> <span class="s">&quot;/bin/cat&quot;</span><span class="p">,</span>
+        <span class="s">&quot;arguments&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s">&quot;test.txt&quot;</span><span class="p">],</span>
+        <span class="s">&quot;number_of_processes&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s">&quot;output&quot;</span><span class="p">:</span> <span class="s">&quot;stdout.txt&quot;</span><span class="p">,</span>
+        <span class="s">&quot;error&quot;</span><span class="p">:</span> <span class="s">&quot;stderr.txt&quot;</span><span class="p">,</span>
+        <span class="s">&quot;output_data&quot;</span><span class="p">:[{</span> <span class="n">output_du</span><span class="o">.</span><span class="n">get_url</span><span class="p">():</span> <span class="p">[</span><span class="s">&#39;std*&#39;</span><span class="p">]}</span> <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="putting-it-all-together">
+<h2>3.2.5. Putting it All Together<a class="headerlink" href="#putting-it-all-together" title="Permalink to this headline">¶</a></h2>
+<p>The following script combines input and output staging. Input DUs and output DUs utilize the same Pilot-Data for storage. This can be modified in your own scripts by making two Pilot-Datas.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">pilot</span> <span class="kn">import</span> <span class="n">PilotComputeService</span><span class="p">,</span> <span class="n">PilotDataService</span><span class="p">,</span><span class="n">ComputeDataService</span><span class="p">,</span> <span class="n">State</span>
+
+<span class="n">COORDINATION_URL</span> <span class="o">=</span> <span class="s">&quot;redis://localhost&quot;</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+
+    <span class="n">pilot_compute_service</span> <span class="o">=</span> <span class="n">PilotComputeService</span><span class="p">(</span><span class="n">coordination_url</span><span class="o">=</span><span class="n">COORDINATION_URL</span><span class="p">)</span>
+
+    <span class="c"># create pilot job service and initiate a pilot job</span>
+    <span class="n">pilot_compute_description</span> <span class="o">=</span> <span class="p">{</span>
+                             <span class="s">&quot;service_url&quot;</span><span class="p">:</span> <span class="s">&#39;pbs://localhost&#39;</span><span class="p">,</span>
+                             <span class="s">&quot;number_of_processes&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span>
+                             <span class="s">&quot;working_directory&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s">&quot;HOME&quot;</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;/agent&quot;</span><span class="p">,</span>
+                             <span class="s">&quot;walltime&quot;</span><span class="p">:</span><span class="mi">10</span><span class="p">,</span>
+                             <span class="s">&#39;affinity_datacenter_label&#39;</span><span class="p">:</span><span class="s">&quot;eu-de-south&quot;</span><span class="p">,</span>
+                             <span class="s">&#39;affinity_machine_label&#39;</span><span class="p">:</span> <span class="s">&quot;mymachine-1&quot;</span>
+                                <span class="p">}</span>
+
+    <span class="n">pilotjob</span> <span class="o">=</span> <span class="n">pilot_compute_service</span><span class="o">.</span><span class="n">create_pilot</span><span class="p">(</span><span class="n">pilot_compute_description</span><span class="o">=</span><span class="n">pilot_compute_description</span><span class="p">)</span>
+    <span class="c"># create pilot data service (factory for data pilots (physical,distributed storage))</span>
+    <span class="c"># and pilot data</span>
+    <span class="n">pilot_data_service</span> <span class="o">=</span> <span class="n">PilotDataService</span><span class="p">(</span><span class="n">coordination_url</span><span class="o">=</span><span class="n">COORDINATION_URL</span><span class="p">)</span>
+    <span class="n">pilot_data_description</span><span class="o">=</span><span class="p">{</span>
+                                <span class="s">&quot;service_url&quot;</span><span class="p">:</span><span class="s">&quot;ssh://localhost/&quot;</span><span class="o">+</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s">&quot;HOME&quot;</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;/pilotdata&quot;</span><span class="p">,</span>
+                               <span class="s">&quot;size&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+                               <span class="s">&quot;affinity_datacenter_label&quot;</span><span class="p">:</span><span class="s">&quot;eu-de-south&quot;</span><span class="p">,</span>
+                               <span class="s">&quot;affinity_machine_label&quot;</span><span class="p">:</span><span class="s">&quot;mymachine-1&quot;</span>
+                           <span class="p">}</span>
+
+    <span class="n">ps</span> <span class="o">=</span> <span class="n">pilot_data_service</span><span class="o">.</span><span class="n">create_pilot</span><span class="p">(</span><span class="n">pilot_data_description</span><span class="o">=</span><span class="n">pilot_data_description</span><span class="p">)</span>
+
+    <span class="n">compute_data_service</span> <span class="o">=</span> <span class="n">ComputeDataService</span><span class="p">()</span>
+    <span class="n">compute_data_service</span><span class="o">.</span><span class="n">add_pilot_compute_service</span><span class="p">(</span><span class="n">pilot_compute_service</span><span class="p">)</span>
+    <span class="n">compute_data_service</span><span class="o">.</span><span class="n">add_pilot_data_service</span><span class="p">(</span><span class="n">pilot_data_service</span><span class="p">)</span>
+
+    <span class="n">input_data_unit_description</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&quot;file_urls&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s">&quot;ssh://localhost&quot;</span> <span class="o">+</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="s">&quot;test.txt&quot;</span><span class="p">)],</span>
+                                   <span class="s">&quot;affinity_datacenter_label&quot;</span><span class="p">:</span><span class="s">&quot;eu-de-south&quot;</span><span class="p">,</span>
+                                    <span class="s">&quot;affinity_machine_label&quot;</span><span class="p">:</span> <span class="s">&quot;mymachine-1&quot;</span><span class="p">}</span>
+
+   <span class="c"># submit pilot data to a pilot store</span>
+    <span class="n">input_du</span> <span class="o">=</span> <span class="n">compute_data_service</span><span class="o">.</span><span class="n">submit_data_unit</span><span class="p">(</span><span class="n">input_data_unit_description</span><span class="p">)</span>
+    <span class="n">input_du</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+
+
+    <span class="c">### Create Output DU to store the output files.</span>
+    <span class="n">output_data_unit_description</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&quot;file_urls&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                                     <span class="s">&quot;affinity_datacenter_label&quot;</span><span class="p">:</span><span class="n">input_du</span><span class="o">.</span><span class="n">data_unit_description</span><span class="p">[</span><span class="s">&#39;affinity_datacenter_label&#39;</span><span class="p">],</span>
+                                     <span class="s">&quot;affinity_machine_label&quot;</span><span class="p">:</span><span class="n">input_du</span><span class="o">.</span><span class="n">data_unit_description</span><span class="p">[</span><span class="s">&#39;affinity_machine_label&#39;</span><span class="p">]}</span>
+
+   <span class="c"># submit pilot data to a pilot store</span>
+    <span class="n">output_du</span> <span class="o">=</span> <span class="n">compute_data_service</span><span class="o">.</span><span class="n">submit_data_unit</span><span class="p">(</span><span class="n">output_data_unit_description</span><span class="p">)</span>
+    <span class="n">output_du</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+
+
+    <span class="c"># start compute unit</span>
+    <span class="n">compute_unit_description</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&quot;executable&quot;</span><span class="p">:</span> <span class="s">&quot;/bin/cat&quot;</span><span class="p">,</span>
+            <span class="s">&quot;arguments&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s">&quot;test.txt&quot;</span><span class="p">],</span>
+            <span class="s">&quot;number_of_processes&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s">&quot;output&quot;</span><span class="p">:</span> <span class="s">&quot;stdout.txt&quot;</span><span class="p">,</span>
+            <span class="s">&quot;error&quot;</span><span class="p">:</span> <span class="s">&quot;stderr.txt&quot;</span><span class="p">,</span>
+            <span class="s">&quot;input_data&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="n">input_du</span><span class="o">.</span><span class="n">get_url</span><span class="p">()],</span> <span class="c"># this stages the content of the data unit to the working directory of the compute unit</span>
+            <span class="s">&quot;output_data&quot;</span><span class="p">:[{</span> <span class="n">output_du</span><span class="o">.</span><span class="n">get_url</span><span class="p">():</span> <span class="p">[</span><span class="s">&#39;std*&#39;</span><span class="p">]}</span> <span class="p">]</span>
+    <span class="p">}</span>
+
+    <span class="n">compute_unit</span> <span class="o">=</span> <span class="n">compute_data_service</span><span class="o">.</span><span class="n">submit_compute_unit</span><span class="p">(</span><span class="n">compute_unit_description</span><span class="p">)</span>
+
+    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Finished setup of PSS and PDS. Waiting for scheduling of PD&quot;</span><span class="p">)</span>
+    <span class="n">compute_data_service</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+
+    <span class="c">## export the output files to local directory.</span>
+    <span class="n">output_du</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span>
+
+    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Terminate Pilot Compute/Data Service&quot;</span><span class="p">)</span>
+    <span class="n">compute_data_service</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
+    <span class="n">pilot_data_service</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
+    <span class="n">pilot_compute_service</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+  <a href="../_sources/usage/pilotdata.txt"
+     rel="nofollow">Source</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2012, The BigJob Project.<br/>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>
