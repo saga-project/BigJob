@@ -473,7 +473,7 @@ class bigjob_agent:
                     #        command = command + " : "
                 elif self.LAUNCH_METHOD=="ibrun" and spmdvariation.lower()=="mpi": 
                     # Non MPI launch is handled via standard SSH
-                    command = envi + "mpirun_rsh   -np " + str(numberofprocesses) + " -hostfile " + machinefile + " " + executable + " " + arguments                   
+		    command = envi + "mpirun_rsh   -np " +str(numberofprocesses) + " -hostfile " + machinefile + "  `build_env.pl` " + executable + " " + arguments
                 elif (spmdvariation.lower()!="mpi"):
                     command =  envi + executable + " " + arguments
                     # In particular for Condor - if executable is staged x flag is not set
