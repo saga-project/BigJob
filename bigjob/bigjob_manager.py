@@ -1096,17 +1096,6 @@ class subjob(api.base.subjob):
 ## Properties for description class
 #
 
-def environment():
-    doc = "The environment variables to set in the job's execution context."
-    def fget(self):
-        return self._environment
-    def fset(self, val):
-        self._environment = val
-    def fdel(self, val):
-        self._environment = None
-    return locals()
-
-
 def input_data():
     doc = "List of input data units."
     def fget(self):
@@ -1132,7 +1121,7 @@ class description(SAGAJobDescription):
     """ Sub-job description """
     input_data  = property(**input_data())
     output_data = property(**output_data())   
-    environment = property(**environment())   
+    environment = {}
     
     
     def __init__(self):
