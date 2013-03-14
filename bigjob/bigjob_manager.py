@@ -152,7 +152,7 @@ class bigjob(api.base.bigjob):
             self.working_directory = None
             logger.debug("initialized BigJob: " + self.app_url)
         
-            
+
     def start_pilot_job(self, 
                  lrms_url, 
                  number_nodes=1,
@@ -298,19 +298,20 @@ class bigjob(api.base.bigjob):
                                                           )
         logger.debug("Adaptor specific modifications: "  + str(lrms_saga_url.scheme))
 
-        if lrms_saga_url.scheme.startswith("condor") == False:
-            bootstrap_script = self.__escape_bliss(bootstrap_script)
-        else:
-            if lrms_saga_url.scheme == "gram":
-                bootstrap_script = self.__escape_rsl(bootstrap_script)
-            elif lrms_saga_url.scheme == "pbspro" or lrms_saga_url.scheme=="xt5torque" or lrms_saga_url.scheme=="torque":                
-                bootstrap_script = self.__escape_pbs(bootstrap_script)
-            elif lrms_saga_url.scheme == "ssh" and lrms_saga_url.scheme == "slurm+ssh":
-                bootstrap_script = self.__escape_ssh(bootstrap_script)                    
+        #if lrms_saga_url.scheme.startswith("condor") == False:
+        #    bootstrap_script = self.__escape_bliss(bootstrap_script)
+        #else:
+        #    if lrms_saga_url.scheme == "gram":
+        #        bootstrap_script = self.__escape_rsl(bootstrap_script)
+        #    elif lrms_saga_url.scheme == "pbspro" or lrms_saga_url.scheme=="xt5torque" or lrms_saga_url.scheme=="torque":                
+        #        bootstrap_script = self.__escape_pbs(bootstrap_script)
+        #    elif lrms_saga_url.scheme == "ssh" and lrms_saga_url.scheme == "slurm+ssh":
+        #        bootstrap_script = self.__escape_ssh(bootstrap_script)                    
+        bootstrap_script = self.__escape_pbs(bootstrap_script)
                 
         logger.debug(bootstrap_script)
-        
-        
+ 
+
         # Define Agent Executable in Job description
         # in Condor case bootstrap script is staged 
         # (Python app cannot be passed inline in Condor job description)
