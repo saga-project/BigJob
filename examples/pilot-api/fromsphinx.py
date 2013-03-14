@@ -6,14 +6,16 @@ from pilot import PilotComputeService, ComputeDataService, State
 ### This is the number of jobs you want to run
 NUMBER_JOBS=4
 COORDINATION_URL = "redis://ILikeBigJob_wITH-REdIS@gw68.quarry.iu.teragrid.org:6379"
+#COORDINATION_URL = "redis://localhost:6379"
 
 if __name__ == "__main__":
 
     pilot_compute_service = PilotComputeService(COORDINATION_URL)
 
-    pilot_compute_description = { "service_url": "fork://localhost",
+    #pilot_compute_description = { "service_url": "fork://localhost",
+    pilot_compute_description = { "service_url": "pbs://localhost",
                                   "number_of_processes": 1,
-                                  "working_directory": "/tmp",
+                                  "working_directory": "$HOME/agent",
                                   "walltime":10
                                 }
 
@@ -28,10 +30,10 @@ if __name__ == "__main__":
     for i in range(NUMBER_JOBS):
         compute_unit_description = {
                 "executable": "/bin/echo",
-                "arguments": ["Hello", "$ENV1","$ENV2"],
+                "arguments": ["Hello", "$ENV1", "$ENV2"],
                 "environment": {'ENV1':"env_arg1","ENV2" : "env_arg2"},
                 "number_of_processes": 1,
-                "spmd_variation":"single",
+                #"spmd_variation":"single",
                 "output": "stdout.txt",
                 "error": "stderr.txt",
                 }
