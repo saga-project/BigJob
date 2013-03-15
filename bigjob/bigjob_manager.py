@@ -19,8 +19,16 @@ import urlparse
 import types
 import subprocess
 import pdb
+ 
+# the one and only saga
+import saga
+from saga.job import Description
+from saga import Url as SAGAUrl
+from saga.job import Description as SAGAJobDescription
+from saga.job import Service as SAGAJobService
+from saga import Session as SAGASession
+from saga import Context as SAGAContext
 
-from bigjob import SAGA_BLISS 
 from bigjob.state import Running, New, Failed, Done, Unknown
 
 # Optional Job Plugins
@@ -44,48 +52,7 @@ except:
 import api.base
 sys.path.append(os.path.dirname(__file__))
 
-
-if SAGA_BLISS == False:
-    try:
-        import saga
-        logger.info("Using SAGA C++/Python.")
-        is_bliss=False
-    except:
-        logger.warn("SAGA C++ and Python bindings not found. Using Bliss.")
-        try:
-            import bliss.saga as saga
-            is_bliss=True
-        except:
-            logger.warn("SAGA Bliss not found")
-else:
-    logger.info("Using SAGA Bliss.")
-    try:
-        import bliss.saga as saga
-        is_bliss=True 
-    except:
-        logger.warn("SAGA Bliss not found")
-
-
-"""BigJob Job Description is always derived from BLISS Job Description
-   BLISS Job Description behaves compatible to SAGA C++ job description
-"""
-import bliss.saga.job.Description
-
-"""BLISS / SAGA C++ detection """
-if is_bliss:
-    import bliss.saga as saga
-    from bliss.saga import Url as SAGAUrl
-    from bliss.saga.job import Description as SAGAJobDescription
-    from bliss.saga.job import Service as SAGAJobService
-    from bliss.saga import Session as SAGASession
-    from bliss.saga import Context as SAGAContext
-else:
-    from saga import url as SAGAUrl
-    from saga.job import description as SAGAJobDescription
-    from saga.job import service as SAGAJobService
-    from saga import session as SAGASession
-    from saga import context as SAGAContext 
-
+# Some python version detection
 if sys.version_info < (2, 5):
     sys.path.append(os.path.dirname( __file__ ) + "/ext/uuid-1.30/")
     sys.stderr.write("Warning: Using unsupported Python version\n")
@@ -192,7 +159,7 @@ class bigjob(api.base.bigjob):
             self.working_directory = None
             logger.debug("initialized BigJob: " + self.app_url)
         
-            
+
     def start_pilot_job(self, 
                  lrms_url, 
                  number_nodes=1,
@@ -267,10 +234,8 @@ class bigjob(api.base.bigjob):
             jd.project=project       
         if walltime!=None:
             logger.debug("setting walltime to: " + str(walltime))
-            if is_bliss:
-                jd.wall_time_limit=int(walltime)
-            else:
-                jd.wall_time_limit=str(walltime)
+            jd.wall_time_limit=int(walltime)
+
     
         
         ##############################################################################
@@ -335,19 +300,20 @@ class bigjob(api.base.bigjob):
                                                           )
         logger.debug("Adaptor specific modifications: "  + str(lrms_saga_url.scheme))
 
-        if is_bliss and lrms_saga_url.scheme.startswith("condor")==False:
-            bootstrap_script = self.__escape_bliss(bootstrap_script)
-        else:
-            if lrms_saga_url.scheme == "gram":
-                bootstrap_script = self.__escape_rsl(bootstrap_script)
-            elif lrms_saga_url.scheme == "pbspro" or lrms_saga_url.scheme=="xt5torque" or lrms_saga_url.scheme=="torque":                
-                bootstrap_script = self.__escape_pbs(bootstrap_script)
-            elif lrms_saga_url.scheme == "ssh" and lrms_saga_url.scheme == "slurm+ssh":
-                bootstrap_script = self.__escape_ssh(bootstrap_script)                    
+        #if lrms_saga_url.scheme.startswith("condor") == False:
+        #    bootstrap_script = self.__escape_bliss(bootstrap_script)
+        #else:
+        #    if lrms_saga_url.scheme == "gram":
+        #        bootstrap_script = self.__escape_rsl(bootstrap_script)
+        #    elif lrms_saga_url.scheme == "pbspro" or lrms_saga_url.scheme=="xt5torque" or lrms_saga_url.scheme=="torque":                
+        #        bootstrap_script = self.__escape_pbs(bootstrap_script)
+        #    elif lrms_saga_url.scheme == "ssh" and lrms_saga_url.scheme == "slurm+ssh":
+        #        bootstrap_script = self.__escape_ssh(bootstrap_script)                    
+        bootstrap_script = self.__escape_pbs(bootstrap_script)
                 
         logger.debug(bootstrap_script)
-        
-        
+ 
+
         # Define Agent Executable in Job description
         # in Condor case bootstrap script is staged 
         # (Python app cannot be passed inline in Condor job description)
@@ -385,12 +351,9 @@ class bigjob(api.base.bigjob):
             logger.debug("Condor file transfers: " + str(bj_file_transfers))
             jd.file_transfer = bj_file_transfers
         else:
-            if is_bliss:
-                jd.total_cpu_count=int(number_nodes)                   
-            else:
-                jd.number_of_processes=str(number_nodes)
-                jd.processes_per_host=str(processes_per_node)
-            jd.spmd_variation = "single"
+            jd.total_cpu_count=int(number_nodes)                   
+
+            #jd.spmd_variation = "single"
             jd.arguments = ["python", "-c", bootstrap_script]
             jd.executable = "/usr/bin/env"           
       
@@ -403,8 +366,15 @@ class bigjob(api.base.bigjob):
         # Create and submit pilot job to job service
         logger.debug("Creating pilot job with description: %s" % str(jd))
         self.job = self.js.create_job(jd)
-        logger.debug("Submit pilot job to: " + str(lrms_saga_url))
+        logger.debug("Trying to submit pilot job to: " + str(lrms_saga_url))
         self.job.run()
+
+        if self.job.state == saga.job.FAILED:
+            logger.debug("SUBMISSION FAILED. Exiting... ")
+            sys.exit(-1)
+        else:
+            logger.debug("Submission succeeded. Job ID: %s " % self.job.id)
+
         return self.pilot_url
 
      
@@ -1128,17 +1098,6 @@ class subjob(api.base.subjob):
 ## Properties for description class
 #
 
-def environment():
-    doc = "The environment variables to set in the job's execution context."
-    def fget(self):
-        return self._environment
-    def fset(self, val):
-        self._environment = val
-    def fdel(self, val):
-        self._environment = None
-    return locals()
-
-
 def input_data():
     doc = "List of input data units."
     def fget(self):
@@ -1160,23 +1119,33 @@ def output_data():
     return locals()
 
      
-class description(bliss.saga.job.Description):
+class description(SAGAJobDescription):
     """ Sub-job description """
-    environment = property(**environment())   
-    input_data = property(**input_data())
+    input_data  = property(**input_data())
     output_data = property(**output_data())   
+    environment = {}
     
     
     def __init__(self):
-        bliss.saga.job.Description.__init__(self)
+        saga.job.Description.__init__(self)
         #self.attributes_extensible_ (True)
         
         # Extend description class by Pilot-Data relevant attributes
         self._output_data = None
         self._input_data = None
         
-        self._register_rw_vec_attribute(name="InputData", 
-                                        accessor=self.__class__.input_data) 
-        self._register_rw_vec_attribute(name="OutputData", 
-                                        accessor=self.__class__.output_data) 
+        import saga.attributes as sa
+
+        self._attributes_extensible  (True)
+
+        self._attributes_register   ("InputData",  None, sa.ANY, sa.VECTOR, sa.WRITEABLE)
+        self._attributes_register   ("OutputData", None, sa.ANY, sa.VECTOR, sa.WRITEABLE)
+
+        self._attributes_set_getter ("InputData",  self.__class__.input_data )
+        self._attributes_set_getter ("OutputData", self.__class__.output_data)
+
+        # self._register_rw_vec_attribute(name="InputData", 
+        #                                 accessor=self.__class__.input_data) 
+        # self._register_rw_vec_attribute(name="OutputData", 
+        #                                 accessor=self.__class__.output_data) 
         
