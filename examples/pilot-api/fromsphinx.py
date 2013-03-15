@@ -15,7 +15,7 @@ if __name__ == "__main__":
     #pilot_compute_description = { "service_url": "fork://localhost",
     pilot_compute_description = { "service_url": "pbs://localhost",
                                   "number_of_processes": 1,
-                                  "working_directory": "$HOME/agent",
+                                  "working_directory": os.getenv("HOME")+"/agent",
                                   "walltime":10
                                 }
 
