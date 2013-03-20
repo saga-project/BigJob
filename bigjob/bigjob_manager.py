@@ -604,8 +604,6 @@ BOOTSTRAP_URL="https://raw.github.com/saga-project/BigJob/master/bootstrap/bigjo
 BOOTSTRAP_FILE=BIGJOB_AGENT_DIR+"/bigjob-bootstrap.py"
 #ensure that BJ in .bigjob is upfront in sys.path
 sys.path.insert(0, os.getcwd() + "/../")
-#sys.path.insert(0, /User/luckow/.bigjob/python/lib")
-#sys.path.insert(0, os.getcwd() + "/../../")
 p = list()
 for i in sys.path:
     if i.find(\".bigjob/python\")>1:
