@@ -48,7 +48,7 @@ except:
 #from pilot.coordination.advert import AdvertCoordinationAdaptor as CoordinationAdaptor
 #from pilot.coordination.nocoord import NoCoordinationAdaptor as CoordinationAdaptor
 from pilot.coordination.redis_adaptor import RedisCoordinationAdaptor as CoordinationAdaptor
-from bliss.saga import Url as SAGAUrl
+from saga import Url as SAGAUrl
 
 
 # generate global application id for this instance

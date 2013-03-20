@@ -100,9 +100,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../library/index.html">5. Library Reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../library/index.html#compute-and-data-services">5.1. Compute and Data Services</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../library/index.html#compute-and-data-units">5.2. Compute and Data Units</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../library/index.html#state-enumeration">5.3. State Enumeration</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorial/index.html">6. Tutorial</a></li>
 </ul>
 </ul>
 </li>
@@ -178,6 +178,11 @@ ImportError: No module named pilot</pre>
 <p><strong>Q: How do I execute and reconnect to long-running sessions of BigJob in a Unix terminal?</strong></p>
 <p>The UNIX <tt class="code docutils literal"><span class="pre">screen</span></tt> tool can / should be used to re-connect to a running BigJob session on a remote machine. For documentation on screen, please see <a class="reference external" href="http://www.slac.stanford.edu/comp/unix/package/epics/extensions/iocConsole/screen.1.html">Screen Manpage</a>.</p>
 <p>You should not just submit a BigJob from your local machine to a remote host and then close the terminal without the use of screen.</p>
+<p><strong>Q: Can I reconnect to a current running BigJob?</strong></p>
+<p>Yes, if your BigJob manager (or application) terminates before all ComputeUnits terminate, you can reconnect to a running pilot by providing a <tt class="code docutils literal"><span class="pre">pilot_url</span></tt> to the PilotCompute constructor. For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">pilot</span> <span class="o">=</span> <span class="n">PilotCompute</span><span class="p">(</span><span class="n">pilot_url</span><span class="o">=</span><span class="s">&quot;redis://localhost:6379/bigjob:bj-a7bfae68-25a0-11e2-bd6c-705681b3df0f:localhost&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
 <p><strong>Q: Why is BigJob downloading an installation package?</strong></p>
 <p>BigJob attempts to install itself, if it can&#8217;t find a valid BJ installation on a resource (i.e. if <tt class="code docutils literal"><span class="pre">import</span> <span class="pre">pilot</span></tt> fails). By default BigJob searches for <tt class="code docutils literal"><span class="pre">$HOME/.bigjob/python</span></tt> for a working BJ installation. Please, make sure that the correct Python is found in your default paths. If BJ attempts to install itself despite being already installed on a resource, this can be a sign that the wrong Python is found.</p>
 </div>
