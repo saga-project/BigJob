@@ -346,7 +346,7 @@ class bigjob_agent:
                     else:
                         arguments_list = eval(job_dict["Arguments"])                    
                     for i in arguments_list:
-                        arguments = arguments + " " + i
+                        arguments = arguments + " " + str(i)
                         
                 environment = os.environ
                 envi = ""
