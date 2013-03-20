@@ -352,23 +352,20 @@ class bigjob_agent:
                 envi = ""
                 self.number_subjobs=1
                 if (job_dict.has_key("Environment") == True):
-                    env_raw = job_dict['Environment']
-                    if type(env_raw) == types.ListType:
-                        env_list = env_raw
-                    else:
-                        env_list = eval(job_dict["Environment"])
+                    env_dict = eval(job_dict['Environment'])
+                    logger.debug("Environment: " + str(env_dict))
 
-                    logger.debug("Environment: " + str(env_list))
-                    for i in env_list:
-                        logger.debug("Eval " + i)
+                    for key in env_dict:
+                        logger.debug("Eval " + key)
+
                         # Hack for conduction experiments on Kraken
                         # Kraken specific support for running n sub-jobs at a time
-                        if i.startswith("NUMBER_SUBJOBS"):
-                            self.number_subjobs=int(i.split("=")[1].strip())
+                        # TODO: verify kraken fix
+                        if key == "NUMBER_SUBJOBS":
+                            self.number_subjobs = env_dict[key]
                             logger.debug("NUMBER_SUBJOBS: " + str(self.number_subjobs))
                         else:
-                            envi_1 = "export " + i +"; "
-                            envi = envi + envi_1
+                            envi += "export %s=%s;" % (key, env_dict[key])
                             logger.debug(envi) 
                 
                 executable = job_dict["Executable"]
@@ -473,7 +470,7 @@ class bigjob_agent:
                     #        command = command + " : "
                 elif self.LAUNCH_METHOD=="ibrun" and spmdvariation.lower()=="mpi": 
                     # Non MPI launch is handled via standard SSH
-                    command = envi + "mpirun_rsh   -np " + str(numberofprocesses) + " -hostfile " + machinefile + " " + executable + " " + arguments                   
+		    command = envi + "mpirun_rsh   -np " +str(numberofprocesses) + " -hostfile " + machinefile + "  `build_env.pl` " + executable + " " + arguments
                 elif (spmdvariation.lower()!="mpi"):
                     command =  envi + executable + " " + arguments
                     # In particular for Condor - if executable is staged x flag is not set
@@ -489,7 +486,7 @@ class bigjob_agent:
                     command ="cd " + workingdirectory + "; " + command
                 else: # ssh launch is default
                     if (spmdvariation.lower( )=="mpi"):
-                        command = "cd " + workingdirectory + "; " + envi +  self.MPIRUN + " -np " + numberofprocesses + " -machinefile " + machinefile + " " + command
+                        command = "cd " + workingdirectory + "; " + envi +  self.MPIRUN + " -np " + numberofprocesses + " -machinefile " + machinefile + " " + executable + " " + arguments
                     elif host == "localhost":
                         command ="cd " + workingdirectory + "; " + command
                     else:    
