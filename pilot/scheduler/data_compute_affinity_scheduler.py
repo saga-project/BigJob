@@ -51,9 +51,7 @@ class Scheduler:
     
     def schedule_pilot_job(self, compute_unit_description=None):
         """ Enforces affinity description: if no PJ is available with the right
-            affinity, WU can't be scheduled.
-            
-            TODO: incorporate potential data movements to co-locate PD/WU 
+            affinity, CU can't be scheduled.
         
         """    
         logger.debug("Schedule to PJ - # Avail PJs: %d"%len(self.pilot_jobs))
@@ -68,9 +66,9 @@ class Scheduler:
                 logger.debug("BJ: %r State: %s Free nodes: %d"%(i, i.get_state(), free_nodes))
                 if i.get_state()=="Running" and free_nodes >= required_number_of_processes: # check whether pilot is active
                     pilot_job_description = i.pilot_compute_description
-                    if pilot_job_description["affinity_datacenter_label"] == compute_unit_description["affinity_datacenter_label"]\
-                        and pilot_job_description["affinity_machine_label"] == compute_unit_description["affinity_machine_label"]:
-                        candidate_pilot_jobs.append(i)
+                    if pilot_job_description.has_key("affinity_datacenter_label") and pilot_job_description.has_key("affinity_machine_label"):
+                        if pilot_job_description["affinity_datacenter_label"] == compute_unit_description["affinity_datacenter_label"] and pilot_job_description["affinity_machine_label"] == compute_unit_description["affinity_machine_label"]:
+                            candidate_pilot_jobs.append(i)
                         
                         
         if len(candidate_pilot_jobs) == 0:

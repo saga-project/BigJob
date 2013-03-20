@@ -219,8 +219,7 @@ class SSHFileAdaptor(object):
         result = urlparse.urlparse(url)
         host = result.hostname
         path = result.path
-        user = result.username
-        
+        user = result.username        
         command = "test -d %s"%path
         rc = self.__run_ssh_command(self.userkey, user, host, command)
         if rc==0:
