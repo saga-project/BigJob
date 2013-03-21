@@ -19,8 +19,7 @@ import sys
         tcp://* (ZMQ - listening to all interfaces)
 """
 
-COORDINATION_URL = "redis://ILikeBigJob_wITH-REdIS@gw68.quarry.iu.teragrid.org:6379"
-#COORDINATION_URL = "redis://localhost:6379"
+COORDINATION_URL = "redis://localhost:6379"
 
 # for running BJ from local dir
 sys.path.insert(0, os.getcwd() + "/../")

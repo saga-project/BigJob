@@ -10,7 +10,6 @@ from pilot import PilotComputeService, PilotDataService, ComputeDataService, Sta
 from bigjob import logger 
 
 #COORDINATION_URL = "redis://localhost:6379"
-COORDINATION_URL="redis://ILikeBigJob_wITH-REdIS@gw68.quarry.iu.teragrid.org:6379/pcs/pcs-4867ff08-e192-11e1-a694-00003e980000"
 
 if __name__ == "__main__":      
      
