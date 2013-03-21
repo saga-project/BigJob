@@ -121,6 +121,12 @@ class PilotComputeService(PilotComputeService):
             resource_description["queue"] = pilot_compute_description["queue"] 
         else:
             resource_description["queue"] = None
+
+        if pilot_compute_description.has_key("spmd_variation"):
+            resource_description["spmd_variation"] = pilot_compute_description["spmd_variation"] 
+        else:
+            resource_description["spmd_variation"] = None
+            
             
         if pilot_compute_description.has_key("project"):
             resource_description["project"] = pilot_compute_description["project"] 
@@ -167,6 +173,7 @@ class PilotComputeService(PilotComputeService):
                            walltime = walltime,
                            processes_per_node = ppn,
                            filetransfers = bj_filetransfer,
+			   spmd_variation = bj_dict["spmd_variation"],
                            external_queue = self.coordination_queue,
                            pilot_compute_description = bj_dict["pilot_compute_description"]
                            )
