@@ -86,14 +86,9 @@ else:
     from saga import session as SAGASession
     from saga import context as SAGAContext 
 
-if sys.version_info < (2, 5):
-    sys.path.append(os.path.dirname( __file__ ) + "/ext/uuid-1.30/")
-    sys.stderr.write("Warning: Using unsupported Python version\n")
+
 if sys.version_info < (2, 4):
-    sys.path.append(os.path.dirname( __file__ ) + "/ext/subprocess-2.6.4/")
-    sys.stderr.write("Warning: Using unsupported Python version\n")
-if sys.version_info < (2, 3):
-    sys.stderr.write("Error: Python versions <2.3 not supported\n")
+    sys.stderr.write("Error: Python versions <2.4 not supported\n")
     sys.exit(-1)
 
 import uuid
@@ -609,8 +604,6 @@ BOOTSTRAP_URL="https://raw.github.com/saga-project/BigJob/master/bootstrap/bigjo
 BOOTSTRAP_FILE=BIGJOB_AGENT_DIR+"/bigjob-bootstrap.py"
 #ensure that BJ in .bigjob is upfront in sys.path
 sys.path.insert(0, os.getcwd() + "/../")
-#sys.path.insert(0, /User/luckow/.bigjob/python/lib")
-#sys.path.insert(0, os.getcwd() + "/../../")
 p = list()
 for i in sys.path:
     if i.find(\".bigjob/python\")>1:
@@ -869,7 +862,7 @@ except:
                 from pilot.filemanagement.ssh_adaptor import SSHFileAdaptor
                 self.__filemanager = SSHFileAdaptor(service_url) 
             except:
-                logger.debug("SSH/Paramiko package not found.")            
+                logger.debug("SSH package not found.")            
                 self.__print_traceback()
         elif service_url.startswith("http:"):
             logger.debug("Use WebHDFS backend")
