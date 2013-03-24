@@ -631,12 +631,12 @@ class bigjob_agent:
             if len(self.freenodes)==0:
                 time.sleep(3)
                 continue
-            logger.debug("Dequeue sub-job from: " + self.base_url)       
+            logger.debug("Dequeue sub-job from PilotCompute queue: " + self.base_url)       
             job_url=self.coordination.dequeue_job(self.base_url)
             logger.debug("Dequed:%s"%str(job_url))
             if job_url==None:
                 if self.cds_queue_url!=None:
-                    logger.debug("Dequeue sub-job from: " + self.cds_queue_url)       
+                    logger.debug("Dequeue sub-job from ComputeDataServicequeue: " + self.cds_queue_url)       
                     job_url=self.coordination.dequeue_job(self.cds_queue_url)
                     logger.debug("Dequed:%s"%str(job_url))
                 if job_url==None:
