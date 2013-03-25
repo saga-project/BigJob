@@ -836,7 +836,7 @@ except:
         # initialize file adaptor
         # Pilot Data API for File Management
         if service_url.startswith("ssh:"):
-            logger.debug("Use SSH backend")
+            logger.debug("Use SSH backend for PilotData")
             try:
                 from pilot.filemanagement.ssh_adaptor import SSHFileAdaptor
                 self.__filemanager = SSHFileAdaptor(service_url) 
