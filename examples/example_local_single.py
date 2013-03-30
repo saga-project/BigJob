@@ -22,6 +22,7 @@ import sys
 #COORDINATION_URL = "advert://localhost/?dbtype=sqlite3"
 #COORDINATION_URL = "tcp://*"
 COORDINATION_URL = "redis://localhost:6379"
+#COORDINATION_URL = "redis://Oily9tourSorenavyvault@redis01.tacc.utexas.edu"
 # for running BJ from local dir
 sys.path.insert(0, os.getcwd() + "/../")
 
@@ -39,7 +40,7 @@ def main():
     processes_per_node=4
     number_of_processes = 8
     #workingdirectory=os.path.join(os.getcwd(), "agent")  # working directory for agent
-    workingdirectory="/tmp"
+    workingdirectory="agent"
     userproxy = None # userproxy (not supported yet due to context issue w/ SAGA)
 
     
