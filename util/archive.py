@@ -83,6 +83,7 @@ if __name__ == '__main__':
         rd = RedisDownloader(sys.argv[1])
         pilots = rd.get_pilots()
         cus = rd.get_cus()
+        print "Loaded Redis data: %d pilots, %d cus"%(len(pilots), len(cus))
     else:
         for i in REDIS_URLS:
             rd = RedisDownloader(i)
