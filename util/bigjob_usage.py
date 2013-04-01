@@ -16,6 +16,7 @@ import matplotlib.pyplot as plt
 import os, sys
 import archive
 import datetime
+import ast
 
 # <codecell>
 
@@ -23,8 +24,8 @@ import datetime
 cus_df = None
 pilot_df = None
 if os.path.exists("cus.df") and os.path.exists("pilot.df"):
-    cus_df = pd.load("cus.df")
-    pilot_df = pd.load("pilot.df")
+    cus_df = pd.load("cus.df") #pd.read_csv("cus.csv", index_col=0, parse_dates=False, date_parser=)
+    pilot_df = pd.load("pilot.df") #pd.read_csv("pilot.csv", index_col=0, parse_dates=False, date_parser=), dat
 
     max_cus_date = cus_df.index.max()
     max_pilots_date = pilot_df.index.max()
@@ -32,9 +33,11 @@ if os.path.exists("cus.df") and os.path.exists("pilot.df"):
 
 # <codecell>
 
+# Download new data
 #%run archive.py "redis://ILikeBigJob_wITH-REdIS@gw68.quarry.iu.teragrid.org:6379"
 #%run archive.py "redis://localhost:6379"
-rd = archive.RedisDownloader("redis://localhost:6379")
+rd = archive.RedisDownloader("redis://ILikeBigJob_wITH-REdIS@gw68.quarry.iu.teragrid.org:6379")
+#rd = archive.RedisDownloader("redis://localhost:6379")
 pilots = rd.get_pilots()
 cus = rd.get_cus()
 
@@ -66,7 +69,7 @@ if len(cus_new) > 0:
     except:
         cus_df = cus_df_new
 cus_df_h = cus_df["Executable"].resample("D", how="count")
-cus_df_h.plot(kind="bar",  color='k', alpha=0.7)
+cus_df_h.plot(color='k', alpha=0.7)
 plt.ylabel("Number of CUs Executed")
 plt.xlabel("Day")
 plt.savefig("number_cus_per_day.pdf", format="pdf", bbox_inches='tight', pad_inches=0.1)
@@ -79,7 +82,6 @@ plt.savefig("number_cus_per_day.pdf", format="pdf", bbox_inches='tight', pad_inc
 
 # <codecell>
 
-
 spmd = cus_df["SPMDVariation"].astype("object")
 #spmd.dtype = "object"
 spmd[spmd.isnull()]="Single"
@@ -91,15 +93,36 @@ plt.savefig("cu_type.pdf", format="pdf", bbox_inches='tight', pad_inches=0.1)
 # <markdowncell>
 
 # ## Pilots Executed per Day
+# Extract pilot desciptions out of Redis entries
 
 # <codecell>
 
 pilots = [i for i in pilots if i.has_key("start_time")]
-timestamp_index = [datetime.datetime.utcfromtimestamp(float(i["start_time"])) for i in pilots]
-#pilot_df = pd.DataFrame.from_dict(pilots)
-pilot_df = pd.DataFrame(pilots, index=timestamp_index, columns=['description'])
-pilot_df_h = pilot_df['description'].resample("D", how="count")
-pilot_df_h.plot(kind="bar",  color='k', alpha=0.7)
+
+max_pilot_date = None
+try:
+    max_pilot_date = max_pilot_date.index.max()
+except:
+    pass
+timestamp_index = []
+pilot_new = []
+for i in pilots:
+    if max_pilot_date == None or datetime.datetime.utcfromtimestamp(float(i["start_time"]))>max_pilot_date:
+        timestamp_index.append(datetime.datetime.utcfromtimestamp(float(i["start_time"])))
+        pilot_new.append(ast.literal_eval(i["description"]))
+
+#print cus_new    
+if len(pilot_new) > 0:
+    pilot_df_new = pd.DataFrame(pilot_new, index=timestamp_index, columns=['service_url', "number_of_processes"])
+    try:
+        pilot_df = pd.concat([pilot_df, pilot_df_new])
+    except:
+        pilot_df = pilot_df_new
+
+# <codecell>
+
+pilot_df_h = pilot_df['service_url'].resample("D", how="count")
+pilot_df_h.plot(kind="line",  color='k', alpha=0.7)
 plt.ylabel("Number of Pilots")
 plt.xlabel("Day")
 plt.savefig("number_pilots.pdf", format="pdf", bbox_inches='tight', pad_inches=0.1)
@@ -112,4 +135,6 @@ plt.savefig("number_pilots.pdf", format="pdf", bbox_inches='tight', pad_inches=0
 
 cus_df.save("cus.df")
 pilot_df.save("pilot.df")
+cus_df.to_csv("cus.csv", index_label="Date")
+pilot_df.to_csv("pilot.csv", index_label="Date")
 
