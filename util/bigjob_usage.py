@@ -34,8 +34,6 @@ if os.path.exists("cus.df") and os.path.exists("pilot.df"):
 # <codecell>
 
 # Download new data
-#%run archive.py "redis://ILikeBigJob_wITH-REdIS@gw68.quarry.iu.teragrid.org:6379"
-#%run archive.py "redis://localhost:6379"
 rd = archive.RedisDownloader("redis://ILikeBigJob_wITH-REdIS@gw68.quarry.iu.teragrid.org:6379")
 #rd = archive.RedisDownloader("redis://localhost:6379")
 pilots = rd.get_pilots()
@@ -68,6 +66,9 @@ if len(cus_new) > 0:
         cus_df = pd.concat([cus_df, cus_df_new])
     except:
         cus_df = cus_df_new
+
+# <codecell>
+
 cus_df_h = cus_df["Executable"].resample("D", how="count")
 cus_df_h.plot(color='k', alpha=0.7)
 plt.ylabel("Number of CUs Executed")
@@ -78,17 +79,23 @@ plt.savefig("number_cus_per_day.pdf", format="pdf", bbox_inches='tight', pad_inc
 
 # ## Compute Unit Types
 # 
-# How many sequential versus parallel (MPI) CUs are executed
+# How many sequential versus parallel (MPI) CUs are executed?
 
 # <codecell>
 
 spmd = cus_df["SPMDVariation"].astype("object")
-#spmd.dtype = "object"
-spmd[spmd.isnull()]="Single"
+spmd[spmd.isnull()]="single"
 spmd.value_counts().plot(kind="bar",  color='k', alpha=0.7)
 plt.ylabel("Number of CUs")
 plt.ylabel("CU SPMD Variation")
 plt.savefig("cu_type.pdf", format="pdf", bbox_inches='tight', pad_inches=0.1)
+
+# <codecell>
+
+cus_df["Executable"].value_counts().plot(kind="bar",  color='k', alpha=0.7)
+plt.ylabel("Number CUs")
+plt.xlabel("CU Executable")
+plt.savefig("cu_executable.pdf", format="pdf", bbox_inches='tight', pad_inches=0.1)
 
 # <markdowncell>
 
@@ -97,8 +104,11 @@ plt.savefig("cu_type.pdf", format="pdf", bbox_inches='tight', pad_inches=0.1)
 
 # <codecell>
 
-pilots = [i for i in pilots if i.has_key("start_time")]
+print "Number of Pilots: %d Number CUs: %d Executed since: %s"%(len(pilots), len(cus), str(cus_df.index.min()))
 
+# <codecell>
+
+pilots = [i for i in pilots if i.has_key("start_time")]
 max_pilot_date = None
 try:
     max_pilot_date = max_pilot_date.index.max()
