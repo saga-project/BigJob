@@ -42,6 +42,8 @@ class bigjob_coordination(object):
         
         self.address = "%s%s:%i"%(REDIS_URL_SCHEME, server, server_port)
         self.dbtype=""
+        self.redis_adaptor_start_time = datetime.datetime.utcnow().strftime("%s") 
+        
         if server_connect_url!=None:
             self.address=server_connect_url    
             start_index = self.address.find(REDIS_URL_SCHEME)+len(REDIS_URL_SCHEME)
@@ -155,6 +157,7 @@ class bigjob_coordination(object):
         elif new_state=="Staging":
             self.redis_client.hset(job_url,"start_staging_time", str(timestamp))
         elif new_state=="Running":
+            self.redis_client.hset(job_url,"agent_start_time", str(self.redis_adaptor_start_time))
             self.redis_client.hset(job_url,"end_queue_time", str(timestamp))
         elif new_state=="Done":
             self.redis_client.hset(job_url, "run_host", socket.gethostname())
