@@ -95,7 +95,8 @@ class bigjob_coordination(object):
         state_dict = {"state":str(new_state), "stopped":str(stopped)}
         
         # set timestamps for state changes
-        timestamp = datetime.datetime.utcnow().strftime("%s") 
+        #timestamp = datetime.datetime.utcnow().strftime("%s") 
+        timestamp = time.time()
         if new_state=="Unknown":
             state_dict["start_time"] = str(timestamp)
         elif new_state=="Running":
@@ -151,7 +152,8 @@ class bigjob_coordination(object):
     def set_job_state(self, job_url, new_state):
         #self.resource_lock.acquire()        
         logger.debug("set job state to: " + str(new_state))
-        timestamp = datetime.datetime.utcnow().strftime("%s") 
+        #timestamp = datetime.datetime.utcnow().strftime("%s")
+        timestamp =time.time() 
         if new_state=="Unknown":
             self.redis_client.hset(job_url,"start_time", str(timestamp))
         elif new_state=="Staging":
