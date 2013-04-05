@@ -8,9 +8,6 @@
 
 # <codecell>
 
-# Redis Service to connect to:
-# redis://ILikeBigJob_wITH-REdIS@gw68.quarry.iu.teragrid.org:6379
-# redis://localhost
 import pandas as pd
 import matplotlib.pyplot as plt
 import os, sys
@@ -34,6 +31,9 @@ if os.path.exists("cus.df") and os.path.exists("pilot.df"):
 # <codecell>
 
 # Download new data
+# Redis Service to connect to:
+# redis://ILikeBigJob_wITH-REdIS@gw68.quarry.iu.teragrid.org:6379
+# redis://localhost
 rd = archive.RedisDownloader("redis://ILikeBigJob_wITH-REdIS@gw68.quarry.iu.teragrid.org:6379")
 #rd = archive.RedisDownloader("redis://localhost:6379")
 pilots = rd.get_pilots()
@@ -61,7 +61,7 @@ for i in cus:
 
 #print cus_new    
 if len(cus_new) > 0:
-    cus_df_new = pd.DataFrame(cus_new, index=timestamp_index, columns=['Executable', 'NumberOfProcesses', "SPMDVariation"])
+    cus_df_new = pd.DataFrame(cus_new, index=timestamp_index, columns=['Executable', 'NumberOfProcesses', "SPMDVariation", "start_time", "end_queue_time", "start_staging_time", "end_time"])
     try:
         cus_df = pd.concat([cus_df, cus_df_new])
     except:
@@ -96,6 +96,19 @@ cus_df["Executable"].value_counts().plot(kind="bar",  color='k', alpha=0.7)
 plt.ylabel("Number CUs")
 plt.xlabel("CU Executable")
 plt.savefig("cu_executable.pdf", format="pdf", bbox_inches='tight', pad_inches=0.1)
+
+# <markdowncell>
+
+# ## CU Runtime Distribution
+
+# <codecell>
+
+runtimes = cus_df.apply(lambda row: float(row["end_time"]) - float(row["end_queue_time"]), axis=1)
+runtimes.hist(bins=50)
+plt.ylabel("Number of Events")
+plt.xlabel("CU Runtime (in sec)")
+plt.savefig("cu_runtime.pdf", format="pdf", bbox_inches='tight', pad_inches=0.1)
+runtimes.describe()
 
 # <markdowncell>
 
@@ -145,6 +158,8 @@ plt.savefig("number_pilots.pdf", format="pdf", bbox_inches='tight', pad_inches=0
 
 cus_df.save("cus.df")
 pilot_df.save("pilot.df")
-cus_df.to_csv("cus.csv", index_label="Date")
-pilot_df.to_csv("pilot.csv", index_label="Date")
+
+date_string = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+cus_df.to_csv("cus-"+date_string+".csv", index_label="Date")
+pilot_df.to_csv("pilot-"+date_string+".csv", index_label="Date")
 
