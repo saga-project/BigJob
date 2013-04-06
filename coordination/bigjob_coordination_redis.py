@@ -152,22 +152,26 @@ class bigjob_coordination(object):
     def set_job_state(self, job_url, new_state):
         #self.resource_lock.acquire()        
         logger.debug("set job state to: " + str(new_state))
-        #timestamp = datetime.datetime.utcnow().strftime("%s")
         timestamp =time.time() 
         if new_state=="Unknown":
-            self.redis_client.hset(job_url,"start_time", str(timestamp))
+            #self.redis_client.hset(job_url,"start_time", str(timestamp))
+            self.pipe.hset(job_url,"start_time", str(timestamp))
         elif new_state=="Staging":
-            self.redis_client.hset(job_url,"start_staging_time", str(timestamp))
+            self.pipe.hset(job_url,"start_staging_time", str(timestamp))
         elif new_state=="Running":
-            self.redis_client.hset(job_url,"agent_start_time", str(self.redis_adaptor_start_time))
-            self.redis_client.hset(job_url,"end_queue_time", str(timestamp))
+            self.pipe.hset(job_url,"agent_start_time", str(self.redis_adaptor_start_time))
+            self.pipe.hset(job_url,"end_queue_time", str(timestamp))
         elif new_state=="Done":
-            self.redis_client.hset(job_url, "run_host", socket.gethostname())
-            self.redis_client.hset(job_url, "end_time", str(timestamp))
-       
-        self.redis_client.hset(job_url, "state", str(new_state))
+            self.pipe.hset(job_url, "run_host", socket.gethostname())
+            self.pipe.hset(job_url, "end_time", str(timestamp))       
+        self.pipe.hset(job_url, "state", str(new_state))
         
-        #self.resource_lock.release()
+        # update last contact time in pilot hash        
+        pilot_url = job_url[:job_url.index(":jobs")]
+        self.pipe.hset(pilot_url, "last_contact", str(timestamp))
+        # execute pipe
+        self.pipe.execute()
+        
         
     def get_job_state(self, job_url):
         return self.redis_client.hget(job_url, "state")      
