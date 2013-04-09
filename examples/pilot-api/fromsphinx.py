@@ -13,10 +13,10 @@ if __name__ == "__main__":
     pilot_compute_service = PilotComputeService(COORDINATION_URL)
 
     #pilot_compute_description = { "service_url": "fork://localhost",
-    pilot_compute_description = { "service_url": "pbs://localhost",
+    pilot_compute_description = { "service_url": "fork://localhost",
                                   "number_of_processes": 1,
-                                  "working_directory": os.getenv("HOME")+"/agent",
-                                  "walltime":10
+                                  "working_directory": "/Users/oweidner/agent",
+                                  "walltime": 10
                                 }
 
     pilot_compute_service.create_pilot(pilot_compute_description=pilot_compute_description)
@@ -31,7 +31,7 @@ if __name__ == "__main__":
         compute_unit_description = {
                 "executable": "/bin/echo",
                 "arguments": ["Hello", "$ENV1", "$ENV2"],
-                "environment": {'ENV1':"env_arg1","ENV2" : "env_arg2"},
+                "environment": {}, #{'ENV1':"env_arg1","ENV2" : "env_arg2"},
                 "number_of_processes": 1,
                 #"spmd_variation":"single",
                 "output": "stdout.txt",
