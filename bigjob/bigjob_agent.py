@@ -352,20 +352,23 @@ class bigjob_agent:
                 envi = ""
                 self.number_subjobs=1
                 if (job_dict.has_key("Environment") == True):
-                    env_dict = eval(job_dict['Environment'])
-                    logger.debug("Environment: " + str(env_dict))
+                    env_raw = job_dict['Environment']
+                    if type(env_raw) == types.ListType:
+                        env_list = env_raw
+                    else:
+                        env_list = eval(job_dict["Environment"])
 
-                    for key in env_dict:
-                        logger.debug("Eval " + key)
-
+                    logger.debug("Environment: " + str(env_list))
+                    for i in env_list:
+                        logger.debug("Eval " + i)
                         # Hack for conduction experiments on Kraken
                         # Kraken specific support for running n sub-jobs at a time
-                        # TODO: verify kraken fix
-                        if key == "NUMBER_SUBJOBS":
-                            self.number_subjobs = env_dict[key]
+                        if i.startswith("NUMBER_SUBJOBS"):
+                            self.number_subjobs=int(i.split("=")[1].strip())
                             logger.debug("NUMBER_SUBJOBS: " + str(self.number_subjobs))
                         else:
-                            envi += "export %s=%s;" % (key, env_dict[key])
+                            envi_1 = "export " + i +"; "
+                            envi = envi + envi_1
                             logger.debug(envi) 
                 
                 executable = job_dict["Executable"]
