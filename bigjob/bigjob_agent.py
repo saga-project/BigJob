@@ -51,7 +51,7 @@ import subprocess
 
 """ Config parameters (will move to config file in future) """
 CONFIG_FILE="bigjob_agent.conf"
-THREAD_POOL_SIZE=1
+THREAD_POOL_SIZE=8
 APPLICATION_NAME="bigjob"
 
 class bigjob_agent:
@@ -346,7 +346,7 @@ class bigjob_agent:
                     else:
                         arguments_list = eval(job_dict["Arguments"])                    
                     for i in arguments_list:
-                        arguments = arguments + " " + i
+                        arguments = arguments + " " + str(i)
                         
                 environment = os.environ
                 envi = ""
@@ -473,7 +473,7 @@ class bigjob_agent:
                     #        command = command + " : "
                 elif self.LAUNCH_METHOD=="ibrun" and spmdvariation.lower()=="mpi": 
                     # Non MPI launch is handled via standard SSH
-                    command = envi + "mpirun_rsh   -np " + str(numberofprocesses) + " -hostfile " + machinefile + " " + executable + " " + arguments                   
+                    command = envi + "mpirun_rsh   -np " +str(numberofprocesses) + " -hostfile " + machinefile + "  `build_env.pl` " + executable + " " + arguments
                 elif (spmdvariation.lower()!="mpi"):
                     command =  envi + executable + " " + arguments
                     # In particular for Condor - if executable is staged x flag is not set
@@ -631,12 +631,12 @@ class bigjob_agent:
             if len(self.freenodes)==0:
                 time.sleep(3)
                 continue
-            logger.debug("Dequeue sub-job from: " + self.base_url)       
+            logger.debug("Dequeue sub-job from PilotCompute queue: " + self.base_url)       
             job_url=self.coordination.dequeue_job(self.base_url)
             logger.debug("Dequed:%s"%str(job_url))
             if job_url==None:
                 if self.cds_queue_url!=None:
-                    logger.debug("Dequeue sub-job from: " + self.cds_queue_url)       
+                    logger.debug("Dequeue sub-job from ComputeDataServicequeue: " + self.cds_queue_url)       
                     job_url=self.coordination.dequeue_job(self.cds_queue_url)
                     logger.debug("Dequed:%s"%str(job_url))
                 if job_url==None:

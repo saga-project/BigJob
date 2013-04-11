@@ -41,6 +41,7 @@ class Job(object):
         self.job_id = ""
         self.resource_url = resource_url
         self.resource_url.scheme="ssh"
+        logger.debug("BigJob/SLURM: Parsing job description")        
         if pilot_compute_description == None:
             pilot_compute_description={}
             pilot_compute_description['queue'] = job_description.queue
@@ -57,7 +58,7 @@ class Job(object):
             minu=int(pilot_compute_description["walltime"])%60 
             walltime_slurm=""+str(hrs)+":"+str(minu)+":00"
 
-
+        logger.debug("BigJob/SLURM: generate bootstrap script")
         self.bootstrap_script = textwrap.dedent("""import sys
 import os
 import urllib
@@ -110,14 +111,21 @@ os.system( "sbatch  " + sbatch_file_name)
         js = None
         js = saga.job.Service(self.resource_url)
         slurmsshjob = js.create_job(jd)
-        print "Submit pilot job to: " + str(self.resource_url)
+        logger.debug("Submit pilot job to: " + str(self.resource_url))
         slurmsshjob.run()
         slurmsshjob.wait()
+        logger.debug("BigJob/SLURM: SSH run job finished")
         
-        outfile = 'sftp://'+saga.Url(self.resource_url).host+self.working_directory+'/bliss_job_submission.out'        
+        saga_surl = saga.Url(self.resource_url)
+        sftp_url = "sftp://"
+        if saga_surl.username!=None or saga_surl.username!="":
+            sftp_url = sftp_url + saga_surl.username + "@"
+        sftp_url = sftp_url + saga_surl.host + "/"
+        outfile = sftp_url + self.working_directory+'/bliss_job_submission.out'        
+        logger.debug("BigJob/SLURM: get outfile: " + outfile)
         out = saga.filesystem.File(outfile)
         out.copy("sftp://localhost/"+os.getcwd() + "/tmpout")
-        errfile = 'sftp://'+saga.Url(self.resource_url).host+self.working_directory+'/bliss_job_submission.err'        
+        errfile = sftp_url + self.working_directory+'/bliss_job_submission.err'        
         err = saga.filesystem.File(errfile)
         err.copy("sftp://localhost/"+os.getcwd() + "/tmperr")
         
@@ -131,10 +139,10 @@ os.system( "sbatch  " + sbatch_file_name)
         tempfile.close()
         os.remove(os.getcwd() + "/tmperr")
 
-        print "Output - \n" + str(outstr)
+        logger.debug("Output - \n" + str(outstr))
         if ((outstr).split("\n")[-1]).split()[0] == "Submitted": 
             self.job_id=((outstr).split("\n")[-1]).split()[3]
-            print "SLURM JobID: " + str(self.job_id)
+            logger.debug("SLURM JobID: " + str(self.job_id))
         if self.job_id==None or self.job_id=="":
             raise Exception("BigJob submission via slurm+ssh:// failed: %s %s" % (outstr,errstr))
 

@@ -5,7 +5,7 @@ import logging
 from pilot import PilotComputeService, ComputeDataService, State
 logging.basicConfig(level=logging.WARNING)
 
-COORDINATION_URL = "redis://ILikeBigJob_wITH-REdIS@gw68.quarry.iu.teragrid.org:6379"
+COORDINATION_URL = "redis://localhost:6379"
 
 if __name__ == "__main__":      
     
