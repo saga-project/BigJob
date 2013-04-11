@@ -205,8 +205,8 @@ class bigjob(api.base.bigjob):
         elif lrms_saga_url.scheme=="ec2+ssh" or lrms_saga_url.scheme=="euca+ssh" \
             or lrms_saga_url.scheme=="nova+ssh":
             self.js = EC2Service(lrms_saga_url, pilot_compute_description)    
-        elif lrms_saga_url.scheme=="slurm+ssh":
-            self.js = SlurmService(lrms_saga_url, pilot_compute_description)          
+        #elif lrms_saga_url.scheme=="slurm+ssh":
+        #    self.js = SlurmService(lrms_saga_url, pilot_compute_description)          
         else:
             self.js = SAGAJobService(lrms_saga_url)        
         ##############################################################################
