@@ -148,10 +148,12 @@ Your first simple BigJob script:
 
 .. code-block:: python
 
+   import sys
+   import os
    from pilot import PilotComputeService, ComputeDataService, State
 
    NUMBER_JOBS = 4
-   COORDINATION_URL = redis://localhost
+   COORDINATION_URL = "redis://localhost"
 
    pilot_compute_service = PilotComputeService(COORDINATION_URL)
 
