@@ -21,6 +21,7 @@ import uuid
 REDIS_SERVER="localhost"
 REDIS_SERVER_PORT=6379
 REDIS_URL_SCHEME="redis://"
+REDIS_BIGJOB_STATS="bigjob:stats"
 
 class bigjob_coordination(object):
     '''
@@ -41,6 +42,8 @@ class bigjob_coordination(object):
         
         self.address = "%s%s:%i"%(REDIS_URL_SCHEME, server, server_port)
         self.dbtype=""
+        self.redis_adaptor_start_time = datetime.datetime.utcnow().strftime("%s") 
+        
         if server_connect_url!=None:
             self.address=server_connect_url    
             start_index = self.address.find(REDIS_URL_SCHEME)+len(REDIS_URL_SCHEME)
@@ -88,7 +91,21 @@ class bigjob_coordination(object):
     def set_pilot_state(self, pilot_url, new_state, stopped=False):     
         logger.debug("update state of pilot job to: " + str(new_state) 
                      + " stopped: " + str(stopped))
-        self.redis_client.hmset(pilot_url, {"state":str(new_state), "stopped":str(stopped)})
+        
+        state_dict = {"state":str(new_state), "stopped":str(stopped)}
+        
+        # set timestamps for state changes
+        #timestamp = datetime.datetime.utcnow().strftime("%s") 
+        timestamp = time.time()
+        if new_state=="Unknown":
+            state_dict["start_time"] = str(timestamp)
+        elif new_state=="Running":
+            state_dict["end_queue_time"] = str(timestamp)
+        elif new_state=="Done":
+            state_dict["end_time"] = str(timestamp)
+               
+        #self.redis_client.hmset(pilot_url, {"state":str(new_state), "stopped":str(stopped)})
+        self.redis_client.hmset(pilot_url, state_dict)
         if stopped==True:
             self.queue_job(pilot_url, "STOP")
         
@@ -102,10 +119,12 @@ class bigjob_coordination(object):
     # Pilot-Job State
     def set_pilot_description(self, pilot_url, description):     
         logger.debug("update description of pilot job to: " + str(description))
-        self.redis_client.hmset(pilot_url + ":description", {"description":description})
+        #self.redis_client.hmset(pilot_url + ":description", {"description":description})
+        self.redis_client.hset(pilot_url, "description", description)
         
     def get_pilot_description(self, pilot_url):
-        description = self.redis_client.hgetall(pilot_url + ":description")
+        #description = self.redis_client.hgetall(pilot_url + ":description")
+        description = self.redis_client.hget(pilot_url, "description")
         return description
     
     #def is_pilot_stopped(self,pilot_url):
@@ -122,30 +141,37 @@ class bigjob_coordination(object):
     
     
     def delete_pilot(self, pilot_url):
-        items = self.redis_client.keys(pilot_url+"*")  
+        items = self.redis_client.keys(pilot_url+":queue*")  
         for i in items:        
             self.pipe.delete(i)
         self.pipe.execute()
+        pass
     
     #####################################################################################
     # Sub-Job State    
     def set_job_state(self, job_url, new_state):
         #self.resource_lock.acquire()        
         logger.debug("set job state to: " + str(new_state))
-        
+        timestamp =time.time() 
         if new_state=="Unknown":
-            self.redis_client.hset(job_url,"start_time", str(time.time()))
+            #self.redis_client.hset(job_url,"start_time", str(timestamp))
+            self.pipe.hset(job_url,"start_time", str(timestamp))
         elif new_state=="Staging":
-            self.redis_client.hset(job_url,"start_staging_time", str(time.time()))
+            self.pipe.hset(job_url,"start_staging_time", str(timestamp))
         elif new_state=="Running":
-            self.redis_client.hset(job_url,"end_queue_time", str(time.time()))
+            self.pipe.hset(job_url,"agent_start_time", str(self.redis_adaptor_start_time))
+            self.pipe.hset(job_url,"end_queue_time", str(timestamp))
         elif new_state=="Done":
-            self.redis_client.hset(job_url, "run_host", socket.gethostname())
-            self.redis_client.hset(job_url, "end_time", str(time.time()))
-       
-        self.redis_client.hset(job_url, "state", str(new_state))
+            self.pipe.hset(job_url, "run_host", socket.gethostname())
+            self.pipe.hset(job_url, "end_time", str(timestamp))       
+        self.pipe.hset(job_url, "state", str(new_state))
         
-        #self.resource_lock.release()
+        # update last contact time in pilot hash        
+        pilot_url = job_url[:job_url.index(":jobs")]
+        self.pipe.hset(pilot_url, "last_contact", str(timestamp))
+        # execute pipe
+        self.pipe.execute()
+        
         
     def get_job_state(self, job_url):
         return self.redis_client.hget(job_url, "state")      
@@ -161,7 +187,8 @@ class bigjob_coordination(object):
         return self.redis_client.hgetall(job_url)    
     
     def delete_job(self, job_url):
-        self.redis_client.delete(job_url+"*")
+        #self.redis_client.delete(job_url+"*")
+        pass
     
     
     #####################################################################################
@@ -178,8 +205,8 @@ class bigjob_coordination(object):
         queue_name = pilot_url + ":queue"        
         logger.debug("Dequeue sub-job from: " + queue_name 
                       + " number queued items: " + str(self.redis_client.llen(queue_name)))
-        self.redis_client.set(queue_name + ':last_out', pickle.dumps(datetime.datetime.now()))
-        job_url = self.redis_client.brpop(queue_name, 1)
+        #self.redis_client.set(queue_name + ':last_out', pickle.dumps(datetime.datetime.now()))
+        job_url = self.redis_client.brpop(queue_name, timeout=5)
         if job_url==None:
             return job_url
         logger.debug("Dequeued: " + str(job_url))
