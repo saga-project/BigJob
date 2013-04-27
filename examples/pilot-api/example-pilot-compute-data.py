@@ -8,8 +8,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 from pilot import PilotComputeService, PilotDataService, ComputeDataService, State
 
 
-#COORDINATION_URL = "redis://localhost:6379"
-COORDINATION_URL = "redis://ILikeBigJob_wITH-REdIS@gw68.quarry.iu.teragrid.org:6379"
+COORDINATION_URL = "redis://localhost:6379"
 
 if __name__ == "__main__":      
     

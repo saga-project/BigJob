@@ -195,7 +195,11 @@ class bigjob(api.base.bigjob):
         
         logger.debug("create pilot job entry on backend server: " + self.pilot_url)
         self.coordination.set_pilot_state(self.pilot_url, str(Unknown), False)
-        self.coordination.set_pilot_description(self.pilot_url, filetransfers)    
+        if pilot_compute_description==None:
+            pilot_compute_description={"service_url": lrms_url, 
+                                       "number_of_processes": number_nodes, 
+                                       "processes_per_node": processes_per_node}
+        self.coordination.set_pilot_description(self.pilot_url, pilot_compute_description)    
         logger.debug("set pilot state to: " + str(Unknown))
 
         # Create Job Service (Default: SAGA Job Service, alternative Job Services supported)
@@ -256,9 +260,9 @@ class bigjob(api.base.bigjob):
             # Fallback if working directory is not a valid URL
             if not (self.working_directory.startswith("go:") or self.working_directory.startswith("ssh://")):            
                 if lrms_saga_url.username!=None and lrms_saga_url.username!="":
-                    self.bigjob_working_directory_url = "ssh://" + lrms_saga_url.username + "@" + lrms_saga_url.host + self.__get_bigjob_working_dir()
+                    self.bigjob_working_directory_url = "ssh://" + lrms_saga_url.username + "@" + lrms_saga_url.host + "/" + self.__get_bigjob_working_dir()
                 else:
-                    self.bigjob_working_directory_url = "ssh://" + lrms_saga_url.host + self.__get_bigjob_working_dir()
+                    self.bigjob_working_directory_url = "ssh://" + lrms_saga_url.host + "/" + self.__get_bigjob_working_dir()
             elif self.working_directory.startswith("go:"):
                     self.bigjob_working_directory_url=os.path.join(self.working_directory, self.uuid)
             else:
@@ -814,6 +818,7 @@ except:
     
     
     def __get_bigjob_working_dir(self):
+        self.working_directory = os.path.abspath(self.working_directory)        
         if self.working_directory.find(self.uuid)!=-1: # working directory already contains BJ id
             return self.working_directory
         else:

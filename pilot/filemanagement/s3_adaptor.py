@@ -309,7 +309,7 @@ def test_s3import():
     s3._put_file("s3://pilot-data-05d88e40-f65b-11e1-a327-00215ec9e3ac/du-3624837e-f66f-11e1-a327-00215ec9e3ac/WRT54GS_UG_WEB_20070529.pdf", "bla/test.pdf")
 
 def test_s3import_via_pilotapi():
-    COORDINATION_URL="redis://ILikeBigJob_wITH-REdIS@gw68.quarry.iu.teragrid.org:6379"
+    COORDINATION_URL="redis://localhost:6379"
     from pilot import PilotComputeService, PilotDataService, ComputeDataService, State
     pilot_data_service = PilotDataService(coordination_url=COORDINATION_URL)
     
