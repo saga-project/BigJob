@@ -221,7 +221,7 @@ class RedisCoordinationAdaptor:
     def __get_redis_api_client(cls):
         import redis
         ''' Initialize Redis API Client     '''
-        saga_url = saga.Url(RedisCoordinationAdaptor.BASE_URL)
+        saga_url = SAGAUrl(RedisCoordinationAdaptor.BASE_URL)
         username = saga_url.username
         server = saga_url.host
         server_port = saga_url.port

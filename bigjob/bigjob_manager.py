@@ -1125,31 +1125,39 @@ def output_data():
      
 class description(SAGAJobDescription):
     """ Sub-job description """
-    input_data  = property(**input_data())
-    output_data = property(**output_data())   
-    environment = {}
+    ##input_data  = property(**input_data())
+    ##output_data = property(**output_data())   
+    ##environment = {}
     
-    
+    # --------------------------------------------------------------------------
+    #
     def __init__(self):
         saga.job.Description.__init__(self)
         #self.attributes_extensible_ (True)
-        
+
         # Extend description class by Pilot-Data relevant attributes
         self._output_data = None
         self._input_data = None
-        
+
         import saga.attributes as sa
 
         self._attributes_extensible  (True)
+        self._attributes_camelcasing (True)
+
 
         self._attributes_register   ("InputData",  None, sa.ANY, sa.VECTOR, sa.WRITEABLE)
         self._attributes_register   ("OutputData", None, sa.ANY, sa.VECTOR, sa.WRITEABLE)
 
-        self._attributes_set_getter ("InputData",  self.__class__.input_data )
-        self._attributes_set_getter ("OutputData", self.__class__.output_data)
+        self._attributes_set_getter ("InputData",  self._get_input_data )
+        self._attributes_set_getter ("OutputData", self._get_output_data)
 
-        # self._register_rw_vec_attribute(name="InputData", 
-        #                                 accessor=self.__class__.input_data) 
-        # self._register_rw_vec_attribute(name="OutputData", 
-        #                                 accessor=self.__class__.output_data) 
-        
+    # --------------------------------------------------------------------------
+    #
+    def _get_input_data (self) :
+        print "get caled. returning: %s" % self.input_data
+        return self.input_data
+
+    # --------------------------------------------------------------------------
+    #
+    def _get_output_data (self) :
+        return self.output_data
