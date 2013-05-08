@@ -452,6 +452,15 @@ class bigjob(api.base.bigjob):
         except:
             pass
             #traceback.print_stack()
+
+        logger.debug("Cancel Job Service")
+        try:
+            del(self.js)
+            self.js = None
+        except:
+            pass
+            #traceback.print_stack()
+
         try:            
             self._stop_pilot_job()
             logger.debug("delete pilot job: " + str(self.pilot_url))                      
@@ -949,11 +958,11 @@ except:
     def __repr__(self):
         return self.pilot_url 
 
-    def __del__(self):
-        """ BJ is not cancelled when object terminates
-            Application can reconnect to BJ via pilot url later on"""
-        pass
-        #self.cancel()
+  # def __del__(self):
+  #     """ BJ is not cancelled when object terminates
+  #         Application can reconnect to BJ via pilot url later on"""
+  #     pass
+  #     #self.cancel()
 
 
                     
