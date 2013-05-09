@@ -168,7 +168,7 @@ class bigjob(api.base.bigjob):
                  walltime=None,
                  processes_per_node=1,
                  filetransfers=None,
-		 spmd_variation=None,
+                 spmd_variation=None,
                  external_queue="",
                  pilot_compute_description=None):
         """ Start a batch job (using SAGA Job API) at resource manager. Currently, the following resource manager are supported:
@@ -233,8 +233,8 @@ class bigjob(api.base.bigjob):
         
         if queue != None:
             jd.queue = queue
-	if spmd_variation != None:
-	    jd.spmd_variation = spmd_variation
+        if spmd_variation != None:
+            jd.spmd_variation = spmd_variation
         if project !=None:
             jd.project=project       
         if walltime!=None:
