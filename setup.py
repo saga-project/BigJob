@@ -39,7 +39,7 @@ setup(name='BigJob',
       
       # data files for pip
       package_data = {'': ['*.conf']},
-      install_requires=['uuid', 'threadpool', 'virtualenv', 'redis==2.2.4', 'saga-python==0.9.3', 'google-api-python-client', 'python-hostlist',
+      install_requires=['uuid', 'threadpool', 'virtualenv', 'redis==2.2.4', 'saga-python', 'google-api-python-client', 'python-hostlist',
                         'globusonline-transfer-api-client', 'boto>=2.2,<2.3', 'simplejson<2.1', 'pexpect'],
       entry_points = {
         'console_scripts': [
