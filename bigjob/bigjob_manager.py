@@ -168,7 +168,7 @@ class bigjob(api.base.bigjob):
                  walltime=None,
                  processes_per_node=1,
                  filetransfers=None,
-		 spmd_variation=None,
+                 spmd_variation=None,
                  external_queue="",
                  pilot_compute_description=None):
         """ Start a batch job (using SAGA Job API) at resource manager. Currently, the following resource manager are supported:
@@ -233,8 +233,8 @@ class bigjob(api.base.bigjob):
         
         if queue != None:
             jd.queue = queue
-	if spmd_variation != None:
-	    jd.spmd_variation = spmd_variation
+        if spmd_variation != None:
+            jd.spmd_variation = spmd_variation
         if project !=None:
             jd.project=project       
         if walltime!=None:
@@ -452,6 +452,15 @@ class bigjob(api.base.bigjob):
         except:
             pass
             #traceback.print_stack()
+
+        logger.debug("Cancel Job Service")
+        try:
+            del(self.js)
+            self.js = None
+        except:
+            pass
+            #traceback.print_stack()
+
         try:            
             self._stop_pilot_job()
             logger.debug("delete pilot job: " + str(self.pilot_url))                      
@@ -949,11 +958,11 @@ except:
     def __repr__(self):
         return self.pilot_url 
 
-    def __del__(self):
-        """ BJ is not cancelled when object terminates
-            Application can reconnect to BJ via pilot url later on"""
-        pass
-        #self.cancel()
+  # def __del__(self):
+  #     """ BJ is not cancelled when object terminates
+  #         Application can reconnect to BJ via pilot url later on"""
+  #     pass
+  #     #self.cancel()
 
 
                     
