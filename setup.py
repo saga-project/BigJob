@@ -6,19 +6,57 @@
 #from distutils.core import setup
 import os
 from setuptools import setup
+import subprocess
 
 try:
     import saga
 except:
     print "SAGA C++ and SAGA Python Bindings not found. Using Bliss/SAGA."
     #sys.exit(1)
+
+VERSION_FILE="VERSION"    
     
-fn = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'VERSION')
-version = open(fn).read().strip()
+
+def update_version():
+    if not os.path.isdir(".git"):
+        print "This does not appear to be a Git repository."
+        return
+    try:
+        p = subprocess.Popen(["git", "describe",
+                              "--tags", "--dirty", "--always"],
+                             stdout=subprocess.PIPE)
+    except EnvironmentError:
+        print "Unable to run git, not modifying VERSION"
+        return
+    stdout = p.communicate()[0]
+    if p.returncode != 0:
+        print "Unable to run git, not modifying VERSION"
+        return
+    # we use tags like "python-ecdsa-0.5", so strip the prefix
+    
+    ver = stdout.strip()
+    fn = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'VERSION')
+    f = open(fn, "w")
+    f.write(ver)
+    f.close()
+    print "set ecdsa/_version.py to '%s'" % ver
+
+
+def get_version():
+    try:
+        fn = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'VERSION')
+        f = open(fn)
+        version = f.read().strip()
+        f.close()
+    except EnvironmentError:
+        return "-1"
+    return version    
+    
+update_version()
     
 setup(name='BigJob',
-      version=version,
-      description='SAGA-based Pilot-Job Implementation',
+      version=get_version(),
+      description='P* Pilot-Job Implementation',
       author='Andre Luckow',
       author_email='aluckow@cct.lsu.edu',
       url='https://github.com/saga-project/BigJob',
