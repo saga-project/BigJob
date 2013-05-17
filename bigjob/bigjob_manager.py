@@ -227,7 +227,8 @@ class bigjob(api.base.bigjob):
         if pilot_compute_description==None:
             pilot_compute_description={"service_url": lrms_url, 
                                        "number_of_processes": number_nodes, 
-                                       "processes_per_node": processes_per_node}
+                                       "processes_per_node": processes_per_node,
+                                       "working_directory": working_directory}
         self.coordination.set_pilot_description(self.pilot_url, pilot_compute_description)    
         logger.debug("set pilot state to: " + str(Unknown))
 
