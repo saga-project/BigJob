@@ -44,11 +44,11 @@ class Job(object):
         logger.debug("BigJob/SLURM: Parsing job description")        
         if pilot_compute_description == None:
             pilot_compute_description={}
-            pilot_compute_description['queue'] = job_description.queue
-            pilot_compute_description['project'] = job_description.project
-            pilot_compute_description['working_directory'] = job_description.working_directory
-            pilot_compute_description['walltime'] = job_description.wall_time_limit
-            pilot_compute_description['number_of_processes'] =  job_description.total_cpu_count
+        pilot_compute_description['queue'] = job_description.queue
+        pilot_compute_description['project'] = job_description.project
+        pilot_compute_description['working_directory'] = job_description.working_directory
+        pilot_compute_description['walltime'] = job_description.wall_time_limit
+        pilot_compute_description['number_of_processes'] =  job_description.total_cpu_count
 
         self.working_directory = pilot_compute_description["working_directory"]
         ### convert walltime in minutes to SLURM representation of time ###
@@ -118,8 +118,8 @@ os.system( "sbatch  " + sbatch_file_name)
         
         saga_surl = saga.Url(self.resource_url)
         sftp_url = "sftp://"
-        if saga_surl.username!=None or saga_surl.username!="":
-            sftp_url = sftp_url + saga_surl.username + "@"
+        if saga_surl.username!=None and saga_surl.username!="":
+            sftp_url = sftp_url + str(saga_surl.username) + "@"
         sftp_url = sftp_url + saga_surl.host + "/"
         outfile = sftp_url + self.working_directory+'/bliss_job_submission.out'        
         logger.debug("BigJob/SLURM: get outfile: " + outfile)
