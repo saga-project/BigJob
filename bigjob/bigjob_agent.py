@@ -229,7 +229,7 @@ class bigjob_agent:
             if(os.environ.get("GLIDEIN_CPUS")!=None):
                 num_cpus = int(os.environ.get("GLIDEIN_CPUS"))
         except:
-             pass
+            pass
         for i in range(0, num_cpus): 
             self.freenodes.append("localhost\n")
         return self.freenodes            
