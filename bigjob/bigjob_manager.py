@@ -168,7 +168,7 @@ class bigjob(api.base.bigjob):
                  walltime=None,
                  processes_per_node=1,
                  filetransfers=None,
-		 spmd_variation=None,
+                 spmd_variation=None,
                  external_queue="",
                  pilot_compute_description=None):
         """ Start a batch job (using SAGA Job API) at resource manager. Currently, the following resource manager are supported:
@@ -233,8 +233,8 @@ class bigjob(api.base.bigjob):
         
         if queue != None:
             jd.queue = queue
-	if spmd_variation != None:
-	    jd.spmd_variation = spmd_variation
+        if spmd_variation != None:
+            jd.spmd_variation = spmd_variation
         if project !=None:
             jd.project=project       
         if walltime!=None:
@@ -452,6 +452,15 @@ class bigjob(api.base.bigjob):
         except:
             pass
             #traceback.print_stack()
+
+        logger.debug("Cancel Job Service")
+        try:
+            del(self.js)
+            self.js = None
+        except:
+            pass
+            #traceback.print_stack()
+
         try:            
             self._stop_pilot_job()
             logger.debug("delete pilot job: " + str(self.pilot_url))                      
@@ -949,11 +958,11 @@ except:
     def __repr__(self):
         return self.pilot_url 
 
-    def __del__(self):
-        """ BJ is not cancelled when object terminates
-            Application can reconnect to BJ via pilot url later on"""
-        pass
-        #self.cancel()
+  # def __del__(self):
+  #     """ BJ is not cancelled when object terminates
+  #         Application can reconnect to BJ via pilot url later on"""
+  #     pass
+  #     #self.cancel()
 
 
                     
@@ -1125,31 +1134,39 @@ def output_data():
      
 class description(SAGAJobDescription):
     """ Sub-job description """
-    input_data  = property(**input_data())
-    output_data = property(**output_data())   
-    environment = {}
+    ##input_data  = property(**input_data())
+    ##output_data = property(**output_data())   
+    ##environment = {}
     
-    
+    # --------------------------------------------------------------------------
+    #
     def __init__(self):
         saga.job.Description.__init__(self)
         #self.attributes_extensible_ (True)
-        
+
         # Extend description class by Pilot-Data relevant attributes
         self._output_data = None
         self._input_data = None
-        
+
         import saga.attributes as sa
 
         self._attributes_extensible  (True)
+        self._attributes_camelcasing (True)
+
 
         self._attributes_register   ("InputData",  None, sa.ANY, sa.VECTOR, sa.WRITEABLE)
         self._attributes_register   ("OutputData", None, sa.ANY, sa.VECTOR, sa.WRITEABLE)
 
-        self._attributes_set_getter ("InputData",  self.__class__.input_data )
-        self._attributes_set_getter ("OutputData", self.__class__.output_data)
+        self._attributes_set_getter ("InputData",  self._get_input_data )
+        self._attributes_set_getter ("OutputData", self._get_output_data)
 
-        # self._register_rw_vec_attribute(name="InputData", 
-        #                                 accessor=self.__class__.input_data) 
-        # self._register_rw_vec_attribute(name="OutputData", 
-        #                                 accessor=self.__class__.output_data) 
-        
+    # --------------------------------------------------------------------------
+    #
+    def _get_input_data (self) :
+        print "get caled. returning: %s" % self.input_data
+        return self.input_data
+
+    # --------------------------------------------------------------------------
+    #
+    def _get_output_data (self) :
+        return self.output_data
