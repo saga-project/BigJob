@@ -6,19 +6,51 @@
 #from distutils.core import setup
 import os
 from setuptools import setup
+import subprocess
 
-#try:
-#    import saga
-#except:
-#    print "SAGA C++ and SAGA Python Bindings not found. Using Bliss/SAGA."
-#    #sys.exit(1)
+
+VERSION_FILE="VERSION"    
     
-fn = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'VERSION')
-version = open(fn).read().strip()
+
+def update_version():
+    if not os.path.isdir(".git"):
+        print "This does not appear to be a Git repository."
+        return
+    try:
+        p = subprocess.Popen(["git", "describe",
+                              "--tags", "--dirty", "--always"],
+                             stdout=subprocess.PIPE)
+    except EnvironmentError:
+        print "Unable to run git, not modifying VERSION"
+        return
+    stdout = p.communicate()[0]
+    if p.returncode != 0:
+        print "Unable to run git, not modifying VERSION"
+        return
+    
+    ver = stdout.strip()
+    fn = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'VERSION')
+    f = open(fn, "w")
+    f.write(ver + "-saga-python")
+    f.close()
+    print "Version to '%s'" % ver
+
+
+def get_version():
+    try:
+        fn = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'VERSION')
+        f = open(fn)
+        version = f.read().strip()
+        f.close()
+    except EnvironmentError:
+        return "-1"
+    return version    
+    
+update_version()
     
 setup(name='BigJob',
-      version=version,
-      description='SAGA-based Pilot-Job Implementation',
+      version=get_version(),
+      description='P* Pilot-Job Implementation',
       author='Andre Luckow',
       author_email='aluckow@cct.lsu.edu',
       url='https://github.com/saga-project/BigJob',
@@ -39,7 +71,7 @@ setup(name='BigJob',
       
       # data files for pip
       package_data = {'': ['*.conf']},
-      install_requires=['uuid', 'threadpool', 'virtualenv', 'redis==2.2.4', 'saga-python==0.9.3', 'google-api-python-client', 'python-hostlist',
+      install_requires=['uuid', 'threadpool', 'virtualenv', 'redis==2.2.4', 'saga-python', 'google-api-python-client', 'python-hostlist',
                         'globusonline-transfer-api-client', 'boto>=2.2,<2.3', 'simplejson<2.1', 'pexpect'],
       entry_points = {
         'console_scripts': [
