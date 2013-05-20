@@ -14,7 +14,7 @@ import time
 # This is for local debugging!
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../.."))
 
-import bliss.saga as saga
+import saga
 from pilot.api import State
 from bigjob import logger
 
