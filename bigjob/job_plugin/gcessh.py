@@ -10,7 +10,7 @@ import os
 import uuid
 import time
 
-import bliss.saga as saga
+import saga
 
 """
 AN OAUTH2 Client Id must be created at the Google API console at:
@@ -165,15 +165,19 @@ class Job(object):
         self.network_ip = compute_instance_details["networkInterfaces"][0]["accessConfigs"][0]['natIP']
         url = "ssh://" + str(self.network_ip)
         logger.debug("Connect to: %s"%(url))
-        js = saga.job.Service(url)
+
         
         # Submit job
-        ctx = saga.Context()
-        ctx.type = saga.Context.SSH
-        ctx.userid  = self.pilot_compute_description["vm_ssh_username"]
-        ctx.userkey = self.pilot_compute_description["vm_ssh_keyfile"]
-        js.session.contexts = [ctx]
+        ctx = saga.Context("SSH")
+        #ctx.type = saga.Context.SSH
+        ctx.user_id  = self.pilot_compute_description["vm_ssh_username"]
+        ctx.user_key = self.pilot_compute_description["vm_ssh_keyfile"]
+        #js.session.contexts = [ctx]
 
+        session = saga.Session()
+        session.add_context(ctx)
+
+        js = saga.job.Service(url, session=session)
 
         job = js.create_job(self.job_description)
         print "Submit pilot job to: " + str(url)
