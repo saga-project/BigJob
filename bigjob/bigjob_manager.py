@@ -302,7 +302,7 @@ class bigjob(api.base.bigjob):
         logger.debug("Adaptor specific modifications: "  + str(lrms_saga_url.scheme))
 
         #if lrms_saga_url.scheme.startswith("condor") == False:
-        #    bootstrap_script = self.__escape_bliss(bootstrap_script)
+        #    bootstrap_script = self.__escape_saga(bootstrap_script)
         #else:
         #    if lrms_saga_url.scheme == "gram":
         #        bootstrap_script = self.__escape_rsl(bootstrap_script)
@@ -525,7 +525,7 @@ class bigjob(api.base.bigjob):
                 logger.debug("create dictionary for job description. Job-URL: " + job_url)
                 # put job description attributes to Coordination Service
                 job_dict = {}
-                # to accomendate current bug in bliss (Number of processes is not returned from list attributes)
+                # to accomendate current bug in saga (Number of processes is not returned from list attributes)
                 job_dict["NumberOfProcesses"] = "1" 
                 attributes = jd.list_attributes()   
                 logger.debug("SJ Attributes: " + str(jd))             
@@ -701,8 +701,8 @@ except:
         bootstrap_script = "\"" + bootstrap_script+ "\""
         return bootstrap_script
     
-    def __escape_bliss(self, bootstrap_script):
-        logger.debug("Escape Bliss")
+    def __escape_saga(self, bootstrap_script):
+        logger.debug("Escape SAGA")
         #bootstrap_script = bootstrap_script.replace("\'", "\"")
         #bootstrap_script = "\'" + bootstrap_script+ "\'"
         bootstrap_script = bootstrap_script.replace('"','\\"')

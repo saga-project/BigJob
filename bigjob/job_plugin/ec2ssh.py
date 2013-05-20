@@ -10,8 +10,7 @@ from boto.ec2.connection import EC2Connection
 from boto.ec2.regioninfo import RegionInfo
 import boto.ec2
 
-import bliss.saga as saga
-import bliss
+import saga
 
 ###############################################################################
 # EC2 General
@@ -168,15 +167,18 @@ class Job(object):
         self.network_ip = self.instance.ip_address 
         url = "ssh://" + str(self.network_ip)
         logger.debug("Connect to: %s"%(url))
-        js = saga.job.Service(url)
+
         
         # Submit job
-        ctx = saga.Context()
-        ctx.type = saga.Context.SSH
-        ctx.userid = self.pilot_compute_description["vm_ssh_username"]
-        ctx.userkey = self.pilot_compute_description["vm_ssh_keyfile"]
-        js.session.contexts = [ctx]
+        ctx = saga.Context("SSH")
+        #ctx.type = saga.Context.SSH
+        ctx.user_id = self.pilot_compute_description["vm_ssh_username"]
+        ctx.user_key = self.pilot_compute_description["vm_ssh_keyfile"]
 
+        session = saga.Session()
+        session.add_context(ctx)
+
+        js = saga.job.Service(url, session=session)
         logger.debug("Job Description Type: " + str(type(self.job_description)))
 
         job = js.create_job(self.job_description)
