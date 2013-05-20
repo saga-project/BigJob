@@ -4,7 +4,7 @@ import pdb
 
 from pilot import *
 from bigjob import logger
-from bliss.saga import Url as SAGAUrl
+from saga import Url as SAGAUrl
 
 class NoCoordinationAdaptor:
     """
