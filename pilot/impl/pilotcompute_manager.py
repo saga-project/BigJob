@@ -408,9 +408,6 @@ class ComputeUnit(ComputeUnit):
             return self.__subjob.cancel()
         return None
     
-    def __repr__(self):
-        return self.id
-
     
     def _update_compute_unit_description(self, compute_unit_description):
         self.compute_unit_description = compute_unit_description # CU Description
