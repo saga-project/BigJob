@@ -39,7 +39,7 @@ def update_version():
     f = open(fn, "w")
     f.write(ver)
     f.close()
-    print "set ecdsa/_version.py to '%s'" % ver
+    print "set VERSION to '%s'" % ver
 
 
 def get_version():
