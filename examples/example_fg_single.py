@@ -24,7 +24,7 @@ import sys
 #COORDINATION_URL = "advert://SAGA:SAGA_client@advert.cct.lsu.edu:8080/?dbtype=postgresql"
 #COORDINATION_URL = "tcp://*"
 #COORDINATION_URL = "redis://cyder.cct.lsu.edu:2525"
-COORDINATION_URL = "redis://ILikeBigJob_wITH-REdIS@gw68.quarry.iu.teragrid.org:6379"
+COORDINATION_URL = "redis://*@gw68.quarry.iu.teragrid.org:6379"
 #COORDINATION_URL = "redis://<password>@gw68.quarry.iu.teragrid.org:6379"
 #COORDINATION_URL="sqlasyncadvert://gw68.quarry.iu.teragrid.org/"
 
