@@ -23,7 +23,7 @@ def update_version():
         return
     try:
         p = subprocess.Popen(["git", "describe",
-                              "--tags", "--dirty", "--always"],
+                              "--tags", "--always"],
                              stdout=subprocess.PIPE)
     except EnvironmentError:
         print "Unable to run git, not modifying VERSION"

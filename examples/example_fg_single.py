@@ -23,7 +23,8 @@ import sys
 #COORDINATION_URL = "advert://localhost/?dbtype=sqlite3"
 #COORDINATION_URL = "advert://SAGA:SAGA_client@advert.cct.lsu.edu:8080/?dbtype=postgresql"
 #COORDINATION_URL = "tcp://*"
-COORDINATION_URL = "redis://cyder.cct.lsu.edu:2525"
+#COORDINATION_URL = "redis://cyder.cct.lsu.edu:2525"
+COORDINATION_URL = "redis://*@gw68.quarry.iu.teragrid.org:6379"
 #COORDINATION_URL = "redis://<password>@gw68.quarry.iu.teragrid.org:6379"
 #COORDINATION_URL="sqlasyncadvert://gw68.quarry.iu.teragrid.org/"
 
@@ -42,8 +43,9 @@ def main():
     project=None # if None default allocation is used 
     walltime=10
     processes_per_node=8
-    number_nodes = 1
+    number_nodes = 16
     workingdirectory="/N/u/luckow" # working directory for agent
+    workingdirectory= os.getcwd() + "/agent/" # working directory for agent
     userproxy = None # userproxy (not supported yet due to context issue w/ SAGA)
 
     
@@ -59,7 +61,7 @@ def main():
     
     Please ensure that the respective SAGA adaptor is installed and working
     """
-    lrms_url = "pbs-ssh://sierra.futuregrid.org" # resource url to run the jobs on localhost
+    lrms_url = "pbs://localhost" # resource url to run the jobs on localhost
    
     ##########################################################################################
 
@@ -79,15 +81,17 @@ def main():
     ##########################################################################################
     # Submit SubJob through BigJob
     jd = description()
-    jd.executable = "/bin/date"
+    jd.executable = "/bin/hostname"
     jd.number_of_processes = "1"
     jd.spmd_variation = "single"
     jd.arguments = [""]
     #jd.working_directory = "/tmp" 
     jd.output = "stdout.txt"
     jd.error = "stderr.txt"
-    sj = subjob()
-    sj.submit_job(bj.pilot_url, jd)
+
+    for i in range(0,128):
+        sj = subjob()
+        sj.submit_job(bj.pilot_url, jd)
     
     #########################################
     # busy wait for completion
@@ -100,6 +104,7 @@ def main():
 
     ##########################################################################################
     # Cleanup - stop BigJob
+    bj.wait()
     bj.cancel()
     #time.sleep(30)
 
