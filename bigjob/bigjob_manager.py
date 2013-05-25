@@ -391,6 +391,8 @@ class bigjob(api.base.bigjob):
                 jd.number_of_processes=str(number_nodes)
                 jd.processes_per_host=str(processes_per_node)
             jd.spmd_variation = "single"
+            if pilot_compute_description!=None and pilot_compute_description.has_key("spmd_variation"):
+                jd.spmd_variation=pilot_compute_description["spmd_variation"]
             jd.arguments = ["python", "-c", bootstrap_script]
             jd.executable = "/usr/bin/env"           
       
