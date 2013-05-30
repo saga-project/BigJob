@@ -124,6 +124,7 @@ class bigjob(api.base.bigjob):
             logger.error("Coordination URL not set. Exiting BigJob.")
         #self.launch_method=""
         self.__filemanager=None
+        self._pool = ConnectionPool ()
         
         # restore existing BJ or initialize new BJ
         if pilot_url!=None:
@@ -208,7 +209,10 @@ class bigjob(api.base.bigjob):
         #elif lrms_saga_url.scheme=="slurm+ssh":
         #    self.js = SlurmService(lrms_saga_url, pilot_compute_description)          
         else:
-            self.js = SAGAJobService(lrms_saga_url)        
+            self.js = self._pool.get (lrms_saga_url)
+            if  not self.js :
+                self.js = SAGAJobService (lrms_saga_url)
+                self._pool.add (lrms_saga_url, self.js)
         ##############################################################################
         # create job description
         jd = SAGAJobDescription()
@@ -453,7 +457,8 @@ class bigjob(api.base.bigjob):
 
         logger.debug("Cancel Job Service")
         try:
-            del(self.js)
+            if  not self._pool.del_value (self.js) :
+                del (self.js)
             self.js = None
         except:
             pass
@@ -1168,3 +1173,81 @@ class description(SAGAJobDescription):
     #
     def _get_output_data (self) :
         return self.output_data
+
+
+# ------------------------------------------------------------------------------
+#
+class ConnectionPool (object) :
+
+    """ This is a singleton connection pooling class -- it maintains a reference
+    counted registry of existing connections."""
+
+    _instance    = None
+    _initialized = False
+
+    # --------------------------------------------------------------------------
+    #
+    def __new__ (cls, *args, **kwargs) :
+
+        if  not cls._instance:
+            cls._instance = super (ConnectionPool, cls).__new__(cls, *args, **kwargs)
+
+        return cls._instance
+
+
+    # --------------------------------------------------------------------------
+    #
+    def __init__ (self) :
+
+        if not self._initialized :
+            self._pool        = {}
+            self._initialized = True
+
+
+    # --------------------------------------------------------------------------
+    #
+    def get (self, n) :
+
+        name = str(n)
+
+        if  not name in self._pool :
+            return None
+
+        else :
+            self._pool [name]['cnt'] += 1
+            return self._pool [name]['val']
+
+    # --------------------------------------------------------------------------
+    #
+    def add (self, n, val) :
+
+        name = str(n)
+
+        if  name in self._pool :
+            return False
+
+        else :
+            self._pool [name]        = {}
+            self._pool [name]['cnt'] = 1
+            self._pool [name]['val'] = val
+            return True
+
+    # --------------------------------------------------------------------------
+    #
+    def del_value (self, val) :
+
+        for name in self._pool.keys () :
+
+            if  val == self._pool [name]['val'] :
+
+                self._pool [name]['cnt'] -= 1
+
+                if  self._pool [name]['cnt'] == 0 :
+                    self._pool [name]['val'] = None
+                    self._pool.pop (name, None)
+
+                return True
+
+        return False
+
+
