@@ -1,4 +1,3 @@
-
 import sys
 import time
 import bigjob
@@ -10,11 +9,12 @@ except :
     pass
 
 
-# HOST  = "redis://ILikeBigJob_wITH-REdIS@gw68.quarry.iu.teragrid.org:6379"
-# COORD = "ssh://localhost"
+HOST  = "ssh://localhost"
+COORD = "redis://ILikeBigJob_wITH-REdIS@gw68.quarry.iu.teragrid.org:6379"
 
-HOST  = "ssh://boskop"
-COORD = "redis://10.0.1.18"
+#HOST  = "ssh://boskop"
+#COORD = "redis://10.0.1.18"
+
 N     = 100
 bjs   = []
 start = time.time ()
