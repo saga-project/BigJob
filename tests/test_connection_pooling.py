@@ -15,7 +15,7 @@ COORD = "redis://ILikeBigJob_wITH-REdIS@gw68.quarry.iu.teragrid.org:6379"
 #HOST  = "ssh://boskop"
 #COORD = "redis://10.0.1.18"
 
-N     = 100
+N     = 20
 bjs   = []
 start = time.time ()
 total = 0.0
