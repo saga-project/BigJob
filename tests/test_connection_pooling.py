@@ -1,24 +1,25 @@
 import os
-import sys
 import time
 import pilot
 
-try :
+try:
     import pudb
     pudb.set_interrupt_handler()
-except :
+except:
     pass
 
-
+#########################################################################
+##
 redis_password = os.environ.get('REDIS_PASSWORD')
 COORD    = "redis://%s@gw68.quarry.iu.teragrid.org:6379" % redis_password
 HOST     = "ssh://localhost"
+##
+#########################################################################
 
 N     = 20
 pjs   = []
-start = time.time ()
+start = time.time()
 total = 0.0
-
 
 for i in range(0, N):
 
@@ -53,9 +54,6 @@ stop = time.time()
 for i, pj in enumerate(pjs):
 
     print "cancel %3d" % i
-    pj.cancel ()
-
+    pj.cancel()
 
 print "time: %.1fs   rate: %.1f/s" % (stop-start, N/(stop-start))
-
-
