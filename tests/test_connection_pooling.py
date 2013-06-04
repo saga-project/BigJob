@@ -1,6 +1,6 @@
 import sys
 import time
-import bigjob
+import pilot
 
 try :
     import pudb
@@ -16,35 +16,46 @@ COORD = "redis://ILikeBigJob_wITH-REdIS@gw68.quarry.iu.teragrid.org:6379"
 #COORD = "redis://10.0.1.18"
 
 N     = 20
-bjs   = []
+pjs   = []
 start = time.time ()
 total = 0.0
 
 
-for i in range (0, N) :
+for i in range(0, N):
 
     print "start  %3d" % i
 
-    bj = bigjob.bigjob (COORD)
-    bj.start_pilot_job (HOST)
+    ### This is broken !!! -> https://github.com/saga-project/BigJob/issues/117
+    #pilot_description = pilot.api.PilotComputeDescription()
+    #pilot_description.service_url = HOST
+    #pilot_description.number_of_processes = 1
 
-    bjs.append (bj)
+    pilot_description = {
+        "service_url": HOST,
+        "number_of_processes": 1
+    }
 
-    jd = bigjob.description ()
-    jd.executable          = "/bin/sleep"
-    jd.arguments           = ["10"]
-    
-    sj = bigjob.subjob ()
-    sj.submit_job (bj.pilot_url, jd)
+    pilot_service = pilot.PilotComputeService(COORD)
+
+    ### This is broken !!! -> https://github.com/saga-project/BigJob/issues/118
+    #pilotjob = pilot_service.create_pilot(pilot_compute_description)
+    pilotjob = pilot_service.create_pilot(pilot_compute_description=pilot_description)
+
+    pjs.append(pilotjob)
+
+    task = pilot.api.ComputeUnitDescription()
+    task.executable = "/bin/sleep"
+    task.arguments = ["10"]
+
+    pilotjob.submit_compute_unit(task)
+
+stop = time.time()
 
 
-stop = time.time ()
-
-
-for i, bj in enumerate (bjs) :
+for i, pj in enumerate(pjs):
 
     print "cancel %3d" % i
-    bj.cancel ()
+    pj.cancel ()
 
 
 print "time: %.1fs   rate: %.1f/s" % (stop-start, N/(stop-start))
