@@ -32,7 +32,8 @@ for i in range(0, N):
 
     pilot_description = {
         "service_url": HOST,
-        "number_of_processes": 1
+        "number_of_processes": 1,
+        "working_directory": os.getcwd()
     }
 
     pilot_service = pilot.PilotComputeService(COORD)
