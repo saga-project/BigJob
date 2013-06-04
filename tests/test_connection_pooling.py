@@ -1,3 +1,4 @@
+import os
 import sys
 import time
 import pilot
@@ -9,11 +10,9 @@ except :
     pass
 
 
-HOST  = "ssh://localhost"
-COORD = "redis://ILikeBigJob_wITH-REdIS@gw68.quarry.iu.teragrid.org:6379"
-
-#HOST  = "ssh://boskop"
-#COORD = "redis://10.0.1.18"
+redis_password = os.environ.get('REDIS_PASSWORD')
+COORD    = "redis://%s@gw68.quarry.iu.teragrid.org:6379" % redis_password
+HOST     = "ssh://localhost"
 
 N     = 20
 pjs   = []
@@ -26,7 +25,7 @@ for i in range(0, N):
     print "start  %3d" % i
 
     ### This is broken !!! -> https://github.com/saga-project/BigJob/issues/117
-    #pilot_description = pilot.api.PilotComputeDescription()
+    #pilot_description = pilot.PilotComputeDescription()
     #pilot_description.service_url = HOST
     #pilot_description.number_of_processes = 1
 
@@ -50,7 +49,6 @@ for i in range(0, N):
     pilotjob.submit_compute_unit(task)
 
 stop = time.time()
-
 
 for i, pj in enumerate(pjs):
 
