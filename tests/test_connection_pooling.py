@@ -53,9 +53,12 @@ for i in range(0, N):
 
 stop = time.time()
 
-for i, pj in enumerate(pjs):
+#for i, pj in enumerate(pjs):
+#    print "cancel %3d" % i
+#    pj.cancel()
 
-    print "cancel %3d" % i
-    pj.cancel()
+# see https://github.com/saga-project/BigJob/issues/121
+pilot_service.cancel()
+
 
 print "time: %.1fs   rate: %.1f/s" % (stop-start, N/(stop-start))
