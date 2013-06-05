@@ -44,6 +44,7 @@ for i in range(0, N):
 
     pjs.append(pilotjob)
 
+    ### This is broken !!! ComputeUnitDescription should not be in the 'api' package
     task = pilot.api.ComputeUnitDescription()
     task.executable = "/bin/sleep"
     task.arguments = ["10"]
