@@ -95,14 +95,15 @@
 <li class="toctree-l2"><a class="reference internal" href="../patterns/chained.html">4.2. Chained Example</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../patterns/coupled.html">4.3. Coupled Ensembles</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../patterns/exsede.html">4.4. XSEDE Simple Ensemble Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../patterns/pdata.html">4.5. Remote Pilot Data Example</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../library/index.html">5. Library Reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../library/index.html#compute-and-data-services">5.1. Compute and Data Services</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../library/index.html#compute-and-data-units">5.2. Compute and Data Units</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../library/index.html#state-enumeration">5.3. State Enumeration</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorial/index.html">6. Tutorial</a></li>
 </ul>
 </ul>
 </li>
@@ -176,13 +177,11 @@
 <div class="section" id="coordination-url">
 <h2>3.1.3. Coordination URL<a class="headerlink" href="#coordination-url" title="Permalink to this headline">¶</a></h2>
 <p>Identify the coordination system to be used. You should have set up a Redis server as part of the <a class="reference external" href="../install/redis.html">Setting Up a Redis Server</a> section.</p>
-<p>Replace the COORDINATION_URL parameter with the path to your Redis server. The following example shows how to do this for localhost and a remote resource, such as cyder:</p>
+<p>Replace the COORDINATION_URL parameter with the path to your Redis server. The following example shows how to do this for localhost:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">COORDINATION_URL</span> <span class="o">=</span> <span class="s">&quot;redis://localhost:6379&quot;</span>   <span class="c"># uses redis database as coordination system.</span>
 </pre></div>
 </div>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">COORDINATION_URL</span> <span class="o">=</span> <span class="s">&quot;redis://cyder.cct.lsu.edu:2525&quot;</span>  <span class="c"># uses redis database on cyder.cct.lsu.edu at port 2525 as coordination system.</span>
-</pre></div>
-</div>
+<p>To do this for a remote resource, simply change localhost to the machine URL and verify which port redis is running on.</p>
 </div>
 <div class="section" id="number-jobs">
 <h2>3.1.4. NUMBER_JOBS<a class="headerlink" href="#number-jobs" title="Permalink to this headline">¶</a></h2>
@@ -285,10 +284,12 @@
 <div class="section" id="putting-it-all-together">
 <h2>3.1.9. Putting it all Together<a class="headerlink" href="#putting-it-all-together" title="Permalink to this headline">¶</a></h2>
 <p>Your first simple BigJob script:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">pilot</span> <span class="kn">import</span> <span class="n">PilotComputeService</span><span class="p">,</span> <span class="n">ComputeDataService</span><span class="p">,</span> <span class="n">State</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">pilot</span> <span class="kn">import</span> <span class="n">PilotComputeService</span><span class="p">,</span> <span class="n">ComputeDataService</span><span class="p">,</span> <span class="n">State</span>
 
 <span class="n">NUMBER_JOBS</span> <span class="o">=</span> <span class="mi">4</span>
-<span class="n">COORDINATION_URL</span> <span class="o">=</span> <span class="n">redis</span><span class="p">:</span><span class="o">//</span><span class="n">localhost</span>
+<span class="n">COORDINATION_URL</span> <span class="o">=</span> <span class="s">&quot;redis://localhost&quot;</span>
 
 <span class="n">pilot_compute_service</span> <span class="o">=</span> <span class="n">PilotComputeService</span><span class="p">(</span><span class="n">COORDINATION_URL</span><span class="p">)</span>
 
