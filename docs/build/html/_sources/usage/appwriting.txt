@@ -40,12 +40,11 @@ Coordination URL
 
 Identify the coordination system to be used. You should have set up a Redis server as part of the `Setting Up a Redis Server <../install/redis.html>`_ section.
 
-Replace the COORDINATION_URL parameter with the path to your Redis server. The following example shows how to do this for localhost and a remote resource, such as cyder::
-
-	COORDINATION_URL = "redis://localhost:6379"   # uses redis database as coordination system.   
+Replace the COORDINATION_URL parameter with the path to your Redis server. The following example shows how to do this for localhost:
 ::
+	COORDINATION_URL = "redis://localhost:6379"   # uses redis database as coordination system.   
 
-	COORDINATION_URL = "redis://cyder.cct.lsu.edu:2525"  # uses redis database on cyder.cct.lsu.edu at port 2525 as coordination system. 
+To do this for a remote resource, simply change localhost to the machine URL and verify which port redis is running on.
 
 ======================
 NUMBER_JOBS
