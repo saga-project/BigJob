@@ -48,7 +48,7 @@ def main():
 
         # do something useful here, wait or whatever. print some information.
 
-        pilotjob.cancel()
+        pilot_service.cancel()
 
         return(0)
 
