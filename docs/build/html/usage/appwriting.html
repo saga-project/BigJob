@@ -177,13 +177,11 @@
 <div class="section" id="coordination-url">
 <h2>3.1.3. Coordination URL<a class="headerlink" href="#coordination-url" title="Permalink to this headline">¶</a></h2>
 <p>Identify the coordination system to be used. You should have set up a Redis server as part of the <a class="reference external" href="../install/redis.html">Setting Up a Redis Server</a> section.</p>
-<p>Replace the COORDINATION_URL parameter with the path to your Redis server. The following example shows how to do this for localhost and a remote resource, such as cyder:</p>
+<p>Replace the COORDINATION_URL parameter with the path to your Redis server. The following example shows how to do this for localhost:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">COORDINATION_URL</span> <span class="o">=</span> <span class="s">&quot;redis://localhost:6379&quot;</span>   <span class="c"># uses redis database as coordination system.</span>
 </pre></div>
 </div>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">COORDINATION_URL</span> <span class="o">=</span> <span class="s">&quot;redis://cyder.cct.lsu.edu:2525&quot;</span>  <span class="c"># uses redis database on cyder.cct.lsu.edu at port 2525 as coordination system.</span>
-</pre></div>
-</div>
+<p>To do this for a remote resource, simply change localhost to the machine URL and verify which port redis is running on.</p>
 </div>
 <div class="section" id="number-jobs">
 <h2>3.1.4. NUMBER_JOBS<a class="headerlink" href="#number-jobs" title="Permalink to this headline">¶</a></h2>
