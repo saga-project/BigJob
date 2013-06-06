@@ -123,7 +123,6 @@ from pilot.api.api import PilotError
 from pilot.api import State 
 from pilot.api import ComputeUnitDescription, DataUnitDescription, PilotComputeDescription
 
-
 import bigjob
 
 """ Version of Pilot-API/BigJob """
