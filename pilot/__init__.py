@@ -119,6 +119,7 @@ from pilot.impl.pilot_manager import ComputeDataService, ComputeUnitService, Dat
 from pilot.impl.pilot_manager_decentral import ComputeDataServiceDecentral 
 from pilot.api.api import PilotError
 from pilot.api import State 
+from pilot.api import ComputeUnitDescription
 
 import bigjob
 
