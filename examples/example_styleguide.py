@@ -39,8 +39,7 @@ def main():
         #pilotjob = pilot_service.create_pilot(pilot_compute_description)
         pilotjob = pilot_service.create_pilot(pilot_compute_description=pilot_description)
 
-        ### This is broken !!! ComputeUnitDescription should not be in the 'api' package
-        task = pilot.api.ComputeUnitDescription()
+        task = pilot.ComputeUnitDescription()
         task.executable = "/bin/sleep"
         task.arguments = ["10"]
 
