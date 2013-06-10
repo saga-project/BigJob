@@ -25,16 +25,10 @@ for i in range(0, N):
 
     print "start  %3d" % i
 
-    ### This is broken !!! -> https://github.com/saga-project/BigJob/issues/117
-    #pilot_description = pilot.PilotComputeDescription()
-    #pilot_description.service_url = HOST
-    #pilot_description.number_of_processes = 1
-
-    pilot_description = {
-        "service_url": HOST,
-        "number_of_processes": 1,
-        "working_directory": os.getcwd()
-    }
+    pilot_description = pilot.PilotComputeDescription()
+    pilot_description.service_url = HOST
+    pilot_description.number_of_processes = 1
+    pilot_description.working_directory = os.getcwd()
 
     pilot_service = pilot.PilotComputeService(COORD)
 
