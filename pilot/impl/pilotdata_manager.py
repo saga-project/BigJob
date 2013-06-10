@@ -1,3 +1,4 @@
+
 """ B{PilotData Module}: Implementation of L{PilotData}, L{PilotDataService} and L{DataUnit}
 """ 
 import sys
@@ -9,6 +10,10 @@ import threading
 import time
 import pdb
 import Queue
+import socket
+import tldextract
+tldextract.tldextract.LOG.setLevel(logging.WARNING)
+
 from pilot.api.api import PilotError
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
@@ -602,7 +607,19 @@ class DataUnit(DataUnit):
         """
         if self.get_state()!=State.Running:
             self.wait()
+        
         if len(self.pilot_data) > 0:
+            # Search for PD that is close to local machine
+            for pd in self.pilot_data:
+                pd_domain = tldextract.extract(pd.service_url).domain
+                local_domain = tldextract.extract(socket.getfqdn()).domain
+                logger.debug("Export to %s... checking PD at: %s"%(local_domain, pd_domain))
+                if pd_domain == local_domain:
+                    logger.debug("Export from: %s"%(pd_domain))
+                    pd.export_du(self, target_url)
+                    return
+            # No PD found. Utilize default PD
+            logger.debug("Export from random PD")
             self.pilot_data[0].export_du(self, target_url)
         else:
             logger.error("No Pilot Data for PD found")

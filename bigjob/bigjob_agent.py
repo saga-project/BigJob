@@ -51,7 +51,7 @@ import subprocess
 
 """ Config parameters (will move to config file in future) """
 CONFIG_FILE="bigjob_agent.conf"
-THREAD_POOL_SIZE=8
+THREAD_POOL_SIZE=4
 APPLICATION_NAME="bigjob"
 
 class bigjob_agent:
@@ -278,7 +278,7 @@ class bigjob_agent:
             self.freenodes=[]
             for i in range(0, int(number_nodes)):
                 slot = "slot-%d\n"%i
-                logger.debug("add slot: " + slot)
+                logger.debug("add slot: " + slot.strip())
                 self.freenodes.append(slot)            
         else:
             pbs_node_file = os.environ.get("PBS_NODEFILE")    
@@ -903,15 +903,15 @@ class bigjob_agent:
         
         aprun_available = False
         try:
-            aprun_available = (subprocess.call("aprun -n 1 /bin/date", shell=True)==0)
+            aprun_available = (subprocess.call("aprun -n 1 /bin/date", shell=True, stdout=None, stderr=None)==0)
         except:
-            pass
+            self.__print_traceback()
 
         ibrun_available = self.__ibrun_available()
         
         ssh_available = False
         try:
-            ssh_available = (subprocess.call("ssh -o PasswordAuthentication=no -o NumberOfPasswordPrompts=0 localhost /bin/date", shell=True)==0)
+            ssh_available = (subprocess.call("ssh -o PasswordAuthentication=no -o NumberOfPasswordPrompts=0 localhost /bin/date", shell=True, stdout=None, stderr=None)==0)
         except:
             pass
         
