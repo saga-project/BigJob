@@ -79,8 +79,7 @@ class PilotComputeDescription(dict):
 
    
     def __init__(self):
-        self.service_url.__doc__="SAGA-Python URL for respective resource manager, e.g. fork://localhost"
-
+	pass
     
     
     def __setattr__(self, attr, value):
