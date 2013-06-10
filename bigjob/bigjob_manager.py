@@ -227,7 +227,8 @@ class bigjob(api.base.bigjob):
         if pilot_compute_description==None:
             pilot_compute_description={"service_url": lrms_url, 
                                        "number_of_processes": number_nodes, 
-                                       "processes_per_node": processes_per_node}
+                                       "processes_per_node": processes_per_node,
+                                       "working_directory": working_directory}
         self.coordination.set_pilot_description(self.pilot_url, pilot_compute_description)    
         logger.debug("set pilot state to: " + str(Unknown))
 
@@ -390,6 +391,8 @@ class bigjob(api.base.bigjob):
                 jd.number_of_processes=str(number_nodes)
                 jd.processes_per_host=str(processes_per_node)
             jd.spmd_variation = "single"
+            if pilot_compute_description!=None and pilot_compute_description.has_key("spmd_variation"):
+                jd.spmd_variation=pilot_compute_description["spmd_variation"]
             jd.arguments = ["python", "-c", bootstrap_script]
             jd.executable = "/usr/bin/env"           
       
