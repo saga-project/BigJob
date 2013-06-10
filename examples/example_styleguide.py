@@ -20,18 +20,10 @@ HOST      = "ssh://localhost"
 #
 def main():
     try:
-
-        ### This is broken !!! -> https://github.com/saga-project/BigJob/issues/117
-        #pilot_description = pilot.PilotComputeDescription()
-        #pilot_description.service_url = HOST
-        #pilot_description.number_of_processes = 1
-
-        ### 'free-form' dicts should not be encouraged!
-        pilot_description = {
-            "service_url": HOST,
-            "number_of_processes": 1,
-            "working_directory": os.getcwd()
-        }
+        pilot_description = pilot.PilotComputeDescription()
+        pilot_description.service_url = HOST
+        pilot_description.number_of_processes = 1
+        pilot_description.working_directory = os.getcwd()
 
         pilot_service = pilot.PilotComputeService(COORD)
 
@@ -46,6 +38,14 @@ def main():
         pilotjob.submit_compute_unit(task)
 
         # do something useful here, wait or whatever. print some information.
+
+
+        # Not sure how to cancel properly
+        #   - see https://github.com/saga-project/BigJob/issues/121
+        #   - see https://github.com/saga-project/BigJob/issues/131
+        for i, pj in enumerate(pjs):
+            print "cancel %3d" % i
+            pj.cancel()
 
         pilot_service.cancel()
 
