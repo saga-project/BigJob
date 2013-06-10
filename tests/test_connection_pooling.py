@@ -52,11 +52,13 @@ for i in range(0, N):
 
 stop = time.time()
 
-#for i, pj in enumerate(pjs):
-#    print "cancel %3d" % i
-#    pj.cancel()
-
 # see https://github.com/saga-project/BigJob/issues/121
+# see https://github.com/saga-project/BigJob/issues/131
+
+for i, pj in enumerate(pjs):
+    print "cancel %3d" % i
+    pj.cancel()
+
 pilot_service.cancel()
 
 
