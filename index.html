@@ -139,41 +139,30 @@
                         a high-level, easy-to-use API for accessing distributed resources, meaning BigJob works
                         on a variety of backends such as PBS, SGE, Amazon EC2, etc.
                         </p>
-                        
-                        <h3>What are Pilot-Jobs?</h3>
-                        <p>
-                        Pilot-Jobs support the decoupling of workload submission from resource assignment. This
-                        results in a flexible execution model, which in turn enables the distributed scale-out of
-                        applications on multiple and possibly heterogeneous resources. Pilot-Jobs support the use of
-                        container jobs with sophisticated workflow management to coordinate the launch and interaction
-                        of actual computational tasks within the container. It allows the execution of jobs without
-                        the necessity to queue each individual job.
-                        </p>
-                        
-                        <p>
-                        BigJob's main focus is to be a flexible and extensible Pilot-based system for job submission
-                        and data management. Unlike many other Pilot-Job systems, BigJob natively supports MPI jobs
-                        and, because of its integration with saga-python, works on a variety of backend systems. 
-                        </p>
                     </div>
-                    
                 </div>
                 
                 <hr class="soften">
                 
                 <div class="row-fluid">
-                    <div class="span6" id="whypilots">
-                        <h2>Why Pilot-Jobs?</h2>
-                        <p class="marketing-byline">Simple Setup, Thousands of Jobs, Less Worry</p>
-                        
-                        <p>Production-grade distributed cyberinfrastructure almost always has a local resource manager installed, such as a batch queuing system. A distributed application often requires many jobs to produce useful output data; these jobs often have the same executable. A traditional way of submitting these jobs would be to submit an individual job for each executable. These jobs (often hundreds) sit in the batch queuing system and may not become active at the same time. Overall, time-to-completion can take many hours due to load and scheduling variations.</p>
-                        
-                        <p>A Pilot-Job provides an alternative approach. It can be thought of as a container job for many sub-jobs. A Pilot-Job acquires the resources necessary to execute the sub-jobs (thus, it asks for all of the resources required to run the sub-jobs, rather than just one sub-job). If a system has a batch queue, the Pilot-Job is submitted to this queue. Once it becomes active, it can run the sub-jobs directly, instead of having to wait for each sub-job to queue. This eliminates the need to submit a different job for every executable, and significantly reduces the time-to-completion.</p>
-                        
-                        <!--p>TODO: User showcase</p>
-                         <p><a class="btn" href="#">Read more &raquo;</a></p-->
-                        
+                    <div class="span6" id="whatpilots">
+                    <h2>What are Pilot-Jobs?</h2>
+                    <p>
+                    Pilot-Jobs support the decoupling of workload submission from resource assignment. This
+                    results in a flexible execution model, which in turn enables the distributed scale-out of
+                    applications on multiple and possibly heterogeneous resources. Pilot-Jobs support the use of
+                    container jobs with sophisticated workflow management to coordinate the launch and interaction
+                    of actual computational tasks within the container. It allows the execution of jobs without
+                    the necessity to queue each individual job.
+                    </p>
+                    
+                    <p>
+                    BigJob's main focus is to be a flexible and extensible Pilot-based system for job submission
+                    and data management. Unlike many other Pilot-Job systems, BigJob natively supports MPI jobs
+                    and, because of its integration with saga-python, works on a variety of backend systems.
+                    </p>
                     </div>
+                    
                     <div class="span6" id="usagemodes">
                         <h2>What is BigJob used for?</h2>
                         
@@ -191,6 +180,21 @@
                         </ul>
                         
                         </p>
+                    </div>
+                    </div>
+                <hr class="soften">
+                
+                <div class="row-fluid">
+                    <div class="span12" id="whypilots">
+                        <h2>Why Pilot-Jobs?</h2>
+                        <p class="marketing-byline">Simple Setup, Thousands of Jobs, Less Worry</p>
+                        
+                        <p>Production-grade distributed cyberinfrastructure almost always has a local resource manager installed, such as a batch queuing system. A distributed application often requires many jobs to produce useful output data; these jobs often have the same executable. A traditional way of submitting these jobs would be to submit an individual job for each executable. These jobs (often hundreds) sit in the batch queuing system and may not become active at the same time. Overall, time-to-completion can take many hours due to load and scheduling variations.</p>
+
+                        <p>A Pilot-Job provides an alternative approach. It can be thought of as a container job for many sub-jobs. A Pilot-Job acquires the resources necessary to execute the sub-jobs (thus, it asks for all of the resources required to run the sub-jobs, rather than just one sub-job). If a system has a batch queue, the Pilot-Job is submitted to this queue. Once it becomes active, it can run the sub-jobs directly, instead of having to wait for each sub-job to queue. This eliminates the need to submit a different job for every executable, and significantly reduces the time-to-completion.</p>
+                        <!--p>TODO: User showcase</p>
+                         <p><a class="btn" href="#">Read more &raquo;</a></p-->
+                        
                     </div>
                 </div>
                 
@@ -232,7 +236,7 @@
                 <p>
                 In order to use
                 BigJob for remote job submission, configure your SSH-keys to allow password-less login,
-                and change the "service_url" parameter on <b>line 14</b> to a different adaptor scheme.
+                and change the <code>service_url</code> parameter on <b>line 14</b> to a different adaptor scheme.
                 For example, you can
                 use <code>slurm[+ssh]://...</code> to access a SLURM cluster, <code>sge[+ssh]://...</code>
                 to access an SGE cluster, <code>pbs[+ssh]://</code> to access a Condor(-G) gateway
