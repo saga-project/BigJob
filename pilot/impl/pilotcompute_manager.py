@@ -61,7 +61,7 @@ class PilotComputeService(PilotComputeService):
         
             
 
-    def create_pilot(self, pilot_compute_description):
+    def create_pilot(self, rm=None, pilot_compute_description=None, pj_type=None, context=None):
         """ Add a PilotJob to the PilotJobService
 
             Keyword arguments:
