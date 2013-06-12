@@ -44,8 +44,7 @@ def main():
     walltime=10
     processes_per_node=8
     number_nodes = 24
-    workingdirectory="/N/u/luckow" # working directory for agent
-    workingdirectory= os.getcwd() + "/agent/" # working directory for agent
+    workingdirectory= os.getcwd() # working directory for agent
     userproxy = None # userproxy (not supported yet due to context issue w/ SAGA)
 
     
@@ -93,15 +92,6 @@ def main():
         sj = subjob()
         sj.submit_job(bj.pilot_url, jd)
     
-    #########################################
-    # busy wait for completion
-    while 1:
-        state = str(sj.get_state())
-        print "state: " + state
-        if(state=="Failed" or state=="Done"):
-            break
-        time.sleep(2)
-
     ##########################################################################################
     # Cleanup - stop BigJob
     bj.wait()
