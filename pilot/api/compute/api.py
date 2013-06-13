@@ -79,7 +79,8 @@ class PilotComputeDescription(dict):
 
    
     def __init__(self):
-	self.service_url.__doc__="SAGA-Python URL for respective resource manager, e.g. fork://localhost"
+	pass
+    
     
     def __setattr__(self, attr, value):
         self[attr]=value
@@ -186,14 +187,11 @@ class PilotComputeService(object):
         raise  NotImplementedError("Abstract super class, please use PilotComputeService implementation class in pilot namespace")
 
 
-    def create_pilot(self, rm, pilotcompute_description, pj_type=None, context=None):
+    def create_pilot(self, pilotcompute_description):
         """ Add a PilotCompute to the PilotComputeService
 
             Keyword arguments:
-	    rm -- Contact string for resource manager
             pilotcompute_description -- PilotCompute Description
-	    pj_type -- backend type (optional)
-            context -- Security context (optional)
 
             Return value:
             A PilotCompute handle
