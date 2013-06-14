@@ -107,9 +107,7 @@
 <p>The Pilot-Manager then stores information into the distributed coordination service (usually a redis database). For each new job (or chunk of data), an entry is created in the database by the BigJob manager. This database can be located on any resource, including the localhost. It is used for communication between the Pilot-Manager and the Pilot-Agent.</p>
 <p>Once the Pilot-Compute is submitted to the batch queuing system of the remote resource and becomes active, the Pilot-Agent comes into play. The Pilot-Agent is responsible for gathering local information and for executing the actual tasks (compute units) on its local resource. It achieves this by periodically polling for new jobs. If a new job is found and resources are available, the job is dispatched, otherwise it is queued. If multiple resources (machines) are acquired, there will be multiple Pilot-Agents.</p>
 <p>The overall BigJob architecture is shown below. BigJob utilizes a Master-Worker coordination model.</p>
-<div class="figure align-center">
-<img alt="../_images/bigjob-architecture.png" src="../_images/bigjob-architecture.png" />
-</div>
+<img alt="../_images/bigjob-architecture.png" class="align-center" src="../_images/bigjob-architecture.png" style="width: 500px;" />
 <div class="section" id="supported-adaptors">
 <h3>1.5.1. Supported Adaptors<a class="headerlink" href="#supported-adaptors" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
