@@ -13,14 +13,14 @@
  */
 
 /* RTD colors
- * light blue: #e8ecef
- * medium blue: #8ca1af
- * dark blue: #465158
+ * light blue: #C5D2DD
+ * medium blue: rgba(255, 255, 255, 0.5)
+ * dark blue: #3467a0
  * dark grey: 
  *
- * medium blue hover: #697983;
+ * medium blue hover: rgba(255, 255, 255, 0.25);
  * green highlight: #8ecc4c
- * light blue (project bar): #e8ecef
+ * light blue (project bar): #C5D2DD
  */
 
 @import url("basic.css");
@@ -28,17 +28,19 @@
 /* PAGE LAYOUT -------------------------------------------------------------- */
 
 body {
-    font: 100%/1.5 "ff-meta-web-pro-1","ff-meta-web-pro-2",Arial,"Helvetica Neue",sans-serif; 
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
     text-align: center;
-    color: black;
-    background-color: #465158;
+    color: #5A5A5B;
+    background-color: rgba(27, 27, 27, 1.0);
     padding: 0;
     margin: 0;
 }
 
 div.document {
     text-align: left;
-    background-color: #e8ecef;
+    background-color: #C5D2DD;
 }
 
 div.bodywrapper {
@@ -57,38 +59,41 @@ div.body {
 
 div.related {
     font-size: 1em;
-    background-color: #465158;
+    background-color: rgba(27, 27, 27, 1.0);
 }
 
 div.documentwrapper {
     float: left;
     width: 100%;
-    background-color: #e8ecef;
+    background-color: #C5D2DD;
 }
 
 
 /* HEADINGS --------------------------------------------------------------- */
 
 h1 {
+    font-family: 'Trebuchet MS', sans-serif;
     margin: 0;
     padding: 0.7em 0 0.3em 0;
     font-size: 1.5em;
     line-height: 1.15;
-    color: #000000;
+    color: #1f3744;
     clear: both;
 }
 
 h2 {
+    font-family: 'Trebuchet MS', sans-serif;
     margin: 2em 0 0.2em 0;
     font-size: 1.35em;
     padding: 0;
-    color: #465158;
+    color: #335C72;
 }
 
 h3 {
+    font-family: 'Trebuchet MS', sans-serif;
     margin: 1em 0 -0.3em 0;
     font-size: 1.2em;
-    color: #6c818f;
+    color: #638fa6;
 }
 
 div.body h1 a, div.body h2 a, div.body h3 a, div.body h4 a, div.body h5 a, div.body h6 a {
@@ -118,9 +123,9 @@ h5 a.anchor:hover, h6 a.anchor:hover {
 
 /* Normal links get a pseudo-underline */
 a {
-    color: #444444;
+    color: #335C72;
     text-decoration: none;
-    border-bottom: 1px solid #CCCCCC;
+    border-bottom: 1px solid #99AEB9;
 }
 
 /* Links in sidebar, TOC, index trees and tables have no underline */
@@ -145,12 +150,12 @@ div.toctree-wrapper a:hover,
 
 /* Footer links */
 div.footer a {
-    color: #86989b;
+    color: #C0D9D9;
     text-decoration: none;
     border: none;
 }
 div.footer a:hover {
-    color: #a6b8bb;
+    color: #261a0c;
     text-decoration: underline;
     border: none;
 }
@@ -165,7 +170,7 @@ div.body a.headerlink {
     border: none;
 }
 div.body a.headerlink:hover {
-    color: #c60f0f;
+    color: #00cccc;
     border: none;
 }
 
@@ -181,7 +186,7 @@ div.related ul li {
     padding: 0.65em 0;
     float: left;
     display: block;
-    color: #ffffff; /* For the >> separators */
+    color: #FFFFFF; /* For the >> separators */
     font-size: 0.8em;
 }
 
@@ -198,7 +203,7 @@ div.related ul li a {
     font-weight: bold;
     margin: 6px 0 6px 4px;
     line-height: 1.75em;
-    color: #ffffff;
+    color: #FFFFFF;
     text-shadow: 0 1px rgba(0, 0, 0, 0.5);
     padding: 0.4em 0.8em;
     border: none;
@@ -207,7 +212,7 @@ div.related ul li a {
 /* previous / next / modules / index links look more like buttons */
 div.related ul li.right a {
     margin: 0.375em 0;
-    background-color: #697983;
+    background-color: rgba(255, 255, 255, 0.25);
     text-shadow: 0 1px rgba(0, 0, 0, 0.5);
     border-radius: 3px;
     -webkit-border-radius: 3px;
@@ -215,7 +220,7 @@ div.related ul li.right a {
 }
 /* All navbar links light up as buttons when hovered */
 div.related ul li a:hover {
-    background-color: #8ca1af;
+    background-color: rgba(255, 255, 255, 0.5);
     color: #ffffff;
     text-decoration: none;
     border-radius: 3px;
@@ -246,7 +251,7 @@ div.sphinxsidebar {
     width: 14em;
     font-size: 1em;
     text-align: left;
-    background-color: #e8ecef;
+    background-color: #C5D2DD;
 }
 
 div.sphinxsidebar img {
@@ -270,7 +275,7 @@ div.sphinxsidebar p {
     margin-top: 0;
     padding-left: 0;
     line-height: 130%;
-    background-color: #e8ecef;
+    background-color: #C5D2DD;
 }
 
 /* No bullets for nested lists, but a little extra indentation */
@@ -307,7 +312,7 @@ div.sphinxsidebar p.topless:hover {
 #searchbox {
     margin-top: 2em;
     margin-bottom: 1em;
-    background: #dddddd;
+    background: #6588A5;
     padding: 0.5em;
     border-radius: 6px;
     -moz-border-radius: 6px;
@@ -342,7 +347,7 @@ input[type="submit"] {
     margin: 0 0 0 -1px; /* -1px prevents a double-border with textbox */
     height: 22px;
     color: #444444;
-    background-color: #e8ecef;
+    background-color: #C5D2DD;
     padding: 1px 4px;
     font-weight: bold;
     border-top-right-radius: 3px;
@@ -360,15 +365,15 @@ input[type="submit"]:hover {
 div.sphinxsidebar p.searchtip {
     clear: both;
     padding: 0.5em 0 0 0;
-    background: #dddddd;
-    color: #666666;
+    background: #6588A5;
+    color: #CCCCCC;
     font-size: 0.9em;
 }
 
 /* Sidebar links are unusual */
 div.sphinxsidebar li a,
 div.sphinxsidebar p a {
-    background: #e8ecef; /* In case links overlap main content */
+    background: #C5D2DD; /* In case links overlap main content */
     border-radius: 3px;
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
@@ -399,7 +404,7 @@ cite, code, tt {
 }
 
 tt {
-    background-color: #eeeeee;
+    background-color: rgba(0, 0, 0, 0.075);
     color: #444444;
 }
 
@@ -421,7 +426,7 @@ pre, #_fontwidthtest {
     line-height: 120%;
     padding: 0.5em;
     border: 1px solid #cccccc;
-    background-color: #eeeeee;
+    background-color: rgba(0, 0, 0, 0.075);
     border-radius: 6px;
     -moz-border-radius: 6px;
     -webkit-border-radius: 6px;
@@ -504,24 +509,24 @@ div.sidebar ul, div.sidebar ol {
 
 /* Admonitions and sidebars only */
 div.admonition, div.sidebar {
-    border: 1px solid #609060;
-    background-color: #e9ffe9;
+    border: 1px solid #1a004d;
+    background-color: #330099;
 }
 div.admonition p.admonition-title,
 div.sidebar p.sidebar-title {
-    background-color: #70a070;
-    border-bottom: 1px solid #609060;
+    background-color: #330099;
+    border-bottom: 1px solid #1a004d;
 }
 
 
 /* Warnings only */
 div.warning {
-    border: 1px solid #900000;
-    background-color: #ffe9e9;
+    border: 1px solid rgba(51, 13, 0, 1.0);
+    background-color: #0099cc;
 }
 div.warning p.admonition-title {
-    background-color: #b04040;
-    border-bottom: 1px solid #900000;
+    background-color: #0099cc;
+    border-bottom: 1px solid rgba(51, 13, 0, 1.0);
 }
 
 
@@ -547,9 +552,9 @@ div.versioninfo {
 }
 
 div.viewcode-block:target {
-    background-color: #f4debf;
-    border-top: 1px solid #ac9;
-    border-bottom: 1px solid #ac9;
+    background-color: #bfd5f4;
+    border-top: 1px solid #a299cc;
+    border-bottom: 1px solid #a299cc;
 }
 
 dl {
@@ -558,7 +563,7 @@ dl {
 
 /* Highlight target when you click an internal link */
 dt:target {
-    background: #ffe080;
+    background: #809fff;
 }
 /* Don't highlight whole divs */
 div.highlight {
@@ -566,12 +571,12 @@ div.highlight {
 }
 /* But do highlight spans (so search results can be highlighted) */
 span.highlight {
-    background: #ffe080;
+    background: #809fff;
 }
 
 div.footer {
-    background-color: #465158;
-    color: #eeeeee;
+    background-color: rgba(27, 27, 27, 1.0);
+    color: #FFFFFF;
     padding: 0 2em 2em 2em;
     clear: both;
     font-size: 0.8em;
@@ -600,7 +605,7 @@ p {
     }
 
     div.bodywrapper a.headerlink, #indices-and-tables h1 a {
-        color: #e6e6e6;
+        color: #95adc1;
         font-size: 80%;
         float: right;
         line-height: 1.8;
@@ -628,19 +633,19 @@ p {
 
     div.related ul li {
         clear: both;
-        color: #465158;
+        color: #3467a0;
         padding: 0.2em 0;
     }
 
     div.related ul li:last-child {
-        border-bottom: 1px dotted #8ca1af;
+        border-bottom: 1px dotted rgba(255, 255, 255, 0.5);
         padding-bottom: 0.4em;
         margin-bottom: 1em;
         width: 100%;
     }
 
     div.related ul li a {
-        color: #465158;
+        color: #3467a0;
         padding-right: 0;
     }
 
@@ -661,7 +666,7 @@ p {
     }
 
     div.related ul li.right a:hover {
-        background-color: #8ca1af;
+        background-color: rgba(255, 255, 255, 0.5);
     }
 
     div.body {
