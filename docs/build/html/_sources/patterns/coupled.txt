@@ -19,7 +19,7 @@ The script provides a simple workflow which submit a set of jobs(A) and jobs(B) 
     
 	    pilot_compute_service = PilotComputeService(COORDINATION_URL)
     
-	    pilot_compute_description = { "service_url": "sge://localhost",
+	    pilot_compute_description = { "service_url": "fork://localhost",
         	                          "number_of_processes": 1,
                 	                  "working_directory": os.getenv("HOME")+"/agent",
                         	          "walltime":10

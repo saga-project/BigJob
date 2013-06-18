@@ -75,7 +75,7 @@
 
     <span class="n">pilot_compute_service</span> <span class="o">=</span> <span class="n">PilotComputeService</span><span class="p">(</span><span class="n">COORDINATION_URL</span><span class="p">)</span>
 
-    <span class="n">pilot_compute_description</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&quot;service_url&quot;</span><span class="p">:</span> <span class="s">&quot;sge://localhost&quot;</span><span class="p">,</span>
+    <span class="n">pilot_compute_description</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&quot;service_url&quot;</span><span class="p">:</span> <span class="s">&quot;fork://localhost&quot;</span><span class="p">,</span>
                                   <span class="s">&quot;number_of_processes&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
                                   <span class="s">&quot;working_directory&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s">&quot;HOME&quot;</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;/agent&quot;</span><span class="p">,</span>
                                   <span class="s">&quot;walltime&quot;</span><span class="p">:</span><span class="mi">10</span>

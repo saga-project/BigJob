@@ -27,6 +27,7 @@ Contents
    usage/index.rst
    patterns/index.rst
    library/index.rst
+   tutorial/index.rst
 
 Indices and tables
 ==================
