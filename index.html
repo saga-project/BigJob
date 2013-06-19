@@ -92,7 +92,7 @@
                      <a href="./extend.html" >Extend</a>
                      </li-->
                     <li>
-                        Version 0.4.130
+                        Version 0.4.132
                     </li>
                 </ul>
             </div>
@@ -128,11 +128,11 @@
                         <br />
                         <h2>About</h2>
                         
-                        <p class="marketing-byline">It's a BigJob to make Job and Data Management Simple.</p>
+                        <p class="marketing-byline">It's a BigJob to Make Job and Data Management Simple.</p>
                         
                         <p>
                         BigJob is a flexible Pilot framework that takes the headache out of job and data management
-                        for clusters, grids, and clouds. BigJob is written in the python programming language,
+                        for clusters, grids, and clouds. BigJob is written in the Python programming language,
                         and as such, is easily deployable into user space. It allows user-level control of Pilots
                         and supports a wide range of application types. It is built on top of
                         <a href="http://saga-project.github.io/saga-python/">The Simple API for Grid Applications</a>,
@@ -169,7 +169,8 @@
                         <p class="marketing-byline">Production-grade science and engineering</p>
                         
                         <p>BigJob is used by scientists and engineers to solve real problems, such
-                        as protein-folding, traditional molecular dynamics umbrella sampling, </p>
+                        as protein-folding, traditional molecular dynamics umbrella sampling, 
+			replica exchange, and other data/compute intensive workloads.</p>
                         
                         <ul class="bigjob-usage">
                             <li>Parameter Sweeps</li>
@@ -189,9 +190,9 @@
                         <h2>Why Pilot-Jobs?</h2>
                         <p class="marketing-byline">Simple Setup, Thousands of Jobs, Less Worry</p>
                         
-                        <p>Production-grade distributed cyberinfrastructure almost always has a local resource manager installed, such as a batch queuing system. A distributed application often requires many jobs to produce useful output data; these jobs often have the same executable. A traditional way of submitting these jobs would be to submit an individual job for each executable. These jobs (often hundreds) sit in the batch queuing system and may not become active at the same time. Overall, time-to-completion can take many hours due to load and scheduling variations.</p>
+                        <p>Production-grade distributed cyberinfrastructure almost always has a local resource manager installed, such as a batch queuing system. A distributed application often requires many jobs to produce useful output data; these jobs often have the same executable. A traditional way of submitting these jobs would be to submit an individual job for each executable. These jobs (often hundreds) sit in the batch queuing system and may not become active at the same time. Load and scheduling variations may add unnecessary hours to a job's total time to completion due to inefficiencies in scheduling many individual jobs.</p> 
 
-                        <p>A Pilot-Job provides an alternative approach. It can be thought of as a container job for many sub-jobs. A Pilot-Job acquires the resources necessary to execute the sub-jobs (thus, it asks for all of the resources required to run the sub-jobs, rather than just one sub-job). If a system has a batch queue, the Pilot-Job is submitted to this queue. Once it becomes active, it can run the sub-jobs directly, instead of having to wait for each sub-job to queue. This eliminates the need to submit a different job for every executable, and significantly reduces the time-to-completion.</p>
+                        <p>A Pilot-Job provides an alternative approach. It can be thought of as a container job for many sub-jobs. A Pilot-Job acquires the resources necessary to execute the sub-jobs (thus, it asks for all of the resources required to run the sub-jobs, rather than just one sub-job). If a system has a batch queue, the Pilot-Job is submitted to this queue. Once it becomes active, it can run the sub-jobs directly, instead of having to wait for each sub-job to queue. This eliminates the need to submit a different job for every executable and significantly reduces the time-to-completion.</p>
                         <!--p>TODO: User showcase</p>
                          <p><a class="btn" href="#">Read more &raquo;</a></p-->
                         
@@ -211,7 +212,8 @@
                 and easy_install or pip. 
                 
                 
-                <pre class="prettyprint languague-bash">$ virtualenv $HOME/.bigjob/python
+                <pre class="prettyprint languague-bash">
+		    $ virtualenv $HOME/.bigjob/python
                     $ source $HOME/.bigjob/python/bin/activate
                     $ easy_install bigjob</pre>
                 
@@ -305,9 +307,9 @@
                     Waiting for compute units to complete
                     Terminate Pilot Jobs</pre>
                 
-                <p>Want to learn more? Check out are application-writing guide in the <a
+                <p>Want to learn more? Check out our application-writing guide in the <a
                     href="sphinxdoc/usage/appwriting.html">manual</a>! Or jump right in
-                and try our <a href="https://github.com/saga-project/BigJob/wiki">tutorial</a>!</p>
+                and try our <a href="http://saga-project.github.io/BigJob/sphinxdoc/tutorial/index.html">tutorial</a>!</p>
                 
                 <!--p class="marketing-byline">For even more sites built with Bootstrap, <a href="http://builtwithbootstrap.tumblr.com/" target="_blank">visit the unofficial Tumblr</a> or <a href="./getting-started.html#examples">browse the examples</a>.</p>
                  <div class="row-fluid">
