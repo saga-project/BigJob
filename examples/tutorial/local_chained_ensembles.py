@@ -18,10 +18,10 @@ if __name__ == "__main__":
                                   "walltime":10,
                                 }
 
-   pilot_compute_service.create_pilot(pilot_compute_description)
+    pilot_compute_service.create_pilot(pilot_compute_description)
 
-   compute_data_service = ComputeDataService()
-   compute_data_service.add_pilot_compute_service(pilot_compute_service)
+    compute_data_service = ComputeDataService()
+    compute_data_service.add_pilot_compute_service(pilot_compute_service)
 
     print ("Finished Pilot-Job setup. Submit compute units")
     # submit Set A compute units
@@ -37,7 +37,7 @@ if __name__ == "__main__":
         compute_unit = compute_data_service.submit_compute_unit(compute_unit_description)
         all_A_cus.append(compute_unit) # Store all the compute units.
 
-    # Chaining tasks i.e submit a compute unit, when compute unit from A is successfully executed.
+     # Chaining tasks i.e submit a compute unit, when compute unit from A is successfully executed.
 
     while 1:
         for i in all_A_cus:
@@ -61,3 +61,4 @@ if __name__ == "__main__":
     print ("Terminate Pilot Jobs")
     compute_data_service.cancel()
     pilot_compute_service.cancel()
+
