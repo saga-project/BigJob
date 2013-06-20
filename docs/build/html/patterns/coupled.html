@@ -102,8 +102,8 @@
         <span class="n">compute_data_service</span><span class="o">.</span><span class="n">submit_compute_unit</span><span class="p">(</span><span class="n">compute_unit_description</span><span class="p">)</span>
 
 
-<span class="c"># submit a set of CUs, call it B</span>
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NUMBER_JOBS</span><span class="p">):</span>
+    <span class="c"># submit a set of CUs, call it B</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NUMBER_JOBS</span><span class="p">):</span>
         <span class="n">compute_unit_description</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&quot;executable&quot;</span><span class="p">:</span> <span class="s">&quot;/bin/date&quot;</span><span class="p">,</span>
                                      <span class="s">&quot;arguments&quot;</span><span class="p">:</span> <span class="p">[],</span>
                                      <span class="s">&quot;environment&quot;</span><span class="p">:</span> <span class="p">{},</span>
@@ -114,11 +114,11 @@
                                    <span class="p">}</span>
         <span class="n">compute_data_service</span><span class="o">.</span><span class="n">submit_compute_unit</span><span class="p">(</span><span class="n">compute_unit_description</span><span class="p">)</span>
 
-<span class="k">print</span> <span class="p">(</span><span class="s">&quot;Wait for CUs of task set A &amp; B to complete&quot;</span><span class="p">)</span>
-<span class="n">compute_data_service</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+   <span class="k">print</span> <span class="p">(</span><span class="s">&quot;Wait for CUs of task set A &amp; B to complete&quot;</span><span class="p">)</span>
+   <span class="n">compute_data_service</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
 
-<span class="c"># submit a set of CUs, call it C</span>
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NUMBER_JOBS</span><span class="p">):</span>
+   <span class="c"># submit a set of CUs, call it C</span>
+   <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NUMBER_JOBS</span><span class="p">):</span>
         <span class="n">compute_unit_description</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&quot;executable&quot;</span><span class="p">:</span> <span class="s">&quot;/bin/echo&quot;</span><span class="p">,</span>
                                      <span class="s">&quot;arguments&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s">&quot;Hello&quot;</span><span class="p">,</span><span class="s">&quot;$ENV1&quot;</span><span class="p">,</span><span class="s">&quot;$ENV2&quot;</span><span class="p">],</span>
                                      <span class="s">&quot;environment&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;ENV1=env_arg1&#39;</span><span class="p">,</span><span class="s">&#39;ENV2=env_arg2&#39;</span><span class="p">],</span>
@@ -129,12 +129,12 @@
                                     <span class="p">}</span>
         <span class="n">compute_data_service</span><span class="o">.</span><span class="n">submit_compute_unit</span><span class="p">(</span><span class="n">compute_unit_description</span><span class="p">)</span>
 
-<span class="k">print</span> <span class="p">(</span><span class="s">&quot;Wait for CUs of task set C to complete&quot;</span><span class="p">)</span>
-<span class="n">compute_data_service</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+   <span class="k">print</span> <span class="p">(</span><span class="s">&quot;Wait for CUs of task set C to complete&quot;</span><span class="p">)</span>
+   <span class="n">compute_data_service</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
 
-<span class="k">print</span> <span class="p">(</span><span class="s">&quot;Terminate Pilot Jobs&quot;</span><span class="p">)</span>
-<span class="n">compute_data_service</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
-<span class="n">pilot_compute_service</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
+   <span class="k">print</span> <span class="p">(</span><span class="s">&quot;Terminate Pilot Jobs&quot;</span><span class="p">)</span>
+   <span class="n">compute_data_service</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
+   <span class="n">pilot_compute_service</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
