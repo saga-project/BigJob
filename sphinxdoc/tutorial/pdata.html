@@ -8,7 +8,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
 
-    <title>4. Remote Pilot Data Example &mdash; BigJob 1.0 User Manual</title>
+    <title>5. Remote Pilot Data Example &mdash; BigJob 1.0 User Manual</title>
 
 <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>
 
@@ -33,7 +33,7 @@
     <script type="text/javascript" src="../../_static/searchtools.js"></script>
     <link rel="top" title="BigJob 1.0 User Manual" href="../index.html" />
     <link rel="up" title="6. Tutorial" href="index.html" />
-    <link rel="prev" title="3. XSEDE Simple Ensemble Example" href="exsede.html" /> 
+    <link rel="prev" title="4. XSEDE Simple Ensemble Example" href="exsede.html" /> 
   </head>
   <body>
     <div class="related">
@@ -43,7 +43,7 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="exsede.html" title="3. XSEDE Simple Ensemble Example"
+          <a href="exsede.html" title="4. XSEDE Simple Ensemble Example"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">BigJob 1.0 User Manual</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">6. Tutorial</a> &raquo;</li> 
@@ -56,7 +56,7 @@
           <div class="body">
             
   <div class="section" id="remote-pilot-data-example">
-<h1>4. Remote Pilot Data Example<a class="headerlink" href="#remote-pilot-data-example" title="Permalink to this headline">¶</a></h1>
+<h1>5. Remote Pilot Data Example<a class="headerlink" href="#remote-pilot-data-example" title="Permalink to this headline">¶</a></h1>
 <p>This example illustrates how to move the files (contained in a DU) associated with your compute workload from one machine to another machine using the concept of &#8220;Pilot Data.&#8221; This is achieved by creating two Pilot Data entities and moving the output DU from the local Pilot Data entity to the remote Pilot Data entity.</p>
 <p>As an example, we are running a computational workload on Stampede, an XSEDE machine (see <tt class="code docutils literal"><span class="pre">pilot_compute_description</span></tt>). We want our input Data Unit to be available on Stampede, because our Compute Unit (which requires the file in the input Data Unit) runs on Stampede. The CU needs the input DU to be transferred to the compute node where the computation will be done. However, we want our output data to be available on india, a FutureGrid machine. Note that we have set up our ssh keys to allow for password-less login to <tt class="code docutils literal"><span class="pre">india.futuregrid.org</span></tt> from <tt class="code docutils literal"><span class="pre">stampede.tacc.utexas.edu</span></tt>.</p>
 <p>Be sure to change the <tt class="code docutils literal"><span class="pre">project</span></tt> field to your allocation on the machine you are running on. You will also need to change the <tt class="code docutils literal"><span class="pre">service_url</span></tt> to your home directory on india. You may also wish to create a folder to contain the DUs such as &#8220;pilotdata&#8221;. This is not a necessary step, but is a suggested step. Your output on india.futuregrid.org will be available in the directory you specify, in this case, <tt class="code docutils literal"><span class="pre">/N/u/&lt;your</span> <span class="pre">username&gt;/pilotdata</span></tt> in subdirectories that start with <tt class="code docutils literal"><span class="pre">DU-&lt;uid&gt;</span></tt> where uid is a unique identifier to your output data.</p>
@@ -163,7 +163,7 @@
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
   <p class="topless"><a href="exsede.html"
-                        title="previous chapter">3. XSEDE Simple Ensemble Example</a></p>
+                        title="previous chapter">4. XSEDE Simple Ensemble Example</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/tutorial/pdata.txt"
@@ -193,7 +193,7 @@
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="exsede.html" title="3. XSEDE Simple Ensemble Example"
+          <a href="exsede.html" title="4. XSEDE Simple Ensemble Example"
              >previous</a> |</li>
         <li><a href="../index.html">BigJob 1.0 User Manual</a> &raquo;</li>
           <li><a href="index.html" >6. Tutorial</a> &raquo;</li> 

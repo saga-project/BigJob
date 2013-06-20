@@ -27,5 +27,6 @@ This tutorial will walk you through the installation as well as the most importa
 
    part1
    part2
+   mbrot
    exsede
    pdata

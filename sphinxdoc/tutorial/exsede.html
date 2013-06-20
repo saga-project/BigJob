@@ -8,7 +8,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
 
-    <title>3. XSEDE Simple Ensemble Example &mdash; BigJob 1.0 User Manual</title>
+    <title>4. XSEDE Simple Ensemble Example &mdash; BigJob 1.0 User Manual</title>
 
 <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>
 
@@ -33,8 +33,8 @@
     <script type="text/javascript" src="../../_static/searchtools.js"></script>
     <link rel="top" title="BigJob 1.0 User Manual" href="../index.html" />
     <link rel="up" title="6. Tutorial" href="index.html" />
-    <link rel="next" title="4. Remote Pilot Data Example" href="pdata.html" />
-    <link rel="prev" title="2. Run BigJob Locally" href="part2.html" /> 
+    <link rel="next" title="5. Remote Pilot Data Example" href="pdata.html" />
+    <link rel="prev" title="3. Mandelbrot using BigJob" href="mbrot.html" /> 
   </head>
   <body>
     <div class="related">
@@ -44,10 +44,10 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="pdata.html" title="4. Remote Pilot Data Example"
+          <a href="pdata.html" title="5. Remote Pilot Data Example"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="part2.html" title="2. Run BigJob Locally"
+          <a href="mbrot.html" title="3. Mandelbrot using BigJob"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">BigJob 1.0 User Manual</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">6. Tutorial</a> &raquo;</li> 
@@ -60,11 +60,11 @@
           <div class="body">
             
   <div class="section" id="xsede-simple-ensemble-example">
-<h1>3. XSEDE Simple Ensemble Example<a class="headerlink" href="#xsede-simple-ensemble-example" title="Permalink to this headline">¶</a></h1>
+<h1>4. XSEDE Simple Ensemble Example<a class="headerlink" href="#xsede-simple-ensemble-example" title="Permalink to this headline">¶</a></h1>
 <p><strong>Note:</strong> If you do not have an <a class="reference external" href="http://www.xsede.org/">XSEDE account</a>, please skip this tutorial.</p>
 <p>One of the features of BigJob is the ability for application-level programmability by users. Many of the parameters in each script are customizable and configurable. There are several parameters that must be added to the PilotComputeDescription in order to run on XSEDE.</p>
 <div class="section" id="service-url">
-<h2>3.1. <tt class="code docutils literal"><span class="pre">service_url</span></tt><a class="headerlink" href="#service-url" title="Permalink to this headline">¶</a></h2>
+<h2>4.1. <tt class="code docutils literal"><span class="pre">service_url</span></tt><a class="headerlink" href="#service-url" title="Permalink to this headline">¶</a></h2>
 <p>The service URL communicates what type of queueing system or middleware you want to use and where it is. The following table shows the machine type and the adaptor to use for that machine.</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -117,19 +117,19 @@
 </table>
 </div>
 <div class="section" id="project">
-<h2>3.2. <tt class="code docutils literal"><span class="pre">project</span></tt><a class="headerlink" href="#project" title="Permalink to this headline">¶</a></h2>
+<h2>4.2. <tt class="code docutils literal"><span class="pre">project</span></tt><a class="headerlink" href="#project" title="Permalink to this headline">¶</a></h2>
 <p>When running on XSEDE, the project parameter must be changed to your project&#8217;s allocation number.</p>
 </div>
 <div class="section" id="number-of-processes">
-<h2>3.3. <tt class="code docutils literal"><span class="pre">number_of_processes</span></tt><a class="headerlink" href="#number-of-processes" title="Permalink to this headline">¶</a></h2>
+<h2>4.3. <tt class="code docutils literal"><span class="pre">number_of_processes</span></tt><a class="headerlink" href="#number-of-processes" title="Permalink to this headline">¶</a></h2>
 <p>This refers to the number of cores used. If your machine does not have 12 cores per node, you will have to change this parameter.</p>
 </div>
 <div class="section" id="queue">
-<h2>3.4. <tt class="code docutils literal"><span class="pre">queue</span></tt><a class="headerlink" href="#queue" title="Permalink to this headline">¶</a></h2>
+<h2>4.4. <tt class="code docutils literal"><span class="pre">queue</span></tt><a class="headerlink" href="#queue" title="Permalink to this headline">¶</a></h2>
 <p>This refers to the name of the queue on the submission machine. For example, two queue names on Lonestar are &#8216;normal&#8217; and &#8216;development&#8217;. Please refer to the machine-specific documentation to find out the names of the queues on the machines.</p>
 </div>
 <div class="section" id="example-pilotcomputedescription">
-<h2>3.5. Example PilotComputeDescription<a class="headerlink" href="#example-pilotcomputedescription" title="Permalink to this headline">¶</a></h2>
+<h2>4.5. Example PilotComputeDescription<a class="headerlink" href="#example-pilotcomputedescription" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">pilot_compute_description</span> <span class="o">=</span> <span class="p">{</span>
                  <span class="s">&quot;service_url&quot;</span><span class="p">:</span> <span class="s">&#39;slurm+ssh://stampede.tacc.utexas.edu&#39;</span><span class="p">,</span>
                  <span class="s">&quot;number_of_processes&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
@@ -142,7 +142,7 @@
 </div>
 </div>
 <div class="section" id="simple-ensembles-stampede-example">
-<h2>3.6. Simple Ensembles Stampede Example<a class="headerlink" href="#simple-ensembles-stampede-example" title="Permalink to this headline">¶</a></h2>
+<h2>4.6. Simple Ensembles Stampede Example<a class="headerlink" href="#simple-ensembles-stampede-example" title="Permalink to this headline">¶</a></h2>
 <p>Now that we have modified the Pilot Compute Description, we can put this together with our simple ensemble pattern to build a script that executes on Stampede. Note that the PCD is the only thing that changes in this example.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">time</span>
@@ -205,23 +205,23 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">3. XSEDE Simple Ensemble Example</a><ul>
-<li><a class="reference internal" href="#service-url">3.1. <tt class="code docutils literal"><span class="pre">service_url</span></tt></a></li>
-<li><a class="reference internal" href="#project">3.2. <tt class="code docutils literal"><span class="pre">project</span></tt></a></li>
-<li><a class="reference internal" href="#number-of-processes">3.3. <tt class="code docutils literal"><span class="pre">number_of_processes</span></tt></a></li>
-<li><a class="reference internal" href="#queue">3.4. <tt class="code docutils literal"><span class="pre">queue</span></tt></a></li>
-<li><a class="reference internal" href="#example-pilotcomputedescription">3.5. Example PilotComputeDescription</a></li>
-<li><a class="reference internal" href="#simple-ensembles-stampede-example">3.6. Simple Ensembles Stampede Example</a></li>
+<li><a class="reference internal" href="#">4. XSEDE Simple Ensemble Example</a><ul>
+<li><a class="reference internal" href="#service-url">4.1. <tt class="code docutils literal"><span class="pre">service_url</span></tt></a></li>
+<li><a class="reference internal" href="#project">4.2. <tt class="code docutils literal"><span class="pre">project</span></tt></a></li>
+<li><a class="reference internal" href="#number-of-processes">4.3. <tt class="code docutils literal"><span class="pre">number_of_processes</span></tt></a></li>
+<li><a class="reference internal" href="#queue">4.4. <tt class="code docutils literal"><span class="pre">queue</span></tt></a></li>
+<li><a class="reference internal" href="#example-pilotcomputedescription">4.5. Example PilotComputeDescription</a></li>
+<li><a class="reference internal" href="#simple-ensembles-stampede-example">4.6. Simple Ensembles Stampede Example</a></li>
 </ul>
 </li>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="part2.html"
-                        title="previous chapter">2. Run BigJob Locally</a></p>
+  <p class="topless"><a href="mbrot.html"
+                        title="previous chapter">3. Mandelbrot using BigJob</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="pdata.html"
-                        title="next chapter">4. Remote Pilot Data Example</a></p>
+                        title="next chapter">5. Remote Pilot Data Example</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/tutorial/exsede.txt"
@@ -251,10 +251,10 @@
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="pdata.html" title="4. Remote Pilot Data Example"
+          <a href="pdata.html" title="5. Remote Pilot Data Example"
              >next</a> |</li>
         <li class="right" >
-          <a href="part2.html" title="2. Run BigJob Locally"
+          <a href="mbrot.html" title="3. Mandelbrot using BigJob"
              >previous</a> |</li>
         <li><a href="../index.html">BigJob 1.0 User Manual</a> &raquo;</li>
           <li><a href="index.html" >6. Tutorial</a> &raquo;</li> 
