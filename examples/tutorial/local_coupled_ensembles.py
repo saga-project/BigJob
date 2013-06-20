@@ -38,8 +38,8 @@ if __name__ == "__main__":
         compute_data_service.submit_compute_unit(compute_unit_description)
 
 
-# submit a set of CUs, call it B
-for i in range(NUMBER_JOBS):
+    # submit a set of CUs, call it B
+    for i in range(NUMBER_JOBS):
         compute_unit_description = { "executable": "/bin/date",
                                      "arguments": [],
                                      "environment": {},
@@ -50,11 +50,11 @@ for i in range(NUMBER_JOBS):
                                    }
         compute_data_service.submit_compute_unit(compute_unit_description)
 
-print ("Wait for CUs of task set A & B to complete")
-compute_data_service.wait()
+   print ("Wait for CUs of task set A & B to complete")
+   compute_data_service.wait()
 
-# submit a set of CUs, call it C
-for i in range(NUMBER_JOBS):
+   # submit a set of CUs, call it C
+   for i in range(NUMBER_JOBS):
         compute_unit_description = { "executable": "/bin/echo",
                                      "arguments": ["Hello","$ENV1","$ENV2"],
                                      "environment": ['ENV1=env_arg1','ENV2=env_arg2'],
@@ -65,9 +65,9 @@ for i in range(NUMBER_JOBS):
                                     }
         compute_data_service.submit_compute_unit(compute_unit_description)
 
-print ("Wait for CUs of task set C to complete")
-compute_data_service.wait()
+   print ("Wait for CUs of task set C to complete")
+   compute_data_service.wait()
 
-print ("Terminate Pilot Jobs")
-compute_data_service.cancel()
-pilot_compute_service.cancel()
+   print ("Terminate Pilot Jobs")
+   compute_data_service.cancel()
+   pilot_compute_service.cancel()
