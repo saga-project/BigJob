@@ -282,7 +282,7 @@ if __name__ == "__main__":
                                   "walltime":10
                                 }
 
-    pilot_compute_service.create_pilot(pilot_compute_description=pilot_compute_description)
+    pilot_compute_service.create_pilot(pilot_compute_description)
 
     compute_data_service = ComputeDataService()
     compute_data_service.add_pilot_compute_service(pilot_compute_service)
@@ -293,8 +293,8 @@ if __name__ == "__main__":
     for i in range(NUMBER_JOBS):
         compute_unit_description = {
                 "executable": "/bin/echo",
-                "arguments": ["Hello","$ENV1","$ENV2"],
-                "environment": ['ENV1=env_arg1','ENV2=env_arg2'],
+                "arguments": ["Hello","$ENV1","I am CU number "+str(i)],
+                "environment": ['ENV1=World'],
                 "number_of_processes": 1,
                 "spmd_variation":"single",
                 "output": "stdout.txt",
