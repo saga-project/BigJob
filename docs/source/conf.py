@@ -44,7 +44,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'BigJob'
-copyright = u'2013, The BigJob Project'
+copyright = u'2013, The SAGA Project'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -108,7 +108,7 @@ html_theme_path = ["_themes",]
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
-#html_title = None
+html_title =  'BigJob 1.0 User Manual'
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
 #html_short_title = None
@@ -189,7 +189,7 @@ latex_elements = {
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
   ('index', 'BigJob.tex', u'BigJob Manual',
-   u'The BigJob Project', 'manual'),
+   u'The SAGA Project', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -219,7 +219,7 @@ latex_show_pagerefs = True
 # (source start file, name, description, authors, manual section).
 man_pages = [
     ('index', 'BigJob', u'BigJob User Manual',
-     [u'The BigJob Project'], 1)
+     [u'The SAGA Project'], 1)
 ]
 
 # If true, show URL addresses after external links.
