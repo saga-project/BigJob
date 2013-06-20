@@ -61,16 +61,22 @@
             
   <div class="section" id="setting-up-a-redis-server">
 <h1>2.2. Setting Up a Redis Server<a class="headerlink" href="#setting-up-a-redis-server" title="Permalink to this headline">¶</a></h1>
-<p>BigJob uses a Redis server for coordination and task management. Redis is the most stable and fastest backend (requires Python &gt;2.5) and the recommended way of using BigJob.</p>
-<p>Redis can easily be run in user space. It can be downloaded at: <a class="reference external" href="http://redis.io/download">http://redis.io/download</a> (just ~500 KB). Once you have downloaded it, start a Redis server on the machine of your choice as follows:</p>
-<div class="highlight-python"><pre>$ redis-server
+<p>BigJob uses a Redis server for coordination and task management. Redis is the most stable and fastest backend (requires Python &gt;2.5) and the recommended way of using BigJob. BigJob will <strong>not</strong> work without a coordination backend.</p>
+<p>Redis can easily be run in user space. For additional information about redis, please visit the website, <a href="#id1"><span class="problematic" id="id2">`redis.io&lt;http://www.redis.io&gt;`_</span></a>. To install your own redis server, please take the following steps:</p>
+<div class="highlight-python"><pre>wget http://download.redis.io/redis-stable.tar.gz
+tar xvzf redis-stable.tar.gz
+cd redis-stable
+make</pre>
+</div>
+<p>Once you have downloaded and installed it, start a Redis server on the machine of your choice as follows:</p>
+<div class="highlight-python"><pre>$ cd redis-stable
+$ ./src/redis-server
 [489] 13 Sep 10:11:28 # Warning: no config file specified, using the default config. In order to specify a config file use 'redis-server /path/to/redis.conf'
 [489] 13 Sep 10:11:28 * Server started, Redis version 2.2.12
 [489] 13 Sep 10:11:28 * The server is now ready to accept connections on port 6379
 [489] 13 Sep 10:11:28 - 0 clients connected (0 slaves), 922160 bytes in use</pre>
 </div>
 <p>You can install redis on a persistent server and use this server as your dedicated coordination server.</p>
-<p><strong>Coming Soon:</strong> XSEDE-Specific Redis server.</p>
 </div>
 
 

@@ -27,6 +27,5 @@ This tutorial will walk you through the installation as well as the most importa
 
    part1
    part2
-   part3
-   part4
-   part5
+   exsede
+   pdata
