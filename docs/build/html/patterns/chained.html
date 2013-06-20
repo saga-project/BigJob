@@ -73,7 +73,7 @@
 
 <span class="c">### This is the number of jobs you want to run</span>
 <span class="n">NUMBER_JOBS</span><span class="o">=</span><span class="mi">4</span>
-<span class="n">COORDINATION_URL</span> <span class="o">=</span> <span class="s">&quot;redis://localhost&quot;</span>
+<span class="n">COORDINATION_URL</span> <span class="o">=</span> <span class="s">&quot;redis://localhost:6379&quot;</span>
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
 
@@ -85,7 +85,7 @@
                                   <span class="s">&quot;walltime&quot;</span><span class="p">:</span><span class="mi">10</span><span class="p">,</span>
                                 <span class="p">}</span>
 
-   <span class="n">pilot_compute_service</span><span class="o">.</span><span class="n">create_pilot</span><span class="p">(</span><span class="n">pilot_compute_description</span><span class="o">=</span><span class="n">pilot_compute_description</span><span class="p">)</span>
+   <span class="n">pilot_compute_service</span><span class="o">.</span><span class="n">create_pilot</span><span class="p">(</span><span class="n">pilot_compute_description</span><span class="p">)</span>
 
    <span class="n">compute_data_service</span> <span class="o">=</span> <span class="n">ComputeDataService</span><span class="p">()</span>
    <span class="n">compute_data_service</span><span class="o">.</span><span class="n">add_pilot_compute_service</span><span class="p">(</span><span class="n">pilot_compute_service</span><span class="p">)</span>
