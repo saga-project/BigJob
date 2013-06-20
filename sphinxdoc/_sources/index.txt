@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 ##############################
-BigJob |version| Documentation
+BigJob |version| User Manual 
 ##############################
 
 BigJob is a light-weight Python package that provides a Pilot-based Job and Data Management system. BigJob aims to be as flexible and extensible as possible - it installs where you want it (requiring no root access to the target machine). Unlike many other Pilot-Job systems, BigJob natively supports MPI jobs and, because of its integration with saga-python_, works on a variety of backend systems (such as SGE, PBS, SLURM, etc.). BigJob has been shown to work on grids, clouds, and clusters, as well as locally on your personal computer.
