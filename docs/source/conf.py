@@ -44,7 +44,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'BigJob'
-copyright = u'2012, The BigJob Project'
+copyright = u'2013, The BigJob Project'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -218,7 +218,7 @@ latex_show_pagerefs = True
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'BigJob', u'BigJob Documentation',
+    ('index', 'BigJob', u'BigJob User Manual',
      [u'The BigJob Project'], 1)
 ]
 
