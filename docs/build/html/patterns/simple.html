@@ -71,7 +71,7 @@
 
 <span class="c">### This is the number of jobs you want to run</span>
 <span class="n">NUMBER_JOBS</span><span class="o">=</span><span class="mi">4</span>
-<span class="n">COORDINATION_URL</span> <span class="o">=</span> <span class="s">&quot;redis://localhost&quot;</span>
+<span class="n">COORDINATION_URL</span> <span class="o">=</span> <span class="s">&quot;redis://localhost:6379&quot;</span>
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
 
@@ -94,8 +94,8 @@
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NUMBER_JOBS</span><span class="p">):</span>
         <span class="n">compute_unit_description</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="s">&quot;executable&quot;</span><span class="p">:</span> <span class="s">&quot;/bin/echo&quot;</span><span class="p">,</span>
-                <span class="s">&quot;arguments&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s">&quot;Hello&quot;</span><span class="p">,</span><span class="s">&quot;$ENV1&quot;</span><span class="p">,</span><span class="s">&quot;$ENV2&quot;</span><span class="p">],</span>
-                <span class="s">&quot;environment&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;ENV1=env_arg1&#39;</span><span class="p">,</span><span class="s">&#39;ENV2=env_arg2&#39;</span><span class="p">],</span>
+                <span class="s">&quot;arguments&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s">&quot;Hello&quot;</span><span class="p">,</span><span class="s">&quot;$ENV1&quot;</span><span class="p">,</span><span class="s">&quot;I am CU number &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span>
+                <span class="s">&quot;environment&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;ENV1=World&#39;</span><span class="p">],</span>
                 <span class="s">&quot;number_of_processes&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
                 <span class="s">&quot;spmd_variation&quot;</span><span class="p">:</span><span class="s">&quot;single&quot;</span><span class="p">,</span>
                 <span class="s">&quot;output&quot;</span><span class="p">:</span> <span class="s">&quot;stdout.txt&quot;</span><span class="p">,</span>
@@ -164,7 +164,7 @@
       </ul>
     </div>
 <div class="footer">
-    &copy; Copyright 2012, The BigJob Project.
+    &copy; Copyright 2013, The BigJob Project.
   Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
   <br />Theme based on <a href="http://readthedocs.org/">Read The Docs</a>
 
