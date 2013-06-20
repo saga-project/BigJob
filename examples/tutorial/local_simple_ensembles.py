@@ -28,7 +28,7 @@ if __name__ == "__main__":
     for i in range(NUMBER_JOBS):
         compute_unit_description = {
                 "executable": "/bin/echo",
-                "arguments": ["Hello","$ENV1","I am CU number "+str(i)]
+                "arguments": ["Hello","$ENV1","I am CU number "+str(i)],
                 "environment": ['ENV1=World'],
                 "number_of_processes": 1,
                 "spmd_variation":"single",
