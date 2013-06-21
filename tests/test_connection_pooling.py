@@ -16,7 +16,7 @@ HOST     = "ssh://localhost"
 ##
 #########################################################################
 
-N     = 20
+N     = 1
 pjs   = []
 start = time.time()
 total = 0.0
@@ -28,7 +28,7 @@ for i in range(0, N):
     pilot_description = pilot.PilotComputeDescription()
     pilot_description.service_url = HOST
     pilot_description.number_of_processes = 1
-    pilot_description.working_directory = os.getcwd()
+    pilot_description.working_directory = "/home/merzky/.bigjob/"
 
     pilot_service = pilot.PilotComputeService(COORD)
 

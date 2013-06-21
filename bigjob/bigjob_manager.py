@@ -365,8 +365,26 @@ class bigjob(api.base.bigjob):
             jd.spmd_variation = "single"
             if pilot_compute_description!=None and pilot_compute_description.has_key("spmd_variation"):
                 jd.spmd_variation=pilot_compute_description["spmd_variation"]
-            jd.arguments = ["python", "-c", bootstrap_script]
-            jd.executable = "/usr/bin/env"           
+            command = """ "virtualenv /home/merzky/.bigjob/python; 
+                           .          /home/merzky/.bigjob/python/bin/activate;
+                           easy_install saga-python; 
+                           easy_install python-hostlist; 
+                           easy_install bigjob; 
+                           python -c '
+import bigjob.bigjob_agent
+args = [\\"bigjob_agent.py\\", \\"%s\\", \\"%s\\", \\"%s\\"]
+print \\"Starting BigJob Agents with following args: \\" + str(args)
+bigjob_agent = bigjob.bigjob_agent.bigjob_agent (args)
+              '
+             "
+            """ % (self.coordination.get_address(), 
+                   self.pilot_url, # Queue 1 used by this BJ object 
+                   external_queue) # Queue 2 used by Pilot Compute Service 
+                                   # or another external scheduler
+
+            print command
+            jd.arguments  = ['-c', command]
+            jd.executable = "/bin/sh"
       
         logger.debug("Working directory: " + jd.working_directory + " Job Description: " + str(jd))
         
@@ -379,6 +397,7 @@ class bigjob(api.base.bigjob):
         self.job = self.js.create_job(jd)
         logger.debug("Trying to submit pilot job to: " + str(lrms_saga_url))
         self.job.run()
+        print "running now"
 
         if self.job.state == saga.job.FAILED:
             logger.debug("SUBMISSION FAILED. Exiting... ")
@@ -386,6 +405,9 @@ class bigjob(api.base.bigjob):
         else:
             logger.debug("Submission succeeded. Job ID: %s " % self.job.id)
 
+        print self.job.id
+        print self.pilot_url
+        sys.exit (0)
         return self.pilot_url
 
      
