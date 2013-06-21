@@ -365,8 +365,8 @@ class bigjob(api.base.bigjob):
             jd.spmd_variation = "single"
             if pilot_compute_description!=None and pilot_compute_description.has_key("spmd_variation"):
                 jd.spmd_variation=pilot_compute_description["spmd_variation"]
-            command = """ "virtualenv /home/merzky/.bigjob/python; 
-                           .          /home/merzky/.bigjob/python/bin/activate;
+            command = """ "virtualenv $HOME/.bigjob/python; 
+                           .          $HOME/.bigjob/python/bin/activate;
                            easy_install saga-python; 
                            easy_install python-hostlist; 
                            easy_install bigjob; 
