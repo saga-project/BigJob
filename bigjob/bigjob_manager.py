@@ -1186,72 +1186,111 @@ class ConnectionPool (object) :
     """ This is a singleton connection pooling class -- it maintains a reference
     counted registry of existing connections."""
 
+    import threading
+
+    _lock        = threading.RLock ()
     _instance    = None
     _initialized = False
 
     # --------------------------------------------------------------------------
     #
     def __new__ (cls, *args, **kwargs) :
+        """
+        This is the singleton allocator -- test if the singleton exists, and
+        create if not.
+        """
 
-        if  not cls._instance:
-            cls._instance = super (ConnectionPool, cls).__new__(cls, *args, **kwargs)
+        with cls._lock :
 
-        return cls._instance
+            if  not cls._instance:
+                cls._instance = super (ConnectionPool, cls).__new__(cls, *args, **kwargs)
+
+            return cls._instance
 
 
     # --------------------------------------------------------------------------
     #
     def __init__ (self) :
+        """
+        Make sure the connection pool dict is initialized, exactly once.
+        """
 
-        if not self._initialized :
-            self._pool        = {}
-            self._initialized = True
+        with self._lock :
 
+            if not self._initialized :
+                self._pool        = {}
+                self._initialized = True
 
-    # --------------------------------------------------------------------------
-    #
-    def get (self, n) :
-
-        name = str(n)
-
-        if  not name in self._pool :
-            return None
-
-        else :
-            self._pool [name]['cnt'] += 1
-            return self._pool [name]['val']
 
     # --------------------------------------------------------------------------
     #
-    def add (self, n, val) :
+    def get (self, name) :
+        """
+        For a given endpoint name, attempt to retrieve an existing connection.
+        If that connection exists, increase the reference counter, as there is
+        now one more user for that connection.
+        Returns None if that connection does not exist.  
+        """
 
-        name = str(n)
+        with self._lock :
 
-        if  name in self._pool :
-            return False
+            name = str(name)
 
-        else :
-            self._pool [name]        = {}
-            self._pool [name]['cnt'] = 1
-            self._pool [name]['val'] = val
-            return True
+            if  not name in self._pool :
+                return None
+
+            else :
+                self._pool [name]['cnt'] += 1
+                return self._pool [name]['val']
+
+    # --------------------------------------------------------------------------
+    #
+    def add (self, name, val) :
+        """
+        For a given endpoint name, register a new connection.  Initialize the
+        ref counter to 1 (one user of that connection, which is the one
+        registering it).  
+        Returns False if that connection already exist.
+        """
+
+        with self._lock :
+
+            name = str(name)
+
+            if  name in self._pool :
+                return False
+
+            else :
+                self._pool [name]        = {}
+                self._pool [name]['cnt'] = 1
+                self._pool [name]['val'] = val
+                return True
 
     # --------------------------------------------------------------------------
     #
     def del_value (self, val) :
+        """
+        For a given connections instance, decrease the refcounter as the caller
+        stops using that connection.  once the ref counter is '0', remove all
+        traces of the connection.  That should get the actuall connection object
+        eligable for Python's garbage collection.
+        Returns False if the given connection is not registered.
+        """
 
-        for name in self._pool.keys () :
+        with self._lock :
 
-            if  val == self._pool [name]['val'] :
+            for name in self._pool.keys () :
 
-                self._pool [name]['cnt'] -= 1
+                if  val == self._pool [name]['val'] :
 
-                if  self._pool [name]['cnt'] == 0 :
-                    self._pool [name]['val'] = None
-                    self._pool.pop (name, None)
+                    self._pool [name]['cnt'] -= 1
 
-                return True
+                    if  self._pool [name]['cnt'] == 0 :
+                        self._pool [name]['val'] = None
+                        self._pool.pop (name, None)
 
-        return False
+                    return True
+
+            return False
 
 
