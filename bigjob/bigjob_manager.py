@@ -23,11 +23,13 @@ import pdb
 # the one and only saga
 import saga
 from saga.job import Description
-from saga import Url as SAGAUrl
+from saga     import Url         as SAGAUrl
 from saga.job import Description as SAGAJobDescription
-from saga.job import Service as SAGAJobService
-from saga import Session as SAGASession
-from saga import Context as SAGAContext
+from saga.job import Service     as SAGAJobService
+from saga     import Session     as SAGASession
+from saga     import Context     as SAGAContext
+
+from saga.utils.object_cache import ObjectCache as SAGAObjectCache
 
 from bigjob.state import Running, New, Failed, Done, Unknown
 
@@ -124,7 +126,7 @@ class bigjob(api.base.bigjob):
             logger.error("Coordination URL not set. Exiting BigJob.")
         #self.launch_method=""
         self.__filemanager=None
-        self._pool = ConnectionPool ()
+        self._ocache = SAGAObjectCache ()
         
         # restore existing BJ or initialize new BJ
         if pilot_url!=None:
@@ -209,10 +211,7 @@ class bigjob(api.base.bigjob):
         #elif lrms_saga_url.scheme=="slurm+ssh":
         #    self.js = SlurmService(lrms_saga_url, pilot_compute_description)          
         else:
-            self.js = self._pool.get (lrms_saga_url)
-            if  not self.js :
-                self.js = SAGAJobService (lrms_saga_url)
-                self._pool.add (lrms_saga_url, self.js)
+            self.js = self._ocache.get_obj (lrms_saga_url, lambda : SAGAJobService (lrms_saga_url))
         ##############################################################################
         # create job description
         jd = SAGAJobDescription()
@@ -457,7 +456,7 @@ class bigjob(api.base.bigjob):
 
         logger.debug("Cancel Job Service")
         try:
-            if  not self._pool.del_value (self.js) :
+            if  not self._ocache.rem_obj (self.js) :
                 del (self.js)
             self.js = None
         except:
@@ -1174,119 +1173,5 @@ class description(SAGAJobDescription):
     def _get_output_data (self) :
         return self.output_data
 
-
-# ------------------------------------------------------------------------------
-#
-class ConnectionPool (object) :
-
-    """ This is a singleton connection pooling class -- it maintains a reference
-    counted registry of existing connections."""
-
-    import threading
-
-    _lock        = threading.RLock ()
-    _instance    = None
-    _initialized = False
-
-    # --------------------------------------------------------------------------
-    #
-    def __new__ (cls, *args, **kwargs) :
-        """
-        This is the singleton allocator -- test if the singleton exists, and
-        create if not.
-        """
-
-        with cls._lock :
-
-            if  not cls._instance:
-                cls._instance = super (ConnectionPool, cls).__new__(cls, *args, **kwargs)
-
-            return cls._instance
-
-
-    # --------------------------------------------------------------------------
-    #
-    def __init__ (self) :
-        """
-        Make sure the connection pool dict is initialized, exactly once.
-        """
-
-        with self._lock :
-
-            if not self._initialized :
-                self._pool        = {}
-                self._initialized = True
-
-
-    # --------------------------------------------------------------------------
-    #
-    def get (self, name) :
-        """
-        For a given endpoint name, attempt to retrieve an existing connection.
-        If that connection exists, increase the reference counter, as there is
-        now one more user for that connection.
-        Returns None if that connection does not exist.  
-        """
-
-        with self._lock :
-
-            name = str(name)
-
-            if  not name in self._pool :
-                return None
-
-            else :
-                self._pool [name]['cnt'] += 1
-                return self._pool [name]['val']
-
-    # --------------------------------------------------------------------------
-    #
-    def add (self, name, val) :
-        """
-        For a given endpoint name, register a new connection.  Initialize the
-        ref counter to 1 (one user of that connection, which is the one
-        registering it).  
-        Returns False if that connection already exist.
-        """
-
-        with self._lock :
-
-            name = str(name)
-
-            if  name in self._pool :
-                return False
-
-            else :
-                self._pool [name]        = {}
-                self._pool [name]['cnt'] = 1
-                self._pool [name]['val'] = val
-                return True
-
-    # --------------------------------------------------------------------------
-    #
-    def del_value (self, val) :
-        """
-        For a given connections instance, decrease the refcounter as the caller
-        stops using that connection.  once the ref counter is '0', remove all
-        traces of the connection.  That should get the actuall connection object
-        eligable for Python's garbage collection.
-        Returns False if the given connection is not registered.
-        """
-
-        with self._lock :
-
-            for name in self._pool.keys () :
-
-                if  val == self._pool [name]['val'] :
-
-                    self._pool [name]['cnt'] -= 1
-
-                    if  self._pool [name]['cnt'] == 0 :
-                        self._pool [name]['val'] = None
-                        self._pool.pop (name, None)
-
-                    return True
-
-            return False
 
 
