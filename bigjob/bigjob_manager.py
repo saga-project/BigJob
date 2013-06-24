@@ -457,7 +457,11 @@ class bigjob(api.base.bigjob):
         logger.debug("Cancel Job Service")
         try:
             if  not self._ocache.rem_obj (self.js) :
+                logger.debug("Cancel Job Service Manually")
                 del (self.js)
+            else :
+                logger.debug("Cancel Job Service done")
+
             self.js = None
         except:
             pass
