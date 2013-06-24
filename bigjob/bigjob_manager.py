@@ -445,11 +445,7 @@ class bigjob(api.base.bigjob):
         """ duck typing for cancel of saga.cpr.job and saga.job.job  """
         logger.debug("Cancel Pilot Job")
         try:
-            if self.url.scheme.startswith("condor")==False:
-                self.job.cancel()
-            else:
-                pass
-                #logger.debug("Output files are being transfered to file: outpt.tar.gz. Please wait until transfer is complete.")
+            self.job.cancel()
         except:
             pass
             #traceback.print_stack()
