@@ -49,7 +49,7 @@ if __name__ == "__main__":
     # make absolute paths
     #absolute_url_list = [os.path.join(base_dir, i) for i in url_list]
     data_unit_description = {
-                              "file_urls": [os.path.join(os.getcwd(), "../test.txt")],
+                              "file_urls": [os.path.join(os.getcwd(), "test.txt")],
                               "affinity_datacenter_label": "eu-de-south",              
                               "affinity_machine_label": "mymachine-1"
                              }    

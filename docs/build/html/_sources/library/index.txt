@@ -114,7 +114,7 @@ The number of cores that need to be allocated to run the jobs.
 
 :type: string
 
-.. data:: processes_per_host
+.. data:: processes_per_node
 
 The number of cores per node. 
 

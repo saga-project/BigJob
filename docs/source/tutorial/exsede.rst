@@ -2,6 +2,8 @@
 XSEDE Simple Ensemble Example
 #############################
 
+**Note:** If you do not have an `XSEDE account <http://www.xsede.org/>`_, please skip this tutorial.
+
 One of the features of BigJob is the ability for application-level programmability by users. Many of the parameters in each script are customizable and configurable. There are several parameters that must be added to the PilotComputeDescription in order to run on XSEDE. 
 
 ----------------------------
@@ -14,7 +16,7 @@ The service URL communicates what type of queueing system or middleware you want
 | Machine	              | :code:`service_url`		          				    |
 +=============================+=============================================================================+ 
 | All machines                |* *fork://localhost*							    |
-|			      |* *ssh://eric1.loni.org*							    |
+|			      |* *ssh://your.remote.cluster*						    |
 +-----------------------------+-----------------------------------------------------------------------------+ 
 | Stampede		      |* **Local:** *slurm://localhost*						    |
 |			      |* **Remote:** *slurm+ssh://stampede.tacc.utexas.edu*			    |
@@ -78,7 +80,7 @@ Now that we have modified the Pilot Compute Description, we can put this togethe
 	
 	### This is the number of jobs you want to run
 	NUMBER_JOBS=4
-	COORDINATION_URL = "redis://localhost"
+	COORDINATION_URL = "redis://localhost:6379"
 
 	if __name__ == "__main__":
 
