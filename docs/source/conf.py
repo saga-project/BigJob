@@ -12,7 +12,6 @@
 # serve to show the default.
 
 import sys, os
-import sphinx_bootstrap_theme
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -45,7 +44,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'BigJob'
-copyright = u'2012, The BigJob Project'
+copyright = u'2013, The SAGA Project'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -95,24 +94,21 @@ pygments_style = 'sphinx'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'bootstrap'
+html_theme = 'armstrong'
 
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
 html_theme_options = {
-	'globaltoc_depth':2,
-	'navbar_class': "navbar navbar-inverse",
-	'source_link_position':"footer",
 }
 
 # Add any paths that contain custom themes here, relative to this directory.
-html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
+html_theme_path = ["_themes",]
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
-#html_title = None
+html_title =  'BigJob 1.0 User Manual'
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
 #html_short_title = None
@@ -193,7 +189,7 @@ latex_elements = {
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
   ('index', 'BigJob.tex', u'BigJob Manual',
-   u'The BigJob Project', 'manual'),
+   u'The SAGA Project', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -222,8 +218,8 @@ latex_show_pagerefs = True
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'BigJob', u'BigJob Documentation',
-     [u'The BigJob Project'], 1)
+    ('index', 'BigJob', u'BigJob User Manual',
+     [u'The SAGA Project'], 1)
 ]
 
 # If true, show URL addresses after external links.
