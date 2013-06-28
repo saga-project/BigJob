@@ -32,12 +32,11 @@ def update_version():
     if p.returncode != 0:
         print "Unable to run git, not modifying VERSION"
         return
-    # we use tags like "python-ecdsa-0.5", so strip the prefix
     
     ver = stdout.strip()
     fn = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'VERSION')
     f = open(fn, "w")
-    f.write(ver)
+    f.write(ver + "-saga-python")
     f.close()
     print "set VERSION to '%s'" % ver
 
@@ -87,7 +86,6 @@ setup(name='BigJob',
 
       install_requires=['uuid', 'threadpool', 'virtualenv', 'redis', 'saga-python', 'google-api-python-client', 'python-hostlist',
                         'globusonline-transfer-api-client', 'boto>=2.2,<2.3', 'simplejson<2.1', 'pexpect', 'tldextract'],
-      
       entry_points = {
         'console_scripts': [
             'test-bigjob = examples.example_local_single:main',

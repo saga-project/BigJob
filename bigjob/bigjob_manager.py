@@ -54,6 +54,7 @@ sys.path.append(os.path.dirname(__file__))
 if sys.version_info < (2, 5):
     sys.path.append(os.path.dirname( __file__ ) + "/ext/uuid-1.30/")
     sys.stderr.write("Warning: Using unsupported Python version\n")
+
 if sys.version_info < (2, 4):
     sys.stderr.write("Error: Python versions <2.4 not supported\n")
     sys.exit(-1)
@@ -356,7 +357,6 @@ class bigjob(api.base.bigjob):
             jd.file_transfer = bj_file_transfers
         else:
             jd.total_cpu_count=int(number_nodes)                   
-
             jd.spmd_variation = "single"
             if pilot_compute_description!=None and pilot_compute_description.has_key("spmd_variation"):
                 jd.spmd_variation=pilot_compute_description["spmd_variation"]
@@ -446,6 +446,7 @@ class bigjob(api.base.bigjob):
         logger.debug("Cancel Pilot Job")
         try:
             self.job.cancel()
+<<<<<<< HEAD
         except:
             pass
             #traceback.print_stack()
@@ -459,10 +460,28 @@ class bigjob(api.base.bigjob):
                 logger.debug("Cancel Job Service done")
 
             self.js = None
+=======
+>>>>>>> d4f815d79010f4a0ea2d69801971dbaeef722db5
         except:
             pass
             #traceback.print_stack()
 
+<<<<<<< HEAD
+=======
+        logger.debug("Cancel Job Service")
+        try:
+            if  not self._ocache.rem_obj (self.js) :
+                logger.debug("Cancel Job Service Manually")
+                del (self.js)
+            else :
+                logger.debug("Cancel Job Service done")
+
+            self.js = None
+        except:
+            pass
+            #traceback.print_stack()
+
+>>>>>>> d4f815d79010f4a0ea2d69801971dbaeef722db5
         try:            
             self._stop_pilot_job()
             logger.debug("delete pilot job: " + str(self.pilot_url))                      
