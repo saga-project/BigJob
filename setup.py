@@ -50,13 +50,11 @@ def get_version():
     except EnvironmentError:
         return "-1"
     return version    
-=======
 #try:
 #    import saga
 #except:
 #    print "SAGA C++ and SAGA Python Bindings not found. Using Bliss/SAGA."
 #    #sys.exit(1)
->>>>>>> saga integration
     
 update_version()
     
