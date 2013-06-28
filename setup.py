@@ -5,14 +5,15 @@
 
 #from distutils.core import setup
 import os
+import sys
 from setuptools import setup
 import subprocess
 
-try:
-    import saga
-except:
-    print "saga-python not found. Please verify that saga-python is installed."
-    sys.exit(1)
+# try:
+#     import saga
+# except:
+#     print "saga-python not found. Please verify that saga-python is installed."
+#     sys.exit(1)
 
 VERSION_FILE="VERSION"    
     
