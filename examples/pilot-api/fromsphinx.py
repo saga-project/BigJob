@@ -12,7 +12,6 @@ if __name__ == "__main__":
 
     pilot_compute_service = PilotComputeService(COORDINATION_URL)
 
-    #pilot_compute_description = { "service_url": "fork://localhost",
     pilot_compute_description = { "service_url": "pbs://localhost",
                                   "number_of_processes": 1,
                                   "working_directory": os.getenv("HOME")+"/agent",
