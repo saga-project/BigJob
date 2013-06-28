@@ -446,7 +446,6 @@ class bigjob(api.base.bigjob):
         logger.debug("Cancel Pilot Job")
         try:
             self.job.cancel()
-<<<<<<< HEAD
         except:
             pass
             #traceback.print_stack()
@@ -460,28 +459,10 @@ class bigjob(api.base.bigjob):
                 logger.debug("Cancel Job Service done")
 
             self.js = None
-=======
->>>>>>> d4f815d79010f4a0ea2d69801971dbaeef722db5
         except:
             pass
             #traceback.print_stack()
 
-<<<<<<< HEAD
-=======
-        logger.debug("Cancel Job Service")
-        try:
-            if  not self._ocache.rem_obj (self.js) :
-                logger.debug("Cancel Job Service Manually")
-                del (self.js)
-            else :
-                logger.debug("Cancel Job Service done")
-
-            self.js = None
-        except:
-            pass
-            #traceback.print_stack()
-
->>>>>>> d4f815d79010f4a0ea2d69801971dbaeef722db5
         try:            
             self._stop_pilot_job()
             logger.debug("delete pilot job: " + str(self.pilot_url))                      
