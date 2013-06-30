@@ -1,18 +1,20 @@
 #!/usr/bin/env python
 
-#from distribute_setup import use_setuptools
-#use_setuptools()
-
-#from distutils.core import setup
 import os
+import sys
+
 from setuptools import setup
 import subprocess
 
 try:
     import saga
 except:
-    print "SAGA C++ and SAGA Python Bindings not found. Using Bliss/SAGA."
+    print "Installing BigJob using SAGA/Bliss."
     #sys.exit(1)
+
+if sys.version_info < (2, 6):
+    sys.stderr.write("BigJob requires Python 2.6 and above. Installation unsuccessful! \n")
+    sys.exit(1)
 
 VERSION_FILE="VERSION"    
     
@@ -39,7 +41,7 @@ def update_version():
     f = open(fn, "w")
     f.write(ver)
     f.close()
-    print "set VERSION to '%s'" % ver
+    print "BigJob VERSION: '%s'" % ver
 
 
 def get_version():
