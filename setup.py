@@ -13,7 +13,7 @@ except:
     #sys.exit(1)
 
 if sys.version_info < (2, 6):
-    sys.stderr.write("BigJob requires Python 2.6 and above. Installation unsuccessful! \n")
+    sys.stderr.write("BigJob requires Python 2.6 and above. Installation unsuccessful!")
     sys.exit(1)
 
 VERSION_FILE="VERSION"    
