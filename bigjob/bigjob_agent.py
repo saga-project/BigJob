@@ -268,7 +268,7 @@ class bigjob_agent:
     def init_pbs(self):
         """ initialize free nodes list from PBS environment """
         logger.debug("Init nodeslist from PBS NODEFILE")
-        if self.LAUNCH_METHOD == "aprun":
+        if self.LAUNCH_METHOD == "aprun" and os.environ.has_key("PBS_NNODES"):
             # Workaround for Kraken
             # PBS_NODEFILE does only contain front node
             # thus we create a dummy node file with the respective 
