@@ -48,11 +48,20 @@ if __name__ == "__main__":
     while compute_unit != State.Done:
         print("Final state check...")
         state_cu = compute_unit.get_state()
-        print "PCS State %s" % pilot_compute_service
+        print "Pilot Compute Service State %s" % pilot_compute_service
         print "CU: %s State: %s"%(compute_unit, state_cu)
         if state_cu==State.Done:
             break
         time.sleep(2)  
+
+    
+    print "CU Details:"
+    print str(compute_unit.get_details())
+
+    print "PJ 1 Details:"
+    print str(pilotjob.get_details())
+    print "PJ 2 Details:"
+    print str(pilotjob2.get_details())
     
     print("Terminate Pilot Compute and Compute Data Service")
     compute_data_service.cancel()    
