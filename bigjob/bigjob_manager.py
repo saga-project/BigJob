@@ -9,7 +9,6 @@ All shortrunning task will be started using the protocol implemented by subjob()
 """
 
 import sys
-from bigjob import logger
 import time
 import os
 import traceback
@@ -32,6 +31,7 @@ from saga     import Context     as SAGAContext
 from saga.utils.object_cache import ObjectCache as SAGAObjectCache
 
 from bigjob.state import Running, New, Failed, Done, Unknown
+from bigjob import logger
 
 # Optional Job Plugins
 try:
@@ -428,6 +428,11 @@ class bigjob(api.base.bigjob):
      
     
     def get_free_nodes(self):
+        """ Returns number of free nodes of subjob 
+            
+            Attention: Only evaluates jobs directly submitted to BigJob. 
+            This method cannot be used if Pilot is managed by a ComputeDataService.
+        """
         jobs = self.coordination.get_jobs_of_pilot(self.pilot_url)
         number_used_nodes=0
         for i in jobs:
@@ -440,7 +445,18 @@ class bigjob(api.base.bigjob):
                 number_used_nodes=number_used_nodes + int(job_np)
         return (self.number_nodes - number_used_nodes)
 
-    
+
+    def get_details(self):
+        """ Return details with respect to PilotCompute (BigJob) Instance """
+        details_dict={}
+        try:
+            details_dict = self.coordination.get_pilot_state(self.pilot_url)
+        except:
+            pass
+        details_dict["bigjob_id"] = self.pilot_url
+        return details_dict
+
+    ###############################################################################################################    
     def cancel(self):        
         """ duck typing for cancel of saga.cpr.job and saga.job.job  """
         logger.debug("Cancel Pilot Job")
@@ -603,7 +619,7 @@ for i in p: sys.path.insert(0, i)
 print "Python path: " + str(sys.path)
 print "Python version: " + str(sys.version_info)
 try: import saga
-except: print "SAGA and SAGA Python Bindings not found.";
+except: print "SAGA not found.";
 try: import bigjob.bigjob_agent
 except: 
     print "BigJob not installed. Attempt to install it."; 
@@ -796,6 +812,8 @@ except:
     
      
     def __init_coordination(self, coordination_url):        
+        
+        bigjob_coordination = None
         if(coordination_url.startswith("advert://") or coordination_url.startswith("sqlasyncadvert://")):
             try:
                 from coordination.bigjob_coordination_advert import bigjob_coordination
@@ -808,6 +826,7 @@ except:
                 logger.debug("Utilizing Redis Backend")
             except:
                 logger.error("Error loading pyredis.")
+                self.__print_traceback()
         elif (coordination_url.startswith("tcp://")):
             try:
                 from coordination.bigjob_coordination_zmq import bigjob_coordination
@@ -817,6 +836,11 @@ except:
                       +"PYZMQ (http://zeromq.github.com/pyzmq/)")
         else:
             logger.error("No suitable coordination backend found.")
+        
+        # check whether coordination subsystem could be initialized
+        if bigjob_coordination==None:
+            raise BigJobError("Could not initialize coordination subsystem (Redis)")
+        
         
         logger.debug("Parsing URL: " + coordination_url)
         scheme, username, password, host, port, dbtype  = self.__parse_url(coordination_url) 
