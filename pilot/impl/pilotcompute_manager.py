@@ -55,7 +55,7 @@ class PilotComputeService(PilotComputeService):
             self.id = self.PJS_ID_PREFIX+str(uuid.uuid1())
             self.url = os.path.join(self.coordination_url, "pcs", self.id)
             self.coordination_queue = "PilotComputeServiceQueue-" + str(self.id)
-            logger.debug("Created Pilot Compute Service: %s"%self.url)
+            logger.debug("Created Pilot Compute Service: %s" % self.url)
         else:
             logger.error("Reconnect to PilotComputeService currently not supported.")
         
@@ -221,6 +221,7 @@ class PilotCompute(PilotCompute):
             referenced by the pilot_url.  
 
         """        
+
         self.__subjobs = []
         self.__pilot_compute_service = None
         if pilot_url==None:
@@ -237,17 +238,19 @@ class PilotCompute(PilotCompute):
         # ComputeDataServiceDecentral
         if self.__pilot_compute_service!=None:
             self.coordination_queue = pilot_compute_service.coordination_queue
-            
-        
+
+        # the local working directory of this pilot compute
+        self._local_working_directory = "%s/%s" \
+          % (pilot_compute_description['working_directory'], bigjob_object.uuid)
+
+
     def cancel(self):
         """ Terminates the pilot """
         self.__bigjob.cancel()    
     
-    
     def get_state(self):
         """ Returns the state of the pilot """
         return self.__bigjob.get_state()    
-    
     
     def wait(self):
         """ Wait until Pilot Compute to enter a final state (Done, Cancel or Failed) 
@@ -272,6 +275,12 @@ class PilotCompute(PilotCompute):
         for i in sj_list:
             cu_list.append(ComputeUnit(cu_url=i))
         return cu_list
+
+    def get_local_working_directory(self):
+        """ Returns the local working directory of this
+            PilotCompute object.
+        """
+        return self._local_working_directory
     
     
     def get_url(self):
@@ -317,8 +326,7 @@ class PilotCompute(PilotCompute):
             are ignored.
         """
         cu = ComputeUnit(compute_unit_description)
-        return self._submit_cu(cu)
-    
+        return self._submit_cu(cu, self.get_local_working_directory())
     
     def __repr__(self):
         return str(self.__bigjob)
@@ -327,13 +335,14 @@ class PilotCompute(PilotCompute):
     ###########################################################################
     # Internal methods
         
-    def _submit_cu(self, compute_unit):
+    def _submit_cu(self, compute_unit, parent_bj_workdir):
         """ Submits compute unit to Bigjob """
         logger.debug("Submit CU to big-job")
         sj = subjob()
         sj.submit_job(self.__bigjob.pilot_url, compute_unit.subjob_description)
         self.__subjobs.append(sj)
-        compute_unit._update_subjob(sj)
+        compute_unit._update_subjob(sj, parent_bj_workdir)
+
         return compute_unit
         
 
@@ -356,6 +365,8 @@ class ComputeUnit(ComputeUnit):
 
     def __init__(self, compute_unit_description=None, compute_data_service=None, cu_url=None):
         
+        self._local_working_directory = None
+
         if cu_url==None:
             self.id = self.CU_ID_PREFIX + str(uuid.uuid1())
             if compute_data_service!=None:
@@ -366,13 +377,17 @@ class ComputeUnit(ComputeUnit):
             self.compute_unit_description = compute_unit_description # CU Description
             self.subjob_description = self.__translate_cu_sj_description(compute_unit_description)
         else:
-            self.__subjob = subjob(subjob_url=cu_url)
-           
+            self.__subjob = subjob(subjob_url=cu_url)           
     
     def get_id(self):
         """Returns unique identifier of Compute Unit. Deprecated: Please use get_url() instead."""
         return self.id
     
+    def get_local_working_directory(self):
+        """ Returns the local working directory of this
+            PilotCompute object.
+        """
+        return self._local_working_directory
     
     def get_url(self):   
         """Returns URL of Compute Unit. This URL can be used to reconnect to this Compute Unit later on."""
@@ -395,6 +410,9 @@ class ComputeUnit(ComputeUnit):
         if self.__subjob != None:
             self.state = self.__subjob.get_state()
         return self.state
+
+    def get_subjob(self):
+        return self.__subjob
     
     
     def wait(self):
@@ -420,8 +438,12 @@ class ComputeUnit(ComputeUnit):
         self.compute_unit_description = compute_unit_description # CU Description
         self.subjob_description = self.__translate_cu_sj_description(compute_unit_description)
 
-    def _update_subjob(self, subjob):
+    def _update_subjob(self, subjob, parent_bj_workdir):
         self.__subjob = subjob
+
+        # at this point, we can also set the working directory for this CU
+        self._local_working_directory = "%s/%s" \
+            % (parent_bj_workdir, subjob.uuid)
         
     # INTERNAL
     def __translate_cu_sj_description(self, compute_unit_description):
