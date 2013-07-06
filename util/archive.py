@@ -59,6 +59,7 @@ class RedisDownloader(object):
             logger.error("Please start Redis server!")
             raise Exception("Please start Redis server!")
         
+        
     def get_pilots(self):
         pilots = self.redis_client.keys("bigjob:bj-*")    
         for i in pilots:

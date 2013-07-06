@@ -9,6 +9,8 @@ import os
 import traceback
 import logging
 import uuid
+from pilot.api.api import PilotError
+from bigjob.bigjob_manager import BigJobError
 
 
 """ import bigjob classes """
@@ -70,10 +72,14 @@ class PilotComputeService(PilotComputeService):
             Return value:
             A PilotCompute object
         """
-        bj_dict = self.__translate_pj_bj_description(pilot_compute_description)
-        bj = self.__start_bigjob(bj_dict)
-        pj = PilotCompute(self, bj, pilot_compute_description)
-        self.pilot_computes.append(pj)
+        pj = None
+        try:
+            bj_dict = self.__translate_pj_bj_description(pilot_compute_description)
+            bj = self.__start_bigjob(bj_dict)
+            pj = PilotCompute(self, bj, pilot_compute_description)
+            self.pilot_computes.append(pj)
+        except BigJobError as bj_error:
+            raise PilotError(bj_error.args[0])
         return pj
            
     
