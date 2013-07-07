@@ -137,7 +137,19 @@ We then have the CDS wait for all of the compute units to complete and then do s
     pilot_compute_service.cancel()
 
 
-CONGRATULATIONS! You are now ready to write your first BigJob script.
+=======================
+Working Directories
+=======================
+
+BigJob creates a unique directory for each PilotCompute instance using the unique identifier of the Pilot::
+
+    <BIGJOB_WORKING_DIRECTORY>/bj-54aaba6c-32ec-11e1-a4e5-00264a13ca4c/
+ 
+If no working_directory for the ComputeUnit is specified, BigJob creates a subdirectory for each ComputeUnit::
+
+    <BIGJOB_WORKING_DIRECTORY>/bj-54aaba6c-32ec-11e1-a4e5-00264a13ca4c/sj-55010912-32ec-11e1-a4e5-00264a13ca4c
+   
+This subdirectory will be the current working directory of your ComputeUnit. Stdin/Stdout as well as files created by your application will be written to this directory.
 
 =======================
 Putting it all Together
@@ -185,8 +197,4 @@ Your first simple BigJob script:
    compute_data_service.cancel()
 
 
-======================
-Pilot Data (Optional)
-======================
-
-For more information on using Pilot Data, please click to the next section.
+Make sure that the working directory of your Pilot exists; create a directory called `work` if necessary.
