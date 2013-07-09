@@ -510,11 +510,11 @@ div.sidebar ul, div.sidebar ol {
 /* Admonitions and sidebars only */
 div.admonition, div.sidebar {
     border: 1px solid #1a004d;
-    background-color: #330099;
+    background-color: #e6daff;
 }
 div.admonition p.admonition-title,
 div.sidebar p.sidebar-title {
-    background-color: #330099;
+    background-color: #d5c0ff;
     border-bottom: 1px solid #1a004d;
 }
 
