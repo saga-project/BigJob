@@ -43,8 +43,8 @@ def main():
         for i in range(NUMBER_JOBS):
             task_desc = pilot.ComputeUnitDescription()
             task_desc.executable = '/bin/echo'
-            task_desc.arguments = ['Hello', '$ENV1', "I am CU number %s" % str(i)]
-            task_desc.environment = {'ENV1': 'World'}
+            task_desc.arguments = ['Hello, I am task number $TASK_NO', ]
+            task_desc.environment = ['TASK_NO=%s' % i]
             task_desc.number_of_processes = 1
             task_desc.output = 'simple-ensemble-stdout.txt'
             task_desc.error = 'simple-ensemble-stderr.txt'
@@ -55,10 +55,6 @@ def main():
 
         print "Waiting for tasks to finish..."
         pilotjob.wait()
-
-        # get the output directories
-        for task in tasks:
-            print "* Output for '%s' can be found remotely in '%s'" % (task.get_id(), task.get_local_working_directory())
 
         return(0)
 
@@ -72,7 +68,7 @@ def main():
     finally:
         # alway try to shut down pilots, otherwise jobs might end up
         # lingering in the queue
-        print ("Terminating BigJob")
+        print ("Terminating BigJob...")
         pilotjob.cancel()
         pilot_compute_service.cancel()
 
