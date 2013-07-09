@@ -1,0 +1,270 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+
+    <title>2.3. XSEDE Specific Tips &mdash; BigJob 1.0 User Manual</title>
+
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>
+
+
+    
+    <link rel="stylesheet" href="../_static/rtd.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../../_static/searchtools.js"></script>
+    <link rel="top" title="BigJob 1.0 User Manual" href="../index.html" />
+    <link rel="up" title="2. Installation" href="index.html" />
+    <link rel="next" title="2.4. Troubleshooting" href="trouble.html" />
+    <link rel="prev" title="2.2. Setting Up a Redis Server" href="redis.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="trouble.html" title="2.4. Troubleshooting"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="redis.html" title="2.2. Setting Up a Redis Server"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">BigJob 1.0 User Manual</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">2. Installation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="xsede-specific-tips">
+<h1>2.3. XSEDE Specific Tips<a class="headerlink" href="#xsede-specific-tips" title="Permalink to this headline">¶</a></h1>
+<p>This page provides both general and specific tips for running on XSEDE infrastructure. General information is provided first, and then tips are listed by machine name (i.e. Lonestar, Kraken, Trestles, Stampede etc). If you are interested in running on a specific machine, please scroll down until you see the machine name.</p>
+<p>If you do not see a particular machine name, BigJob may run on this machine but not be supported yet in the documentation. Please feel free to email <tt class="code docutils literal"><span class="pre">bigjob-users&#64;googlegroups.com</span></tt> to request machine information to be added.</p>
+<div class="section" id="general">
+<h2>2.3.1. General<a class="headerlink" href="#general" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="where-to-run">
+<h3>2.3.1.1. Where to Run<a class="headerlink" href="#where-to-run" title="Permalink to this headline">¶</a></h3>
+<p>In general, on XSEDE machines, production-grade science should be done in either the <tt class="code docutils literal"><span class="pre">$SCRATCH</span></tt> or <cite>$WORK</cite> directories on the machine. This means you will run your BigJob script and make your BigJob <tt class="code docutils literal"><span class="pre">agent</span></tt> directory in either $SCRATCH or $WORK and <strong>not</strong> in $HOME.</p>
+</div>
+<div class="section" id="adding-your-project-allocation">
+<h3>2.3.1.2. Adding your Project Allocation<a class="headerlink" href="#adding-your-project-allocation" title="Permalink to this headline">¶</a></h3>
+<p>When creating BigJob scripts for XSEDE machines, it is necessary to add the <tt class="code docutils literal"><span class="pre">project</span></tt> field to the <tt class="code docutils literal"><span class="pre">pilot_compute_description</span></tt>.</p>
+<div class="highlight-python"><pre>"project": "TG-XXXXXXXXX"</pre>
+</div>
+<p>TG-XXXXX must be replaced with your individual allocation SU number as provided to you by XSEDE.</p>
+</div>
+</div>
+<div class="section" id="stampede">
+<h2>2.3.2. Stampede<a class="headerlink" href="#stampede" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="service-url">
+<h3>2.3.2.1. service_url<a class="headerlink" href="#service-url" title="Permalink to this headline">¶</a></h3>
+<p>Stampede uses the SLURM batch queuing system. When editing your scripts, the <tt class="code docutils literal"><span class="pre">service_url</span></tt> should be set to <tt class="code docutils literal"><span class="pre">slurm+ssh://login1.stampede.tacc.utexas.edu</span></tt>.</p>
+</div>
+</div>
+<div class="section" id="lonestar">
+<h2>2.3.3. Lonestar<a class="headerlink" href="#lonestar" title="Permalink to this headline">¶</a></h2>
+<p>Installation of a virtual environment on Lonestar requires the use of a higher python version than the default. In order to load Python 2.7.x before installing the virtual environment, please execute:</p>
+<div class="highlight-python"><pre>module load python</pre>
+</div>
+<p>Then you can proceed with the Installation instructions, and make sure that you activate your virtual environment in your <tt class="code docutils literal"><span class="pre">.bashrc</span></tt> before you try to run BigJob.</p>
+<p>You will need to put the following two lines in both your <tt class="code docutils literal"><span class="pre">.bashrc</span></tt> and your <tt class="code docutils literal"><span class="pre">.bash_profile</span></tt> in order to run on Ranger. This is due to the fact that interactive shells source a different file than regular shells.</p>
+<div class="highlight-python"><pre>module load python
+source $HOME/bigjob/.python/bin/activate</pre>
+</div>
+<div class="section" id="id1">
+<h3>2.3.3.1. service_url<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>Lonestar uses the Sun Grid Engine (SGE) batch queuing system. When editing your scripts, the <tt class="code docutils literal"><span class="pre">service_url</span></tt> should be set to <tt class="code docutils literal"><span class="pre">sge://localhost</span></tt> for running locally on Lonestar or <tt class="code docutils literal"><span class="pre">sge+ssh://lonestar.tacc.utexas.edu</span></tt> for running remotely.</p>
+</div>
+<div class="section" id="queues">
+<h3>2.3.3.2. queues<a class="headerlink" href="#queues" title="Permalink to this headline">¶</a></h3>
+<p>Commonly used queues on Lonestar to run BigJob:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="23%" />
+<col width="23%" />
+<col width="21%" />
+<col width="34%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Queue Name</th>
+<th class="head">Max Runtime</th>
+<th class="head">Max Procs</th>
+<th class="head">Purpose</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>normal</td>
+<td>24 hrs</td>
+<td>4104</td>
+<td>normal priority</td>
+</tr>
+<tr class="row-odd"><td>development</td>
+<td>1 hr</td>
+<td>264</td>
+<td>development</td>
+</tr>
+<tr class="row-even"><td>largemem</td>
+<td>24 hrs</td>
+<td>48</td>
+<td>large memory jobs</td>
+</tr>
+</tbody>
+</table>
+<p>A complete list of Lonestar queues can be found <a class="reference external" href="http://www.tacc.utexas.edu/user-services/user-guides/lonestar-user-guide">here</a>.</p>
+</div>
+</div>
+<div class="section" id="kraken">
+<h2>2.3.4. Kraken<a class="headerlink" href="#kraken" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="load-proper-python-environment">
+<h3>2.3.4.1. Load Proper Python Environment<a class="headerlink" href="#load-proper-python-environment" title="Permalink to this headline">¶</a></h3>
+<p>Before installing your virtual environment, you must do a <tt class="code docutils literal"><span class="pre">module</span> <span class="pre">load</span> <span class="pre">python</span></tt> on Kraken to ensure you&#8217;re using Python 2.7.x instead of the system-level Python.</p>
+</div>
+<div class="section" id="using-lustre-scratch">
+<h3>2.3.4.2. Using Lustre Scratch<a class="headerlink" href="#using-lustre-scratch" title="Permalink to this headline">¶</a></h3>
+<p>Prior to running code on Kraken, you will need to make a directory called <tt class="code docutils literal"><span class="pre">agent</span></tt> in the same location that you are running your scripts from. The BigJob agent relies on <tt class="code docutils literal"><span class="pre">aprun</span></tt> to execute subjobs. <tt class="code docutils literal"><span class="pre">aprun</span></tt> works only if the working directory of the Pilot and Compute Units is set to the scratch space of Kraken.</p>
+<p>Create your agent directory in <tt class="code docutils literal"><span class="pre">/lustre/scratch/&lt;username&gt;</span></tt> by typing:</p>
+<div class="highlight-python"><pre>cd /lustre/scratch/&lt;username&gt;
+mkdir agent</pre>
+</div>
+<p>Replace <tt class="code docutils literal"><span class="pre">&lt;username&gt;</span></tt> with your Kraken username.</p>
+</div>
+<div class="section" id="activate-your-credentials">
+<h3>2.3.4.3. Activate your Credentials<a class="headerlink" href="#activate-your-credentials" title="Permalink to this headline">¶</a></h3>
+<p>To submit jobs to Kraken from another resource using gsissh, the use of myproxy is required. To start a my proxy server, execute the following command:</p>
+<div class="highlight-python"><pre>myproxy-logon -T -t &lt;number of hours&gt; -l &lt;your username&gt;</pre>
+</div>
+<p>You need to use your XSEDE portal username and password. To verify that your my proxy server is running, type <tt class="code docutils literal"><span class="pre">grid-proxy-info</span></tt>.</p>
+<p>If it was successful, you should see a valid proxy running.</p>
+</div>
+<div class="section" id="id2">
+<h3>2.3.4.4. service_url<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p>Kraken is a Cray machine with a special Torque queuing system. It requires the use of GSISSH (Globus certificates required). Initiate a grid proxy (using <tt class="code docutils literal"><span class="pre">myproxy-logon</span></tt>) before executing the BigJob application.  When editing your scripts, the <tt class="code docutils literal"><span class="pre">service_url</span></tt> should be set to <tt class="code docutils literal"><span class="pre">xt5torque+gsissh://gsissh.kraken.nics.xsede.org</span></tt>.</p>
+</div>
+</div>
+<div class="section" id="trestles">
+<h2>2.3.5. Trestles<a class="headerlink" href="#trestles" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id3">
+<h3>2.3.5.1. service_url<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>Trestles uses the Torque queuing system.  When editing your scripts, the <tt class="code docutils literal"><span class="pre">service_url</span></tt> should be set to <tt class="code docutils literal"><span class="pre">pbs+ssh://trestles.sdsc.edu</span></tt>.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">2.3. XSEDE Specific Tips</a><ul>
+<li><a class="reference internal" href="#general">2.3.1. General</a><ul>
+<li><a class="reference internal" href="#where-to-run">2.3.1.1. Where to Run</a></li>
+<li><a class="reference internal" href="#adding-your-project-allocation">2.3.1.2. Adding your Project Allocation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#stampede">2.3.2. Stampede</a><ul>
+<li><a class="reference internal" href="#service-url">2.3.2.1. service_url</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#lonestar">2.3.3. Lonestar</a><ul>
+<li><a class="reference internal" href="#id1">2.3.3.1. service_url</a></li>
+<li><a class="reference internal" href="#queues">2.3.3.2. queues</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#kraken">2.3.4. Kraken</a><ul>
+<li><a class="reference internal" href="#load-proper-python-environment">2.3.4.1. Load Proper Python Environment</a></li>
+<li><a class="reference internal" href="#using-lustre-scratch">2.3.4.2. Using Lustre Scratch</a></li>
+<li><a class="reference internal" href="#activate-your-credentials">2.3.4.3. Activate your Credentials</a></li>
+<li><a class="reference internal" href="#id2">2.3.4.4. service_url</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#trestles">2.3.5. Trestles</a><ul>
+<li><a class="reference internal" href="#id3">2.3.5.1. service_url</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="redis.html"
+                        title="previous chapter">2.2. Setting Up a Redis Server</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="trouble.html"
+                        title="next chapter">2.4. Troubleshooting</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/install/xsede.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="trouble.html" title="2.4. Troubleshooting"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="redis.html" title="2.2. Setting Up a Redis Server"
+             >previous</a> |</li>
+        <li><a href="../index.html">BigJob 1.0 User Manual</a> &raquo;</li>
+          <li><a href="index.html" >2. Installation</a> &raquo;</li> 
+      </ul>
+    </div>
+<div class="footer">
+    &copy; Copyright 2013, The SAGA Project.
+  Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+  <br />Theme based on <a href="http://readthedocs.org/">Read The Docs</a>
+
+</div>
+
+
+
+
+
+  </body>
+</html>

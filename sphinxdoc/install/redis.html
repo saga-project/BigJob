@@ -1,0 +1,144 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+
+    <title>2.2. Setting Up a Redis Server &mdash; BigJob 1.0 User Manual</title>
+
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>
+
+
+    
+    <link rel="stylesheet" href="../_static/rtd.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../../_static/searchtools.js"></script>
+    <link rel="top" title="BigJob 1.0 User Manual" href="../index.html" />
+    <link rel="up" title="2. Installation" href="index.html" />
+    <link rel="next" title="2.3. XSEDE Specific Tips" href="xsede.html" />
+    <link rel="prev" title="2.1. Installing BigJob" href="install.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="xsede.html" title="2.3. XSEDE Specific Tips"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="install.html" title="2.1. Installing BigJob"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">BigJob 1.0 User Manual</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">2. Installation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="setting-up-a-redis-server">
+<h1>2.2. Setting Up a Redis Server<a class="headerlink" href="#setting-up-a-redis-server" title="Permalink to this headline">¶</a></h1>
+<p>BigJob uses a Redis server for coordination and task management. Redis is the most stable and fastest backend (requires Python &gt;2.5) and the recommended way of using BigJob. BigJob will <strong>not</strong> work without a coordination backend.</p>
+<p>Redis can easily be run in user space. For additional information about redis, please visit the website, <a href="#id1"><span class="problematic" id="id2">`redis.io&lt;http://www.redis.io&gt;`_</span></a>. To install your own redis server, please take the following steps:</p>
+<div class="highlight-python"><pre>wget http://download.redis.io/redis-stable.tar.gz
+tar xvzf redis-stable.tar.gz
+cd redis-stable
+make</pre>
+</div>
+<p>Once you have downloaded and installed it, start a Redis server on the machine of your choice as follows:</p>
+<div class="highlight-python"><pre>$ cd redis-stable
+$ ./src/redis-server
+[489] 13 Sep 10:11:28 # Warning: no config file specified, using the default config. In order to specify a config file use 'redis-server /path/to/redis.conf'
+[489] 13 Sep 10:11:28 * Server started, Redis version 2.2.12
+[489] 13 Sep 10:11:28 * The server is now ready to accept connections on port 6379
+[489] 13 Sep 10:11:28 - 0 clients connected (0 slaves), 922160 bytes in use</pre>
+</div>
+<p>You can install redis on a persistent server and use this server as your dedicated coordination server.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="install.html"
+                        title="previous chapter">2.1. Installing BigJob</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="xsede.html"
+                        title="next chapter">2.3. XSEDE Specific Tips</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/install/redis.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="xsede.html" title="2.3. XSEDE Specific Tips"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="install.html" title="2.1. Installing BigJob"
+             >previous</a> |</li>
+        <li><a href="../index.html">BigJob 1.0 User Manual</a> &raquo;</li>
+          <li><a href="index.html" >2. Installation</a> &raquo;</li> 
+      </ul>
+    </div>
+<div class="footer">
+    &copy; Copyright 2013, The SAGA Project.
+  Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+  <br />Theme based on <a href="http://readthedocs.org/">Read The Docs</a>
+
+</div>
+
+
+
+
+
+  </body>
+</html>

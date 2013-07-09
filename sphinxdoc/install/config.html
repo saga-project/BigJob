@@ -1,0 +1,157 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+
+    <title>Configuration &mdash; BigJob 1.0 User Manual</title>
+
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>
+
+
+    
+    <link rel="stylesheet" href="../_static/rtd.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../../_static/searchtools.js"></script>
+    <link rel="top" title="BigJob 1.0 User Manual" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="../index.html">BigJob 1.0 User Manual</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="configuration">
+<h1>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h1>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">SAGA has been designed as a zero-configuration library. Unless you are
+experiencing problems with one of the default configuration settings, there&#8217;s
+really no need to create a configuration file for SAGA.</p>
+</div>
+<p>SAGA and its individual middleware adaptors provide various optional
+<a class="reference internal" href="#conf-options"><em>Configuration Options</em></a>. While SAGA tries to provide sensible default values  for
+the majority of these options (zero-conf), it can sometimes be necessary to
+modify or extend SAGA&#8217;s configuration. SAGA provides two ways to access and
+modify  its configuration: via <a class="reference internal" href="#conf-file"><em>Configuration Files</em></a> (recommended) and via the
+<em class="xref std std-ref">conf_api</em> (for advanced use-cases).</p>
+<div class="section" id="configuration-files">
+<span id="conf-file"></span><h2>Configuration Files<a class="headerlink" href="#configuration-files" title="Permalink to this headline">¶</a></h2>
+<p>If you need to make persistent changes to any of SAGA&#8217;s <a class="reference internal" href="#conf-options"><em>Configuration Options</em></a>, the
+simplest option is to create a configuration file. During startup, SAGA checks
+in two different locations for the existence of a configuration file:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">/etc/saga.conf</span></tt> - for a system-wide configuration</li>
+<li><tt class="docutils literal"><span class="pre">$HOME/.saga.conf</span></tt> - for a user-specific configuration (Note that it start with a &#8216;.&#8217;)</li>
+</ul>
+<p>If a configuration file is found, it is parsed by SAGA&#8217;s configuration system.
+If files are present in both locations, SAGA will try to merge both, with the
+user-level  configuration (<tt class="docutils literal"><span class="pre">$HOME/.saga.conf</span></tt>) always having precedence over
+the  system-wide configuration (<tt class="docutils literal"><span class="pre">$HOME/.saga.conf</span></tt>). SAGA configuration files
+use a structure that looks like this:</p>
+<div class="highlight-python"><pre>[saga.core]
+    option = value
+
+[saga.logging]
+    option = value
+
+[saga.adaptor.name]
+    option = value</pre>
+</div>
+</div>
+<div class="section" id="configuration-options">
+<span id="conf-options"></span><h2>Configuration Options<a class="headerlink" href="#configuration-options" title="Permalink to this headline">¶</a></h2>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This should be generated automatically!</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Configuration</a><ul>
+<li><a class="reference internal" href="#configuration-files">Configuration Files</a></li>
+<li><a class="reference internal" href="#configuration-options">Configuration Options</a></li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/install/config.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="../index.html">BigJob 1.0 User Manual</a> &raquo;</li> 
+      </ul>
+    </div>
+<div class="footer">
+    &copy; Copyright 2013, The SAGA Project.
+  Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+  <br />Theme based on <a href="http://readthedocs.org/">Read The Docs</a>
+
+</div>
+
+
+
+
+
+  </body>
+</html>
