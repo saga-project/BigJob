@@ -480,5 +480,3 @@ class ComputeUnit(ComputeUnit):
         if compute_unit_description.has_key("output_data"):
             jd.output_data=compute_unit_description["output_data"]            
         return jd
-        
-        
