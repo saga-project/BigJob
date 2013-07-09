@@ -21,7 +21,7 @@ if __name__ == "__main__":
                             }
     
     pilotjob = pilot_compute_service.create_pilot(pilot_compute_description=pilot_compute_description)
-    #pilotjob2 = pilot_compute_service.create_pilot(pilot_compute_description=pilot_compute_description)
+    pilotjob2 = pilot_compute_service.create_pilot(pilot_compute_description=pilot_compute_description)
          
     compute_data_service = ComputeDataService()
     compute_data_service.add_pilot_compute_service(pilot_compute_service)
