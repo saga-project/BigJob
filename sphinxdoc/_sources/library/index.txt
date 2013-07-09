@@ -65,7 +65,7 @@ The PilotComputeService (PCS) is a factory for creating Pilot-Compute objects, w
 PilotComputeDescription
 =======================
 
-The PCD defines the compute resource in which you will be running on and different attributes required for managing jobs on that resource. Recall that a Pilot-Job requests resources required to run all of the jobs. There can be any number of Pilot-Computes instantiated depending on the compute resources available to the application (using two machines rather than 1 requires 2 pilot compute descriptions).
+The PCD defines the compute resource on which the Pilot agent will be started . Recall that a Pilot-Job requests resources required to run all of the Compute Units (subjobs). There can be any number of Pilot-Computes instantiated depending on the compute resources available to the application (using two machines rather than 1 requires 2 PilotComputeDescriptions).
 
 An example of a Pilot Compute Description is shown below::
 
@@ -74,75 +74,54 @@ An example of a Pilot Compute Description is shown below::
                     "number_of_processes": 8,
                     "processes_per_node":8,                     
                     "working_directory": "/N/u/<username>",
-                    'affinity_datacenter_label': "us-east-indiana",              
-                    'affinity_machine_label': "india" 
+                    'affinity_datacenter_label': "us-east-indiana",                                 'affinity_machine_label': "india" 
                    }
 
 .. class:: PilotComputeDescription
 
-.. data:: affinity_datacenter_label
-
-The data center label used for affinity topology. 
-
-:type: string
-
-	.. note:: Data centers and machines are organized in a logical topology tree (similar to the tree spawned by an DNS topology). The further the distance between two resources, the smaller their affinity.
-
-.. data:: affinity_machine_label
-
-The machine (resource) label used for affinity topology. 
-
-:type: string
-
-   	.. note:: Data centers and machines are organized in a logical topology tree (similar to the tree spawned by an DNS topology). The further the distance between two resources, the smaller their affinity.
-
-.. data:: output
-
-Controls the location of the Pilot-Agent standard output file.
-
-:type: string
-
-.. data:: error
-
-Controls the location of the Pilot-Agent standard error file.
+.. data:: service_url
+	
+	Specifies the SAGA-Python job adaptor (often this is based on the batch queuing system) and resource hostname (for instance, `pbs+ssh://lonestar.tacc.utexas.edu`) on which jobs can be executed.
 
 :type: string
 
 .. data:: number_of_processes
 
-The number of cores that need to be allocated to run the jobs.
+
+	The number of cores that need to be allocated to run the jobs.
 
 :type: string
 
 .. data:: processes_per_node
 
-The number of cores per node. 
 
-This argument does not actually limit the number of processes that can run on a node but specifies the order in which processes are assigned to nodes. You can think of :code:`-ppn 2` as repeating each line of the :code:`$PBS_NODEFILE` 2 times.  
+	*Optional.* The number of cores per node to be requested from the resource management system.
 
 :type: string
 
-   	.. note:: This field is required by some XSEDE/Torque clusters. If you have to specify ppn when running an MPI job on command line, then you must likely need this field in your BigJob script.
+   	.. note:: This argument does not limit the number of processes that can run on a node! This field is required by some XSEDE/Torque clusters. If you have to specify a `ppn` parameter (e.g.`-lnodes=1:ppn=8`) in your `qsub` script, you must need this field in your BigJob script.
 
-.. data:: project
+.. data:: working_directory
 
-The project allocation, if running on an XSEDE resource.
+	The directory in which the Pilot-Job agent executes
+
+	:type: string
+
+.. data:: project 
+
+	*Optional.* The project allocation, if running on an XSEDE resource.
  
-:type: string
+	:type: string
 
    	.. note:: This field must be removed if you are running somewhere that does not require an allocation.
 
-.. data:: queue
+.. data:: queue 
 
-The job queue to be used.
+	*Optional.* The job queue to be used.
 
-:type: string
+	:type: string
 
    	.. note:: If you are not submitting to a batch queuing system, remove this parameter.
-
-.. data:: service_url
-	
-Specifies the SAGA-Python job adaptor (often this is based on the batch queuing system) and resource hostname (for instance, lonestar.tacc.utexas.edu) on which jobs can be executed.
 
 :type: string
 
@@ -150,15 +129,27 @@ Specifies the SAGA-Python job adaptor (often this is based on the batch queuing 
 
 .. data:: wall_time_limit
 
-The number of minutes the resources are requested for
+	*Optional.* The number of minutes the resources are requested for. Required for some resources (e.g. on TACC machines).
 
 :type: string
 
-.. data:: working_directory
+.. data:: affinity_datacenter_label
 
-The directory in which the Pilot-Job agent executes
+	*Optional.* The data center label used for affinity topology. 
 
 :type: string
+
+	.. note:: Data centers and machines are organized in a logical topology tree (similar to the tree spawned by an DNS topology). The further the distance between two resources, the smaller their affinity.
+
+.. data:: affinity_machine_label
+
+	*Optional.* The machine (resource) label used for affinity topology. 
+
+:type: string
+
+   	.. note:: Data centers and machines are organized in a logical topology tree (similar to the tree spawned by an DNS topology). The further the distance between two resources, the smaller their affinity.
+
+
 
 
 PilotCompute
@@ -192,14 +183,28 @@ PilotDataDescription objects are used to describe the requirements for a
 generic property that can be set is :data:`size`, all other properties are 
 backend-specific security / authentication hints. Example::
 
-    PilotDataDescription pdd()
-    pdd.size = 100
+	pilot_data_service = PilotDataService(COORDINATION_URL)
+    pilot_data_description =    {
+                                   'service_url': "ssh://localhost/tmp/pilotdata/",
+                               }
+    pilot_data = service.create_pilot(pilot_data_description)
 
-    data_pilot = service.create_pilot(pdd)
+.. data:: service_url
+
+    Specifies the file adaptor and resource hostname on which a Pilot-Data will be created. Supported schemes:
+	
+	* SSH: `ssh://localhost/tmp/pilotdata/` (Password-less login and password-less private key required)
+	* iRODS: `irods://gw68/${OSG_DATA}/osg/irods/<username>/?vo=osg&resource-group=osgGridFtpGroup`
+	* Globus Online: `go://<user>:<password>@globusonline.org?ep=xsede#lonestar4&path=/work/01131/tg804093/pilot-data-go`
+	* Google Storage: `gs://google.com`
+	* Amazon S3: `s3://aws.amazon.com`
+	* Eucalyptus Walrus: `walrus://<endpoint-ip>`
+
+    :type: string
 
 .. data:: size 
 
-   The storage space required (in Megabyte) on the storage resource. 
+   *Optional.* The storage space required (in Megabyte) on the storage resource. 
 
    :type: int
 
@@ -207,7 +212,7 @@ backend-specific security / authentication hints. Example::
 
 .. data:: userkey
 
-    The SSH private key -- this is required by some systems by the Pilot-Data in order to ensure that the SSH service can be accessed from worker nodes.
+    *For SSH backend.* The SSH private key (for SSH backend). **Attention: This key is put into the Redis service in order to make it available at the Pilot agent. Use with caution and not with your production keys. Do not use with shared Redis server!** The SSH key delegation mechanism is designed for resources where the worker nodes are not directly accessible to install the private key manually (e.g. OSG).
 
     :type: string
 
@@ -215,7 +220,7 @@ backend-specific security / authentication hints. Example::
 
 .. data:: access_key_id
 
-    The 'username' for Amazon AWS compliant instances. It is an alphanumeric text string that uniquely identifies a user who owns an account. No two accounts can have the same access key.
+    *For S3/Walrus backend.* The 'username' for Amazon AWS compliant instances. It is an alphanumeric text string that uniquely identifies a user who owns an account. No two accounts can have the same access key.
 
     :type: string
 
@@ -223,17 +228,13 @@ backend-specific security / authentication hints. Example::
 
 .. data:: secret_access_key
 
-    The 'password' for Amazon AWS compliant instances. It's called secret because it is assumed to be known to the owner only. 
+    *For S3/Walrus backend.* The 'password' for Amazon AWS compliant instances. It's called secret because it is assumed to be known to the owner only. 
 
     :type: string
 
     .. note:: 'secret_access_key' is only supported by  AWS complaint EC2 based connections. This applies to Amazon AWS, Eucalpytus, and OpenStack. Please see Amazon's documentation to learn how to obtain your access key id and password.
 
-.. data:: service_url
 
-    Specifies the file adaptor and resource hostname on which a Pilot-Data will be created.
-
-    :type: string
 
 PilotData
 =========
