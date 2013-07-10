@@ -8,17 +8,20 @@ import traceback
 """
 
 #------------------------------------------------------------------------------
-#
-# The Redis password is read from the environment
-REDIS_PWD   = os.environ.get('REDIS_PASSWORD')
+# Redis password and 'user' name a aquired from the environment
+REDIS_PWD   = os.environ.get('XSEDE_TUTORIAL_REDIS_PASSWORD')
+USER_NAME   = os.environ.get('XSEDE_TUTORIAL_USER_NAME')
+
 # The coordination server
 COORD       = "redis://%s@gw68.quarry.iu.teragrid.org:6379" % REDIS_PWD
 # The host to run BigJob on
-HOSTNAME    = "localhost"
+HOSTNAME    = "stampede.tacc.utexas.edu"
+# The queue on the remote system
+QUEUE       = "normal"
 # The working directory on the remote cluster / machine
-WORKDIR     = os.getenv("HOME")+"/XSEDETutorial"
+WORKDIR     = "/home1/00988/tg802352/XSEDETutorial/%s/example3" % USER_NAME
 # The number of jobs you want to run
-NUMBER_JOBS = 4
+NUMBER_JOBS = 32
 
 
 #------------------------------------------------------------------------------
@@ -28,8 +31,10 @@ if __name__ == "__main__":
     try:
         # this describes the parameters and requirements for our pilot job
         pilot_description = pilot.PilotComputeDescription()
-        pilot_description.service_url = "ssh://%s" % HOSTNAME
-        pilot_description.number_of_processes = 1
+        pilot_description.service_url = "slurm+ssh://%s" % HOSTNAME
+        pilot_description.queue = QUEUE
+        pilot_description.project = 'TG-MCB090174'       ## TODO: this should disappear
+        pilot_description.number_of_processes = NUMBER_JOBS
         pilot_description.working_directory = WORKDIR
         pilot_description.walltime = 10
 
@@ -96,12 +101,12 @@ if __name__ == "__main__":
 
         # all 'C' tasks have finished. now we can use saga-python
         # to transfer back the output files...
+        d = saga.filesystem.Directory("sftp://%s/" % (HOSTNAME))
         for task in task_set_C:
-            d = saga.filesystem.Directory("sftp://%s/%s" \
-                % (HOSTNAME, task.get_local_working_directory()))
-            local_file = "stdout-%s.txt" % (task.get_id())
-            d.copy("C-stdout.txt", "file://localhost/%s/%s" % (os.getcwd(), local_file))
-            print "* Output for 'C' task %s copied to: './%s'" % (task.get_id(), local_file)
+            local_filename = "stdout-%s.txt" % (task.get_id())
+            d.copy("%s/C-stdout.txt" % (task.get_local_working_directory()), "file://localhost/%s/%s" % (os.getcwd(), local_filename))
+            print "* Output for '%s' copied to: './%s'" % (task.get_id(), local_filename)
+
 
         sys.exit(0)
 
