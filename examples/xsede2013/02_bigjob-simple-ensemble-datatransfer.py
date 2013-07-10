@@ -25,7 +25,7 @@ QUEUE       = "normal"
 # The working directory on the remote cluster / machine
 WORKDIR     = "/home1/00988/tg802352/XSEDETutorial/%s/example1" % USER_NAME
 # The number of jobs you want to run
-NUMBER_JOBS = 32
+NUMBER_JOBS = 4
 
 
 #------------------------------------------------------------------------------
@@ -51,7 +51,7 @@ def main():
             task_desc = pilot.ComputeUnitDescription()
             task_desc.executable = '/bin/echo'
             task_desc.arguments = ['I am task number $TASK_NO', ]
-            task_desc.environment = ['TASK_NO=%s' % i]
+            task_desc.environment = {'TASK_NO': i}
             task_desc.number_of_processes = 1
             task_desc.output = 'simple-ensemble-stdout.txt'
             task_desc.error = 'simple-ensemble-stderr.txt'
@@ -65,10 +65,10 @@ def main():
 
         # all compute units have finished. now we can use saga-python
         # to transfer back the output files...
+        d = saga.filesystem.Directory("sftp://%s/" % (HOSTNAME))
         for task in tasks:
-            d = saga.filesystem.Directory("sftp://%s/%s" % (HOSTNAME, task.get_local_working_directory()))
             local_filename = "stdout-%s.txt" % (task.get_id())
-            d.copy("simple-ensemble-stdout.txt", "file://localhost/%s/%s" % (os.getcwd(), local_filename))
+            d.copy("%s/simple-ensemble-stdout.txt" % (task.get_local_working_directory()), "file://localhost/%s/%s" % (os.getcwd(), local_filename))
             print "* Output for '%s' can be found locally in: './%s'" % (task.get_id(), local_filename)
 
         return(0)
