@@ -462,8 +462,18 @@ class ComputeUnit(ComputeUnit):
             jd.spmd_variation = "single"
         if compute_unit_description.has_key("arguments"): 
             jd.arguments = compute_unit_description["arguments"]
+
         if compute_unit_description.has_key("environment"):
-            jd.environment = compute_unit_description["environment"] 
+
+            env = compute_unit_description["environment"]
+            if type(env) == dict:
+                # convet to 'old-style' argument list
+                env_list = list()
+                for (key, val) in env.iteritems():
+                    env_list.append("%s=%s" % (key, val))
+                jd.environment = env_list
+            else:
+                jd.environment = env
         
         # handling number of processes
         if compute_unit_description.has_key("number_of_processes"):

@@ -46,7 +46,7 @@ def main():
             task_desc = pilot.ComputeUnitDescription()
             task_desc.executable = '/bin/echo'
             task_desc.arguments = ['I am task number $TASK_NO', ]
-            task_desc.environment = ['TASK_NO=%s' % i]
+            task_desc.environment = {'TASK_NO': i}
             task_desc.number_of_processes = 1
             task_desc.output = 'simple-ensemble-stdout.txt'
             task_desc.error = 'simple-ensemble-stderr.txt'
