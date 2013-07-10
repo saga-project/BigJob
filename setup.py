@@ -1,19 +1,19 @@
 #!/usr/bin/env python
 
-#from distribute_setup import use_setuptools
-#use_setuptools()
-
-#from distutils.core import setup
 import os
 import sys
 from setuptools import setup
 import subprocess
 
-# try:
-#     import saga
-# except:
-#     print "saga-python not found. Please verify that saga-python is installed."
-#     sys.exit(1)
+try:
+    import saga
+except:
+    print "Installing BigJob using SAGA/Bliss."
+    #sys.exit(1)
+
+if sys.version_info < (2, 6):
+    sys.stderr.write("BigJob requires Python 2.6 and above. Installation unsuccessful!")
+    sys.exit(1)
 
 VERSION_FILE="VERSION"    
     
@@ -39,7 +39,7 @@ def update_version():
     f = open(fn, "w")
     f.write(ver + "-saga-python")
     f.close()
-    print "set VERSION to '%s'" % ver
+    print "BigJob VERSION: '%s'" % ver
 
 
 def get_version():
@@ -59,7 +59,7 @@ def get_version():
     
 update_version()
     
-setup(name='BigJob',
+setup(name='saga-bigjob',
       version=get_version(),
       description='P* Pilot-Job Implementation based on SAGA-Python',
       author='Andre Luckow, et al.',
@@ -91,5 +91,5 @@ setup(name='BigJob',
             'test-bigjob-dynamic = examples.example_manyjob_local:main',
             'pilot-cli = cli.pilot_cli:main'            
         ]
-        }
+            }
 )
