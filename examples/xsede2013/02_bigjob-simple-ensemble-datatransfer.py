@@ -23,9 +23,9 @@ HOSTNAME    = "stampede.tacc.utexas.edu"
 # The queue on the remote system
 QUEUE       = "normal"
 # The working directory on the remote cluster / machine
-WORKDIR     = "/home1/00988/tg802352/XSEDETutorial/%s/example1" % USER_NAME
+WORKDIR     = "/home1/00988/tg802352/XSEDETutorial/%s/examplew" % USER_NAME
 # The number of jobs you want to run
-NUMBER_JOBS = 4
+NUMBER_JOBS = 32
 
 
 #------------------------------------------------------------------------------
@@ -53,8 +53,8 @@ def main():
             task_desc.arguments = ['I am task number $TASK_NO', ]
             task_desc.environment = {'TASK_NO': i}
             task_desc.number_of_processes = 1
-            task_desc.output = 'simple-ensemble-stdout.txt'
-            task_desc.error = 'simple-ensemble-stderr.txt'
+            task_desc.output = 'stdout.txt'
+            task_desc.error =  'stderr.txt'
 
             task = pilotjob.submit_compute_unit(task_desc)
             print "* Submitted task '%s' with id '%s' to %s" % (i, task.get_id(), HOSTNAME)
@@ -68,8 +68,8 @@ def main():
         d = saga.filesystem.Directory("sftp://%s/" % (HOSTNAME))
         for task in tasks:
             local_filename = "stdout-%s.txt" % (task.get_id())
-            d.copy("%s/simple-ensemble-stdout.txt" % (task.get_local_working_directory()), "file://localhost/%s/%s" % (os.getcwd(), local_filename))
-            print "* Output for '%s' can be found locally in: './%s'" % (task.get_id(), local_filename)
+            d.copy("%s/stdout.txt" % (task.get_local_working_directory()), "file://localhost/%s/%s" % (os.getcwd(), local_filename))
+            print "* Output for '%s' copied to: './%s'" % (task.get_id(), local_filename)
 
         return(0)
 
