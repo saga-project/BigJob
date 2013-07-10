@@ -4,7 +4,11 @@ import saga
 import pilot
 import traceback
 
-""" TODO: Describe...
+""" This tutorial example shows another form of task set synchronization.
+    It exemplifies a simple  workflow which submit a set of tasks (set A) and
+    (set B) and wait until they are completed until it submits another set of
+    tasks (set C). Both A- and B-tasks are 'producers'. C-tasks 'consumers' and
+    concatenate the output of an A- and a B-tasks. 
 """
 
 #------------------------------------------------------------------------------
@@ -103,7 +107,7 @@ if __name__ == "__main__":
         # to transfer back the output files...
         d = saga.filesystem.Directory("sftp://%s/" % (HOSTNAME))
         for task in task_set_C:
-            local_filename = "stdout-%s.txt" % (task.get_id())
+            local_filename = "ex4-stdout-%s.txt" % (task.get_id())
             d.copy("%s/C-stdout.txt" % (task.get_local_working_directory()), "file://localhost/%s/%s" % (os.getcwd(), local_filename))
             print "* Output for '%s' copied to: './%s'" % (task.get_id(), local_filename)
 
