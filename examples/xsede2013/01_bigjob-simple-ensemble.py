@@ -3,7 +3,12 @@ import sys
 import pilot
 import traceback
 
-""" DESCRIPTION: This example does this...
+""" This example runs NUMBER_JOBS (32) concurrent '/bin/echo' tasks
+    on TACC's stampede cluster. A 32-core pilot job is initialized
+    and 32 single-core tasks are submitted to it. This example also
+    show basic error handling via 'try/except' and coordinated
+    shutdown (removing pilot from stampede's queue) once all tasks 
+    have finihsed running via 'finally'.
 """
 
 #------------------------------------------------------------------------------
