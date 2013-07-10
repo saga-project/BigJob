@@ -6,21 +6,21 @@ import traceback
 """ DESCRIPTION: This example does this...
 """
 
-# Redis password is read from the environment. The example can be run like this:
-# REDIS_PASSWORD=ILikeBigJob_wITH-REdIS python examples/example_styleguide.py
-# Alternatively, for tutorials, etc. REDIS_PASSWORD can be defined in /etc/profile
-
 #------------------------------------------------------------------------------
-#
-REDIS_PWD   = os.environ.get('REDIS_PASSWORD')
+# Redis password and 'user' name a aquired from the environment
+REDIS_PWD   = os.environ.get('XSEDE_TUTORIAL_REDIS_PASSWORD')
+USER_NAME   = os.environ.get('XSEDE_TUTORIAL_USER_NAME')
+
 # The coordination server
 COORD       = "redis://%s@gw68.quarry.iu.teragrid.org:6379" % REDIS_PWD
 # The host to run BigJob on
-HOSTNAME    = "localhost"
-# The working directory on the remote cluster / machine 
-WORKDIR     = os.getenv("HOME")+"/XSEDETutorial"
+HOSTNAME    = "stampede.tacc.utexas.edu"
+# The queue on the remote system
+QUEUE       = "normal"
+# The working directory on the remote cluster / machine
+WORKDIR     = "/home1/00988/tg802352/XSEDETutorial/%s/example1" % USER_NAME
 # The number of jobs you want to run
-NUMBER_JOBS = 4
+NUMBER_JOBS = 32
 
 
 #------------------------------------------------------------------------------
@@ -29,8 +29,10 @@ def main():
     try:
         # this describes the parameters and requirements for our pilot job
         pilot_description = pilot.PilotComputeDescription()
-        pilot_description.service_url = "ssh://%s" % HOSTNAME
-        pilot_description.number_of_processes = 1
+        pilot_description.service_url = "slurm+ssh://%s" % HOSTNAME
+        pilot_description.queue = QUEUE
+        pilot_description.project = 'TG-MCB090174'       ## TODO: this should disappear
+        pilot_description.number_of_processes = 32
         pilot_description.working_directory = WORKDIR
         pilot_description.walltime = 10
 
@@ -43,7 +45,7 @@ def main():
         for i in range(NUMBER_JOBS):
             task_desc = pilot.ComputeUnitDescription()
             task_desc.executable = '/bin/echo'
-            task_desc.arguments = ['Hello, I am task number $TASK_NO', ]
+            task_desc.arguments = ['I am task number $TASK_NO', ]
             task_desc.environment = ['TASK_NO=%s' % i]
             task_desc.number_of_processes = 1
             task_desc.output = 'simple-ensemble-stdout.txt'
