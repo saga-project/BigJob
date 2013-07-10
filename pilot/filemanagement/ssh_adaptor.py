@@ -11,6 +11,7 @@ import stat
 import logging
 import traceback
 import pexpect
+from pilot.api.api import PilotError
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 from pilot.api import State
@@ -61,6 +62,11 @@ class SSHFileAdaptor(object):
             except:
                 self.__print_traceback()
         
+        if self.__run_check()==False:
+            sys.stderr.write("Unable to connect/initialize Pilot-Data. Exit BigJob.")
+            raise PilotError("Unable to connect/initialize Pilot-Data. Exit BigJob.")
+        
+        
 
     def get_security_context(self):
         """ Returns security context that needs to be available on the distributed
@@ -103,9 +109,6 @@ class SSHFileAdaptor(object):
             
     def create_du(self, du_id):
         du_dir = os.path.join(self.path, str(du_id))
-        logger.debug("/bin/date")
-        command = "/bin/date"
-        self.__run_ssh_command(self.userkey, self.user, self.host, command)
         logger.debug("mkdir: " + du_dir)
         command = "mkdir %s"%du_dir
         self.__run_ssh_command(self.userkey, self.user, self.host, command)
@@ -282,6 +285,11 @@ class SSHFileAdaptor(object):
  
     
     def __run_ssh_command(self, userkey, user, host, command):
+        output = self.__run_ssh_command_rc(userkey, user, host, command)[0]
+        return output
+         
+    
+    def __run_ssh_command_rc(self, userkey, user, host, command):
         prefix=""
         if host != None:
             prefix = "ssh " + SSH_OPTS + " "
@@ -297,8 +305,7 @@ class SSHFileAdaptor(object):
         output = child.readlines()
         logger.debug("Run %s Output: %s"%(command, str(output)))
         child.close()
-        return output 
-    
+        return (output, child.exitstatus) 
 
 
     def __run_scp_command(self, userkey, source_user, source_host, source_path, target_user, target_host, target_path):
@@ -330,7 +337,12 @@ class SSHFileAdaptor(object):
         child.close()
         return child.exitstatus
         
-    
+    def __run_check(self):
+        rc = self.__run_ssh_command_rc(self.userkey, self.user, self.host, "/bin/date")[1]
+        if rc == 0:
+            return True
+        else:
+            return False 
    
     def __print_traceback(self):
         exc_type, exc_value, exc_traceback = sys.exc_info()

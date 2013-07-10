@@ -9,6 +9,8 @@ import os
 import traceback
 import logging
 import uuid
+from pilot.api.api import PilotError
+from bigjob.bigjob_manager import BigJobError
 
 
 """ import bigjob classes """
@@ -70,10 +72,14 @@ class PilotComputeService(PilotComputeService):
             Return value:
             A PilotCompute object
         """
-        bj_dict = self.__translate_pj_bj_description(pilot_compute_description)
-        bj = self.__start_bigjob(bj_dict)
-        pj = PilotCompute(self, bj, pilot_compute_description)
-        self.pilot_computes.append(pj)
+        pj = None
+        try:
+            bj_dict = self.__translate_pj_bj_description(pilot_compute_description)
+            bj = self.__start_bigjob(bj_dict)
+            pj = PilotCompute(self, bj, pilot_compute_description)
+            self.pilot_computes.append(pj)
+        except BigJobError as bj_error:
+            raise PilotError(bj_error.args[0])
         return pj
            
     
@@ -456,8 +462,18 @@ class ComputeUnit(ComputeUnit):
             jd.spmd_variation = "single"
         if compute_unit_description.has_key("arguments"): 
             jd.arguments = compute_unit_description["arguments"]
+
         if compute_unit_description.has_key("environment"):
-            jd.environment = compute_unit_description["environment"] 
+
+            env = compute_unit_description["environment"]
+            if type(env) == dict:
+                # convet to 'old-style' argument list
+                env_list = list()
+                for (key, val) in env.iteritems():
+                    env_list.append("%s=%s" % (key, val))
+                jd.environment = env_list
+            else:
+                jd.environment = env
         
         # handling number of processes
         if compute_unit_description.has_key("number_of_processes"):
@@ -480,5 +496,3 @@ class ComputeUnit(ComputeUnit):
         if compute_unit_description.has_key("output_data"):
             jd.output_data=compute_unit_description["output_data"]            
         return jd
-        
-        
