@@ -48,7 +48,7 @@ if __name__ == "__main__":
             task_desc = pilot.ComputeUnitDescription()
             task_desc.executable = '/bin/echo'
             task_desc.arguments = ['I am an $TASK_SET task with id $TASK_NO', ]
-            task_desc.environment = ['TASK_SET=A', 'TASK_NO=%s' % i]
+            task_desc.environment = {'TASK_SET': 'A', 'TASK_NO': i}
             task_desc.number_of_processes = 1
             task_desc.output = 'A-stdout.txt'
             task_desc.error  = 'A-stderr.txt'
@@ -62,7 +62,7 @@ if __name__ == "__main__":
             task_desc = pilot.ComputeUnitDescription()
             task_desc.executable = '/bin/echo'
             task_desc.arguments = ['I am a $TASK_SET task with id $TASK_NO']
-            task_desc.environment = ['TASK_SET=B', 'TASK_NO=%s' % i]
+            task_desc.environment = {'TASK_SET': 'B', 'TASK_NO': i}
             task_desc.number_of_processes = 1
             task_desc.output = 'B-stdout.txt'
             task_desc.error  = 'B-stderr.txt'
