@@ -5,9 +5,9 @@ import pilot
 import traceback
 
 """ This tutorial example extends and improves the first example
-    (01_bigjob-simple-ensemble.py) by adding file transfer: once the tasks have
-    finished executing, we use SAGA-Python to transfer the individual output
-    files back to the local machine.
+    (01_bigjob-simple-ensemble.py) by adding file transfer: once
+    the 32 tasks have finished executing, we use SAGA-Python to
+    transfer the individual output files back to the local machine.
 """
 
 
@@ -67,7 +67,7 @@ def main():
         # to transfer back the output files...
         d = saga.filesystem.Directory("sftp://%s/" % (HOSTNAME))
         for task in tasks:
-            local_filename = "stdout-%s.txt" % (task.get_id())
+            local_filename = "ex-2-stdout-%s.txt" % (task.get_id())
             d.copy("%s/stdout.txt" % (task.get_local_working_directory()), "file://localhost/%s/%s" % (os.getcwd(), local_filename))
             print "* Output for '%s' copied to: './%s'" % (task.get_id(), local_filename)
 

@@ -4,10 +4,11 @@ import saga
 import pilot
 import traceback
 
-""" This tutorial example extends and improves the first example
-    (01_bigjob-simple-ensemble.py) by adding file transfer: once the tasks have
-    finished executing, we use SAGA-Python to transfer the individual output
-    files back to the local machine.
+""" This tutorial example introduces task synchronization. It submits a 
+    set of 32 '/bin/echo' tasks (task set A). For every successfully completed 
+    task, we submits another '/bin/cat' task from task set B to the same Pilot-Job.
+    Task from set A can be seen as producers and tasks from task set B as
+    consumers, since B-tasks read 'consume' the output file an A-tasks.
 """
 
 #------------------------------------------------------------------------------
@@ -86,7 +87,7 @@ if __name__ == "__main__":
         # to transfer back the output files...
         d = saga.filesystem.Directory("sftp://%s/" % (HOSTNAME))
         for task in task_set_B:
-            local_filename = "stdout-%s.txt" % (task.get_id())
+            local_filename = "ex3-stdout-%s.txt" % (task.get_id())
             d.copy("%s/B-stdout.txt" % (task.get_local_working_directory()), "file://localhost/%s/%s" % (os.getcwd(), local_filename))
             print "* Output for '%s' copied to: './%s'" % (task.get_id(), local_filename)
 
