@@ -18,7 +18,7 @@ USER_NAME   = os.environ.get('XSEDE_TUTORIAL_USER_NAME')
 
 # The coordination server
 COORD       = "redis://%s@gw68.quarry.iu.teragrid.org:6379" % REDIS_PWD
-# The host to run BigJob on
+# The host (+username) to run BigJob on
 HOSTNAME    = "sagatut@stampede.tacc.utexas.edu"
 # The queue on the remote system
 QUEUE       = "normal"
@@ -36,7 +36,6 @@ def main():
         pilot_description = pilot.PilotComputeDescription()
         pilot_description.service_url = "slurm+ssh://%s" % HOSTNAME
         pilot_description.queue = QUEUE
-        pilot_description.project = 'TG-MCB090174'       ## TODO: this should disappear
         pilot_description.number_of_processes = 32
         pilot_description.working_directory = WORKDIR
         pilot_description.walltime = 10
@@ -53,8 +52,8 @@ def main():
             task_desc.arguments = ['I am task number $TASK_NO', ]
             task_desc.environment = {'TASK_NO': i}
             task_desc.number_of_processes = 1
-            task_desc.output = 'simple-ensemble-stdout.txt'
-            task_desc.error = 'simple-ensemble-stderr.txt'
+            task_desc.output = 'stdout.txt'
+            task_desc.error = 'stderr.txt'
 
             task = pilotjob.submit_compute_unit(task_desc)
             print "* Submitted task '%s' with id '%s' to %s" % (i, task.get_id(), HOSTNAME)
