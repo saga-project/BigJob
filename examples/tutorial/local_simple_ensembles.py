@@ -1,45 +1,75 @@
 import os
-import time
 import sys
-from pilot import PilotComputeService, ComputeDataService, State
+import pilot
+import traceback
 
-### This is the number of jobs you want to run
-NUMBER_JOBS=4
-COORDINATION_URL = "redis://localhost:6379"
+""" DESCRIPTION: This example shows how to run BigJob locally to execute tasks.
+"""
+
+#------------------------------------------------------------------------------
+# Redis password and 'user' name a aquired from the environment
+REDIS_PWD   = os.environ.get('REDIS_PASSWORD')
+USER_NAME   = os.environ.get('USER_NAME')
+
+# The coordination server
+COORD       = "redis://%s@localhost:6379" % REDIS_PWD
+# The host to run BigJob on
+HOSTNAME    = "localhost"
+# The working directory on the remote cluster / machine
+WORKDIR     = "/home/%s/example1" % USER_NAME
+# The number of jobs you want to run
+NUMBER_JOBS = 4
+
+
+#------------------------------------------------------------------------------
+#
+def main():
+    try:
+        # this describes the parameters and requirements for our pilot job
+        pilot_description = pilot.PilotComputeDescription()
+        pilot_description.service_url = "fork://%s" % HOSTNAME
+        pilot_description.number_of_processes = 4 
+        pilot_description.working_directory = WORKDIR
+        pilot_description.walltime = 10
+
+        # create a new pilot job
+        pilot_compute_service = pilot.PilotComputeService(COORD)
+        pilotjob = pilot_compute_service.create_pilot(pilot_description)
+
+        # submit tasks to pilot job
+        tasks = list()
+        for i in range(NUMBER_JOBS):
+            task_desc = pilot.ComputeUnitDescription()
+            task_desc.executable = '/bin/echo'
+            task_desc.arguments = ['I am task number $TASK_NO', ]
+            task_desc.environment = {'TASK_NO': i}
+            task_desc.number_of_processes = 1
+            task_desc.output = 'simple-ensemble-stdout.txt'
+            task_desc.error = 'simple-ensemble-stderr.txt'
+
+            task = pilotjob.submit_compute_unit(task_desc)
+            print "* Submitted task '%s' with id '%s' to %s" % (i, task.get_id(), HOSTNAME)
+            tasks.append(task)
+
+        print "Waiting for tasks to finish..."
+        pilotjob.wait()
+
+        return(0)
+
+    except Exception, ex:
+            print "AN ERROR OCCURED: %s" % ((str(ex)))
+            # print a stack trace in case of an exception -
+            # this can be helpful for debugging the problem
+            traceback.print_exc()
+            return(-1)
+
+    finally:
+        # alway try to shut down pilots, otherwise jobs might end up
+        # lingering in the queue
+        print ("Terminating BigJob...")
+        pilotjob.cancel()
+        pilot_compute_service.cancel()
+
 
 if __name__ == "__main__":
-
-    pilot_compute_service = PilotComputeService(COORDINATION_URL)
-
-    pilot_compute_description = { "service_url": "fork://localhost",
-                                  "number_of_processes": 1,
-                                  "working_directory": os.getenv("HOME")+"/agent",
-                                  "walltime":10
-                                }
-
-    pilot_compute_service.create_pilot(pilot_compute_description)
-
-    compute_data_service = ComputeDataService()
-    compute_data_service.add_pilot_compute_service(pilot_compute_service)
-
-    print ("Finished Pilot-Job setup. Submitting compute units")
-
-    # submit compute units
-    for i in range(NUMBER_JOBS):
-        compute_unit_description = {
-                "executable": "/bin/echo",
-                "arguments": ["Hello","$ENV1","I am CU number "+str(i)],
-                "environment": ['ENV1=World'],
-                "number_of_processes": 1,
-                "spmd_variation":"single",
-                "output": "stdout.txt",
-                "error": "stderr.txt",
-                }
-        compute_data_service.submit_compute_unit(compute_unit_description)
-
-    print ("Waiting for compute units to complete")
-    compute_data_service.wait()
-
-    print ("Terminate Pilot Jobs")
-    compute_data_service.cancel()
-    pilot_compute_service.cancel()
+    sys.exit(main())
