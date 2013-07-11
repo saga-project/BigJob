@@ -50,11 +50,11 @@ Install BigJob
 
 After your virtual environment is active, you are ready to install BigJob. BigJob is available via PyPi and can be installed using easy_install as follows::
 	
-	easy_install BigJob
+	pip install saga-bigjob
 
 You can change the default installation directory by calling::
 
-	easy_install --prefix=<target-dir> BigJob
+	pip install --install-option="--prefix=<target-directory>" saga-bigjob	
 
 To make sure that your installation works, run the following command to check if the BigJob module can be imported by the python interpreter::
 
