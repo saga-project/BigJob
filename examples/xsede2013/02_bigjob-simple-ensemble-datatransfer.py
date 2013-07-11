@@ -36,7 +36,6 @@ def main():
         pilot_description = pilot.PilotComputeDescription()
         pilot_description.service_url = "slurm+ssh://%s" % HOSTNAME
         pilot_description.queue = QUEUE
-        pilot_description.project = 'TG-MCB090174'       ## TODO: this should disappear
         pilot_description.number_of_processes = 32
         pilot_description.working_directory = WORKDIR
         pilot_description.walltime = 10
