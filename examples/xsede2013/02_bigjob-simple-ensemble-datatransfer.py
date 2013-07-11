@@ -19,11 +19,11 @@ USER_NAME   = os.environ.get('XSEDE_TUTORIAL_USER_NAME')
 # The coordination server
 COORD       = "redis://%s@gw68.quarry.iu.teragrid.org:6379" % REDIS_PWD
 # The host to run BigJob on
-HOSTNAME    = "stampede.tacc.utexas.edu"
+HOSTNAME    = "sagatut@stampede.tacc.utexas.edu"
 # The queue on the remote system
 QUEUE       = "normal"
 # The working directory on the remote cluster / machine
-WORKDIR     = "/home1/00988/tg802352/XSEDETutorial/%s/examplew" % USER_NAME
+WORKDIR     = "/home1/02554/sagatut/XSEDETutorial/%s/examplew" % USER_NAME
 # The number of jobs you want to run
 NUMBER_JOBS = 32
 
