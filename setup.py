@@ -59,7 +59,7 @@ def get_version():
     
 update_version()
     
-setup(name='saga-bigjob',
+setup(name='BigJob',
       version=get_version(),
       description='P* Pilot-Job Implementation based on SAGA-Python',
       author='Andre Luckow, et al.',

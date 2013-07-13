@@ -269,12 +269,19 @@ class bigjob_agent:
         """ initialize free nodes list from PBS environment """
         logger.debug("Init nodeslist from PBS NODEFILE")
         if self.LAUNCH_METHOD == "aprun" and os.environ.has_key("PBS_NNODES"):
-            # Workaround for Kraken
+            # Workaround for Kraken and Hector
             # PBS_NODEFILE does only contain front node
             # thus we create a dummy node file with the respective 
             # number of slots
             # aprun does not rely on the nodefile for job launching
-            number_nodes =  os.environ.get("PBS_NNODES")
+            
+            # get number of requested slots from pilot description
+            number_of_requested_processes = self.pilot_description["number_of_processes"]
+            if os.environ.has_key("PBS_NNODES"):
+                # use PBS assigned node count if available
+                number_nodes =  os.environ.get("PBS_NNODES")
+            else:
+                number_nodes =  number_of_requested_processes
             self.freenodes=[]
             for i in range(0, int(number_nodes)):
                 slot = "slot-%d\n"%i
