@@ -1,4 +1,5 @@
 include *.cfg
+include *.conf
 include *.md
 
 recursive-include api *

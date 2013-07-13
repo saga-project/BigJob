@@ -33,7 +33,7 @@ def main():
     project="d45" # if None default allocation is used 
     walltime=10
     processes_per_node=8
-    number_of_processes=8
+    number_of_processes=64
     # workingdirectory="/lustre/scratch/aluckow/agent"  # working directory for agent
     workingdirectory="/home/d45/d45/s1026257/al/" # working directory for agent
     userproxy = None # userproxy (not supported yet due to context issue w/ SAGA)
@@ -72,7 +72,7 @@ def main():
     ##########################################################################################
     # Submit SubJob through BigJob
     jd = description()
-    jd.executable = "/bin/date"
+    jd.executable = "/bin/hostname"
     jd.number_of_processes = "1"
     jd.spmd_variation = "single"
     jd.arguments = [""]
