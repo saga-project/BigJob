@@ -75,7 +75,9 @@ setup(name='saga-bigjob',
                 'pilot.filemanagement', 'pilot.impl', 'pilot.scheduler', 'examples', 'api', 'bootstrap', 'cli'],
       include_package_data=True,
       # data files for easy_install
-      data_files = [('', ['README.md', 'README.md'])],
+      data_files = [('', ['bigjob.conf', 'bigjob.conf']), 
+                    ('', ['README.md', 'README.md']), 
+                    ('', ['VERSION', 'VERSION'])],
       
       # data files for pip
       package_data = {'': ['*.conf']},
