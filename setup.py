@@ -76,6 +76,7 @@ setup(name='BigJob',
       include_package_data=True,
       # data files for easy_install
       data_files = [('', ['bigjob.conf', 'bigjob.conf']), 
+                    ('', ['bigjob_agent.conf', 'bigjob_agent.conf']), 
                     ('', ['README.md', 'README.md']), 
                     ('', ['VERSION', 'VERSION'])],
       
