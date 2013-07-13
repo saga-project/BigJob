@@ -1,3 +1,18 @@
-recursive-include package *
-include bigjob.conf VERSION README.md
-prune doc
+include *.cfg
+include *.md
+
+recursive-include api *
+recursive-include bigjob *
+recursive-include bigjob_dynamic *
+recursive-include bootstrap *
+recursive-include cli *
+recursive-include coordination *
+recursive-include pilot * 
+recursive-include scripts *
+recursive-include tests * 
+recursive-include util * 
+
+global-exclude *.dll
+global-exclude *.pyc
+global-exclude *.pyo
+global-exclude *.so
