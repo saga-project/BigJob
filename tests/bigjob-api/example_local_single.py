@@ -34,7 +34,7 @@ def main():
 
     ##########################################################################################
     # Edit parameters for BigJob
-    queue="normal" # if None default queue is used
+    queue="" # if None default queue is used
     project=None # if None default allocation is used 
     walltime=10
     processes_per_node=4
