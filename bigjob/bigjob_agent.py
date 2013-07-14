@@ -104,7 +104,9 @@ class bigjob_agent:
         
         self.LAUNCH_METHOD="ssh"                    
         if default_dict.has_key("launch_method"):
-            self.LAUNCH_METHOD=self.__get_launch_method(default_dict["launch_method"])
+            self.LAUNCH_METHOD=default_dict["launch_method"]
+            
+        self.LAUNCH_METHOD=self.__get_launch_method(self.LAUNCH_METHOD)
         
         logging.debug("Launch Method: " + self.LAUNCH_METHOD + " mpi: " + self.MPIRUN + " shell: " + self.SHELL)
         
