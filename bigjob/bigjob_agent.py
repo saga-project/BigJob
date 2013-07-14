@@ -9,7 +9,6 @@ import os
 import bigjob.state
 import socket
 import threading
-import ast
 import time
 import pdb
 import traceback
@@ -22,6 +21,12 @@ import hostlist
 from string import Template
 
 logging.basicConfig(level=logging.DEBUG)
+
+# Optional Imports
+try:
+    import ast
+except:
+    logging.debug("Python version <2.6. AST coult not be imported. ")
 
 try:
     import saga
@@ -97,7 +102,14 @@ class bigjob_agent:
             self.OUTPUT_TAR=eval(default_dict["create_output_tar"])
             logger.debug("Create output tar: %r", self.OUTPUT_TAR)
         
-
+        self.LAUNCH_METHOD="ssh"                    
+        if default_dict.has_key("launch_method"):
+            self.LAUNCH_METHOD=self.__get_launch_method(default_dict["launch_method"])
+        
+        logging.debug("Launch Method: " + self.LAUNCH_METHOD + " mpi: " + self.MPIRUN + " shell: " + self.SHELL)
+        
+        # init rms (SGE/PBS)
+        self.init_rms()
         self.failed_polls = 0
         
         ##############################################################################
@@ -162,16 +174,11 @@ class bigjob_agent:
         # update state of pilot job to running
         logger.debug("set state to : " +  str(bigjob.state.Running))
         self.coordination.set_pilot_state(self.base_url, str(bigjob.state.Running), False)
-        self.pilot_description = ast.literal_eval(self.coordination.get_pilot_description(self.base_url))
-        logger.debug("Pilot Description: " + str(self.pilot_description))
-
-        ##############################################################################
-        self.LAUNCH_METHOD="ssh"                    
-        if default_dict.has_key("launch_method"):
-            self.LAUNCH_METHOD=self.__get_launch_method(default_dict["launch_method"])
-        logger.debug("Launch Method: " + self.LAUNCH_METHOD + " mpi: " + self.MPIRUN + " shell: " + self.SHELL)
-        # init rms (SGE/PBS)
-        self.init_rms()
+        self.pilot_description = self.coordination.get_pilot_description(self.base_url)
+        try:
+            self.pilot_description = ast.literal_eval(self.pilot_description)
+        except:
+            logger.warn("Unable to parse pilot description")
         
         ##############################################################################
         # start background thread for polling new jobs and monitoring current jobs
@@ -270,8 +277,8 @@ class bigjob_agent:
 
     def init_pbs(self):
         """ initialize free nodes list from PBS environment """
-        if self.LAUNCH_METHOD == "aprun":
-            logger.debug("Detect number of available slots for aprun")
+        logger.debug("Init nodeslist from PBS NODEFILE")
+        if self.LAUNCH_METHOD == "aprun" and os.environ.has_key("PBS_NNODES"):
             # Workaround for Kraken and Hector
             # PBS_NODEFILE does only contain front node
             # thus we create a dummy node file with the respective 
@@ -291,7 +298,6 @@ class bigjob_agent:
                 logger.debug("add slot: " + slot.strip())
                 self.freenodes.append(slot)            
         else:
-            logger.debug("Init nodeslist from PBS NODEFILE")
             pbs_node_file = os.environ.get("PBS_NODEFILE")    
             if pbs_node_file == None:
                 return
@@ -911,15 +917,13 @@ class bigjob_agent:
     
     def __get_launch_method(self, requested_method):
         """ returns desired execution method: ssh, aprun """
-        logger.debug("Testing for aprun") 
+        
         aprun_available = False
         try:
             aprun_available = (subprocess.call("aprun -n 1 /bin/date", shell=True, stdout=None, stderr=None)==0)
-            logger.debug("aprun available: " + str(aprun_available))
         except:
             self.__print_traceback()
 
-        logger.debug("aprun available: " + str(aprun_available))
         ibrun_available = self.__ibrun_available()
         
         ssh_available = False
@@ -929,7 +933,7 @@ class bigjob_agent:
             pass
         
         launch_method = "local"
-        if aprun_available == True:
+        if requested_method=="aprun" and aprun_available == True:
             launch_method="aprun"
         elif ibrun_available == True:
             launch_method="ibrun"

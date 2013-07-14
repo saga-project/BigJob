@@ -623,8 +623,11 @@ except: print "SAGA not found.";
 try: import bigjob.bigjob_agent
 except: 
     print "BigJob not installed. Attempt to install it."; 
-    opener = urllib.FancyURLopener({}); 
-    opener.retrieve(BOOTSTRAP_URL, BOOTSTRAP_FILE); 
+    try:
+        opener = urllib.FancyURLopener({}); 
+        opener.retrieve(BOOTSTRAP_URL, BOOTSTRAP_FILE);
+    except Exception, ex:
+        print "Unable to download bootstrap script: " + str(ex) + ". Please install BigJob manually."
     print "Execute: " + "python " + BOOTSTRAP_FILE + " " + BIGJOB_PYTHON_DIR
     os.system("/usr/bin/env")
     try:
@@ -637,7 +640,10 @@ except:
         activate_this = os.path.join(BIGJOB_PYTHON_DIR, "bin/activate_this.py"); 
         execfile(activate_this, dict(__file__=activate_this))
 #try to import BJ once again
-import bigjob.bigjob_agent
+try:
+    import bigjob.bigjob_agent
+except Exception, ex:
+        print "Unable install BigJob: " + str(ex) + ". Please install BigJob manually."   
 # execute bj agent
 args = list()
 args.append("bigjob_agent.py")
