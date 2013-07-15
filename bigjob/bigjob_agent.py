@@ -102,16 +102,7 @@ class bigjob_agent:
             self.OUTPUT_TAR=eval(default_dict["create_output_tar"])
             logger.debug("Create output tar: %r", self.OUTPUT_TAR)
         
-        self.LAUNCH_METHOD="ssh"                    
-        if default_dict.has_key("launch_method"):
-            self.LAUNCH_METHOD=default_dict["launch_method"]
-            
-        self.LAUNCH_METHOD=self.__get_launch_method(self.LAUNCH_METHOD)
-        
-        logging.debug("Launch Method: " + self.LAUNCH_METHOD + " mpi: " + self.MPIRUN + " shell: " + self.SHELL)
-        
-        # init rms (SGE/PBS)
-        self.init_rms()
+
         self.failed_polls = 0
         
         ##############################################################################
@@ -183,6 +174,20 @@ class bigjob_agent:
             logger.warn("Unable to parse pilot description")
             self.pilot_description = None
              
+
+        ############################################################################
+        # Detect launch method 
+        self.LAUNCH_METHOD="ssh"                    
+        if default_dict.has_key("launch_method"):
+            self.LAUNCH_METHOD=default_dict["launch_method"]
+            
+        self.LAUNCH_METHOD=self.__get_launch_method(self.LAUNCH_METHOD)
+        
+        logging.debug("Launch Method: " + self.LAUNCH_METHOD + " mpi: " + self.MPIRUN + " shell: " + self.SHELL)
+        
+        # init rms (SGE/PBS)
+        self.init_rms()
+        
         ##############################################################################
         # start background thread for polling new jobs and monitoring current jobs
         self.resource_lock=threading.RLock()
@@ -285,7 +290,7 @@ class bigjob_agent:
     def init_pbs(self):
         """ initialize free nodes list from PBS environment """
         logger.debug("Init nodeslist from PBS NODEFILE")
-        if self.LAUNCH_METHOD == "aprun" and os.environ.has_key("PBS_NNODES"):
+        if self.LAUNCH_METHOD == "aprun":
             # Workaround for Kraken and Hector
             # PBS_NODEFILE does only contain front node
             # thus we create a dummy node file with the respective 
