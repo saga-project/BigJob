@@ -97,12 +97,15 @@ class bigjob_agent:
         # linked under mpirun_rsh
         if default_dict.has_key("mpirun"):
             self.MPIRUN=default_dict["mpirun"]
+        
+        if default_dict.has_key("number_executor_threads"):
+            THREAD_POOL_SIZE=int(default_dict["number_executor_threads"])
+            
         self.OUTPUT_TAR=False
         if default_dict.has_key("create_output_tar"):
             self.OUTPUT_TAR=eval(default_dict["create_output_tar"])
             logger.debug("Create output tar: %r", self.OUTPUT_TAR)
         
-
         self.failed_polls = 0
         
         ##############################################################################
@@ -190,6 +193,7 @@ class bigjob_agent:
         
         ##############################################################################
         # start background thread for polling new jobs and monitoring current jobs
+        logger.debug("Creating executor thread pool of size: %d"%(THREAD_POOL_SIZE))
         self.resource_lock=threading.RLock()
         self.threadpool = ThreadPool(THREAD_POOL_SIZE)
         
