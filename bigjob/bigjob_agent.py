@@ -181,7 +181,8 @@ class bigjob_agent:
             self.pilot_description = ast.literal_eval(self.pilot_description)
         except:
             logger.warn("Unable to parse pilot description")
-        
+            self.pilot_description = None
+             
         ##############################################################################
         # start background thread for polling new jobs and monitoring current jobs
         self.resource_lock=threading.RLock()
@@ -250,7 +251,11 @@ class bigjob_agent:
         """ initialize free nodes list with dummy (for fork jobs)"""  
         logger.debug("Init nodefile from /proc/cpuinfo")
         try:
-            num_cpus = self.get_num_cpus()
+            num_cpus=1
+            if self.pilot_description != None:
+                num_cpus = self.pilot_description["number_of_processes"]
+            else:
+                num_cpus = self.get_num_cpus()
             for i in range(0, num_cpus): 
                 self.freenodes.append("localhost\n")
         except IOError:
