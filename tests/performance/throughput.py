@@ -16,7 +16,8 @@ if __name__ == "__main__":
     pilot_compute_description = {
                              "service_url": 'fork://localhost',
                              "number_of_processes": NUMBER_SLOTS,                             
-                             "working_directory": os.getcwd()
+                             "working_directory": os.getcwd(),
+                             "number_executor_threads": 8
                             }
     
     pilotjob = pilot_compute_service.create_pilot(pilot_compute_description=pilot_compute_description)
