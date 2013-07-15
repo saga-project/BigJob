@@ -10,7 +10,7 @@ The SAGA BigJob framework is a SAGA-based pilot job implementation. The  Simple 
 Web Page & Mailing List
 -----------------------
 
-Web page: https://github.com/saga-project/BigJob/wiki
+Web page: <http://saga-project.github.io/BigJob/>
 
 Mailing list:  
 
@@ -36,7 +36,7 @@ BigJob requires [Redis](http://redis.io) for communication between BigJob manage
 
 Mac Homebrew:
 	
-	brew install redis redis-tools hiredis
+	brew install redis redis-tools 
 
 Linux:
 Download Redis http://redis.io/download
