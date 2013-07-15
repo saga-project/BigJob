@@ -193,6 +193,9 @@ class bigjob_agent:
         
         ##############################################################################
         # start background thread for polling new jobs and monitoring current jobs
+        # check whether user requested a certain threadpool size
+        if self.pilot_description!=None and self.pilot_description.has_key("number_executor_threads"):
+            THREAD_POOL_SIZE=int(self.pilot_description["number_executor_threads"])
         logger.debug("Creating executor thread pool of size: %d"%(THREAD_POOL_SIZE))
         self.resource_lock=threading.RLock()
         self.threadpool = ThreadPool(THREAD_POOL_SIZE)
