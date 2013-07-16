@@ -23,7 +23,7 @@ HOSTNAME    = "sagatut@stampede.tacc.utexas.edu"
 # The queue on the remote system
 QUEUE       = "normal"
 # The working directory on the remote cluster / machine
-WORKDIR     = "/home1/02554/sagatut/XSEDETutorial/%s/examplew" % USER_NAME
+WORKDIR     = "/home1/02554/sagatut/XSEDETutorial/%s/example2" % USER_NAME
 # The number of jobs you want to run
 NUMBER_JOBS = 32
 
