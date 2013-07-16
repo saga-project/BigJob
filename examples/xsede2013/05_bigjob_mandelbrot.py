@@ -18,22 +18,22 @@ USER_NAME   = os.environ.get('XSEDE_TUTORIAL_USER_NAME')
 COORD       = "redis://%s@gw68.quarry.iu.teragrid.org:6379" % REDIS_PWD
 # The host (+username) to run BigJob on
 #HOSTNAME    = "sagatut@stampede.tacc.utexas.edu"
-HOSTNAME    = "stampede.tacc.utexas.edu"
+HOSTNAME    = "sagatut@stampede.tacc.utexas.edu"
 # The queue on the remote system
 QUEUE       = "normal"
 # The working directory on the remote cluster / machine
 WORKDIR     = "/home1/02554/sagatut/XSEDETutorial/%s/example5" % USER_NAME
 
 # The number of jobs you want to run
-NUMBER_JOBS = 4
+NUMBER_JOBS = 16
 
 # the dimension of the whole fractal (in pixel)
 IMGX = 8192
 IMGY = 8192
 
 # the number of tiles in X and Y direction
-TILESX = 2
-TILESY = 2
+TILESX = 4
+TILESY = 4
 
 
 #------------------------------------------------------------------------------
@@ -55,7 +55,6 @@ def main():
         pilot_description.number_of_processes = 32
         pilot_description.working_directory = WORKDIR
         pilot_description.walltime = 10
-        pilot_description.project = 'TG-MCB090174'
 
         # create a new pilot job
         pilot_compute_service = pilot.PilotComputeService(COORD)
@@ -73,7 +72,7 @@ def main():
                 task_desc.arguments = ["/%s/mandelbrot.sh" % WORKDIR, IMGX, IMGY,
                                        (IMGX/TILESX*x), (IMGX/TILESX*(x+1)),
                                        (IMGY/TILESY*y), (IMGY/TILESY*(y+1)),
-                                       'tile_x%s_y%s.gif' % (x, y)]
+                                       '%s/tile_x%s_y%s.gif' % (WORKDIR, x, y)]
 
                 task_desc.wall_time_limit = 10
                 task_desc.number_of_processes = 1
