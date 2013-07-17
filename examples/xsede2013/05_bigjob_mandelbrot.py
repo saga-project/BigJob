@@ -6,7 +6,13 @@ import traceback
 
 from PIL import Image
 
-""" TODO
+""" 
+This tutorial example splits up the calculation of a traditional Mandelbrot set using tiles.
+This code aims to show the concurrent execution of tasks 
+(as opposed to the analagous saga-python example, which submits tasks serially).
+It also demonstrates file-movement (calculations are done in a temporary directory, but
+the final image is concatenated back in the home directory), as well as working
+with external python libraries and alternate executables.
 """
 
 #------------------------------------------------------------------------------
