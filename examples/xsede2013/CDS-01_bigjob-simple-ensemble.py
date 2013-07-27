@@ -3,20 +3,22 @@ import sys
 import pilot
 import traceback
 
-""" DESCRIPTION: This example shows how to run BigJob locally to execute tasks.
+""" DESCRIPTION: This example does this...
 """
 
-#------------------------------------------------------------------------------
-# Redis password and 'user' name a aquired from the environment
-REDIS_PWD   = os.environ.get('REDIS_PASSWORD')
-USER_NAME   = os.environ.get('USER_NAME')
+# Redis password is read from the environment. The example can be run like this:
+# REDIS_PASSWORD=ILikeBigJob_wITH-REdIS python examples/example_styleguide.py
+# Alternatively, for tutorials, etc. REDIS_PASSWORD can be defined in /etc/profile
 
+#------------------------------------------------------------------------------
+#
+REDIS_PWD   = os.environ.get('REDIS_PASSWORD')
 # The coordination server
-COORD       = "redis://%s@localhost:6379" % REDIS_PWD
+COORD       = "redis://%s@gw68.quarry.iu.teragrid.org:6379" % REDIS_PWD
 # The host to run BigJob on
 HOSTNAME    = "localhost"
 # The working directory on the remote cluster / machine
-WORKDIR     = "/home/%s/example1" % USER_NAME
+WORKDIR     = os.getenv("HOME")+"/XSEDETutorial"
 # The number of jobs you want to run
 NUMBER_JOBS = 4
 
@@ -27,32 +29,36 @@ def main():
     try:
         # this describes the parameters and requirements for our pilot job
         pilot_description = pilot.PilotComputeDescription()
-        pilot_description.service_url = "fork://%s" % HOSTNAME
-        pilot_description.number_of_processes = 4 
+        pilot_description.service_url = "ssh://%s" % HOSTNAME
+        pilot_description.number_of_processes = 1
         pilot_description.working_directory = WORKDIR
         pilot_description.walltime = 10
 
         # create a new pilot job
         pilot_compute_service = pilot.PilotComputeService(COORD)
-        pilotjob = pilot_compute_service.create_pilot(pilot_description)
+        pilot_compute_service.create_pilot(pilot_description)
+
+        # Compute Data Service
+        compute_data_service = pilot.ComputeDataService()
+        compute_data_service.add_pilot_compute_service(pilot_compute_service)
 
         # submit tasks to pilot job
         tasks = list()
         for i in range(NUMBER_JOBS):
             task_desc = pilot.ComputeUnitDescription()
             task_desc.executable = '/bin/echo'
-            task_desc.arguments = ['I am task number $TASK_NO', ]
-            task_desc.environment = {'TASK_NO': i}
+            task_desc.arguments = ['Hello, I am task number $TASK_NO', ]
+            task_desc.environment = ['TASK_NO=%s' % i]
             task_desc.number_of_processes = 1
             task_desc.output = 'simple-ensemble-stdout.txt'
             task_desc.error = 'simple-ensemble-stderr.txt'
 
-            task = pilotjob.submit_compute_unit(task_desc)
+            task = compute_data_service.submit_compute_unit(task_desc)
             print "* Submitted task '%s' with id '%s' to %s" % (i, task.get_id(), HOSTNAME)
             tasks.append(task)
 
         print "Waiting for tasks to finish..."
-        pilotjob.wait()
+        compute_data_service.wait()
 
         return(0)
 
@@ -67,7 +73,7 @@ def main():
         # alway try to shut down pilots, otherwise jobs might end up
         # lingering in the queue
         print ("Terminating BigJob...")
-        pilotjob.cancel()
+        compute_data_service.cancel()
         pilot_compute_service.cancel()
 
 

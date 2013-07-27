@@ -2,15 +2,13 @@
 
 import os
 import sys
-
 from setuptools import setup
 import subprocess
 
 try:
     import saga
 except:
-    print "Installing BigJob using SAGA/Bliss."
-    #sys.exit(1)
+    print "Installing BigJob and SAGA/Python."
 
 if sys.version_info < (2, 6):
     sys.stderr.write("BigJob requires Python 2.6 and above. Installation unsuccessful!")
@@ -34,7 +32,6 @@ def update_version():
     if p.returncode != 0:
         print "Unable to run git, not modifying VERSION"
         return
-    # we use tags like "python-ecdsa-0.5", so strip the prefix
     
     ver = stdout.strip()
     fn = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'VERSION')
@@ -53,13 +50,14 @@ def get_version():
     except EnvironmentError:
         return "-1"
     return version    
+
     
 update_version()
     
 setup(name='BigJob',
       version=get_version(),
-      description='P* Pilot-Job Implementation',
-      author='Andre Luckow',
+      description='P* Pilot-Job Implementation based on SAGA-Python',
+      author='Andre Luckow, et al.',
       author_email='aluckow@cct.lsu.edu',
       url='https://github.com/saga-project/BigJob',
       classifiers = ['Development Status :: 4 - Beta',                    
@@ -72,14 +70,15 @@ setup(name='BigJob',
                 'pilot.filemanagement', 'pilot.impl', 'pilot.scheduler', 'examples', 'api', 'bootstrap', 'cli'],
       include_package_data=True,
       # data files for easy_install
-      data_files = [('', ['bigjob_agent.conf', 'bigjob_agent.conf']),  
-                    ('', ['bigjob.conf', 'bigjob.conf']), 
+      data_files = [('', ['bigjob.conf', 'bigjob.conf']), 
+                    ('', ['bigjob_agent.conf', 'bigjob_agent.conf']), 
                     ('', ['README.md', 'README.md']), 
                     ('', ['VERSION', 'VERSION'])],
       
       # data files for pip
       package_data = {'': ['*.conf']},
-      install_requires=['uuid', 'threadpool', 'redis', 'bliss', 'google-api-python-client', 'python-hostlist',
+
+      install_requires=['uuid', 'threadpool', 'virtualenv', 'redis', 'saga-python', 'google-api-python-client', 'python-hostlist',
                         'globusonline-transfer-api-client', 'boto>=2.2,<2.3', 'simplejson<2.1', 'pexpect', 'tldextract'],
       entry_points = {
         'console_scripts': [
@@ -87,5 +86,5 @@ setup(name='BigJob',
             'test-bigjob-dynamic = examples.example_manyjob_local:main',
             'pilot-cli = cli.pilot_cli:main'            
         ]
-        }
+            }
 )

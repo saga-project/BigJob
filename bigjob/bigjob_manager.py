@@ -18,8 +18,18 @@ import urlparse
 import types
 import subprocess
 import pdb
+ 
+# the one and only saga
+import saga
+from saga.job import Description
+from saga     import Url         as SAGAUrl
+from saga.job import Description as SAGAJobDescription
+from saga.job import Service     as SAGAJobService
+from saga     import Session     as SAGASession
+from saga     import Context     as SAGAContext
 
-from bigjob import SAGA_BLISS 
+from saga.utils.object_cache import ObjectCache as SAGAObjectCache
+
 from bigjob.state import Running, New, Failed, Done, Unknown
 from bigjob import logger
 
@@ -33,10 +43,6 @@ try:
     from job_plugin.ec2ssh import Service as EC2Service
 except:
     pass  
-try:
-    from job_plugin.slurmssh import Service as SlurmService
-except:
-    pass 
 
 
 # import other BigJob packages
@@ -44,48 +50,10 @@ except:
 import api.base
 sys.path.append(os.path.dirname(__file__))
 
-
-if SAGA_BLISS == False:
-    try:
-        import saga
-        logger.info("Using SAGA C++/Python.")
-        is_bliss=False
-    except:
-        logger.warn("SAGA C++ and Python bindings not found. Using Bliss.")
-        try:
-            import bliss.saga as saga
-            is_bliss=True
-        except:
-            logger.warn("SAGA Bliss not found")
-else:
-    logger.info("Using SAGA Bliss.")
-    try:
-        import bliss.saga as saga
-        is_bliss=True 
-    except:
-        logger.warn("SAGA Bliss not found")
-
-
-"""BigJob Job Description is always derived from BLISS Job Description
-   BLISS Job Description behaves compatible to SAGA C++ job description
-"""
-import bliss.saga.job.Description
-
-"""BLISS / SAGA C++ detection """
-if is_bliss:
-    import bliss.saga as saga
-    from bliss.saga import Url as SAGAUrl
-    from bliss.saga.job import Description as SAGAJobDescription
-    from bliss.saga.job import Service as SAGAJobService
-    from bliss.saga import Session as SAGASession
-    from bliss.saga import Context as SAGAContext
-else:
-    from saga import url as SAGAUrl
-    from saga.job import description as SAGAJobDescription
-    from saga.job import service as SAGAJobService
-    from saga import session as SAGASession
-    from saga import context as SAGAContext 
-
+# Some python version detection
+if sys.version_info < (2, 5):
+    sys.path.append(os.path.dirname( __file__ ) + "/ext/uuid-1.30/")
+    sys.stderr.write("Warning: Using unsupported Python version\n")
 
 if sys.version_info < (2, 4):
     sys.stderr.write("Error: Python versions <2.4 not supported\n")
@@ -159,6 +127,7 @@ class bigjob(api.base.bigjob):
             logger.error("Coordination URL not set. Exiting BigJob.")
         #self.launch_method=""
         self.__filemanager=None
+        self._ocache = SAGAObjectCache ()
         
         # restore existing BJ or initialize new BJ
         if pilot_url!=None:
@@ -187,7 +156,7 @@ class bigjob(api.base.bigjob):
             self.working_directory = None
             logger.debug("initialized BigJob: " + self.app_url)
         
-            
+
     def start_pilot_job(self, 
                  lrms_url, 
                  number_nodes=1,
@@ -198,6 +167,7 @@ class bigjob(api.base.bigjob):
                  walltime=None,
                  processes_per_node=1,
                  filetransfers=None,
+                 spmd_variation=None,
                  external_queue="",
                  pilot_compute_description=None):
         """ Start a batch job (using SAGA Job API) at resource manager. Currently, the following resource manager are supported:
@@ -239,10 +209,10 @@ class bigjob(api.base.bigjob):
         elif lrms_saga_url.scheme=="ec2+ssh" or lrms_saga_url.scheme=="euca+ssh" \
             or lrms_saga_url.scheme=="nova+ssh":
             self.js = EC2Service(lrms_saga_url, pilot_compute_description)    
-        elif lrms_saga_url.scheme=="slurm+ssh":
-            self.js = SlurmService(lrms_saga_url, pilot_compute_description)          
+        #elif lrms_saga_url.scheme=="slurm+ssh":
+        #    self.js = SlurmService(lrms_saga_url, pilot_compute_description)          
         else:
-            self.js = SAGAJobService(lrms_saga_url)        
+            self.js = self._ocache.get_obj (lrms_saga_url, lambda : SAGAJobService (lrms_saga_url))
         ##############################################################################
         # create job description
         jd = SAGAJobDescription()
@@ -263,14 +233,14 @@ class bigjob(api.base.bigjob):
         
         if queue != None:
             jd.queue = queue
+        if spmd_variation != None:
+            jd.spmd_variation = spmd_variation
         if project !=None:
             jd.project=project       
         if walltime!=None:
             logger.debug("setting walltime to: " + str(walltime))
-            if is_bliss:
-                jd.wall_time_limit=int(walltime)
-            else:
-                jd.wall_time_limit=str(walltime)
+            jd.wall_time_limit=int(walltime)
+
     
         
         ##############################################################################
@@ -335,19 +305,20 @@ class bigjob(api.base.bigjob):
                                                           )
         logger.debug("Adaptor specific modifications: "  + str(lrms_saga_url.scheme))
 
-        if is_bliss and lrms_saga_url.scheme.startswith("condor")==False:
-            bootstrap_script = self.__escape_bliss(bootstrap_script)
-        else:
-            if lrms_saga_url.scheme == "gram":
-                bootstrap_script = self.__escape_rsl(bootstrap_script)
-            elif lrms_saga_url.scheme == "pbspro" or lrms_saga_url.scheme=="xt5torque" or lrms_saga_url.scheme=="torque":                
-                bootstrap_script = self.__escape_pbs(bootstrap_script)
-            elif lrms_saga_url.scheme == "ssh" and lrms_saga_url.scheme == "slurm+ssh":
-                bootstrap_script = self.__escape_ssh(bootstrap_script)                    
+        #if lrms_saga_url.scheme.startswith("condor") == False:
+        #    bootstrap_script = self.__escape_saga(bootstrap_script)
+        #else:
+        #    if lrms_saga_url.scheme == "gram":
+        #        bootstrap_script = self.__escape_rsl(bootstrap_script)
+        #    elif lrms_saga_url.scheme == "pbspro" or lrms_saga_url.scheme=="xt5torque" or lrms_saga_url.scheme=="torque":                
+        #        bootstrap_script = self.__escape_pbs(bootstrap_script)
+        #    elif lrms_saga_url.scheme == "ssh" and lrms_saga_url.scheme == "slurm+ssh":
+        #        bootstrap_script = self.__escape_ssh(bootstrap_script)                    
+        bootstrap_script = self.__escape_pbs(bootstrap_script)
                 
         logger.debug(bootstrap_script)
-        
-        
+ 
+
         # Define Agent Executable in Job description
         # in Condor case bootstrap script is staged 
         # (Python app cannot be passed inline in Condor job description)
@@ -385,11 +356,7 @@ class bigjob(api.base.bigjob):
             logger.debug("Condor file transfers: " + str(bj_file_transfers))
             jd.file_transfer = bj_file_transfers
         else:
-            if is_bliss:
-                jd.total_cpu_count=int(number_nodes)                   
-            else:
-                jd.number_of_processes=str(number_nodes)
-                jd.processes_per_host=str(processes_per_node)
+            jd.total_cpu_count=int(number_nodes)                   
             jd.spmd_variation = "single"
             if pilot_compute_description!=None and pilot_compute_description.has_key("spmd_variation"):
                 jd.spmd_variation=pilot_compute_description["spmd_variation"]
@@ -405,8 +372,15 @@ class bigjob(api.base.bigjob):
         # Create and submit pilot job to job service
         logger.debug("Creating pilot job with description: %s" % str(jd))
         self.job = self.js.create_job(jd)
-        logger.debug("Submit pilot job to: " + str(lrms_saga_url))
+        logger.debug("Trying to submit pilot job to: " + str(lrms_saga_url))
         self.job.run()
+
+        if self.job.state == saga.job.FAILED:
+            logger.debug("SUBMISSION FAILED. Exiting... ")
+            sys.exit(-1)
+        else:
+            logger.debug("Submission succeeded. Job ID: %s " % self.job.id)
+
         return self.pilot_url
 
      
@@ -487,14 +461,24 @@ class bigjob(api.base.bigjob):
         """ duck typing for cancel of saga.cpr.job and saga.job.job  """
         logger.debug("Cancel Pilot Job")
         try:
-            if self.url.scheme.startswith("condor")==False:
-                self.job.cancel()
-            else:
-                pass
-                #logger.debug("Output files are being transfered to file: outpt.tar.gz. Please wait until transfer is complete.")
+            self.job.cancel()
         except:
             pass
             #traceback.print_stack()
+
+        logger.debug("Cancel Job Service")
+        try:
+            if  not self._ocache.rem_obj (self.js) :
+                logger.debug("Cancel Job Service Manually")
+                del (self.js)
+            else :
+                logger.debug("Cancel Job Service done")
+
+            self.js = None
+        except:
+            pass
+            #traceback.print_stack()
+
         try:            
             self._stop_pilot_job()
             logger.debug("delete pilot job: " + str(self.pilot_url))                      
@@ -561,7 +545,7 @@ class bigjob(api.base.bigjob):
                 logger.debug("create dictionary for job description. Job-URL: " + job_url)
                 # put job description attributes to Coordination Service
                 job_dict = {}
-                # to accomendate current bug in bliss (Number of processes is not returned from list attributes)
+                # to accomendate current bug in saga (Number of processes is not returned from list attributes)
                 job_dict["NumberOfProcesses"] = "1" 
                 attributes = jd.list_attributes()   
                 logger.debug("SJ Attributes: " + str(jd))             
@@ -639,8 +623,11 @@ except: print "SAGA not found.";
 try: import bigjob.bigjob_agent
 except: 
     print "BigJob not installed. Attempt to install it."; 
-    opener = urllib.FancyURLopener({}); 
-    opener.retrieve(BOOTSTRAP_URL, BOOTSTRAP_FILE); 
+    try:
+        opener = urllib.FancyURLopener({}); 
+        opener.retrieve(BOOTSTRAP_URL, BOOTSTRAP_FILE);
+    except Exception, ex:
+        print "Unable to download bootstrap script: " + str(ex) + ". Please install BigJob manually."
     print "Execute: " + "python " + BOOTSTRAP_FILE + " " + BIGJOB_PYTHON_DIR
     os.system("/usr/bin/env")
     try:
@@ -653,7 +640,10 @@ except:
         activate_this = os.path.join(BIGJOB_PYTHON_DIR, "bin/activate_this.py"); 
         execfile(activate_this, dict(__file__=activate_this))
 #try to import BJ once again
-import bigjob.bigjob_agent
+try:
+    import bigjob.bigjob_agent
+except Exception, ex:
+        print "Unable install BigJob: " + str(ex) + ". Please install BigJob manually."   
 # execute bj agent
 args = list()
 args.append("bigjob_agent.py")
@@ -737,8 +727,8 @@ except:
         bootstrap_script = "\"" + bootstrap_script+ "\""
         return bootstrap_script
     
-    def __escape_bliss(self, bootstrap_script):
-        logger.debug("Escape Bliss")
+    def __escape_saga(self, bootstrap_script):
+        logger.debug("Escape SAGA")
         #bootstrap_script = bootstrap_script.replace("\'", "\"")
         #bootstrap_script = "\'" + bootstrap_script+ "\'"
         bootstrap_script = bootstrap_script.replace('"','\\"')
@@ -889,7 +879,7 @@ except:
         # initialize file adaptor
         # Pilot Data API for File Management
         if service_url.startswith("ssh:"):
-            logger.debug("Use SSH backend")
+            logger.debug("Use SSH backend for PilotData")
             try:
                 from pilot.filemanagement.ssh_adaptor import SSHFileAdaptor
                 self.__filemanager = SSHFileAdaptor(service_url) 
@@ -1000,11 +990,11 @@ except:
     def __repr__(self):
         return self.pilot_url 
 
-    def __del__(self):
-        """ BJ is not cancelled when object terminates
-            Application can reconnect to BJ via pilot url later on"""
-        pass
-        #self.cancel()
+  # def __del__(self):
+  #     """ BJ is not cancelled when object terminates
+  #         Application can reconnect to BJ via pilot url later on"""
+  #     pass
+  #     #self.cancel()
 
 
                     
@@ -1153,17 +1143,6 @@ class subjob(api.base.subjob):
 ## Properties for description class
 #
 
-def environment():
-    doc = "The environment variables to set in the job's execution context."
-    def fget(self):
-        return self._environment
-    def fset(self, val):
-        self._environment = val
-    def fdel(self, val):
-        self._environment = None
-    return locals()
-
-
 def input_data():
     doc = "List of input data units."
     def fget(self):
@@ -1185,23 +1164,44 @@ def output_data():
     return locals()
 
      
-class description(bliss.saga.job.Description):
+class description(SAGAJobDescription):
     """ Sub-job description """
-    environment = property(**environment())   
-    input_data = property(**input_data())
-    output_data = property(**output_data())   
+    ##input_data  = property(**input_data())
+    ##output_data = property(**output_data())   
+    ##environment = {}
     
-    
+    # --------------------------------------------------------------------------
+    #
     def __init__(self):
-        bliss.saga.job.Description.__init__(self)
+        saga.job.Description.__init__(self)
         #self.attributes_extensible_ (True)
-        
+
         # Extend description class by Pilot-Data relevant attributes
         self._output_data = None
         self._input_data = None
-        
-        self._register_rw_vec_attribute(name="InputData", 
-                                        accessor=self.__class__.input_data) 
-        self._register_rw_vec_attribute(name="OutputData", 
-                                        accessor=self.__class__.output_data) 
-        
+
+        import saga.attributes as sa
+
+        self._attributes_extensible  (True)
+        self._attributes_camelcasing (True)
+
+
+        self._attributes_register   ("InputData",  None, sa.ANY, sa.VECTOR, sa.WRITEABLE)
+        self._attributes_register   ("OutputData", None, sa.ANY, sa.VECTOR, sa.WRITEABLE)
+
+        self._attributes_set_getter ("InputData",  self._get_input_data )
+        self._attributes_set_getter ("OutputData", self._get_output_data)
+
+    # --------------------------------------------------------------------------
+    #
+    def _get_input_data (self) :
+        print "get caled. returning: %s" % self.input_data
+        return self.input_data
+
+    # --------------------------------------------------------------------------
+    #
+    def _get_output_data (self) :
+        return self.output_data
+
+
+

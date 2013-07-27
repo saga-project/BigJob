@@ -12,17 +12,12 @@ import sys
 # configuration
 """ This variable defines the coordination system that is used by BigJob
     e.g. 
-        advert://localhost (SAGA/Advert SQLITE)
-        advert://advert.cct.lsu.edu:8080 (SAGA/Advert POSTGRESQL)
         redis://localhost:6379 (Redis at localhost)
-        tcp://localhost (ZMQ)
-        tcp://* (ZMQ - listening to all interfaces)
 """
 
-#COORDINATION_URL = "advert://localhost/?dbtype=sqlite3"
-#COORDINATION_URL = "tcp://*"
-COORDINATION_URL = "redis://localhost:6379"
-#COORDINATION_URL = "redis://Oily9tourSorenavyvault@redis01.tacc.utexas.edu"
+#COORDINATION_URL = "redis://localhost:6379"
+COORDINATION_URL = "redis://hector-xe6-1:6379"
+
 # for running BJ from local dir
 sys.path.insert(0, os.getcwd() + "/../")
 
@@ -34,13 +29,13 @@ def main():
 
     ##########################################################################################
     # Edit parameters for BigJob
-    queue="" # if None default queue is used
-    project=None # if None default allocation is used 
+    queue=None # if None default queue is used
+    project="d45" # if None default allocation is used 
     walltime=10
-    processes_per_node=4
-    number_of_processes = 8
-    #workingdirectory=os.path.join(os.getcwd(), "agent")  # working directory for agent
-    workingdirectory="agent"
+    processes_per_node=8
+    number_of_processes=64
+    # workingdirectory="/lustre/scratch/aluckow/agent"  # working directory for agent
+    workingdirectory="/home/d45/d45/s1026257/al/" # working directory for agent
     userproxy = None # userproxy (not supported yet due to context issue w/ SAGA)
 
     
@@ -56,9 +51,8 @@ def main():
     
     Please ensure that the respective SAGA adaptor is installed and working
     """
-    lrms_url = "fork://localhost" # resource url to run the jobs on localhost
-    #lrms_url = "sge://localhost" # resource url to run the jobs on localhost
-    #lrms_url = "ssh://localhost" # resource url to run the jobs on localhost
+    #lrms_url = "xt5torque://localhost" # resource url to run the jobs on localhost
+    lrms_url = "pbs://localhost" # resource url to run the jobs on localhost
    
     ##########################################################################################
 
@@ -78,25 +72,30 @@ def main():
     ##########################################################################################
     # Submit SubJob through BigJob
     jd = description()
-    jd.executable = "/bin/echo"
-    #jd.executable = "$HOME/hello.sh"
+    jd.executable = "/bin/hostname"
     jd.number_of_processes = "1"
-    jd.arguments = ["$HELLOWORLD"]
-    jd.environment = ['HELLOWORLD=hello_world']
-    #jd.spmd_variation = "mpi"
-    
-    # specify an optinal working directory if sub-job should be executed outside of bigjob sandbox
+    jd.spmd_variation = "single"
+    jd.arguments = [""]
     #jd.working_directory = "/tmp" 
     jd.output = "stdout.txt"
     jd.error = "stderr.txt"
-    sj = subjob()
-    sj.submit_job(bj.pilot_url, jd)
+
+    sjs = []
+    for i in range(0,24):
+        sj = subjob()
+        sj.submit_job(bj.pilot_url, jd)
+        sjs.append(sj)
+
+    
+    
     
     #########################################
     # busy wait for completion
     while 1:
-        state = str(sj.get_state())
-        print "state: " + state
+        for idx, sj in enumerate(sjs):
+            state = str(sj.get_state())
+            print "sj: %d state: %s"%(idx,state)
+
         if(state=="Failed" or state=="Done"):
             break
         time.sleep(2)

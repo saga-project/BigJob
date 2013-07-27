@@ -8,13 +8,7 @@ import pdb
 from bigjob import logger
 import bigjob
 
-try:
-    import bliss.saga as saga
-except:
-    logger.warn("slurm+ssh://<hostname> plugin not compatible with SAGA Bliss. Use slurm+ssh://<hostname>")
-    
-    
-
+import saga
     
 class Service(object):
     """ Plugin for SlURM    """ 
@@ -105,8 +99,8 @@ os.system( "sbatch  " + sbatch_file_name)
         jd.arguments = ["-c", self.bootstrap_script]
         jd.executable = "python"
         jd.working_directory =  self.working_directory
-        jd.output = "bliss_job_submission.out"
-        jd.error = "bliss_job_submission.err"
+        jd.output = "saga_job_submission.out"
+        jd.error = "saga_job_submission.err"
         # Submit job
         js = None
         js = saga.job.Service(self.resource_url)
@@ -121,11 +115,11 @@ os.system( "sbatch  " + sbatch_file_name)
         if saga_surl.username!=None and saga_surl.username!="":
             sftp_url = sftp_url + str(saga_surl.username) + "@"
         sftp_url = sftp_url + saga_surl.host + "/"
-        outfile = sftp_url + self.working_directory+'/bliss_job_submission.out'        
+        outfile = sftp_url + self.working_directory+'/saga_job_submission.out'        
         logger.debug("BigJob/SLURM: get outfile: " + outfile)
         out = saga.filesystem.File(outfile)
         out.copy("sftp://localhost/"+os.getcwd() + "/tmpout")
-        errfile = sftp_url + self.working_directory+'/bliss_job_submission.err'        
+        errfile = sftp_url + self.working_directory+'/saga_job_submission.err'        
         err = saga.filesystem.File(errfile)
         err.copy("sftp://localhost/"+os.getcwd() + "/tmperr")
         

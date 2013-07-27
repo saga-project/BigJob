@@ -3,22 +3,29 @@ import sys
 import pilot
 import traceback
 
-""" DESCRIPTION: This example shows how to run BigJob locally to execute tasks.
+""" This example runs NUMBER_JOBS (32) concurrent '/bin/echo' tasks
+    on TACC's stampede cluster. A 32-core pilot job is initialized
+    and 32 single-core tasks are submitted to it. This example also
+    show basic error handling via 'try/except' and coordinated
+    shutdown (removing pilot from stampede's queue) once all tasks 
+    have finihsed running via 'finally'.
 """
 
 #------------------------------------------------------------------------------
 # Redis password and 'user' name a aquired from the environment
-REDIS_PWD   = os.environ.get('REDIS_PASSWORD')
-USER_NAME   = os.environ.get('USER_NAME')
+REDIS_PWD   = os.environ.get('XSEDE_TUTORIAL_REDIS_PASSWORD')
+USER_NAME   = os.environ.get('XSEDE_TUTORIAL_USER_NAME')
 
 # The coordination server
-COORD       = "redis://%s@localhost:6379" % REDIS_PWD
-# The host to run BigJob on
-HOSTNAME    = "localhost"
+COORD       = "redis://%s@gw68.quarry.iu.teragrid.org:6379" % REDIS_PWD
+# The host (+username) to run BigJob on
+HOSTNAME    = "sagatut@stampede.tacc.utexas.edu"
+# The queue on the remote system
+QUEUE       = "normal"
 # The working directory on the remote cluster / machine
-WORKDIR     = "/home/%s/example1" % USER_NAME
+WORKDIR     = "/home1/02554/sagatut/XSEDETutorial/%s/example1" % USER_NAME
 # The number of jobs you want to run
-NUMBER_JOBS = 4
+NUMBER_JOBS = 32
 
 
 #------------------------------------------------------------------------------
@@ -27,8 +34,9 @@ def main():
     try:
         # this describes the parameters and requirements for our pilot job
         pilot_description = pilot.PilotComputeDescription()
-        pilot_description.service_url = "fork://%s" % HOSTNAME
-        pilot_description.number_of_processes = 4 
+        pilot_description.service_url = "slurm+ssh://%s" % HOSTNAME
+        pilot_description.queue = QUEUE
+        pilot_description.number_of_processes = 32
         pilot_description.working_directory = WORKDIR
         pilot_description.walltime = 10
 
@@ -44,8 +52,8 @@ def main():
             task_desc.arguments = ['I am task number $TASK_NO', ]
             task_desc.environment = {'TASK_NO': i}
             task_desc.number_of_processes = 1
-            task_desc.output = 'simple-ensemble-stdout.txt'
-            task_desc.error = 'simple-ensemble-stderr.txt'
+            task_desc.output = 'stdout.txt'
+            task_desc.error = 'stderr.txt'
 
             task = pilotjob.submit_compute_unit(task_desc)
             print "* Submitted task '%s' with id '%s' to %s" % (i, task.get_id(), HOSTNAME)
