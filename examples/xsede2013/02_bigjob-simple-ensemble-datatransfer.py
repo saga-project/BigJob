@@ -1,24 +1,31 @@
 import os
 import sys
+import saga    # <=== !!
 import pilot
 import traceback
 
-""" DESCRIPTION: This example shows how to run BigJob locally to execute tasks.
+""" This tutorial example extends and improves the first example
+    (01_bigjob-simple-ensemble.py) by adding file transfer: once
+    the 32 tasks have finished executing, we use SAGA-Python to
+    transfer the individual output files back to the local machine.
 """
+
 
 #------------------------------------------------------------------------------
 # Redis password and 'user' name a aquired from the environment
-REDIS_PWD   = os.environ.get('REDIS_PASSWORD')
-USER_NAME   = os.environ.get('USER_NAME')
+REDIS_PWD   = os.environ.get('XSEDE_TUTORIAL_REDIS_PASSWORD')
+USER_NAME   = os.environ.get('XSEDE_TUTORIAL_USER_NAME')
 
 # The coordination server
-COORD       = "redis://%s@localhost:6379" % REDIS_PWD
+COORD       = "redis://%s@gw68.quarry.iu.teragrid.org:6379" % REDIS_PWD
 # The host to run BigJob on
-HOSTNAME    = "localhost"
+HOSTNAME    = "sagatut@stampede.tacc.utexas.edu"
+# The queue on the remote system
+QUEUE       = "normal"
 # The working directory on the remote cluster / machine
-WORKDIR     = "/home/%s/example1" % USER_NAME
+WORKDIR     = "/home1/02554/sagatut/XSEDETutorial/%s/example2" % USER_NAME
 # The number of jobs you want to run
-NUMBER_JOBS = 4
+NUMBER_JOBS = 32
 
 
 #------------------------------------------------------------------------------
@@ -27,8 +34,9 @@ def main():
     try:
         # this describes the parameters and requirements for our pilot job
         pilot_description = pilot.PilotComputeDescription()
-        pilot_description.service_url = "fork://%s" % HOSTNAME
-        pilot_description.number_of_processes = 4 
+        pilot_description.service_url = "slurm+ssh://%s" % HOSTNAME
+        pilot_description.queue = QUEUE
+        pilot_description.number_of_processes = 32
         pilot_description.working_directory = WORKDIR
         pilot_description.walltime = 10
 
@@ -44,8 +52,8 @@ def main():
             task_desc.arguments = ['I am task number $TASK_NO', ]
             task_desc.environment = {'TASK_NO': i}
             task_desc.number_of_processes = 1
-            task_desc.output = 'simple-ensemble-stdout.txt'
-            task_desc.error = 'simple-ensemble-stderr.txt'
+            task_desc.output = 'stdout.txt'
+            task_desc.error =  'stderr.txt'
 
             task = pilotjob.submit_compute_unit(task_desc)
             print "* Submitted task '%s' with id '%s' to %s" % (i, task.get_id(), HOSTNAME)
@@ -53,6 +61,14 @@ def main():
 
         print "Waiting for tasks to finish..."
         pilotjob.wait()
+
+        # all compute units have finished. now we can use saga-python
+        # to transfer back the output files...
+        d = saga.filesystem.Directory("sftp://%s/" % (HOSTNAME))
+        for task in tasks:
+            local_filename = "ex-2-stdout-%s.txt" % (task.get_id())
+            d.copy("%s/stdout.txt" % (task.get_local_working_directory()), "file://localhost/%s/%s" % (os.getcwd(), local_filename))
+            print "* Output for '%s' copied to: './%s'" % (task.get_id(), local_filename)
 
         return(0)
 

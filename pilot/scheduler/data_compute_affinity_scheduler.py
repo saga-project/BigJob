@@ -36,16 +36,12 @@ class Scheduler:
         if len(candidate_pilot_data) == 0:
             # No PD with requested affinity found
             # move data unit into a "possibly" remote pilot data
-            logger.debug("No pilot data w/ affinity found... Looking for alternative pilot.")
+            logger.debug("A No pilot data w/ affinity found... Looking for alternative pilot.")
             candidate_pilot_data = self.pilot_data
             
         if len(candidate_pilot_data)>0:
             return random.choice(candidate_pilot_data)
         
-        return None
-        
-        #if len(self.pilot_data)!=0:
-        #    return random.choice(self.pilot_data)
         return None
     
     
@@ -74,7 +70,7 @@ class Scheduler:
         if len(candidate_pilot_jobs) == 0:
             # No PJ with requested affinity found
             # move compute unit into a "possibly" remote pilot job
-            logger.debug("No pilot compute w/ affinity found... Looking for alternative pilot.")
+            logger.debug("B No pilot compute w/ affinity found... Looking for alternative pilot.")
             for i in self.pilot_jobs:                
                 logger.debug("BJ: %r State: %s"%(i, i.get_state()))
                 free_nodes = i.get_free_nodes()

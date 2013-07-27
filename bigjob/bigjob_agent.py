@@ -22,6 +22,12 @@ from string import Template
 
 logging.basicConfig(level=logging.DEBUG)
 
+# Optional Imports
+try:
+    import ast
+except:
+    logging.debug("Python version <2.6. AST coult not be imported. ")
+
 try:
     import saga
 except:
@@ -91,19 +97,15 @@ class bigjob_agent:
         # linked under mpirun_rsh
         if default_dict.has_key("mpirun"):
             self.MPIRUN=default_dict["mpirun"]
+        
+        if default_dict.has_key("number_executor_threads"):
+            THREAD_POOL_SIZE=int(default_dict["number_executor_threads"])
+            
         self.OUTPUT_TAR=False
         if default_dict.has_key("create_output_tar"):
             self.OUTPUT_TAR=eval(default_dict["create_output_tar"])
             logger.debug("Create output tar: %r", self.OUTPUT_TAR)
         
-        self.LAUNCH_METHOD="ssh"                    
-        if default_dict.has_key("launch_method"):
-            self.LAUNCH_METHOD=self.__get_launch_method(default_dict["launch_method"])
-        
-        logging.debug("Launch Method: " + self.LAUNCH_METHOD + " mpi: " + self.MPIRUN + " shell: " + self.SHELL)
-        
-        # init rms (SGE/PBS)
-        self.init_rms()
         self.failed_polls = 0
         
         ##############################################################################
@@ -169,9 +171,32 @@ class bigjob_agent:
         logger.debug("set state to : " +  str(bigjob.state.Running))
         self.coordination.set_pilot_state(self.base_url, str(bigjob.state.Running), False)
         self.pilot_description = self.coordination.get_pilot_description(self.base_url)
+        try:
+            self.pilot_description = ast.literal_eval(self.pilot_description)
+        except:
+            logger.warn("Unable to parse pilot description")
+            self.pilot_description = None
+             
+
+        ############################################################################
+        # Detect launch method 
+        self.LAUNCH_METHOD="ssh"                    
+        if default_dict.has_key("launch_method"):
+            self.LAUNCH_METHOD=default_dict["launch_method"]
+            
+        self.LAUNCH_METHOD=self.__get_launch_method(self.LAUNCH_METHOD)
+        
+        logging.debug("Launch Method: " + self.LAUNCH_METHOD + " mpi: " + self.MPIRUN + " shell: " + self.SHELL)
+        
+        # init rms (SGE/PBS)
+        self.init_rms()
         
         ##############################################################################
         # start background thread for polling new jobs and monitoring current jobs
+        # check whether user requested a certain threadpool size
+        if self.pilot_description!=None and self.pilot_description.has_key("number_executor_threads"):
+            THREAD_POOL_SIZE=int(self.pilot_description["number_executor_threads"])
+        logger.debug("Creating executor thread pool of size: %d"%(THREAD_POOL_SIZE))
         self.resource_lock=threading.RLock()
         self.threadpool = ThreadPool(THREAD_POOL_SIZE)
         
@@ -238,7 +263,11 @@ class bigjob_agent:
         """ initialize free nodes list with dummy (for fork jobs)"""  
         logger.debug("Init nodefile from /proc/cpuinfo")
         try:
-            num_cpus = self.get_num_cpus()
+            num_cpus=1
+            if self.pilot_description != None:
+                num_cpus = self.pilot_description["number_of_processes"]
+            else:
+                num_cpus = self.get_num_cpus()
             for i in range(0, num_cpus): 
                 self.freenodes.append("localhost\n")
         except IOError:
@@ -269,12 +298,19 @@ class bigjob_agent:
         """ initialize free nodes list from PBS environment """
         logger.debug("Init nodeslist from PBS NODEFILE")
         if self.LAUNCH_METHOD == "aprun":
-            # Workaround for Kraken
+            # Workaround for Kraken and Hector
             # PBS_NODEFILE does only contain front node
             # thus we create a dummy node file with the respective 
             # number of slots
             # aprun does not rely on the nodefile for job launching
-            number_nodes =  os.environ.get("PBS_NNODES")
+            
+            # get number of requested slots from pilot description
+            number_of_requested_processes = self.pilot_description["number_of_processes"]
+            if os.environ.has_key("PBS_NNODES"):
+                # use PBS assigned node count if available
+                number_nodes =  os.environ.get("PBS_NNODES")
+            else:
+                number_nodes =  number_of_requested_processes
             self.freenodes=[]
             for i in range(0, int(number_nodes)):
                 slot = "slot-%d\n"%i

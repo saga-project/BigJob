@@ -1,0 +1,12 @@
+{
+	"folders":
+	[
+		{
+			"path": ".",
+            "folder_exclude_patterns": ["build", "dist", "*.egg-info", 
+                                        "test", "temp", "venv", "*.egg"],
+            "file_exclude_patterns": ["*.sublime-workspace", "*.egg"]
+
+		}
+	]
+}

@@ -8,7 +8,6 @@ version = "latest"
 
 #READ config
 
-SAGA_BLISS=False
 try:
     import ConfigParser
     _CONFIG_FILE="bigjob.conf"
@@ -67,10 +66,6 @@ try:
     paramiko_logger = logging.getLogger(name="paramiko.transport")
     paramiko_logger.setLevel(logging.ERROR)
     #logging.basicConfig(level=logging_level)        
-      
-    saga = default_dict["saga"]
-    if saga.lower() == "bliss":
-        SAGA_BLISS=True    
         
 except:
     print("bigjob.conf could not be read") 
