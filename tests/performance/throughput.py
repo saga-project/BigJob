@@ -6,7 +6,7 @@ from pilot import PilotComputeService, ComputeDataService, State
 
 
 COORDINATION_URL = "redis://localhost"
-NUMBER_CUS=24
+NUMBER_CUS=512
 NUMBER_SLOTS=16
 if __name__ == "__main__":      
     
@@ -17,7 +17,7 @@ if __name__ == "__main__":
                              "service_url": 'fork://localhost',
                              "number_of_processes": NUMBER_SLOTS,                             
                              "working_directory": os.getcwd(),
-                             "number_executor_threads": 8
+                             "number_executor_threads": 16
                             }
     
     pilotjob = pilot_compute_service.create_pilot(pilot_compute_description=pilot_compute_description)
