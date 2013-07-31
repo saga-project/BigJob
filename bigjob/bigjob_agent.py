@@ -665,19 +665,24 @@ class bigjob_agent:
         job_counter = 0               
         while self.is_stopped(self.base_url)==False:     
             if len(self.freenodes)==0:
-                time.sleep(3)
+                time.sleep(1)
                 continue
-            logger.debug("Dequeue sub-job from PilotCompute queue: " + self.base_url)       
-            job_url=self.coordination.dequeue_job(self.base_url)
+            if self.cds_queue_url!=None:
+                logger.debug("Dequeue sub-job from PilotCompute queue: "  + self.base_url 
+                             + " AND ComputeDataService queue: " + self.cds_queue_url)       
+                job_url=self.coordination.dequeue_job(self.base_url, self.cds_queue_url)
+            else:
+                logger.debug("Dequeue sub-job from PilotCompute queue: " + self.base_url)
+                job_url=self.coordination.dequeue_job(self.base_url)
             logger.debug("Dequed:%s"%str(job_url))
-            if job_url==None:
-                if self.cds_queue_url!=None:
-                    logger.debug("Dequeue sub-job from ComputeDataServicequeue: " + self.cds_queue_url)       
-                    job_url=self.coordination.dequeue_job(self.cds_queue_url)
-                    logger.debug("Dequed:%s"%str(job_url))
-                if job_url==None:
-                    time.sleep(3)
-                    continue
+#             if job_url==None:
+#                 if self.cds_queue_url!=None:
+#                     logger.debug("Dequeue sub-job from ComputeDataServicequeue: " + self.cds_queue_url)       
+#                     job_url=self.coordination.dequeue_job(self.cds_queue_url)
+#                     logger.debug("Dequed:%s"%str(job_url))
+#                 if job_url==None:
+#                     time.sleep(3)
+#                     continue
             if job_url=="STOP":
                 break
             
@@ -687,7 +692,8 @@ class bigjob_agent:
             
             request = WorkRequest(self.start_new_job_in_thread, [job_url])
             self.threadpool.putRequest(request)
-            #time.sleep(1)
+            if self.coordination.get_queue_length(self.cds_queue_url)==0 and self.coordination.get_queue_length(self.base_url)==0:
+                time.sleep(1)
             
         # wait for termination of Worker Threads
         # self.threadpool.wait()   
