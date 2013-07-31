@@ -136,6 +136,18 @@ class ComputeDataServiceDecentral(ComputeDataService):
         return self.pilot_job_service
     
     
+    def get_details(self):
+        """ returns a list with dicts that contains the details of the Pilot Compute, 
+                - job state
+                - description
+                - ...        
+        """
+        pilot_details=[]
+        for pcs in self.pilot_job_services:
+            for pc in pcs.list_pilots():
+                pilot_details.append(pc.get_details())
+        return pilot_details
+    
     ###########################################################################
     # Compute Data Service private methods
     def __submit_cu(self, compute_unit):

@@ -204,15 +204,28 @@ class bigjob_coordination(object):
         self.redis_client.lpush(queue_name, job_url)
                 
         
-    def dequeue_job(self, pilot_url):
+    def dequeue_job(self, pilot_url, pilot_url2=None):
         """ deque to new job  of a certain pilot """
-        queue_name = pilot_url + ":queue"        
-        logger.debug("Dequeue sub-job from: " + queue_name 
-                      + " number queued items: " + str(self.redis_client.llen(queue_name)))
+        queue_list = []
+        queue_name = pilot_url + ":queue"
+        queue_list.append(queue_name)
+        if pilot_url2!=None:
+            queue_name2 = pilot_url2 + ":queue"        
+            queue_list.append(queue_name2)
+        logger.debug("Dequeue sub-job from: " + str(queue_list))
+        #+ " number queued items: " + str(self.redis_client.llen(queue_name)))
         #self.redis_client.set(queue_name + ':last_out', pickle.dumps(datetime.datetime.now()))
-        job_url = self.redis_client.brpop(queue_name, timeout=5)
+        job_url = self.redis_client.brpop(queue_list, timeout=1)
+        #job_url = self.redis_client.rpop(queue_name)
+        logger.debug("Dequeued: " + str(job_url))
         if job_url==None:
             return job_url
         logger.debug("Dequeued: " + str(job_url))
         return job_url[1]
     
+    
+    def get_queue_length(self, pilot_url):
+        queue_name = pilot_url + ":queue"        
+        length = self.redis_client.llen(queue_name)
+        logger.debug("Queue: " + queue_name  + " number queued items: " + str(length))        
+        return length
