@@ -179,7 +179,7 @@ class PilotComputeService(PilotComputeService):
                            walltime = walltime,
                            processes_per_node = ppn,
                            filetransfers = bj_filetransfer,
-			   spmd_variation = bj_dict["spmd_variation"],
+			               spmd_variation = bj_dict["spmd_variation"],
                            external_queue = self.coordination_queue,
                            pilot_compute_description = bj_dict["pilot_compute_description"]
                            )
@@ -245,18 +245,16 @@ class PilotCompute(PilotCompute):
         if self.__pilot_compute_service!=None:
             self.coordination_queue = pilot_compute_service.coordination_queue
 
-        # the local working directory of this pilot compute
-        self._local_working_directory = "%s/%s" \
-          % (pilot_compute_description['working_directory'], bigjob_object.uuid)
-
 
     def cancel(self):
         """ Terminates the pilot """
         self.__bigjob.cancel()    
     
+
     def get_state(self):
         """ Returns the state of the pilot """
         return self.__bigjob.get_state()    
+    
     
     def wait(self):
         """ Wait until Pilot Compute to enter a final state (Done, Cancel or Failed) 
@@ -282,11 +280,6 @@ class PilotCompute(PilotCompute):
             cu_list.append(ComputeUnit(cu_url=i))
         return cu_list
 
-    def get_local_working_directory(self):
-        """ Returns the local working directory of this
-            PilotCompute object.
-        """
-        return self._local_working_directory
     
     
     def get_url(self):
