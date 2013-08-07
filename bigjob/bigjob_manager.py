@@ -228,8 +228,8 @@ class bigjob(api.base.bigjob):
             # if no working dir is set assume use home directory
             # will fail if home directory is not the same on remote machine
             # but this is just a guess to avoid failing
-            #self.working_directory = os.path.expanduser("~")
-            self.working_directory = "" 
+            self.working_directory = "~"
+            #self.working_directory = "" 
         
         if queue != None:
             jd.queue = queue
@@ -375,7 +375,7 @@ class bigjob(api.base.bigjob):
         logger.debug("Trying to submit pilot job to: " + str(lrms_saga_url))
         self.job.run()
 
-        if self.job.state == saga.job.FAILED:
+        if self.job.get_state() == saga.job.FAILED:
             logger.debug("SUBMISSION FAILED. Exiting... ")
             sys.exit(-1)
         else:

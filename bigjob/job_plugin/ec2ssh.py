@@ -177,19 +177,23 @@ class Job(object):
 
         session = saga.Session()
         session.add_context(ctx)
-
-        js = saga.job.Service(url, session=session)
-        logger.debug("Job Description Type: " + str(type(self.job_description)))
-
-        job = js.create_job(self.job_description)
-        
+                
         TRIAL_MAX=30
         trials=0
         while trials < TRIAL_MAX:
             try:
+                js = saga.job.Service(url, session=session)
+                logger.debug("Job Description Type: " + str(type(self.job_description)))
+                job = js.create_job(self.job_description)
                 logger.debug("Attempt: %d, submit pilot job to: %s "%(trials,str(url)))
                 job.run()
-                break
+                if job.get_state()==saga.job.FAILED:
+                    logger.warning("Submission failed.")
+                    trials = trials + 1 
+                    time.sleep(30)
+                    continue
+                else:
+                    break
             except:
                 exc_type, exc_value, exc_traceback = sys.exc_info()
                 logger.warning("Submission failed: " + str(exc_value))
