@@ -1,3 +1,5 @@
+include VERSION
+
 include *.cfg
 include *.conf
 include *.md
