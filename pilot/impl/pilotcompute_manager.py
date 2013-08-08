@@ -246,8 +246,12 @@ class PilotCompute(PilotCompute):
             self.coordination_queue = pilot_compute_service.coordination_queue
 
         # the local working directory of this pilot compute
-        self._local_working_directory = "%s/%s" \
-          % (pilot_compute_description['working_directory'], bigjob_object.uuid)
+        if 'working_directory' in pilot_compute_description.keys():
+            self._local_working_directory = "%s/%s" \
+                % (pilot_compute_description['working_directory'], bigjob_object.uuid)
+        else:
+            self._local_working_directory = "~/%s" \
+                % bigjob_object.uuid
 
 
     def cancel(self):
