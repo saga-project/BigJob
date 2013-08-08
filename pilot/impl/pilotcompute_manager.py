@@ -179,7 +179,7 @@ class PilotComputeService(PilotComputeService):
                            walltime = walltime,
                            processes_per_node = ppn,
                            filetransfers = bj_filetransfer,
-			   spmd_variation = bj_dict["spmd_variation"],
+			               spmd_variation = bj_dict["spmd_variation"],
                            external_queue = self.coordination_queue,
                            pilot_compute_description = bj_dict["pilot_compute_description"]
                            )
