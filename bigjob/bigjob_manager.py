@@ -229,8 +229,8 @@ class bigjob(api.base.bigjob):
             # will fail if home directory is not the same on remote machine
             # but this is just a guess to avoid failing
             #self.working_directory = os.path.expanduser("~")
-            self.working_directory = "~"
-            #self.working_directory = "" 
+            #self.working_directory = "~"
+            self.working_directory = "" 
         
         if queue != None:
             jd.queue = queue
