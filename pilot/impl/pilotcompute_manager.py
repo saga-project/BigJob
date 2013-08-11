@@ -325,7 +325,7 @@ class PilotCompute(PilotCompute):
             are ignored.
         """
         cu = ComputeUnit(compute_unit_description)
-        return self._submit_cu(cu, self.get_local_working_directory())
+        return self._submit_cu(cu)
     
     def __repr__(self):
         return str(self.__bigjob)
@@ -334,13 +334,13 @@ class PilotCompute(PilotCompute):
     ###########################################################################
     # Internal methods
         
-    def _submit_cu(self, compute_unit, parent_bj_workdir):
+    def _submit_cu(self, compute_unit):
         """ Submits compute unit to Bigjob """
         logger.debug("Submit CU to big-job")
         sj = subjob()
         sj.submit_job(self.__bigjob.pilot_url, compute_unit.subjob_description)
         self.__subjobs.append(sj)
-        compute_unit._update_subjob(sj, parent_bj_workdir)
+        compute_unit._update_subjob(sj)
 
         return compute_unit
         
@@ -437,12 +437,12 @@ class ComputeUnit(ComputeUnit):
         self.compute_unit_description = compute_unit_description # CU Description
         self.subjob_description = self.__translate_cu_sj_description(compute_unit_description)
 
-    def _update_subjob(self, subjob, parent_bj_workdir):
+    def _update_subjob(self, subjob):
         self.__subjob = subjob
 
         # at this point, we can also set the working directory for this CU
-        self._local_working_directory = "%s/%s" \
-            % (parent_bj_workdir, subjob.uuid)
+        #self._local_working_directory = "%s/%s" \
+        #    % (parent_bj_workdir, subjob.uuid)
         
     # INTERNAL
     def __translate_cu_sj_description(self, compute_unit_description):
