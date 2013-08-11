@@ -228,8 +228,11 @@ class bigjob(api.base.bigjob):
             # if no working dir is set assume use home directory
             # will fail if home directory is not the same on remote machine
             # but this is just a guess to avoid failing
-            #self.working_directory = os.path.expanduser("~")
-            #self.working_directory = "~"
+
+            # '~' has been added by Andre in 'master' - however that 
+            # doesn't seem to work properly (locally on my Mac)
+            # self.working_directory = "~"
+            #
             self.working_directory = "" 
         
         if queue != None:

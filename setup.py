@@ -8,8 +8,7 @@ import subprocess
 try:
     import saga
 except:
-    print "Installing BigJob using SAGA/Bliss."
-    #sys.exit(1)
+    print "Installing BigJob and SAGA/Python."
 
 if sys.version_info < (2, 6):
     sys.stderr.write("BigJob requires Python 2.6 and above. Installation unsuccessful!")
@@ -37,7 +36,7 @@ def update_version():
     ver = stdout.strip()
     fn = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'VERSION')
     f = open(fn, "w")
-    f.write(ver + "-saga-python")
+    f.write(ver)
     f.close()
     print "BigJob VERSION: '%s'" % ver
 
@@ -51,11 +50,7 @@ def get_version():
     except EnvironmentError:
         return "-1"
     return version    
-#try:
-#    import saga
-#except:
-#    print "SAGA C++ and SAGA Python Bindings not found. Using Bliss/SAGA."
-#    #sys.exit(1)
+
     
 update_version()
     
