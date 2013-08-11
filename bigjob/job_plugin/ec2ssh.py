@@ -177,11 +177,7 @@ class Job(object):
 
         session = saga.Session()
         session.add_context(ctx)
-<<<<<<< HEAD
-        
-=======
                 
->>>>>>> master
         TRIAL_MAX=30
         trials=0
         while trials < TRIAL_MAX:
@@ -191,10 +187,6 @@ class Job(object):
                 job = js.create_job(self.job_description)
                 logger.debug("Attempt: %d, submit pilot job to: %s "%(trials,str(url)))
                 job.run()
-<<<<<<< HEAD
-                
-=======
->>>>>>> master
                 if job.get_state()==saga.job.FAILED:
                     logger.warning("Submission failed.")
                     trials = trials + 1 
