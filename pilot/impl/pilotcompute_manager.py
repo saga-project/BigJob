@@ -287,7 +287,11 @@ class PilotCompute(PilotCompute):
             cu_list.append(ComputeUnit(cu_url=i))
         return cu_list
 
-    
+    def get_local_working_directory(self):
+        """ Returns the local working directory of this
+            PilotCompute object.
+        """
+        return self._local_working_directory    
     
     def get_url(self):
         """ Get unique URL referencing the Pilot Compute 
