@@ -228,12 +228,10 @@ class bigjob(api.base.bigjob):
             # if no working dir is set assume use home directory
             # will fail if home directory is not the same on remote machine
             # but this is just a guess to avoid failing
-
-            # '~' has been added by Andre in 'master' - however that 
-            # doesn't seem to work properly (locally on my Mac)
-            # self.working_directory = "~"
-            #
-            self.working_directory = "" 
+            if lrms_saga_url.host == "localhost":
+                self.working_directory = os.getcwd()
+            else:
+                self.working_directory = "~" 
         
         if queue != None:
             jd.queue = queue
