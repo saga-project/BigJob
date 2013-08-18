@@ -243,7 +243,7 @@ class SSHFileAdaptor(object):
             source_host="localhost"
 
         result = urlparse.urlparse(target_url)
-        target_host = result.netloc
+        target_host = result.hostname
         target_path = result.path
         target_user = result.username
         if target_host==None or target_host=="":
@@ -324,6 +324,7 @@ class SSHFileAdaptor(object):
         # path is a must parameter
         command = command + source_path + " "
         
+        logger.debug("Create scp command: target_user: %s, target_host: %s"%(str(target_user), str(target_host)))
         if target_host != None and target_host!="" and target_host!="localhost":
             if target_user!=None:
                 command = command + " " + target_user + "@" 
