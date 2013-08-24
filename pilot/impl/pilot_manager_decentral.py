@@ -163,7 +163,7 @@ class ComputeDataServiceDecentral(ComputeDataService):
         logger.debug("Submit CU to big-job via external queue: %s"%self.pcs_coordination_namespace)
         sj.submit_job(self.pcs_coordination_namespace, compute_unit.subjob_description)
 
-        compute_unit._update_subjob(sj ,"UNKNOWN")
+        compute_unit._update_subjob(sj)
         return compute_unit
     
     

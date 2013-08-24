@@ -240,7 +240,8 @@ class PilotData(PilotData):
         
         if self.pilot_data_description!=None:
             self.service_url=self.pilot_data_description["service_url"]
-            self.size = self.pilot_data_description["size"]
+            if self.pilot_data_description.has_key("size"):
+                self.size = self.pilot_data_description["size"]
             
             # initialize file adaptor
             if self.service_url.startswith("ssh:"):
