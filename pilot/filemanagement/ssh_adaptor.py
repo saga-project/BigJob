@@ -11,6 +11,7 @@ import stat
 import logging
 import traceback
 import pexpect
+from pexpect import TIMEOUT
 from pilot.api.api import PilotError
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
@@ -242,7 +243,7 @@ class SSHFileAdaptor(object):
             source_host="localhost"
 
         result = urlparse.urlparse(target_url)
-        target_host = result.netloc
+        target_host = result.hostname
         target_path = result.path
         target_user = result.username
         if target_host==None or target_host=="":
@@ -323,6 +324,7 @@ class SSHFileAdaptor(object):
         # path is a must parameter
         command = command + source_path + " "
         
+        logger.debug("Create scp command: target_user: %s, target_host: %s"%(str(target_user), str(target_host)))
         if target_host != None and target_host!="" and target_host!="localhost":
             if target_user!=None:
                 command = command + " " + target_user + "@" 
@@ -332,6 +334,16 @@ class SSHFileAdaptor(object):
         command = command + target_path 
         logger.debug(command)    
         child = pexpect.spawn(command.strip(), timeout=None)
+        password_error=False
+        try:
+            child.timeout=300
+            child.expect("password:",timeout=300, searchwindowsize=5024)
+            password_error=True
+        except Exception as ex:
+            logger.debug("No password prompt error found" + str(ex))
+
+        if password_error:
+            raise PilotError("SSH key-less login not correctly setup.")
         output = child.readlines()
         logger.debug("Run %s Output: %s"%(command, str(output)))
         child.close()
