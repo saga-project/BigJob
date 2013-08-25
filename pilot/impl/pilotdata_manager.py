@@ -619,9 +619,11 @@ class DataUnit(DataUnit):
             for pd in self.pilot_data:
                 pd_host = SAGAUrl(pd.service_url).host
                 pd_score = difflib.SequenceMatcher(a=pd_host, b=local_hostname).ratio()
-                if pd_score>max_score:
+                logger.debug("Export locality compute score: Localhost: %s PD at: %s Score: %s"%(local_hostname, pd_host, pd_score))
+                if pd_score > max_score:
                     best_pd=pd
-                logger.debug("Export PD Local host: %s PD at: %s Score: %s"%(local_hostname, pd_host, pd_score))
+                    max_score=pd_score
+                
                 #pd_domain = tldextract.extract(pd.service_url).domain
                 #local_domain = tldextract.extract(socket.getfqdn()).domain
                 
