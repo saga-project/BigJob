@@ -13,6 +13,8 @@ import Queue
 import socket
 import tldextract
 tldextract.tldextract.LOG.setLevel(logging.WARNING)
+import difflib
+
 
 from pilot.api.api import PilotError
 
@@ -611,14 +613,23 @@ class DataUnit(DataUnit):
         
         if len(self.pilot_data) > 0:
             # Search for PD that is close to local machine
+            local_hostname=socket.getfqdn()
+            max_score=0
+            best_pd=None
             for pd in self.pilot_data:
-                pd_domain = tldextract.extract(pd.service_url).domain
-                local_domain = tldextract.extract(socket.getfqdn()).domain
-                logger.debug("Export to %s... checking PD at: %s"%(local_domain, pd_domain))
-                if pd_domain == local_domain:
-                    logger.debug("Export from: %s"%(pd_domain))
-                    pd.export_du(self, target_url)
-                    return
+                pd_host = SAGAUrl(pd.service_url).host
+                pd_score = difflib.SequenceMatcher(a=pd_host, b=local_hostname).ratio()
+                if pd_score>max_score:
+                    best_pd=pd
+                logger.debug("Export PD Local host: %s PD at: %s Score: %s"%(local_hostname, pd_host, pd_score))
+                #pd_domain = tldextract.extract(pd.service_url).domain
+                #local_domain = tldextract.extract(socket.getfqdn()).domain
+                
+            if best_pd!=None:
+                logger.debug("Export from: %s"%(best_pd.service_url))
+                best_pd.export_du(self, target_url)
+                return
+                
             # No PD found. Utilize default PD
             logger.debug("Export from random PD")
             self.pilot_data[0].export_du(self, target_url)
