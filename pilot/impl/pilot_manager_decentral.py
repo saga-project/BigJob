@@ -264,8 +264,8 @@ class ComputeDataServiceDecentral(ComputeDataService):
                     if state==State.Done or state==State.Failed:
                         completed_pilots=completed_pilots + 1
                         
-                if  completed_pilots<number_pilots:
-                    logger.debug("no more active pilots.")
+                if  completed_pilots==number_pilots:
+                    logger.debug("All pilots done/failed. No more active pilots. Exit.")
                     break
 
                 for cu in cus:
