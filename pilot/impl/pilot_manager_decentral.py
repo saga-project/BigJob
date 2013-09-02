@@ -283,6 +283,9 @@ class ComputeDataServiceDecentral(ComputeDataService):
                                number_dus, completed_pilots, number_pilots))
             
                 logger.debug("exit?" + str((completed_dus<number_dus and completed_cus<number_cus)))
+                if completed_dus<number_dus and completed_cus<number_cus:
+                    time.sleep(2)
+            
             
 #             for i in self.data_units.values():
 #                 i.wait()
