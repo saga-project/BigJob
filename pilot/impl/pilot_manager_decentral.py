@@ -241,17 +241,65 @@ class ComputeDataServiceDecentral(ComputeDataService):
             the user has cancelled a CU or DU.            
         """
         try:
-            logger.debug("### START WAIT ###")
-            for i in self.data_units.values():
-                i.wait()
-            logger.debug("Wait for DUs finished")        
-                
-            for i in self.compute_units.values():
-                i.wait()     
-            logger.debug("CUs done")        
+            dus = self.data_units.values()
+            cus = self.compute_units.values()
+            pilots = []
+            for i in self.pilot_job_services:
+                pilots.extend(i.list_pilots())
+            number_dus=len(dus)
+            number_cus=len(cus)
+            number_pilots=len(pilots)
+            completed_dus=0
+            completed_cus=0
+            completed_pilots=0
+            logger.debug("### ComputeDataService wait for completion of %d CUs/ %d DUs ###"%(len(cus), len(dus)))
+            
+            while (completed_dus<number_dus and completed_cus<number_cus):
+                completed_dus=0
+                completed_cus=0
+                completed_pilots=0
+            
+                for p in pilots:
+                    state = p.get_state()
+                    if state==State.Done or state==State.Failed:
+                        completed_pilots=completed_pilots + 1
+                        
+                if  completed_pilots<number_pilots:
+                    logger.debug("no more active pilots.")
+                    break
+
+                for cu in cus:
+                    state = cu.get_state()
+                    if state==State.Done or state==State.Failed:
+                        completed_cus=completed_cus + 1
+
+                for du in dus:
+                    state = du.get_state()
+                    if state==State.Running or state==State.Failed:
+                        completed_dus=completed_dus + 1
+
+                logger.debug("Compute Data Service Status: %d/%d CUs %d/%d DUs %d/%d Pilots"%
+                             (completed_cus, number_cus, completed_dus,
+                               number_dus, completed_pilots, number_pilots))
+            
+                logger.debug("exit?" + str((completed_dus<number_dus and completed_cus<number_cus)))
+            
+#             for i in self.data_units.values():
+#                 i.wait()
+#             logger.debug("Wait for DUs finished")        
+#                 
+#             for i in self.compute_units.values():
+#                 i.wait()     
+#             logger.debug("CUs done")        
                    
             logger.debug("### END WAIT ###")
         except:
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            print "*** print_tb:"
+            traceback.print_tb(exc_traceback, limit=1, file=sys.stderr)
+            print "*** print_exception:"
+            traceback.print_exception(exc_type, exc_value, exc_traceback,
+                              limit=2, file=sys.stderr)
             logger.debug("Ctrl-c detected. Terminating ComputeDataService...")
             self.cancel()
             raise KeyboardInterrupt
