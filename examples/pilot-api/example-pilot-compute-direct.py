@@ -18,8 +18,6 @@ if __name__ == "__main__":
                              "service_url": 'fork://localhost',
                              "number_of_processes": 1,                             
                              "working_directory": os.path.join(os.getcwd(), "agent"),
-                             "affinity_datacenter_label": "eu-de-south",              
-                             "affinity_machine_label": "mymachine-1",
                              "file_transfer": ["ssh://" + os.path.dirname(os.path.abspath(__file__)) 
                                                + "/../test.txt > BIGJOB_WORK_DIR"]
                             }
@@ -28,13 +26,12 @@ if __name__ == "__main__":
     
     # start compute unit
     compute_unit_description = {
-            "executable": "/bin/cat",
-            "arguments": ["test.txt"],
+            "executable": "/bin/echo",
+            "arguments": ["$TBD_DIR"],
             "number_of_processes": 1,
+            "environment": ["TBD_DIR=/tmp"],
             "output": "stdout.txt",
             "error": "stderr.txt",   
-            "affinity_datacenter_label": "eu-de-south",              
-            "affinity_machine_label": "mymachine-1",
             "file_transfer": ["ssh://" + os.path.dirname(os.path.abspath(__file__)) 
                                 + "/../test.txt > BIGJOB_WORK_DIR"]
     }    
