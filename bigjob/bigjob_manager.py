@@ -494,6 +494,10 @@ class bigjob(api.base.bigjob):
     def wait(self):
         """ Waits for completion of all sub-jobs """        
         while 1:
+            if self.get_state()=="Done" or self.get_state()=="Failed":
+                logger.debug("BigJob terminated. Exit Wait")
+                break
+            
             jobs = self.coordination.get_jobs_of_pilot(self.pilot_url)
             finish_counter=0
             result_map = {}
