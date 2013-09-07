@@ -592,7 +592,6 @@ class DataUnit(DataUnit):
         """ add this DU (self) to a certain pilot data 
             data will be moved into this data
         """
-        self._update_state(State.Pending)
         transfer_thread=threading.Thread(target=self.__add_pilot_data, args=[pilot_data])
         transfer_thread.start()        
         self.transfer_threads.append(transfer_thread)
@@ -658,16 +657,13 @@ class DataUnit(DataUnit):
         """ Internal method for updating state"""
         self.state=state
         logger.debug("Update DU: "+ str(self.url) +  " state: " + state)
-        CoordinationAdaptor.update_du(self)
-#         if len(self.pilot_data) > 0: 
-#             
-#         else:
-#             logger.error("No Pilot Data for DU found.")
+        CoordinationAdaptor.update_du_state(self, state)
+        logger.debug("Updated DU: "+ str(self.url) +  " New state: " + self.get_state())
 
     
     def __add_pilot_data(self, pilot_data):
         logger.debug("DU add_pilot_data: add DU to pilot data in Thread")
-        
+        self._update_state(State.Pending)
         if len(self.pilot_data) > 0: # copy files from other pilot data
             self.pilot_data[0].copy_du(self, pilot_data)
         else: # copy files from original location

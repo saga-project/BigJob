@@ -165,9 +165,16 @@ class RedisCoordinationAdaptor:
         return du_dict
     
      
+     
+    @classmethod  
+    def update_du_state(cls, du, state):
+        logger.debug("**** Update data unit STATE at: " + du.url + " to: " + str(state))
+        cls.__store_entry_item(du.url + RedisCoordinationAdaptor.SEPARATOR + "info", "state", state)
+ 
+     
     @classmethod  
     def update_du(cls, du):
-        logger.debug("**** Update data unit at: " + du.url)
+        logger.debug("**** Update data unit FULL at: " + du.url)
         du_dict_list = [i.to_dict() for i in du.data_unit_items]
         pd_urls=[]
         if du.pilot_data!=None: pd_urls = [i.url for i in du.pilot_data]
@@ -252,6 +259,22 @@ class RedisCoordinationAdaptor:
         keys_normalized = [i[:i.index(":info")] for i in keys]
         return keys_normalized
         
+    @classmethod
+    def __store_entry_item(cls, entry_url, item_key, item_value):
+        entry_url = cls.__get_url(entry_url)
+        redis_client = cls.__get_redis_api_client()
+        lock_name=entry_url+":lock"
+        logger.debug("Acquire Redis lock for update: " + lock_name)
+        lock = Lock(redis_client, lock_name, timeout=None, sleep=0.1)
+        acquired=lock.acquire(blocking=True)
+        logger.debug("Lock acquired: " + str(acquired))
+        redis_client.hset(entry_url, item_key, item_value)
+        lock.release()
+        logger.debug("Stored Redis entry at: " + entry_url 
+                      + " Key: " + str(json.dumps(item_key))
+                      + " Value: " + str(json.dumps(item_value))
+                      )
+    
         
     @classmethod
     def __store_entry(cls, entry_url, content):
@@ -261,7 +284,7 @@ class RedisCoordinationAdaptor:
         logger.debug("Acquire Redis lock for update: " + lock_name)
         lock = Lock(redis_client, lock_name, timeout=None, sleep=0.1)
         acquired=lock.acquire(blocking=True)
-        logger.debug("Lock aquired: " + str(acquired))
+        logger.debug("Lock acquired: " + str(acquired))
         redis_client.hmset(entry_url, content)
         lock.release()
         logger.debug("Stored Redis entry at: " + entry_url 
