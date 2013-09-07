@@ -254,7 +254,7 @@ class ComputeDataServiceDecentral(ComputeDataService):
             completed_pilots=0
             logger.debug("### ComputeDataService wait for completion of %d CUs/ %d DUs ###"%(len(cus), len(dus)))
             
-            while (completed_dus<number_dus and completed_cus<number_cus):
+            while not (completed_dus==number_dus and completed_cus==number_cus):
                 completed_dus=0
                 completed_cus=0
                 completed_pilots=0
@@ -262,7 +262,7 @@ class ComputeDataServiceDecentral(ComputeDataService):
                 for p in pilots:
                     state = p.get_state()
                     if state==State.Done or state==State.Failed:
-                        completed_pilots=completed_pilots + 1
+                        completed_pilots = completed_pilots + 1
                         
                 if  completed_pilots==number_pilots:
                     logger.debug("All pilots done/failed. No more active pilots. Exit.")
@@ -278,11 +278,11 @@ class ComputeDataServiceDecentral(ComputeDataService):
                     if state==State.Running or state==State.Failed:
                         completed_dus=completed_dus + 1
 
-                logger.debug("Compute Data Service Status: %d/%d CUs %d/%d DUs %d/%d Pilots"%
+                logger.debug("Compute Data Service Completion Status: %d/%d CUs %d/%d DUs %d/%d Pilots"%
                              (completed_cus, number_cus, completed_dus,
                                number_dus, completed_pilots, number_pilots))
             
-                logger.debug("exit?" + str((completed_dus<number_dus and completed_cus<number_cus)))
+                logger.debug("exit? " + str((completed_dus==number_dus and completed_cus==number_cus)))
                 if completed_dus<number_dus and completed_cus<number_cus:
                     time.sleep(2)
             
@@ -356,8 +356,9 @@ class ComputeDataServiceDecentral(ComputeDataService):
                     if(pd!=None):                        
                         logger.debug("Initiate Transfer to PD.")
                         du.add_pilot_data(pd)
-                        logger.debug("Transfer to PD finished.")
-                        du._update_state(State.Running) 
+                        #logger.debug("Transfer to PD finished.")
+                        #du._update_state(State.Running) 
+                        #logger.debug("Updated State to Running.")
                         self.du_queue.task_done()                   
                     else:
                         self.du_queue.task_done() 
