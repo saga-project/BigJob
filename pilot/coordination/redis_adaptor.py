@@ -1,5 +1,6 @@
 from pilot import *
 from bigjob import logger
+from redis.client import Lock
 
 try:
     import json
@@ -21,7 +22,6 @@ class RedisCoordinationAdaptor:
     DATA_UNIT_SERVICE_PATH=PILOT_DATA_PATH + SEPARATOR +"dus"
     COMPUTE_DATA_SERVICE_PATH = PILOT_DATA_PATH + SEPARATOR + "cds"
 
-    
     ###########################################################################
     # Construct a base url for an application
      
@@ -169,13 +169,15 @@ class RedisCoordinationAdaptor:
     def update_du(cls, du):
         logger.debug("**** Update data unit at: " + du.url)
         du_dict_list = [i.to_dict() for i in du.data_unit_items]
-        du_urls = [i.url for i in du.pilot_data]
+        pd_urls=[]
+        if du.pilot_data!=None: pd_urls = [i.url for i in du.pilot_data]
         du_dict = {
                 "data_unit_description":du.data_unit_description,
                 "state": du.state,
-                "pilot_data": du_urls,
+                "pilot_data": pd_urls,
                 "data_unit_items": du_dict_list
                 }
+        logger.debug("Update DU: " + str(du.url) + " to " + str(du_dict["state"]))
         cls.__store_entry(du.url + RedisCoordinationAdaptor.SEPARATOR + "info", du_dict)
         
        
@@ -255,9 +257,14 @@ class RedisCoordinationAdaptor:
     def __store_entry(cls, entry_url, content):
         entry_url = cls.__get_url(entry_url)
         redis_client = cls.__get_redis_api_client()
+        lock_name=entry_url+":lock"
+        logger.debug("Acquire Redis lock for update: " + lock_name)
+        lock = Lock(redis_client, lock_name, timeout=None, sleep=0.1)
+        acquired=lock.acquire(blocking=True)
+        logger.debug("Lock aquired: " + str(acquired))
         redis_client.hmset(entry_url, content)
-        
-        logger.debug("Store Redis entry at: " + entry_url 
+        lock.release()
+        logger.debug("Stored Redis entry at: " + entry_url 
                       + " Content: " + str(json.dumps(content)))
         
     @classmethod
