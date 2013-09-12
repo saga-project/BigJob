@@ -7,7 +7,7 @@ import traceback
 """
 
 #------------------------------------------------------------------------------
-# Redis password and 'user' name a aquired from the environment
+# Redis password and 'user' name required from the environment
 REDIS_PWD   = os.environ.get('REDIS_PASSWORD')
 USER_NAME   = os.environ.get('USER_NAME')
 
