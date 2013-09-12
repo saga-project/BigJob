@@ -1,64 +1,89 @@
-import os
+import os/Users/melissa/BigJob/examples/tutorial/local_chained_ensembles.py
 import time
 import sys
 from pilot import PilotComputeService, ComputeDataService, State
 
+#------------------------------------------------------------------------------
+# Redis password and 'user' name required from the environment
+REDIS_PWD   = os.environ.get('REDIS_PASSWORD')
+USER_NAME   = os.environ.get('USER_NAME')
 
-### This is the number of jobs you want to run
-NUMBER_JOBS=4
-COORDINATION_URL = "redis://localhost:6379"
+# The coordination server
+COORD       = "redis://%s@localhost:6379" % REDIS_PWD
+# The host to run BigJob on
+HOSTNAME    = "localhost"
+# The working directory on the remote cluster / machine
+WORKDIR     = "/home/%s/example1" % USER_NAME
+# The number of jobs you want to run
+NUMBER_JOBS = 4
 
-if __name__ == "__main__":
 
-    pilot_compute_service = PilotComputeService(COORDINATION_URL)
+#------------------------------------------------------------------------------
+#
+def main():
+    try:
+        # this describes the parameters and requirements for our pilot job
+        pilot_description = pilot.PilotComputeDescription()
+        pilot_description.service_url = "fork://%s" % HOSTNAME
+        pilot_description.number_of_processes = 4 
+        pilot_description.working_directory = WORKDIR
+        pilot_description.walltime = 10
 
-    pilot_compute_description = { "service_url": "fork://localhost",
-                                  "number_of_processes": 1,
-                                  "working_directory": os.getenv("HOME")+"/agent",
-                                  "walltime":10,
-                                }
+        # create a new pilot job
+        pilot_compute_service = pilot.PilotComputeService(COORD)
+        pilotjob = pilot_compute_service.create_pilot(pilot_description)
 
-    pilot_compute_service.create_pilot(pilot_compute_description)
+         # submit 'A' tasks to pilot job
+        task_set_A = list()
+        for i in range(NUMBER_JOBS):
+            task_desc = pilot.ComputeUnitDescription()
+            task_desc.executable = '/bin/echo'
+            task_desc.arguments = ['I am an $TASK_SET task with id $TASK_NO', ]
+            task_desc.environment = {'TASK_SET': 'A', 'TASK_NO': i}
+            task_desc.number_of_processes = 1
+            task_desc.output = 'A-stdout.txt'
+            task_desc.error  = 'A-stderr.txt'
 
-    compute_data_service = ComputeDataService()
-    compute_data_service.add_pilot_compute_service(pilot_compute_service)
+	    # Submit task to PilotJob
+            task = pilotjob.submit_compute_unit(task_desc)
+            print "* Submitted 'A' task '%s' with id '%s'" % (i, task.get_id())
+            task_set_A.append(task)
 
-    print ("Finished Pilot-Job setup. Submit compute units")
-    # submit Set A compute units
-    all_A_cus = []
-    for i in range(NUMBER_JOBS):
-        compute_unit_description = { "executable": "/bin/echo",
-                                     "arguments": ["Hello","$ENV1","$ENV2"],
-                                     "environment": ['ENV1=env_arg1','ENV2=env_arg2'],
-                                     "number_of_processes": 1,
-                                     "output": "A_stdout.txt",
-                                     "error": "A_stderr.txt"
-                                   }
-        compute_unit = compute_data_service.submit_compute_unit(compute_unit_description)
-        all_A_cus.append(compute_unit) # Store all the compute units.
 
      # Chaining tasks i.e submit a compute unit, when compute unit from A is successfully executed.
 
-    while 1:
-        for i in all_A_cus:
-            if i.get_state() == "Done":
-                compute_unit_description = { "executable": "/bin/echo",
-                                             "arguments": ["$ENV1","$ENV2"],
-                                             "environment": ['ENV1=task_B:','ENV2=after_task_A'+str(i)],
-                                             "number_of_processes": 1,
-                                             "output": "B_stdout.txt",
-                                             "error": "B_stderr.txt"
-                                           }
-                compute_data_service.submit_compute_unit(compute_unit_description)
-                all_A_cus.remove(i)
+        # Chaining tasks i.e submit a compute unit, when compute unit from A is successfully executed.
+        # A 'B' task reads the content of the output file of an 'A' task and writes it into its own
+        # output file.
+        task_set_B = list()
+        while len(task_set_A) > 0:
+            for a_task in task_set_A:
+                if a_task.get_state() == "Done":
+                    print "One 'A' task %s finished. Launching a 'B' task." % (a_task.get_id())
+                    task_desc = pilot.ComputeUnitDescription()
+                    task_desc.executable = '/bin/cat'
+                    task_desc.arguments = ['I am an $TASK_SET task with id $TASK_NO', ]
+                    task_desc.environment = {'TASK_SET': 'B', 'TASK_NO': a_task}
+                    task_desc.number_of_processes = 1
+                    task_desc.output = 'B-stdout.txt'
+                    task_desc.error  = 'B-stderr.txt'
 
-        if len(all_A_cus) == 0:
-            break
+		    # Submit task to Pilot Job
+                    task = pilotjob.submit_compute_unit(task_desc)
+                    print "* Submitted 'B' task '%s' with id '%s'" % (i, task.get_id())
+                    task_set_B.append(task)
+                    task_set_A.remove(a_task)
 
-    # Wait for set B jobs.
-    compute_data_service.wait()
+       except Exception, ex:
+            print "AN ERROR OCCURRED: %s" % ((str(ex)))
+            # print a stack trace in case of an exception -
+            # this can be helpful for debugging the problem
+            traceback.print_exc()
+            sys.exit(-1)
 
-    print ("Terminate Pilot Jobs")
-    compute_data_service.cancel()
-    pilot_compute_service.cancel()
-
+      finally:
+         # alway try to shut down pilots, otherwise jobs might end up
+         # lingering in the queue
+         print ("Terminating BigJob...")
+         pilotjob.cancel()
+         pilot_compute_service.cancel()
