@@ -88,12 +88,8 @@
 </ul>
 <p>Some backends require specific keys to be passed to the resource (i.e. Amazon S3 storage requires a access key and password). Parameters for passing these keys are provided in the <a class="reference external" href="../library/index.html">Library Documentation</a>.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">pilot_data_description</span> <span class="o">=</span>    <span class="p">{</span>
-                                <span class="s">&#39;service_url&#39;</span><span class="p">:</span> <span class="s">&quot;ssh://localhost/tmp/pilotstore/&quot;</span><span class="p">,</span>
-                                <span class="s">&#39;size&#39;</span><span class="p">:</span><span class="mi">100</span><span class="p">,</span>
-                                <span class="c"># Affinity</span>
-                                <span class="s">&#39;affinity_datacenter_label&#39;</span><span class="p">:</span><span class="s">&quot;eu-de-south&quot;</span><span class="p">,</span>
-                                <span class="s">&#39;affinity_machine_label&#39;</span><span class="p">:</span><span class="s">&quot;mymachine-1&quot;</span><span class="p">,</span>
-                            <span class="p">}</span>
+                                                        <span class="s">&#39;service_url&#39;</span><span class="p">:</span> <span class="s">&quot;ssh://localhost/tmp/pilotstore/&quot;</span><span class="p">,</span>
+                                                        <span class="p">}</span>
 </pre></div>
 </div>
 </div>
@@ -115,16 +111,13 @@
 <p>First, we define our Pilot-Data using a Pilot-Data Description as follows:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">pilot_data_description</span><span class="o">=</span><span class="p">{</span>
                             <span class="s">&quot;service_url&quot;</span><span class="p">:</span><span class="s">&quot;ssh://localhost/&quot;</span><span class="o">+</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s">&quot;HOME&quot;</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;/pilotdata&quot;</span><span class="p">,</span>
-                            <span class="s">&quot;size&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
-                            <span class="s">&quot;affinity_datacenter_label&quot;</span><span class="p">:</span><span class="s">&quot;eu-de-south&quot;</span><span class="p">,</span>
-                            <span class="s">&quot;affinity_machine_label&quot;</span><span class="p">:</span><span class="s">&quot;mymachine-1&quot;</span>
                        <span class="p">}</span>
 </pre></div>
 </div>
 <p>Next, we define the description for our input data unit (note that we use the affinity labels that match the Pilot-Data in this case):</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">input_data_unit_description</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&quot;file_urls&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s">&quot;ssh://localhost&quot;</span> <span class="o">+</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="s">&quot;test.txt&quot;</span><span class="p">)],</span>
-                                <span class="s">&quot;affinity_datacenter_label&quot;</span><span class="p">:</span><span class="s">&quot;eu-de-south&quot;</span><span class="p">,</span>
-                                <span class="s">&quot;affinity_machine_label&quot;</span><span class="p">:</span> <span class="s">&quot;mymachine-1&quot;</span><span class="p">}</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">input_data_unit_description</span> <span class="o">=</span> <span class="p">{</span>
+                                                                    <span class="s">&quot;file_urls&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s">&quot;ssh://localhost&quot;</span> <span class="o">+</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="s">&quot;test.txt&quot;</span><span class="p">)],</span>
+                                                                    <span class="p">}</span>
 
 <span class="n">input_du</span> <span class="o">=</span> <span class="n">compute_data_service</span><span class="o">.</span><span class="n">submit_data_unit</span><span class="p">(</span><span class="n">input_data_unit_description</span><span class="p">)</span>
 </pre></div>

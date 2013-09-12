@@ -360,13 +360,6 @@ The PilotComputeDescription used to create this pilot.</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="pilot.impl.pilotcompute_manager.PilotCompute.get_local_working_directory">
-<tt class="descname">get_local_working_directory</tt><big>(</big><big>)</big><a class="headerlink" href="#pilot.impl.pilotcompute_manager.PilotCompute.get_local_working_directory" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the local working directory of this
-PilotCompute object.</p>
-</dd></dl>
-
-<dl class="method">
 <dt id="pilot.impl.pilotcompute_manager.PilotCompute.get_state">
 <tt class="descname">get_state</tt><big>(</big><big>)</big><a class="headerlink" href="#pilot.impl.pilotcompute_manager.PilotCompute.get_state" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the state of the pilot</p>
@@ -821,6 +814,7 @@ the user has cancelled a CU or DU.</p>
         <span class="s">&quot;number_of_processes&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
         <span class="s">&quot;output&quot;</span><span class="p">:</span> <span class="s">&quot;stdout.txt&quot;</span><span class="p">,</span>
         <span class="s">&quot;error&quot;</span><span class="p">:</span> <span class="s">&quot;stderr.txt&quot;</span><span class="p">,</span>
+                        <span class="s">&quot;environment&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s">&quot;MY_SCRATCH_DIR=/tmp&quot;</span><span class="p">],</span>
         <span class="s">&quot;input_data&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="n">data_unit</span><span class="o">.</span><span class="n">get_url</span><span class="p">()],</span> <span class="c"># this stages the content of the data unit to the working directory of the compute unit</span>
         <span class="s">&quot;affinity_datacenter_label&quot;</span><span class="p">:</span> <span class="s">&quot;eu-de-south&quot;</span><span class="p">,</span>
         <span class="s">&quot;affinity_machine_label&quot;</span><span class="p">:</span> <span class="s">&quot;mymachine-1&quot;</span>
@@ -869,7 +863,7 @@ the user has cancelled a CU or DU.</p>
 <tt class="descname">environment</tt><a class="headerlink" href="#environment" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<p>Specifies any environment variables that need to be passed with the compute unit in order for the executable to work.</p>
+<p>Specifies any environment variables that need to be passed with the compute unit in order for the executable to work, e.g [&#8220;MY_SCRATCH_DIR=/tmp&#8221;],</p>
 <blockquote>
 <div><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />

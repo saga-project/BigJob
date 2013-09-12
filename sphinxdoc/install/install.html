@@ -96,10 +96,10 @@
 <div class="section" id="install-bigjob">
 <h2>2.1.2. Install BigJob<a class="headerlink" href="#install-bigjob" title="Permalink to this headline">¶</a></h2>
 <p>After your virtual environment is active, you are ready to install BigJob. BigJob is available via PyPi and can be installed using easy_install as follows:</p>
-<div class="highlight-python"><pre>easy_install BigJob</pre>
+<div class="highlight-python"><pre>pip install saga-bigjob</pre>
 </div>
 <p>You can change the default installation directory by calling:</p>
-<div class="highlight-python"><pre>easy_install --prefix=&lt;target-dir&gt; BigJob</pre>
+<div class="highlight-python"><pre>pip install --install-option="--prefix=&lt;target-directory&gt;" saga-bigjob</pre>
 </div>
 <p>To make sure that your installation works, run the following command to check if the BigJob module can be imported by the python interpreter:</p>
 <div class="highlight-python"><pre>python -c "import pilot; print pilot.version"</pre>
