@@ -73,15 +73,15 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="c">#------------------------------------------------------------------------------</span>
-<span class="c"># Redis password and &#39;user&#39; name a aquired from the environment</span>
-<span class="n">REDIS_PWD</span>   <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;REDIS_PASSWORD&#39;</span><span class="p">)</span>
-<span class="n">USER_NAME</span>   <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;USER_NAME&#39;</span><span class="p">)</span>
+<span class="c"># Redis password and &#39;user&#39; name</span>
+<span class="n">REDIS_PWD</span>   <span class="o">=</span> <span class="c"># Fill in the password to your server</span>
+<span class="n">USER_NAME</span>   <span class="o">=</span> <span class="c"># Fill in your username on the resource you&#39;re running on</span>
 
 <span class="c"># The coordination server</span>
 <span class="n">COORD</span>       <span class="o">=</span> <span class="s">&quot;redis://</span><span class="si">%s</span><span class="s">@localhost:6379&quot;</span> <span class="o">%</span> <span class="n">REDIS_PWD</span>
 <span class="c"># The host to run BigJob on</span>
 <span class="n">HOSTNAME</span>    <span class="o">=</span> <span class="s">&quot;localhost&quot;</span>
-<span class="c"># The working directory on the remote cluster / machine</span>
+<span class="c"># The working directory on your machine</span>
 <span class="n">WORKDIR</span>     <span class="o">=</span> <span class="s">&quot;/home/</span><span class="si">%s</span><span class="s">/example1&quot;</span> <span class="o">%</span> <span class="n">USER_NAME</span>
 <span class="c"># The number of jobs you want to run</span>
 <span class="n">NUMBER_JOBS</span> <span class="o">=</span> <span class="mi">4</span>
@@ -89,6 +89,7 @@
 
 <span class="c">#------------------------------------------------------------------------------</span>
 <span class="c">#</span>
+
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="c"># this describes the parameters and requirements for our pilot job</span>
