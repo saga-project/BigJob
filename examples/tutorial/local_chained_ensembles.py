@@ -1,18 +1,22 @@
-import os/Users/melissa/BigJob/examples/tutorial/local_chained_ensembles.py
+import os
 import time
 import sys
-from pilot import PilotComputeService, ComputeDataService, State
+import pilot
+import traceback
+
+""" DESCRIPTION: This example shows how to run BigJob locally to execute chained tasks.
+"""
 
 #------------------------------------------------------------------------------
-# Redis password and 'user' name required from the environment
-REDIS_PWD   = os.environ.get('REDIS_PASSWORD')
-USER_NAME   = os.environ.get('USER_NAME')
+# Redis password and 'user' name
+REDIS_PWD   = # Fill in the password to your server
+USER_NAME   = # Fill in your username on the resource you're running on
 
 # The coordination server
 COORD       = "redis://%s@localhost:6379" % REDIS_PWD
 # The host to run BigJob on
 HOSTNAME    = "localhost"
-# The working directory on the remote cluster / machine
+# The working directory on your machine
 WORKDIR     = "/home/%s/example1" % USER_NAME
 # The number of jobs you want to run
 NUMBER_JOBS = 4
@@ -20,6 +24,7 @@ NUMBER_JOBS = 4
 
 #------------------------------------------------------------------------------
 #
+
 def main():
     try:
         # this describes the parameters and requirements for our pilot job
@@ -48,9 +53,6 @@ def main():
             task = pilotjob.submit_compute_unit(task_desc)
             print "* Submitted 'A' task '%s' with id '%s'" % (i, task.get_id())
             task_set_A.append(task)
-
-
-     # Chaining tasks i.e submit a compute unit, when compute unit from A is successfully executed.
 
         # Chaining tasks i.e submit a compute unit, when compute unit from A is successfully executed.
         # A 'B' task reads the content of the output file of an 'A' task and writes it into its own
