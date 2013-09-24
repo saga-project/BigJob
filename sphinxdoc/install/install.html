@@ -79,7 +79,7 @@
 <div class="highlight-python"><pre>virtualenv $HOME/.bigjob/python</pre>
 </div>
 <p>If you don&#8217;t have virtualenv installed and you don&#8217;t have root access to your machine, you can use the following script instead:</p>
-<div class="highlight-python"><pre>curl --insecure -s https://raw.github.com/pypa/virtualenv/master/virtualenv.py | python - $HOME/.bigjob/python</pre>
+<div class="highlight-python"><pre>curl --insecure -s https://raw.github.com/pypa/virtualenv/1.9.X/virtualenv.py | python - $HOME/.bigjob/python</pre>
 </div>
 </div>
 <div class="section" id="activate-your-local-python-environment">
@@ -96,10 +96,10 @@
 <div class="section" id="install-bigjob">
 <h2>2.1.2. Install BigJob<a class="headerlink" href="#install-bigjob" title="Permalink to this headline">¶</a></h2>
 <p>After your virtual environment is active, you are ready to install BigJob. BigJob is available via PyPi and can be installed using easy_install as follows:</p>
-<div class="highlight-python"><pre>pip install saga-bigjob</pre>
+<div class="highlight-python"><pre>pip install bigjob</pre>
 </div>
 <p>You can change the default installation directory by calling:</p>
-<div class="highlight-python"><pre>pip install --install-option="--prefix=&lt;target-directory&gt;" saga-bigjob</pre>
+<div class="highlight-python"><pre>pip install --install-option="--prefix=&lt;target-directory&gt;" bigjob</pre>
 </div>
 <p>To make sure that your installation works, run the following command to check if the BigJob module can be imported by the python interpreter:</p>
 <div class="highlight-python"><pre>python -c "import pilot; print pilot.version"</pre>
