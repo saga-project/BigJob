@@ -3,43 +3,63 @@ import sys
 import pilot
 import traceback
 
-""" DESCRIPTION: This example shows how to run BigJob locally to execute tasks.
+""" DESCRIPTION: Tutorial 1: A Simple Workload 
+Note: User must edit USER VARIABLES section
+This example will not run if these values are not set.
 """
 
-#------------------------------------------------------------------------------
-# Redis password and 'user' name
-REDIS_PWD   = # Fill in the password to your server
-USER_NAME   = # Fill in your username on the resource you're running on
+# ---------------- BEGIN REQUIRED PILOT SETUP -----------------
 
-# The coordination server
-COORD       = "redis://%s@localhost:6379" % REDIS_PWD
-# The host to run BigJob on
-HOSTNAME    = "localhost"
-# The working directory on your machine
-WORKDIR     = "/home/%s/example1" % USER_NAME
-# The number of jobs you want to run
-NUMBER_JOBS = 4
+# Distributed Coordination Service - Redis server and password
+REDIS_PWD   = # Fill in the password to your redis server
+REDIS_URL   = "redis://%s@localhost:6379" % REDIS_PWD
 
+# Resource Information
+HOSTNAME     = # Remote Resource URL
+USER_NAME    = # Username on the remote resource
+SAGA_ADAPTOR = # Name of the SAGA adaptor, e.g. fork, sge, pbs, slurm, etc.
+# NOTE: See complete list of BigJob supported SAGA adaptors at:
+# http://saga-project.github.io/BigJob/sphinxdoc/tutorial/table.html
 
-#------------------------------------------------------------------------------
+# Fill in queue and allocation for the given resource 
+# Note: Set fields to "None" if not applicable
+QUEUE        = # Add queue you want to use
+PROJECT      = # Add project / allocation / account to charge
+
+WALLTIME     = # Maximum Runtime for the Pilot Job
+
+WORKDIR      = "/home/%s" % USER_NAME # Path of Resource Working Directory
+# This is the directory where BigJob will store its output and error files
+
+# Job Information
+NUMBER_JOBS  = # The TOTAL number of tasks to run; size of the Pilot
+
+# Continue to USER DEFINED TASK DESCRIPTION to add 
+# the required information about the individual tasks.
+
+# ---------------- END REQUIRED PILOT SETUP -----------------
 #
 
 def main():
     try:
         # this describes the parameters and requirements for our pilot job
         pilot_description = pilot.PilotComputeDescription()
-        pilot_description.service_url = "fork://%s" % HOSTNAME
-        pilot_description.number_of_processes = 4 
+        pilot_description.service_url = "%s://%s" %  (SAGA_ADAPTOR,HOSTNAME)
+        pilot_description.queue = QUEUE
+        pilot_description.project = PROJECT
+        pilot_description.number_of_processes = NUMBER_JOBS
         pilot_description.working_directory = WORKDIR
-        pilot_description.walltime = 10
+        pilot_description.walltime = WALLTIME
 
         # create a new pilot job
-        pilot_compute_service = pilot.PilotComputeService(COORD)
+        pilot_compute_service = pilot.PilotComputeService(REDIS_URL)
         pilotjob = pilot_compute_service.create_pilot(pilot_description)
+
 
         # submit tasks to pilot job
         tasks = list()
         for i in range(NUMBER_JOBS):
+	# -------- BEGIN USER DEFINED TASK DESCRIPTION --------- #
             task_desc = pilot.ComputeUnitDescription()
             task_desc.executable = '/bin/echo'
             task_desc.arguments = ['I am task number $TASK_NO', ]
@@ -47,6 +67,7 @@ def main():
             task_desc.number_of_processes = 1
             task_desc.output = 'simple-ensemble-stdout.txt'
             task_desc.error = 'simple-ensemble-stderr.txt'
+	# -------- END USER DEFINED TASK DESCRIPTION --------- #
 
             task = pilotjob.submit_compute_unit(task_desc)
             print "* Submitted task '%s' with id '%s' to %s" % (i, task.get_id(), HOSTNAME)
