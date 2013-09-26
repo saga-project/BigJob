@@ -26,9 +26,9 @@ SAGA_ADAPTOR = # Name of the SAGA adaptor, e.g. fork, sge, pbs, slurm, etc.
 QUEUE        = # Add queue you want to use
 PROJECT      = # Add project / allocation / account to charge
 
-WALLTIME     = # Maximum Runtime for the Pilot Job
+WALLTIME     = # Maximum Runtime (minutes) for the Pilot Job
 
-WORKDIR      = "/home/%s" % USER_NAME # Path of Resource Working Directory
+WORKDIR      = "" # Path of Resource Working Directory
 # This is the directory where BigJob will store its output and error files
 
 # Job Information
@@ -44,7 +44,7 @@ def main():
     try:
         # this describes the parameters and requirements for our pilot job
         pilot_description = pilot.PilotComputeDescription()
-        pilot_description.service_url = "%s://%s" %  (SAGA_ADAPTOR,HOSTNAME)
+        pilot_description.service_url = "%s://%s@%s" %  (SAGA_ADAPTOR,USER_NAME,HOSTNAME)
         pilot_description.queue = QUEUE
         pilot_description.project = PROJECT
         pilot_description.number_of_processes = NUMBER_JOBS
