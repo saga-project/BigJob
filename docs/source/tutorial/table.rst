@@ -7,17 +7,22 @@ The Table
 | All machines               | fork, ssh           | N/A           | Depends on machine cores   | N/A                       | N/A                |
 +----------------------------+---------------------+---------------+----------------------------+---------------------------+--------------------+
 | stampede.tacc.utexas.edu   | Local: slurm        | normal        | 4K (increments of 16)      | 48hrs                     | XSEDE Allocation   |
-| --                         | Remote: slurm+ssh   | development   | 256 (increments of 16)     | 4hrs                      | --                 |
-| --                         | slurm+gsissh        | serial        | 16                         | 12hrs                     | --                 |
-| --                         | --                  | largemem      | 128 (increments of 32)     | 24hrs                     | --                 |
-| --                         | --                  | --            | --                         | 48hrs                     | --                 |
+|			     |			   +---------------+----------------------------+---------------------------+			 |
+|                            | Remote: slurm+ssh   | development   | 256 (increments of 16)     | 4hrs                      |                    |
+|			     |			   +---------------+----------------------------+---------------------------+			 |
+|                            | slurm+gsissh        | serial        | 16                         | 12hrs                     |                    |
+|			     |			   +---------------+----------------------------+---------------------------+			 |
+|                            |                     | largemem      | 128 (increments of 32)     | 48hrs                     |                    |
 +----------------------------+---------------------+---------------+----------------------------+---------------------------+--------------------+
 | lonestar.tacc.utexas.edu   | Local: sge          | normal        | 4K (increments of 12)      | 48hrs                     | XSEDE Allocation   |
-| --                         | Remote: sge+ssh     | development   | 256 (increments of 12)     | 4hrs                      | --                 |
-| --                         | sge+gsissh          | largemem      | 128 (increments of 24)     | 48hrs                     | --                 |
+|			     |			   +---------------+----------------------------+---------------------------+			 |
+|                            | Remote: sge+ssh     | development   | 256 (increments of 12)     | 4hrs                      |                    |
+|			     |			   +---------------+----------------------------+---------------------------+			 |
+|                            | sge+gsissh          | largemem      | 128 (increments of 24)     | 48hrs                     |                    |
 +----------------------------+---------------------+---------------+----------------------------+---------------------------+--------------------+
 | trestles.sdsc.edu          | Local: pbs          | normal        | 1024 (increments of 32)    | 48hrs                     | XSEDE Allocation   |
-| --                         | Remote: pbs+ssh     | shared        | 128 (increments of 32)     | 48hrs                     | --                 |
-| --                         | pbs+gsissh          | --            | --                         | --                        | --                 |
+|			     |			   +---------------+----------------------------+---------------------------+			 |
+|                            | Remote: pbs+ssh     | shared        | 128 (increments of 32)     | 48hrs                     |                    |
+|			     | pbs+gsissh          |		   |				|			    |			 |
 +----------------------------+---------------------+---------------+----------------------------+---------------------------+--------------------+
 
