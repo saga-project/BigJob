@@ -1,0 +1,194 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+
+    <title>The Table &mdash; BigJob 1.0 User Manual</title>
+
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>
+
+
+    
+    <link rel="stylesheet" href="../_static/rtd.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../../_static/searchtools.js"></script>
+    <link rel="top" title="BigJob 1.0 User Manual" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="../index.html">BigJob 1.0 User Manual</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="the-table">
+<h1>The Table<a class="headerlink" href="#the-table" title="Permalink to this headline">¶</a></h1>
+<table border="1" class="docutils">
+<colgroup>
+<col width="20%" />
+<col width="15%" />
+<col width="11%" />
+<col width="20%" />
+<col width="19%" />
+<col width="14%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Resource (Hostname)</th>
+<th class="head">SAGA Adaptor</th>
+<th class="head">Queue Names</th>
+<th class="head">Number of Processes</th>
+<th class="head">Max Walltime (if known)</th>
+<th class="head">Project Accounts</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>All machines</td>
+<td>fork, ssh</td>
+<td>N/A</td>
+<td>Depends on machine cores</td>
+<td>N/A</td>
+<td>N/A</td>
+</tr>
+<tr class="row-odd"><td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td rowspan="4">stampede.tacc.utexas.edu</td>
+<td rowspan="4"><p class="first">Local: slurm</p>
+<p>Remote: slurm+ssh</p>
+<p class="last">slurm+gsissh</p>
+</td>
+<td>normal</td>
+<td>4K (increments of 16)</td>
+<td>48hrs</td>
+<td rowspan="4">XSEDE Allocation</td>
+</tr>
+<tr class="row-odd"><td>development</td>
+<td>256 (increments of 16)</td>
+<td>4hrs</td>
+</tr>
+<tr class="row-even"><td>serial</td>
+<td>16</td>
+<td>12hrs</td>
+</tr>
+<tr class="row-odd"><td>largemem</td>
+<td>128 (increments of 32)</td>
+<td>48hrs</td>
+</tr>
+<tr class="row-even"><td rowspan="3">lonestar.tacc.utexas.edu</td>
+<td rowspan="3"><p class="first">Local: sge</p>
+<p>Remote: sge+ssh</p>
+<p class="last">sge+gsissh</p>
+</td>
+<td>normal</td>
+<td>4K (increments of 12)</td>
+<td>48hrs</td>
+<td rowspan="3">XSEDE Allocation</td>
+</tr>
+<tr class="row-odd"><td>development</td>
+<td>256 (increments of 12)</td>
+<td>4hrs</td>
+</tr>
+<tr class="row-even"><td>largemem</td>
+<td>128 (increments of 24)</td>
+<td>48hrs</td>
+</tr>
+<tr class="row-odd"><td rowspan="2">trestles.sdsc.edu</td>
+<td rowspan="2"><p class="first">Local: pbs</p>
+<p class="last">Remote: pbs+ssh
+pbs+gsissh</p>
+</td>
+<td>normal</td>
+<td>1024 (increments of 32)</td>
+<td>48hrs</td>
+<td rowspan="2">XSEDE Allocation</td>
+</tr>
+<tr class="row-even"><td>shared</td>
+<td>128 (increments of 32)</td>
+<td>48hrs</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/tutorial/table.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="../index.html">BigJob 1.0 User Manual</a> &raquo;</li> 
+      </ul>
+    </div>
+<div class="footer">
+    &copy; Copyright 2013, The SAGA Project.
+  Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+  <br />Theme based on <a href="http://readthedocs.org/">Read The Docs</a>
+
+</div>
+
+
+
+
+
+  </body>
+</html>
