@@ -6,30 +6,30 @@ The Table
 +============================+=====================+===============+============================+===========================+====================+
 | All machines               | fork, ssh           | N/A           | Depends on machine cores   | N/A                       | N/A                |
 +----------------------------+---------------------+---------------+----------------------------+---------------------------+--------------------+
-| stampede.tacc.utexas.edu   | Local: slurm        | normal        | 4K			        | 48hrs                     | XSEDE Allocation   |
-|			     |			   |		   | (increments of 16)	        |			    |			 | 
+| stampede.tacc.utexas.edu   | Local: slurm        | normal        | | 4K			| 48hrs                     | XSEDE Allocation   |
+|			     |			   |		   | | (increments of 16)	|			    |			 | 
 |			     |			   +---------------+----------------------------+---------------------------+			 |
-|                            | Remote: slurm+ssh   | development   | 256 		        | 4hrs                      |                    |
-|			     |			   |		   | (increments of 16)	        |			    |			 | 
+|                            | Remote: slurm+ssh   | development   | | 256 		        | 4hrs                      |                    |
+|			     |			   |		   | | (increments of 16)	|			    |			 | 
 |			     |			   +---------------+----------------------------+---------------------------+			 |
 |                            | slurm+gsissh        | serial        | 16                         | 12hrs                     |                    |
 |			     |			   +---------------+----------------------------+---------------------------+			 |
-|                            |                     | largemem      | 128 		        | 48hrs                     |                    |
-|			     |			   |		   | (increments of 32)	        |			    |			 | 
+|                            |                     | largemem      | | 128 		        | 48hrs                     |                    |
+|			     |			   |		   | | (increments of 32)	|			    |			 | 
 +----------------------------+---------------------+---------------+----------------------------+---------------------------+--------------------+
-| lonestar.tacc.utexas.edu   | Local: sge          | normal        | 4K 		        | 48hrs                     | XSEDE Allocation   |
-|			     |			   |		   | (increments of 12)	        |			    |			 | 
+| lonestar.tacc.utexas.edu   | Local: sge          | normal        | | 4K 		        | 48hrs                     | XSEDE Allocation   |
+|			     |			   |		   | | (increments of 12)	|			    |			 | 
 |			     |			   +---------------+----------------------------+---------------------------+			 |
-|                            | Remote: sge+ssh     | development   | 256 		        | 4hrs                      |                    |
-|			     |			   |		   | (increments of 12)	        |			    |			 | 
+|                            | Remote: sge+ssh     | development   | | 256 		        | 4hrs                      |                    |
+|			     |			   |		   | | (increments of 12)	|			    |			 | 
 |			     |			   +---------------+----------------------------+---------------------------+			 |
-|                            | sge+gsissh          | largemem      | 128 		        | 48hrs                     |                    |
-|			     |			   |		   | (increments of 24)	        |			    |			 | 
+|                            | sge+gsissh          | largemem      | | 128 		        | 48hrs                     |                    |
+|			     |			   |		   | | (increments of 24)	|			    |			 | 
 +----------------------------+---------------------+---------------+----------------------------+---------------------------+--------------------+
-| trestles.sdsc.edu          | Local: pbs          | normal        | 1024 			| 48hrs                     | XSEDE Allocation   |
-|			     |			   |		   | (increments of 32)	        |			    |			 | 
+| trestles.sdsc.edu          | Local: pbs          | normal        | | 1024 			| 48hrs                     | XSEDE Allocation   |
+|			     |			   |		   | | (increments of 32)	|			    |			 | 
 |			     |			   +---------------+----------------------------+---------------------------+			 |
-|                            | Remote: pbs+ssh     | shared        | 128		        | 48hrs                     |                    |
-|			     | pbs+gsissh          |		   | (increments of 32)		|			    |			 |
+|                            | Remote: pbs+ssh     | shared        | | 128		        | 48hrs                     |                    |
+|			     | pbs+gsissh          |		   | | (increments of 32)	|			    |			 |
 +----------------------------+---------------------+---------------+----------------------------+---------------------------+--------------------+
 
