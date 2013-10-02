@@ -169,7 +169,8 @@ class bigjob(api.base.bigjob):
                  filetransfers=None,
                  spmd_variation=None,
                  external_queue="",
-                 pilot_compute_description=None):
+                 pilot_compute_description=None, 
+                 session=None):
         """ Start a batch job (using SAGA Job API) at resource manager. Currently, the following resource manager are supported:
             fork://localhost/ (Default Job Adaptor
             gram://qb1.loni.org/jobmanager-pbs (Globus Adaptor)
@@ -212,7 +213,8 @@ class bigjob(api.base.bigjob):
         #elif lrms_saga_url.scheme=="slurm+ssh":
         #    self.js = SlurmService(lrms_saga_url, pilot_compute_description)          
         else:
-            self.js = self._ocache.get_obj (lrms_saga_url, lambda : SAGAJobService (lrms_saga_url))
+            self.js = self._ocache.get_obj (lrms_saga_url, lambda
+                : SAGAJobService (lrms_saga_url, session=session))
         ##############################################################################
         # create job description
         jd = SAGAJobDescription()
