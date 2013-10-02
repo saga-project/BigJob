@@ -63,7 +63,7 @@ class PilotComputeService(PilotComputeService):
         
             
 
-    def create_pilot(self, pilot_compute_description):
+    def create_pilot(self, pilot_compute_description, session=None):
         """ Add a PilotJob to the PilotJobService
 
             Keyword arguments:
@@ -75,7 +75,7 @@ class PilotComputeService(PilotComputeService):
         pj = None
         try:
             bj_dict = self.__translate_pj_bj_description(pilot_compute_description)
-            bj = self.__start_bigjob(bj_dict)
+            bj = self.__start_bigjob(bj_dict, session)
             pj = PilotCompute(self, bj, pilot_compute_description)
             self.pilot_computes.append(pj)
         except BigJobError as bj_error:
@@ -147,7 +147,7 @@ class PilotComputeService(PilotComputeService):
         return resource_description
 
     
-    def __start_bigjob(self, bj_dict):
+    def __start_bigjob(self, bj_dict, session=None):
         """ private method - starts a bigjob on the defined resource """
         gram_url = bj_dict["resource_url"]
         logger.debug("start bigjob at: " + gram_url)
@@ -182,7 +182,7 @@ class PilotComputeService(PilotComputeService):
 			               spmd_variation = bj_dict["spmd_variation"],
                            external_queue = self.coordination_queue,
                            pilot_compute_description = bj_dict["pilot_compute_description"]
-                           )
+                           session=session)
         return bj
     
 ###############################################################################
