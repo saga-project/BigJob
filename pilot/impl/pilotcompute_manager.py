@@ -181,7 +181,7 @@ class PilotComputeService(PilotComputeService):
                            filetransfers = bj_filetransfer,
 			               spmd_variation = bj_dict["spmd_variation"],
                            external_queue = self.coordination_queue,
-                           pilot_compute_description = bj_dict["pilot_compute_description"]
+                           pilot_compute_description = bj_dict["pilot_compute_description"],
                            session=session)
         return bj
     
