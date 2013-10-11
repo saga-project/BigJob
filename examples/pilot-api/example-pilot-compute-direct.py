@@ -40,6 +40,7 @@ if __name__ == "__main__":
     logging.debug("Finished submission. Waiting for completion of CU")
     compute_unit.wait()
     
+    print str(compute_unit.get_details())
     
     logging.debug("Terminate Pilot Compute Service")
     pilot_compute_service.cancel()
