@@ -50,6 +50,10 @@ class PilotComputeService(PilotComputeService):
             Keyword arguments:
             pcs_id -- Don't create a new, but connect to an existing (optional)
         """
+
+        if  not coordination_url :
+            raise Exception ("No COORDINATION_URL specified - abort")
+
         self.pilot_computes=[]
         self.coordination_url=coordination_url
         self.coordination_queue=""
