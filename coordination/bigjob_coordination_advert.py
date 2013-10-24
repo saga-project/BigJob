@@ -60,7 +60,7 @@ class bigjob_coordination(object):
         self.username=""
         self.password=""
         self.dbtype=""
-        surl = saga.url(self.address)
+        surl = saga.Url(self.address)
         if server_connect_url==None: # Manager
             if username!=None:
                 surl.username=username    
