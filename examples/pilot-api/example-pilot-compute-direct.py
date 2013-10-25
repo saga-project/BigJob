@@ -17,9 +17,9 @@ if __name__ == "__main__":
     pilot_compute_description = {
                              "service_url": 'fork://localhost',
                              "number_of_processes": 1,                             
-                             "working_directory": os.path.join(os.getcwd(), "agent"),
-                             "file_transfer": ["ssh://" + os.path.dirname(os.path.abspath(__file__)) 
-                                               + "/../test.txt > BIGJOB_WORK_DIR"]
+                             #"working_directory": os.path.join(os.getcwd(), "agent"),
+                             #"file_transfer": ["ssh://" + os.path.dirname(os.path.abspath(__file__)) 
+                             #                  + "/../test.txt > BIGJOB_WORK_DIR"]
                             }
     
     pilotjob = pilot_compute_service.create_pilot(pilot_compute_description=pilot_compute_description)
