@@ -146,10 +146,10 @@ class bigjob_agent:
                 traceback.print_tb(exc_traceback, file=sys.stderr)
         elif (self.coordination_url.startswith("redis://")):
             try:
-                from coordination.bigjob_coordination_redis import bigjob_coordination      
-                logger.debug("Utilizing Redis Backend: " + self.coordination_url + ". Please make sure Redis server is configured in bigjob_coordination_redis.py")
-            except:
-                logger.error("Error loading pyredis.")
+                from coordination.bigjob_coordination_redis import bigjob_coordination
+                logger.debug("Utilizing Redis Backend: " + self.coordination_url + ".")
+	    except:
+                logger.error("Error loading pyredis. Check configuration in bigjob_coordination_redis.py.")		
         elif (self.coordination_url.startswith("tcp://")):
             try:
                 from coordination.bigjob_coordination_zmq import bigjob_coordination

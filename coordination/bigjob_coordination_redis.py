@@ -42,7 +42,8 @@ class bigjob_coordination(object):
         
         self.address = "%s%s:%i"%(REDIS_URL_SCHEME, server, server_port)
         self.dbtype=""
-        self.redis_adaptor_start_time = datetime.datetime.utcnow().strftime("%s") 
+        #self.redis_adaptor_start_time = datetime.datetime.utcnow().strftime("%s") 
+        self.redis_adaptor_start_time = time.time()
         
         if server_connect_url!=None:
             self.address=server_connect_url    

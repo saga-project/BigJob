@@ -40,12 +40,8 @@ Some backends require specific keys to be passed to the resource (i.e. Amazon S3
 ::
 
 	pilot_data_description =    {
-   					'service_url': "ssh://localhost/tmp/pilotstore/",
-   					'size':100,
-   					# Affinity
-					'affinity_datacenter_label':"eu-de-south",          
-					'affinity_machine_label':"mymachine-1",                                
-				    }
+   								'service_url': "ssh://localhost/tmp/pilotstore/",
+								}
 
 ======================
 Data Unit Description
@@ -76,17 +72,14 @@ How do we stage the contents of each data unit to the input? The content of the 
 First, we define our Pilot-Data using a Pilot-Data Description as follows::
 
     pilot_data_description={
-                                "service_url":"ssh://localhost/"+os.getenv("HOME")+"/pilotdata",
-                                "size": 100,
-                                "affinity_datacenter_label":"eu-de-south",
-                                "affinity_machine_label":"mymachine-1"
+                                "service_url":"ssh://localhost/"+os.getenv("HOME")+"/pilotdata",                               
                            }
 
 Next, we define the description for our input data unit (note that we use the affinity labels that match the Pilot-Data in this case)::
 
-    input_data_unit_description = { "file_urls": ["ssh://localhost" +os.path.join(os.getcwd(), "test.txt")],
-                                    "affinity_datacenter_label":"eu-de-south",
-                                    "affinity_machine_label": "mymachine-1"}
+    input_data_unit_description = { 
+									"file_urls": ["ssh://localhost" +os.path.join(os.getcwd(), "test.txt")],
+									}
 
     input_du = compute_data_service.submit_data_unit(input_data_unit_description)
 

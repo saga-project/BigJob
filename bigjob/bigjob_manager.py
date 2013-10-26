@@ -218,7 +218,7 @@ class bigjob(api.base.bigjob):
         jd = SAGAJobDescription()
         
         #  Attempt to create working directory (e.g. in local scenario)
-        if working_directory != None:
+        if working_directory != None and working_directory != "":
             if not os.path.isdir(working_directory) \
                 and (lrms_saga_url.scheme.startswith("fork") or lrms_saga_url.scheme.startswith("condor")) \
                 and working_directory.startswith("go:")==False:
@@ -304,18 +304,8 @@ class bigjob(api.base.bigjob):
                                                                           # or another external scheduler
                                                           )
         logger.debug("Adaptor specific modifications: "  + str(lrms_saga_url.scheme))
-
-        #if lrms_saga_url.scheme.startswith("condor") == False:
-        #    bootstrap_script = self.__escape_saga(bootstrap_script)
-        #else:
-        #    if lrms_saga_url.scheme == "gram":
-        #        bootstrap_script = self.__escape_rsl(bootstrap_script)
-        #    elif lrms_saga_url.scheme == "pbspro" or lrms_saga_url.scheme=="xt5torque" or lrms_saga_url.scheme=="torque":                
-        #        bootstrap_script = self.__escape_pbs(bootstrap_script)
-        #    elif lrms_saga_url.scheme == "ssh" and lrms_saga_url.scheme == "slurm+ssh":
-        #        bootstrap_script = self.__escape_ssh(bootstrap_script)                    
         bootstrap_script = self.__escape_pbs(bootstrap_script)
-                
+        #bootstrap_script = self.__escape_ssh(bootstrap_script)
         logger.debug(bootstrap_script)
  
 
@@ -494,6 +484,10 @@ class bigjob(api.base.bigjob):
     def wait(self):
         """ Waits for completion of all sub-jobs """        
         while 1:
+            if self.get_state()=="Done" or self.get_state()=="Failed":
+                logger.debug("BigJob terminated. Exit Wait")
+                break
+            
             jobs = self.coordination.get_jobs_of_pilot(self.pilot_url)
             finish_counter=0
             result_map = {}
@@ -715,7 +709,7 @@ except:
           
             
     def __escape_pbs(self, bootstrap_script):
-        logger.debug("Escape PBS")
+        logger.debug("Escape bootstrap script")
         bootstrap_script = "\'" + bootstrap_script+ "\'"
         return bootstrap_script
     
@@ -745,17 +739,6 @@ except:
             coordination = os.path.join(coordination, "?"+dbtype)
         pilot_url = pilot_saga_url.path[1:]
         
-        #dbtype = None
-        #coordination = pilot_url[:pilot_url.index("bigjob")]
-        #pilot_url = pilot_url[pilot_url.find("bigjob"):]
-        #if pilot_url.find("/") > 0:
-        #    comp = pilot_url.split("/")
-        #    pilot_url = comp[0]
-        #    if comp[1].find("dbtype")>0:
-        #        dbtype=comp[1][comp[1].find("dbtype"):]
-        
-        #if dbtype!=None:
-        #    coordination = os.path.join(coordination, "?"+dbtype)
         logger.debug("Parsed URL - Coordination: %s Pilot: %s"%(coordination, pilot_url))    
         return coordination, pilot_url
     
@@ -859,7 +842,7 @@ except:
     
     
     def __get_bigjob_working_dir(self):
-        self.working_directory = os.path.abspath(self.working_directory)        
+        self.working_directory = os.path.abspath(os.path.expanduser(self.working_directory))        
         if self.working_directory.find(self.uuid)!=-1: # working directory already contains BJ id
             return self.working_directory
         else:
