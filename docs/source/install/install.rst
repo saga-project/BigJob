@@ -28,7 +28,7 @@ To create your local Python environment run the following command (you can insta
 
 If you don't have virtualenv installed and you don't have root access to your machine, you can use the following script instead::
 
-	curl --insecure -s https://raw.github.com/pypa/virtualenv/master/virtualenv.py | python - $HOME/.bigjob/python
+	curl --insecure -s https://raw.github.com/pypa/virtualenv/1.9.X/virtualenv.py | python - $HOME/.bigjob/python
 
 -----------------
 Activate your Local Python Environment
@@ -50,11 +50,11 @@ Install BigJob
 
 After your virtual environment is active, you are ready to install BigJob. BigJob is available via PyPi and can be installed using easy_install as follows::
 	
-	pip install saga-bigjob
+	pip install bigjob
 
 You can change the default installation directory by calling::
 
-	pip install --install-option="--prefix=<target-directory>" saga-bigjob	
+	pip install --install-option="--prefix=<target-directory>" bigjob	
 
 To make sure that your installation works, run the following command to check if the BigJob module can be imported by the python interpreter::
 

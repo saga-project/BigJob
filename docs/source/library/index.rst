@@ -272,6 +272,7 @@ Example::
                    "number_of_processes": 1,
                    "output": "stdout.txt",
                    "error": "stderr.txt",   
+				   "environment": ["MY_SCRATCH_DIR=/tmp"],				   
                    "input_data" : [data_unit.get_url()], # this stages the content of the data unit to the working directory of the compute unit
                    "affinity_datacenter_label": "eu-de-south",              
                    "affinity_machine_label": "mymachine-1" 
@@ -294,7 +295,7 @@ Specifies any arguments that the executable needs. For instance, if running an e
 
 .. data:: environment
 
-Specifies any environment variables that need to be passed with the compute unit in order for the executable to work.
+Specifies any environment variables that need to be passed with the compute unit in order for the executable to work, e.g ["MY_SCRATCH_DIR=/tmp"],				   
 
     :type: string
 
