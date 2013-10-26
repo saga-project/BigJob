@@ -176,7 +176,7 @@ class PilotComputeService(PilotComputeService):
 
 
         bj.start_pilot_job(lrms_url = gram_url,
-                           number_nodes = bj_dict["number_of_processes"],
+                           number_nodes = int(bj_dict["number_of_processes"]),
                            queue = bj_dict["queue"],
                            project = bj_dict["project"],
                            working_directory = working_directory, 

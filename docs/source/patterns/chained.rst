@@ -10,5 +10,5 @@ We can think of this as A is comprised of subjobs {a1,a2,a3}, while B is compris
 
 The code below demonstrates this behavior. As soon as there is a slot available to run a job in B (i.e. a job in A has completed), it executes the job in B. This keeps the BigJob utilization high.
 
-.. literalinclude:: ../../../examples/tutorial/local_chained_ensembles.py
+.. literalinclude:: ../../../examples/tutorial/barebones-local/local_chained_ensembles.py
     :language: python

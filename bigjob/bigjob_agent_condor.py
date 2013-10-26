@@ -93,9 +93,9 @@ class bigjob_agent:
         elif (self.coordination_url.startswith("redis://")):
             try:
                 from coordination.bigjob_coordination_redis import bigjob_coordination      
-                logging.debug("Utilizing Redis Backend: " + self.coordination_url + ". Please make sure Redis server is configured in bigjob_coordination_redis.py")
+                logging.debug("Utilizing Redis Backend: " + self.coordination_url + ".") 
             except:
-                logging.error("Error loading pyredis.")
+                logger.error("Error loading pyredis. Please verify Redis is configured properly.")
         elif (self.coordination_url.startswith("tcp://")):
             try:
                 from coordination.bigjob_coordination_zmq import bigjob_coordination

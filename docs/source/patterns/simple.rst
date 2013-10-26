@@ -8,5 +8,5 @@ The first example, below, submits N jobs using BigJob. This is very useful if yo
 
 The below examples demonstrates the mapping of a simple job (i.e. executable is /bin/echo) using all of the parameters of a Compute Unit Description. Specifically, it shows how to run 4 jobs on your local machine using fork:
 
-.. literalinclude:: ../../../examples/tutorial/local_simple_ensembles.py
+.. literalinclude:: ../../../examples/tutorial/barebones-local/local_simple_ensembles.py
     :language: python
