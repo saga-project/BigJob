@@ -28,7 +28,7 @@ from saga.job import Service     as SAGAJobService
 from saga     import Session     as SAGASession
 from saga     import Context     as SAGAContext
 
-from saga.utils.object_cache import ObjectCache as SAGAObjectCache
+from radical.utils.object_cache import ObjectCache
 
 from bigjob.state import Running, New, Failed, Done, Unknown
 from bigjob import logger
@@ -127,7 +127,7 @@ class bigjob(api.base.bigjob):
             logger.error("Coordination URL not set. Exiting BigJob.")
         #self.launch_method=""
         self.__filemanager=None
-        self._ocache = SAGAObjectCache ()
+        self._ocache = ObjectCache ()
         
         # restore existing BJ or initialize new BJ
         if pilot_url!=None:
