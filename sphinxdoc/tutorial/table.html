@@ -53,12 +53,14 @@
 <h1>The Table<a class="headerlink" href="#the-table" title="Permalink to this headline">¶</a></h1>
 <table border="1" class="docutils">
 <colgroup>
-<col width="20%" />
+<col width="16%" />
+<col width="12%" />
+<col width="8%" />
+<col width="16%" />
 <col width="15%" />
 <col width="11%" />
-<col width="20%" />
-<col width="19%" />
-<col width="14%" />
+<col width="13%" />
+<col width="9%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Resource (Hostname)</th>
@@ -67,6 +69,8 @@
 <th class="head">Number of Processes</th>
 <th class="head">Max Walltime (if known)</th>
 <th class="head">Project Accounts</th>
+<th class="head">Processes Per Node</th>
+<th class="head">SPMD Variation</th>
 </tr>
 </thead>
 <tbody valign="top">
@@ -74,6 +78,8 @@
 <td>fork, ssh</td>
 <td>N/A</td>
 <td>Depends on machine cores</td>
+<td>N/A</td>
+<td>N/A</td>
 <td>N/A</td>
 <td>N/A</td>
 </tr>
@@ -90,6 +96,8 @@
 </td>
 <td>48hrs</td>
 <td rowspan="4">XSEDE Allocation</td>
+<td rowspan="4">N/A</td>
+<td rowspan="4">N/A</td>
 </tr>
 <tr class="row-even"><td>development</td>
 <td><div class="first last line-block">
@@ -124,6 +132,14 @@
 </td>
 <td>48hrs</td>
 <td rowspan="3">XSEDE Allocation</td>
+<td rowspan="3">N/A</td>
+<td rowspan="3"><div class="first last line-block">
+<div class="line">12way</div>
+<div class="line"><br /></div>
+<div class="line">Largemem:</div>
+<div class="line">24way</div>
+</div>
+</td>
 </tr>
 <tr class="row-even"><td>development</td>
 <td><div class="first last line-block">
@@ -154,6 +170,8 @@ pbs+gsissh</p>
 </td>
 <td>48hrs</td>
 <td rowspan="2">XSEDE Allocation</td>
+<td rowspan="2">Max: 32</td>
+<td rowspan="2">N/A</td>
 </tr>
 <tr class="row-odd"><td>shared</td>
 <td><div class="first last line-block">
