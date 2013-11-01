@@ -15,9 +15,10 @@ if __name__ == "__main__":
 
     # create pilot job service and initiate a pilot job
     pilot_compute_description = {
-                             "service_url": 'fork://localhost',
+                             #"service_url": 'fork://localhost',
+                             "service_url": 'ssh://localhost',
                              "number_of_processes": 1,                             
-                             "working_directory": "/tmp",
+                             #"working_directory": "/tmp",
                             }
     
     pilotjob = pilot_compute_service.create_pilot(pilot_compute_description=pilot_compute_description)
