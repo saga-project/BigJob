@@ -4,7 +4,7 @@ import pilot
 import traceback
 
 """ DESCRIPTION: Tutorial 2: Chaining Tasks
-Note: User must edit PILOT SETUP and TASK DESCRIPTION 1-= & 2 sections
+Note: User must edit PILOT SETUP and TASK DESCRIPTION 1-2 sections
 This example will not run if these values are not set.
 """
 
@@ -104,14 +104,6 @@ def main():
                     print "* Submitted 'B' task '%s' with id '%s'" % (i, task.get_id())
                     task_set_B.append(task)
                     task_set_A.remove(a_task)
-
-
-            task = pilotjob.submit_compute_unit(task_desc)
-            print "* Submitted task '%s' with id '%s' to %s" % (i, task.get_id(), HOSTNAME)
-            tasks.append(task)
-
-        print "Waiting for tasks to finish..."
-        pilotjob.wait()
 
         return(0)
 
