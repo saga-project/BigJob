@@ -8,7 +8,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
 
-    <title>2. Simple Ensembles &mdash; BigJob 1.0 User Manual</title>
+    <title>Simple Ensembles with File Transfer &mdash; BigJob 1.0 User Manual</title>
 
 <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>
 
@@ -31,10 +31,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/javascript" src="../../_static/searchtools.js"></script>
-    <link rel="top" title="BigJob 1.0 User Manual" href="../index.html" />
-    <link rel="up" title="6. Tutorial" href="index.html" />
-    <link rel="next" title="3. Chained Ensembles" href="part3.html" />
-    <link rel="prev" title="1. Introduction and Installation" href="part1.html" /> 
+    <link rel="top" title="BigJob 1.0 User Manual" href="../index.html" /> 
   </head>
   <body>
     <div class="related">
@@ -43,14 +40,7 @@
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="part3.html" title="3. Chained Ensembles"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="part1.html" title="1. Introduction and Installation"
-             accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">BigJob 1.0 User Manual</a> &raquo;</li>
-          <li><a href="index.html" accesskey="U">6. Tutorial</a> &raquo;</li> 
+        <li><a href="../index.html">BigJob 1.0 User Manual</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -59,22 +49,23 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="simple-ensembles">
-<h1>2. Simple Ensembles<a class="headerlink" href="#simple-ensembles" title="Permalink to this headline">¶</a></h1>
-<p>You might be wondering how to create your own BigJob script or how BigJob can be useful for your needs. Before delving into the remote job and data submission capabilities that BigJob has, its important to understand the basics.</p>
-<div class="section" id="hands-on-job-submission">
-<h2>2.1. Hands-On Job Submission<a class="headerlink" href="#hands-on-job-submission" title="Permalink to this headline">¶</a></h2>
-<p>The simplest usage of a pilot-job system is to submit multiple identical tasks collectively, i.e. as one big job! Such usage arises, for example to perform either a parameter sweep job or a set of ensemble simulation.</p>
-<p>We will create an example which submits N jobs using BigJob. The jobs are all identical, except that they each record their number in their output. This type of run is called a &#8220;simple ensemble&#8221; run; it is very useful if you are running many jobs using the same executable (but perhaps different input files). Rather than submit each job individually to the queuing system and then wait for every job to become active and complete, you submit just one &#8216;Big&#8217; job (called a Pilot) that reserves the number of cores needed to run all of your jobs. When this BigJob becomes active, your jobs are pulled by BigJob from the Redis server and executed.</p>
-<p>Create a new file <tt class="docutils literal"><span class="pre">simple_ensembles.py</span></tt> and paste the following code:</p>
+  <div class="section" id="simple-ensembles-with-file-transfer">
+<h1>Simple Ensembles with File Transfer<a class="headerlink" href="#simple-ensembles-with-file-transfer" title="Permalink to this headline">¶</a></h1>
+<p>So far, we have covered three different examples which submit jobs to remote resources. In these examples, we had to log on to the remote resource in order to see our data (in the agent directory). This example will cover how we get the files back on our local submission machine.</p>
+<div class="section" id="data-transfer-code">
+<h2>Data Transfer Code<a class="headerlink" href="#data-transfer-code" title="Permalink to this headline">¶</a></h2>
+<p>Create a new file <tt class="docutils literal"><span class="pre">simple_ensemble_dataxfer.py</span></tt> and paste the following code:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">saga</span>
 <span class="kn">import</span> <span class="nn">pilot</span>
 <span class="kn">import</span> <span class="nn">traceback</span>
 
-<span class="sd">&quot;&quot;&quot; DESCRIPTION: Tutorial 1: A Simple Workload </span>
-<span class="sd">Note: User must edit USER VARIABLES section</span>
+<span class="sd">&quot;&quot;&quot; DESCRIPTION: Tutorial 4: Adding File Transfer</span>
+<span class="sd">Note: User must edit  REQUIRED PILOT SETUP and TASK DESCRIPTION sections</span>
 <span class="sd">This example will not run if these values are not set.</span>
+<span class="sd">This example will execute on the HOSTNAME (remote resource) and transfer the output</span>
+<span class="sd">back to the localhost.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="c"># ---------------- BEGIN REQUIRED PILOT SETUP -----------------</span>
@@ -143,8 +134,8 @@
             <span class="n">task_desc</span><span class="o">.</span><span class="n">environment</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;TASK_NO&#39;</span><span class="p">:</span> <span class="n">i</span><span class="p">}</span>
             <span class="n">task_desc</span><span class="o">.</span><span class="n">number_of_processes</span> <span class="o">=</span> <span class="mi">1</span>
 	    <span class="n">task_desc</span><span class="o">.</span><span class="n">spmd_variation</span> <span class="o">=</span> <span class="n">single</span> <span class="c"># Valid values are single or mpi</span>
-            <span class="n">task_desc</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="s">&#39;simple-ensemble-stdout.txt&#39;</span>
-            <span class="n">task_desc</span><span class="o">.</span><span class="n">error</span> <span class="o">=</span> <span class="s">&#39;simple-ensemble-stderr.txt&#39;</span>
+            <span class="n">task_desc</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="s">&#39;stdout.txt&#39;</span>
+            <span class="n">task_desc</span><span class="o">.</span><span class="n">error</span> <span class="o">=</span> <span class="s">&#39;stderr.txt&#39;</span>
 	<span class="c"># -------- END USER DEFINED TASK DESCRIPTION --------- #</span>
 
             <span class="n">task</span> <span class="o">=</span> <span class="n">pilotjob</span><span class="o">.</span><span class="n">submit_compute_unit</span><span class="p">(</span><span class="n">task_desc</span><span class="p">)</span>
@@ -153,6 +144,16 @@
 
         <span class="k">print</span> <span class="s">&quot;Waiting for tasks to finish...&quot;</span>
         <span class="n">pilotjob</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+
+	<span class="c"># ------------ BEGIN FILE TRANSFER LOGIC ------------- #</span>
+        <span class="c"># all compute units have finished. now we can use saga-python</span>
+        <span class="c"># to transfer back the output files...</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">saga</span><span class="o">.</span><span class="n">filesystem</span><span class="o">.</span><span class="n">Directory</span><span class="p">(</span><span class="s">&quot;sftp://</span><span class="si">%s</span><span class="s">/&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">HOSTNAME</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">tasks</span><span class="p">:</span>
+            <span class="n">local_filename</span> <span class="o">=</span> <span class="s">&quot;ex-2-stdout-</span><span class="si">%s</span><span class="s">.txt&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">get_id</span><span class="p">())</span>
+            <span class="n">d</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">/stdout.txt&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">get_local_working_directory</span><span class="p">()),</span> <span class="s">&quot;file://localhost/</span><span class="si">%s</span><span class="s">/</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">local_filename</span><span class="p">))</span>
+            <span class="k">print</span> <span class="s">&quot;* Output for &#39;</span><span class="si">%s</span><span class="s">&#39; copied to: &#39;./</span><span class="si">%s</span><span class="s">&#39;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">get_id</span><span class="p">(),</span> <span class="n">local_filename</span><span class="p">)</span>
+	<span class="c"># ------------ END FILE TRANSFER LOGIC  ------------- #</span>
 
         <span class="k">return</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 
@@ -176,51 +177,29 @@
 </pre></div>
 </div>
 <div class="section" id="how-to-edit-the-examples">
-<h3>2.1.1. How to Edit The Examples<a class="headerlink" href="#how-to-edit-the-examples" title="Permalink to this headline">¶</a></h3>
-<p>Open the file <tt class="docutils literal"><span class="pre">simple_ensembles.py.</span></tt> There are two critical sections that must be filled in by the user. We will cover both in this tutorial.</p>
-<p>Line 11 of this file says, &#8220;BEGIN REQUIRED PILOT SETUP.&#8221; All of the variables in this section are required in order for your BigJob script to run. You might be wondering what values are valid for these variables; we have created a table to answer these questions.
-<a class="reference external" href="http://saga-project.github.io/BigJob/sphinxdoc/tutorial/table.html">Click here to visit the table of valid parameters</a>.</p>
-<p>We will go over the variables not listed in the table below.</p>
-<p>REDIS_PWD and REDIS_URL correspond to the redis server that you set up during the installation process of this tutorial. If you are not running the redis on localhost, you must change the URL line. Please do not delete the <tt class="docutils literal"><span class="pre">redis://</span></tt> directive, as this tells BigJob that it is using a redis server.</p>
-<p>USER_NAME: This does not appear in the table, because it corresponds to your individual username on the remote resource. For instance, if the machine you want to run BigJob on has a user account corresponding to jdoe, the USER_NAME field will be <tt class="docutils literal"><span class="pre">jdoe.</span></tt></p>
-<p>WORKDIR: This field is required. It tells BigJob where to place your files. If you recall, in the installation guide for this tutorial, we created an &#8220;agent&#8221; directory in our home directory. If our home directory on the resource where we created the agent directory is <tt class="docutils literal"><span class="pre">/N/u/username</span></tt>, then our BigJob working directory (WORKDIR) would be <tt class="docutils literal"><span class="pre">/N/u/username/agent</span></tt>.</p>
-<p>Special Note: When you see &#8220;N/A&#8221; in the table, you should fill in None in the simple_ensembles.py file. For example, if the machine you are running on does not have a PROJECT allocation, this line will look like:</p>
-<p><tt class="docutils literal"><span class="pre">PROJECT</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="pre">=</span> <span class="pre">None</span> <span class="pre">#</span> <span class="pre">Add</span> <span class="pre">project</span> <span class="pre">/</span> <span class="pre">allocation</span> <span class="pre">/</span> <span class="pre">account</span> <span class="pre">to</span> <span class="pre">charge</span></tt></p>
-<p>NUMBER_JOBS: This is the number of tasks you want to run. Note that this may be different than the PILOT_SIZE. You may want to run 32 executables of 2 cores each, i.e. NUMBER_JOBS=32, but PILOT_SIZE=64 (if all are to run at once). For the purposes of this tutorial, a good value for the NUMBER_JOBS = 4.</p>
-<p>Line 44, &#8220;END REQUIRED PILOT SETUP,&#8221; concludes this section.</p>
-<p>Now, let&#8217;s take a look at how these variables are used to make the &#8220;Pilot Compute Description (PCD)&#8221; on Lines 51-58. You do not have to modify the PCD at all, because it uses the variables we filled in during the REQUIRED PILOT SETUP section. This is just to show you how these variables are communicated to BigJob. The PCD describes all the parameters for the Pilot-Job.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">pilot_description</span> <span class="o">=</span> <span class="n">pilot</span><span class="o">.</span><span class="n">PilotComputeDescription</span><span class="p">()</span>
-<span class="n">pilot_description</span><span class="o">.</span><span class="n">service_url</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">://</span><span class="si">%s</span><span class="s">@</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span>  <span class="p">(</span><span class="n">SAGA_ADAPTOR</span><span class="p">,</span><span class="n">USER_NAME</span><span class="p">,</span><span class="n">HOSTNAME</span><span class="p">)</span>
-<span class="n">pilot_description</span><span class="o">.</span><span class="n">queue</span> <span class="o">=</span> <span class="n">QUEUE</span>
-<span class="n">pilot_description</span><span class="o">.</span><span class="n">project</span> <span class="o">=</span> <span class="n">PROJECT</span>
-<span class="n">pilot_description</span><span class="o">.</span><span class="n">number_of_processes</span> <span class="o">=</span> <span class="n">PILOT_SIZE</span>
-<span class="n">pilot_description</span><span class="o">.</span><span class="n">working_directory</span> <span class="o">=</span> <span class="n">WORKDIR</span>
-<span class="n">pilot_description</span><span class="o">.</span><span class="n">walltime</span> <span class="o">=</span> <span class="n">WALLTIME</span>
-<span class="n">pilot_description</span><span class="o">.</span><span class="n">processes_per_node</span> <span class="o">=</span> <span class="n">PROCESSES_PER_NODE</span>
-<span class="n">pilot_description</span><span class="o">.</span><span class="n">spmd_variation</span> <span class="o">=</span> <span class="n">SPMD_VARIATION</span>
+<h3>How to Edit The Examples<a class="headerlink" href="#how-to-edit-the-examples" title="Permalink to this headline">¶</a></h3>
+<p>Open the file <tt class="docutils literal"><span class="pre">simple_ensemble_dataxfer.py.</span></tt> You will need to make the necessary changes to the BEGIN REQUIRED PILOT SETUP as you have been making to the previous examples. It is sufficient to copy-paste from the previous examples if you are submitting to the same remote resource.</p>
+<p>You may need to revisit the previous part of this tutorial to understand how to fill out this section if you skipped it.</p>
+<p>The link to the table is reiterated here for your convenience:</p>
+<p><a class="reference external" href="http://saga-project.github.io/BigJob/sphinxdoc/tutorial/table.html">Valid Variable Parameters</a>.</p>
+<p>The logic of this file is exactly the same as in the first tutorial example, Simple Ensembles. The only addition to this file is beginning on Line 91, &#8220;BEGIN FILE TRANSFER LOGIC.&#8221; It is pasted below:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># ------------ BEGIN FILE TRANSFER LOGIC ------------- #</span>
+<span class="c"># all compute units have finished. now we can use saga-python</span>
+<span class="c"># to transfer back the output files...</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">saga</span><span class="o">.</span><span class="n">filesystem</span><span class="o">.</span><span class="n">Directory</span><span class="p">(</span><span class="s">&quot;sftp://</span><span class="si">%s</span><span class="s">/</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">HOSTNAME</span><span class="p">,</span><span class="n">WORKDIR</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">tasks</span><span class="p">:</span>
+    <span class="n">local_filename</span> <span class="o">=</span> <span class="s">&quot;ex-2-stdout-</span><span class="si">%s</span><span class="s">.txt&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">get_id</span><span class="p">())</span>
+    <span class="n">d</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">/stdout.txt&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">get_local_working_directory</span><span class="p">()),</span> <span class="s">&quot;file://localhost/</span><span class="si">%s</span><span class="s">/</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">local_filename</span><span class="p">))</span>
+    <span class="k">print</span> <span class="s">&quot;* Output for &#39;</span><span class="si">%s</span><span class="s">&#39; copied to: &#39;./</span><span class="si">%s</span><span class="s">&#39;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">get_id</span><span class="p">(),</span> <span class="n">local_filename</span><span class="p">)</span>
+<span class="c"># ------------ END FILE TRANSFER LOGIC  ------------- #</span>
 </pre></div>
 </div>
-<p>The second important section of this code will not require any modification for the tutorial, but we cover it here so you can see how to modify it for your own purposes.</p>
-<p>Go to Line 68, &#8220;BEGIN USER DEFINED TASK DESCRIPTION.&#8221; This is where you will define the jobs that the overall Pilot-Job will be executing. This normally includes the path to your specific executable and any inputs or environment setup that is required. It is copied below for discussion purposes:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c"># -------- BEGIN USER DEFINED TASK DESCRIPTION --------- #</span>
-    <span class="n">task_desc</span> <span class="o">=</span> <span class="n">pilot</span><span class="o">.</span><span class="n">ComputeUnitDescription</span><span class="p">()</span>
-    <span class="n">task_desc</span><span class="o">.</span><span class="n">executable</span> <span class="o">=</span> <span class="s">&#39;/bin/echo&#39;</span>
-    <span class="n">task_desc</span><span class="o">.</span><span class="n">arguments</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;I am task number $TASK_NO&#39;</span><span class="p">,</span> <span class="p">]</span>
-    <span class="n">task_desc</span><span class="o">.</span><span class="n">environment</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;TASK_NO&#39;</span><span class="p">:</span> <span class="n">i</span><span class="p">}</span>
-    <span class="n">task_desc</span><span class="o">.</span><span class="n">spmd_variation</span> <span class="o">=</span> <span class="n">single</span> <span class="c"># Valid values are single or mpi</span>
-    <span class="n">task_desc</span><span class="o">.</span><span class="n">number_of_processes</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="n">task_desc</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="s">&#39;simple-ensemble-stdout.txt&#39;</span>
-    <span class="n">task_desc</span><span class="o">.</span><span class="n">error</span> <span class="o">=</span> <span class="s">&#39;simple-ensemble-stderr.txt&#39;</span>
-<span class="c"># -------- END USER DEFINED TASK DESCRIPTION --------- #</span>
-</pre></div>
-</div>
-<p>Let&#8217;s discuss the above example. We define our executable as &#8220;/bin/echo,&#8221; the simple UNIX command that writes arguments to standard output. Next, we need to provide the arguments. In this case, &#8220;I am task number $TASK_NO,&#8221; would correspond to typing <tt class="docutils literal"><span class="pre">/bin/echo</span> <span class="pre">'I</span> <span class="pre">am</span> <span class="pre">task</span> <span class="pre">number</span> <span class="pre">$TASK_NO'</span></tt> on command line. <tt class="docutils literal"><span class="pre">$TASK_NO</span></tt> is an environment variable, so we will need to provide a value for it, as is done on the next line: <tt class="docutils literal"><span class="pre">{'TASK_NO':</span> <span class="pre">i}</span></tt>. Note that this block of code is in a python for loop, therefore, i corresponds to what iteration we are on. The spmd_variation for a job can be either single or mpi. This refers to the way BigJob attempts to run your job (and also is dependent on the application you are running) - use MPI if your executable uses MPI, otherwise just use single. We then define number_of_processes for the task - this is the number of cores that the task requires (think, for example, of a 4-core MPI executable - that would mean 1 executable requires 4-cores, i.e. the number_of_processes = 4). Note that a spmd_variation of &#8216;single&#8217; can also require multiple cores.</p>
-<p>Lastly, we define the filenames for the tasks as output and error - these capture the stdout and stderr of running the task itself. These files will not capture BigJob behavior or error messages - those will be discussed later. The directory structure of BigJob will be discussed after we run this example.</p>
+<p>You do not have to change this logic. It uses the saga-python file transfer capabilities to get the output back to the submitting resource. Let&#8217;s review how it does this. First, a handle to the directory where the files are located are obtained.</p>
 </div>
 <div class="section" id="run-the-code">
-<h3>2.1.2. Run the Code<a class="headerlink" href="#run-the-code" title="Permalink to this headline">¶</a></h3>
+<h3>Run the Code<a class="headerlink" href="#run-the-code" title="Permalink to this headline">¶</a></h3>
 <p>Save the file and execute it <strong>(make sure your virtualenv is activated):</strong></p>
-<div class="highlight-bash"><div class="highlight"><pre>python simple_ensembles.py
+<div class="highlight-bash"><div class="highlight"><pre>python simple_ensemble_dataxfer.py
 </pre></div>
 </div>
 <p>The output should look something like this:</p>
@@ -231,7 +210,7 @@ Terminating BigJob...
 </div>
 </div>
 <div class="section" id="check-the-output">
-<h3>2.1.3. Check the Output<a class="headerlink" href="#check-the-output" title="Permalink to this headline">¶</a></h3>
+<h3>Check the Output<a class="headerlink" href="#check-the-output" title="Permalink to this headline">¶</a></h3>
 <p><strong>Steps to interpreting your output:</strong></p>
 <p>1.) We will find all the relevant BigJob output in the directory that we defined as &#8220;WORKDIR&#8221; in the above example.</p>
 <p><tt class="docutils literal"><span class="pre">cd</span></tt> into your &#8220;working directory.&#8221; In the examples on this tutorial, this would be the <tt class="docutils literal"><span class="pre">$HOME/agent</span></tt> directory.</p>
@@ -265,7 +244,7 @@ simple-ensemble-stderr.txt
 <p>5.) Open simple-ensemble-stdout.txt and note the output from your script.</p>
 </div>
 <div class="section" id="logging-and-debugging">
-<h3>2.1.4. Logging and Debugging<a class="headerlink" href="#logging-and-debugging" title="Permalink to this headline">¶</a></h3>
+<h3>Logging and Debugging<a class="headerlink" href="#logging-and-debugging" title="Permalink to this headline">¶</a></h3>
 <p>Since working with distributed systems is inherently complex and much of the
 complexity is hidden within BigJob, it is necessary to do a lot of internal
 logging. By default, logging output is disabled, but if something goes wrong or
@@ -287,27 +266,21 @@ messages) and 5 (print all messages). Give it a try with the above example:</p>
         <div class="sphinxsidebarwrapper">
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">2. Simple Ensembles</a><ul>
-<li><a class="reference internal" href="#hands-on-job-submission">2.1. Hands-On Job Submission</a><ul>
-<li><a class="reference internal" href="#how-to-edit-the-examples">2.1.1. How to Edit The Examples</a></li>
-<li><a class="reference internal" href="#run-the-code">2.1.2. Run the Code</a></li>
-<li><a class="reference internal" href="#check-the-output">2.1.3. Check the Output</a></li>
-<li><a class="reference internal" href="#logging-and-debugging">2.1.4. Logging and Debugging</a></li>
+<li><a class="reference internal" href="#">Simple Ensembles with File Transfer</a><ul>
+<li><a class="reference internal" href="#data-transfer-code">Data Transfer Code</a><ul>
+<li><a class="reference internal" href="#how-to-edit-the-examples">How to Edit The Examples</a></li>
+<li><a class="reference internal" href="#run-the-code">Run the Code</a></li>
+<li><a class="reference internal" href="#check-the-output">Check the Output</a></li>
+<li><a class="reference internal" href="#logging-and-debugging">Logging and Debugging</a></li>
 </ul>
 </li>
 </ul>
 </li>
 </ul>
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="part1.html"
-                        title="previous chapter">1. Introduction and Installation</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="part3.html"
-                        title="next chapter">3. Chained Ensembles</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
-    <li><a href="../_sources/tutorial/part2.txt"
+    <li><a href="../_sources/tutorial/part5.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
 <div id="searchbox" style="display: none">
@@ -333,14 +306,7 @@ messages) and 5 (print all messages). Give it a try with the above example:</p>
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              >index</a></li>
-        <li class="right" >
-          <a href="part3.html" title="3. Chained Ensembles"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="part1.html" title="1. Introduction and Installation"
-             >previous</a> |</li>
-        <li><a href="../index.html">BigJob 1.0 User Manual</a> &raquo;</li>
-          <li><a href="index.html" >6. Tutorial</a> &raquo;</li> 
+        <li><a href="../index.html">BigJob 1.0 User Manual</a> &raquo;</li> 
       </ul>
     </div>
 <div class="footer">
