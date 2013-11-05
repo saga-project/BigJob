@@ -1,14 +1,14 @@
 ##################
-Run BigJob Locally
+Simple Ensembles
 ##################
 
-You might be wondering how to create your own BigJob script or how BigJob can be useful for your needs. Before delving into the remote job and data submission capabilities that BigJob has, its important to understand the basics. The easiest way to understand the most basic functionality BigJob has to offer is to run multiple jobs on your local laptop. 
+You might be wondering how to create your own BigJob script or how BigJob can be useful for your needs. Before delving into the remote job and data submission capabilities that BigJob has, its important to understand the basics. 
 
-=============================
-Hands-On Local Job Submission
-=============================
+========================
+Hands-On Job Submission
+========================
 
-The simplest usage of a pilot-job system is to submit multiple identical tasks collectively i.e., as one big job! Such usage arises, for example to perform either a parameter sweep job or a set of ensemble simulation.
+The simplest usage of a pilot-job system is to submit multiple identical tasks collectively, i.e. as one big job! Such usage arises, for example to perform either a parameter sweep job or a set of ensemble simulation.
 
 We will create an example which submits N jobs using BigJob. The jobs are all identical, except that they each record their number in their output. This type of run is called a "simple ensemble" run; it is very useful if you are running many jobs using the same executable (but perhaps different input files). Rather than submit each job individually to the queuing system and then wait for every job to become active and complete, you submit just one 'Big' job (called a Pilot) that reserves the number of cores needed to run all of your jobs. When this BigJob becomes active, your jobs are pulled by BigJob from the Redis server and executed. 
 
@@ -44,10 +44,6 @@ NUMBER_JOBS: This is the number of tasks you want to run. Note that this may be 
 Line 44, "END REQUIRED PILOT SETUP," concludes this section.
 
 Now, let's take a look at how these variables are used to make the "Pilot Compute Description (PCD)" on Lines 51-58. You do not have to modify the PCD at all, because it uses the variables we filled in during the REQUIRED PILOT SETUP section. This is just to show you how these variables are communicated to BigJob. The PCD describes all the parameters for the Pilot-Job.
-PILOT_SIZE = # Number of cores required for the Pilot-Job
-
-            task_desc.spmd_variation = single # Valid values are single or mpi
-
 
 .. code-block:: python
 
