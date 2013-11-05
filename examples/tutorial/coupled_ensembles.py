@@ -35,8 +35,10 @@ SPMD_VARIATION = # Specify the WAYNESS of SGE clusters ONLY, valid input '12way'
 
 PROCESSES_PER_NODE = # Valid on PBS clusters ONLY - this is the number of processors per node. One processor core is treated as one processor on PBS; e.g. a node with 8 cores has a maximum ppn=8
 
+PILOT_SIZE = # Number of cores required for the Pilot-Job
+
 # Job Information
-NUMBER_JOBS  = # The TOTAL number of tasks to run; size of the Pilot
+NUMBER_JOBS  = # The TOTAL number of tasks to run
 
 # Continue to USER DEFINED TASK DESCRIPTION to add 
 # the required information about the individual tasks.
@@ -51,7 +53,7 @@ def main():
         pilot_description.service_url = "%s://%s@%s" %  (SAGA_ADAPTOR,USER_NAME,HOSTNAME)
         pilot_description.queue = QUEUE
         pilot_description.project = PROJECT
-        pilot_description.number_of_processes = NUMBER_JOBS
+        pilot_description.number_of_processes = PILOT_SIZE
         pilot_description.working_directory = WORKDIR
         pilot_description.walltime = WALLTIME
 	pilot_description.processes_per_node = PROCESSES_PER_NODE
@@ -70,6 +72,7 @@ def main():
             task_desc.executable = '/bin/echo'
             task_desc.arguments = ['I am an $TASK_SET task with id $TASK_NO', ]
             task_desc.environment = {'TASK_SET': 'A', 'TASK_NO': i}
+	    task_desc.spmd_variation = 'single'
             task_desc.number_of_processes = 1
             task_desc.output = 'A-stdout.txt'
             task_desc.error  = 'A-stderr.txt'
@@ -89,6 +92,7 @@ def main():
             task_desc.executable = '/bin/echo'
             task_desc.arguments = ['I am a $TASK_SET task with id $TASK_NO']
             task_desc.environment = {'TASK_SET': 'B', 'TASK_NO': i}
+	    task_desc.spmd_variation = 'single'
             task_desc.number_of_processes = 1
             task_desc.output = 'B-stdout.txt'
             task_desc.error  = 'B-stderr.txt'
@@ -101,7 +105,7 @@ def main():
         # ---------------------------------------------------------------------
         print "Waiting for 'A' and 'B' tasks to complete..."
         pilotjob.wait()
-	print "Executing 'C' tasks now…"
+	print "Executing 'C' tasks now..."
         # ---------------------------------------------------------------------
 
         # submit 'C' tasks to pilot job. each 'C' task takes the output of
@@ -114,6 +118,7 @@ def main():
             task_desc.executable = '/bin/echo'
             task_desc.arguments = ['I am a $TASK_SET task with id $TASK_NO']
             task_desc.environment = {'TASK_SET': 'C', 'TASK_NO': i}
+	    task_desc.spmd_variation = 'single'
             task_desc.number_of_processes = 1
             task_desc.output = 'C-stdout.txt'
             task_desc.error  = 'C-stderr.txt'

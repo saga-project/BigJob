@@ -48,7 +48,7 @@ The last step in this process is to add your newly created virtualenv to your :c
 Install BigJob
 =================
 
-After your virtual environment is active, you are ready to install BigJob. BigJob is available via PyPi and can be installed using easy_install as follows::
+After your virtual environment is active, you are ready to install BigJob. BigJob is available via PyPi and can be installed using pip as follows::
 	
 	pip install bigjob
 
