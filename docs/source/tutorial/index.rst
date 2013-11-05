@@ -29,3 +29,4 @@ This tutorial will walk you through the installation as well as the most importa
    part2
    part3
    part4
+   table
