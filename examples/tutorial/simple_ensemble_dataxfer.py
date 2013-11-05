@@ -88,7 +88,7 @@ def main():
         print "Waiting for tasks to finish..."
         pilotjob.wait()
 
-
+	# ------------ BEGIN FILE TRANSFER LOGIC ------------- #
         # all compute units have finished. now we can use saga-python
         # to transfer back the output files...
         d = saga.filesystem.Directory("sftp://%s/" % (HOSTNAME))
@@ -96,6 +96,7 @@ def main():
             local_filename = "ex-2-stdout-%s.txt" % (task.get_id())
             d.copy("%s/stdout.txt" % (task.get_local_working_directory()), "file://localhost/%s/%s" % (os.getcwd(), local_filename))
             print "* Output for '%s' copied to: './%s'" % (task.get_id(), local_filename)
+	# ------------ END FILE TRANSFER LOGIC  ------------- #
 
         return(0)
 
