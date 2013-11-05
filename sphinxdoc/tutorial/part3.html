@@ -1,0 +1,311 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+
+    <title>3. Chained Ensembles &mdash; BigJob 1.0 User Manual</title>
+
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>
+
+
+    
+    <link rel="stylesheet" href="../_static/rtd.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../../_static/searchtools.js"></script>
+    <link rel="top" title="BigJob 1.0 User Manual" href="../index.html" />
+    <link rel="up" title="6. Tutorial" href="index.html" />
+    <link rel="next" title="4. Coupled Ensembles" href="part4.html" />
+    <link rel="prev" title="2. Simple Ensembles" href="part2.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="part4.html" title="4. Coupled Ensembles"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="part2.html" title="2. Simple Ensembles"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">BigJob 1.0 User Manual</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">6. Tutorial</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="chained-ensembles">
+<h1>3. Chained Ensembles<a class="headerlink" href="#chained-ensembles" title="Permalink to this headline">¶</a></h1>
+<p>What if you had two different executables to run? What if this second set of executables had some dependencies on data from A? Can you use one BigJob to run both jobs? Yes!</p>
+<p>The below example submits a set of echo jobs (set A) using BigJob, and for every successful job (with state Done), it submits another /bin/echo job (set B) to the same Pilot-Job.</p>
+<p>We can think of this as A is comprised of subjobs {a1,a2,a3}, while B is comprised of subjobs {b1,b2,b3}. Rather than wait for each subjob {a1},{a2},{a3} to complete, {b1} can run as soon as {a1} is complete, or {b1} can run as soon as a slot becomes available – i.e. {a2} could finish before {a1}.</p>
+<p>The code below demonstrates this behavior. As soon as there is a slot available to run a job in B (i.e. a job in A has completed), it executes the job in B. This keeps the BigJob utilization high.</p>
+<div class="section" id="chained-ensemble-code">
+<h2>3.1. Chained Ensemble Code<a class="headerlink" href="#chained-ensemble-code" title="Permalink to this headline">¶</a></h2>
+<p>Create a new file <tt class="docutils literal"><span class="pre">chained_ensembles.py</span></tt> and paste the following code:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">pilot</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
+
+<span class="sd">&quot;&quot;&quot; DESCRIPTION: Tutorial 2: Chaining Tasks</span>
+<span class="sd">Note: User must edit PILOT SETUP and TASK DESCRIPTION 1-2 sections</span>
+<span class="sd">This example will not run if these values are not set.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c"># ---------------- BEGIN REQUIRED PILOT SETUP -----------------</span>
+
+<span class="c"># Distributed Coordination Service - Redis server and password</span>
+<span class="n">REDIS_PWD</span>   <span class="o">=</span> <span class="c"># Fill in the password to your redis server</span>
+<span class="n">REDIS_URL</span>   <span class="o">=</span> <span class="s">&quot;redis://</span><span class="si">%s</span><span class="s">@localhost:6379&quot;</span> <span class="o">%</span> <span class="n">REDIS_PWD</span>
+
+<span class="c"># Resource Information</span>
+<span class="n">HOSTNAME</span>     <span class="o">=</span> <span class="c"># Remote Resource URL</span>
+<span class="n">USER_NAME</span>    <span class="o">=</span> <span class="c"># Username on the remote resource</span>
+<span class="n">SAGA_ADAPTOR</span> <span class="o">=</span> <span class="c"># Name of the SAGA adaptor, e.g. fork, sge, pbs, slurm, etc.</span>
+<span class="c"># NOTE: See complete list of BigJob supported SAGA adaptors at:</span>
+<span class="c"># http://saga-project.github.io/BigJob/sphinxdoc/tutorial/table.html</span>
+
+<span class="c"># Fill in queue and allocation for the given resource </span>
+<span class="c"># Note: Set fields to &quot;None&quot; if not applicable</span>
+<span class="n">QUEUE</span>        <span class="o">=</span> <span class="c"># Add queue you want to use</span>
+<span class="n">PROJECT</span>      <span class="o">=</span> <span class="c"># Add project / allocation / account to charge</span>
+
+<span class="n">WALLTIME</span>     <span class="o">=</span> <span class="c"># Maximum Runtime (minutes) for the Pilot Job</span>
+
+<span class="n">WORKDIR</span>      <span class="o">=</span> <span class="s">&quot;&quot;</span> <span class="c"># Path of Resource Working Directory</span>
+<span class="c"># This is the directory where BigJob will store its output and error files</span>
+
+<span class="n">SPMD_VARIATION</span> <span class="o">=</span> <span class="c"># Specify the WAYNESS of SGE clusters ONLY, valid input &#39;12way&#39; for example. </span>
+
+<span class="n">PROCESSES_PER_NODE</span> <span class="o">=</span> <span class="c"># Valid on PBS clusters ONLY - this is the number of processors per node. One processor core is treated as one processor on PBS; e.g. a node with 8 cores has a maximum ppn=8</span>
+
+<span class="n">PILOT_SIZE</span> <span class="o">=</span> <span class="c"># Number of cores required for the Pilot-Job</span>
+
+<span class="c"># Job Information</span>
+<span class="n">NUMBER_JOBS</span>  <span class="o">=</span> <span class="c"># The TOTAL number of tasks to run</span>
+
+<span class="c"># Continue to USER DEFINED TASK DESCRIPTION to add </span>
+<span class="c"># the required information about the individual tasks.</span>
+
+<span class="c"># ---------------- END REQUIRED PILOT SETUP -----------------</span>
+<span class="c">#</span>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c"># this describes the parameters and requirements for our pilot job</span>
+        <span class="n">pilot_description</span> <span class="o">=</span> <span class="n">pilot</span><span class="o">.</span><span class="n">PilotComputeDescription</span><span class="p">()</span>
+        <span class="n">pilot_description</span><span class="o">.</span><span class="n">service_url</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">://</span><span class="si">%s</span><span class="s">@</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span>  <span class="p">(</span><span class="n">SAGA_ADAPTOR</span><span class="p">,</span><span class="n">USER_NAME</span><span class="p">,</span><span class="n">HOSTNAME</span><span class="p">)</span>
+        <span class="n">pilot_description</span><span class="o">.</span><span class="n">queue</span> <span class="o">=</span> <span class="n">QUEUE</span>
+        <span class="n">pilot_description</span><span class="o">.</span><span class="n">project</span> <span class="o">=</span> <span class="n">PROJECT</span>
+        <span class="n">pilot_description</span><span class="o">.</span><span class="n">number_of_processes</span> <span class="o">=</span> <span class="n">PILOT_SIZE</span>
+        <span class="n">pilot_description</span><span class="o">.</span><span class="n">working_directory</span> <span class="o">=</span> <span class="n">WORKDIR</span>
+        <span class="n">pilot_description</span><span class="o">.</span><span class="n">walltime</span> <span class="o">=</span> <span class="n">WALLTIME</span>
+	<span class="n">pilot_description</span><span class="o">.</span><span class="n">processes_per_node</span> <span class="o">=</span> <span class="n">PROCESSES_PER_NODE</span>
+	<span class="n">pilot_description</span><span class="o">.</span><span class="n">spmd_variation</span> <span class="o">=</span> <span class="n">SPMD_VARIATION</span>
+
+        <span class="c"># create a new pilot job</span>
+        <span class="n">pilot_compute_service</span> <span class="o">=</span> <span class="n">pilot</span><span class="o">.</span><span class="n">PilotComputeService</span><span class="p">(</span><span class="n">REDIS_URL</span><span class="p">)</span>
+        <span class="n">pilotjob</span> <span class="o">=</span> <span class="n">pilot_compute_service</span><span class="o">.</span><span class="n">create_pilot</span><span class="p">(</span><span class="n">pilot_description</span><span class="p">)</span>
+
+        <span class="c"># submit &#39;A&#39; tasks to pilot job</span>
+        <span class="n">task_set_A</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NUMBER_JOBS</span><span class="p">):</span>
+
+	<span class="c"># -------- BEGIN USER DEFINED TASK 1 DESCRIPTION --------- #</span>
+            <span class="n">task_desc</span> <span class="o">=</span> <span class="n">pilot</span><span class="o">.</span><span class="n">ComputeUnitDescription</span><span class="p">()</span>
+            <span class="n">task_desc</span><span class="o">.</span><span class="n">executable</span> <span class="o">=</span> <span class="s">&#39;/bin/echo&#39;</span>
+            <span class="n">task_desc</span><span class="o">.</span><span class="n">arguments</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;I am an $TASK_SET task with id $TASK_NO&#39;</span><span class="p">,</span> <span class="p">]</span>
+            <span class="n">task_desc</span><span class="o">.</span><span class="n">environment</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;TASK_SET&#39;</span><span class="p">:</span> <span class="s">&#39;A&#39;</span><span class="p">,</span> <span class="s">&#39;TASK_NO&#39;</span><span class="p">:</span> <span class="n">i</span><span class="p">}</span>
+	    <span class="n">task_desc</span><span class="o">.</span><span class="n">spmd_variation</span> <span class="o">=</span> <span class="s">&#39;single&#39;</span>
+            <span class="n">task_desc</span><span class="o">.</span><span class="n">number_of_processes</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">task_desc</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="s">&#39;A-stdout.txt&#39;</span>
+            <span class="n">task_desc</span><span class="o">.</span><span class="n">error</span>  <span class="o">=</span> <span class="s">&#39;A-stderr.txt&#39;</span>
+	<span class="c"># -------- END USER DEFINED TASK 1 DESCRIPTION --------- #</span>
+
+	    <span class="c"># Submit task to PilotJob</span>
+            <span class="n">task</span> <span class="o">=</span> <span class="n">pilotjob</span><span class="o">.</span><span class="n">submit_compute_unit</span><span class="p">(</span><span class="n">task_desc</span><span class="p">)</span>
+            <span class="k">print</span> <span class="s">&quot;* Submitted &#39;A&#39; task &#39;</span><span class="si">%s</span><span class="s">&#39; with id &#39;</span><span class="si">%s</span><span class="s">&#39;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">task</span><span class="o">.</span><span class="n">get_id</span><span class="p">())</span>
+            <span class="n">task_set_A</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+
+        <span class="c"># Chaining tasks i.e submit a compute unit, when compute unit from A is successfully executed.</span>
+        <span class="c"># A &#39;B&#39; task reads the content of the output file of an &#39;A&#39; task and writes it into its own</span>
+        <span class="c"># output file.</span>
+        <span class="n">task_set_B</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">task_set_A</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">a_task</span> <span class="ow">in</span> <span class="n">task_set_A</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">a_task</span><span class="o">.</span><span class="n">get_state</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;Done&quot;</span><span class="p">:</span>
+                    <span class="k">print</span> <span class="s">&quot;One &#39;A&#39; task </span><span class="si">%s</span><span class="s"> finished. Launching a &#39;B&#39; task.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">a_task</span><span class="o">.</span><span class="n">get_id</span><span class="p">())</span>
+
+	<span class="c"># -------- BEGIN USER DEFINED TASK 2 DESCRIPTION --------- #</span>
+                    <span class="n">task_desc</span> <span class="o">=</span> <span class="n">pilot</span><span class="o">.</span><span class="n">ComputeUnitDescription</span><span class="p">()</span>
+                    <span class="n">task_desc</span><span class="o">.</span><span class="n">executable</span> <span class="o">=</span> <span class="s">&#39;/bin/echo&#39;</span>
+                    <span class="n">task_desc</span><span class="o">.</span><span class="n">arguments</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;I am a $TASK_SET task with id $TASK_NO&#39;</span><span class="p">,</span> <span class="p">]</span>
+                    <span class="n">task_desc</span><span class="o">.</span><span class="n">environment</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;TASK_SET&#39;</span><span class="p">:</span> <span class="s">&#39;B&#39;</span><span class="p">,</span> <span class="s">&#39;TASK_NO&#39;</span><span class="p">:</span> <span class="n">a_task</span><span class="p">}</span>
+	    	    <span class="n">task_desc</span><span class="o">.</span><span class="n">spmd_variation</span> <span class="o">=</span> <span class="s">&#39;single&#39;</span>
+                    <span class="n">task_desc</span><span class="o">.</span><span class="n">number_of_processes</span> <span class="o">=</span> <span class="mi">1</span>
+                    <span class="n">task_desc</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="s">&#39;B-stdout.txt&#39;</span>
+                    <span class="n">task_desc</span><span class="o">.</span><span class="n">error</span>  <span class="o">=</span> <span class="s">&#39;B-stderr.txt&#39;</span>
+	<span class="c"># -------- END USER DEFINED TASK 2 DESCRIPTION --------- #</span>
+
+		    <span class="c"># Submit task to Pilot Job</span>
+                    <span class="n">task</span> <span class="o">=</span> <span class="n">pilotjob</span><span class="o">.</span><span class="n">submit_compute_unit</span><span class="p">(</span><span class="n">task_desc</span><span class="p">)</span>
+                    <span class="k">print</span> <span class="s">&quot;* Submitted &#39;B&#39; task &#39;</span><span class="si">%s</span><span class="s">&#39; with id &#39;</span><span class="si">%s</span><span class="s">&#39;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">task</span><span class="o">.</span><span class="n">get_id</span><span class="p">())</span>
+                    <span class="n">task_set_B</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+                    <span class="n">task_set_A</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">a_task</span><span class="p">)</span>
+
+        <span class="k">return</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">ex</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;AN ERROR OCCURRED: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">((</span><span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">)))</span>
+            <span class="c"># print a stack trace in case of an exception -</span>
+            <span class="c"># this can be helpful for debugging the problem</span>
+            <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+            <span class="k">return</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="c"># alway try to shut down pilots, otherwise jobs might end up</span>
+        <span class="c"># lingering in the queue</span>
+        <span class="k">print</span> <span class="p">(</span><span class="s">&quot;Terminating BigJob...&quot;</span><span class="p">)</span>
+        <span class="n">pilotjob</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
+        <span class="n">pilot_compute_service</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</pre></div>
+</div>
+<div class="section" id="how-to-edit-the-examples">
+<h3>3.1.1. How to Edit The Examples<a class="headerlink" href="#how-to-edit-the-examples" title="Permalink to this headline">¶</a></h3>
+<p>You will need to make the necessary changes to <tt class="docutils literal"><span class="pre">chained_ensembles.py</span></tt> as you did in the previous example. In the case of this tutorial, you can actually copy the &#8220;REQUIRED PILOT JOB&#8221; section that you filled out from <tt class="docutils literal"><span class="pre">simple_ensembles.py</span></tt> and paste it over the corresponding section in <tt class="docutils literal"><span class="pre">chained_ensembles.py.</span></tt> You may need to revisit the previous part of this tutorial to understand how to fill out this section if you skipped it.</p>
+<p>The link to the table is reiterated here for your convenience:</p>
+<p><a class="reference external" href="http://saga-project.github.io/BigJob/sphinxdoc/tutorial/table.html">Valid Variable Parameters</a>.</p>
+<p>The important difference between this file and the previous file is that there are two separate &#8220;USER DEFINED TASK DESCRIPTION&#8221; sections - numbered 1 and 2. Again, these two sections will not require any modifications for the purposes of this tutorial. We will not review every variable again, but instead, review the relationship between the 2 task descriptions.</p>
+<p>Go to line 70, &#8220;BEGIN USER DEFINED TASK 1 DESCRIPTION.&#8221; This looks a lot like the description we saw in the previous example. It is also contained in a for loop from 0 to the NUMBER_JOBS. We are running the same executable, with almost the same arguments, except that we append an &#8216;A&#8217; as an additional TASK_SET variable. If we look at lines 90-93, we see that as soon as a task in the &#8220;A&#8221; set reaches the &#8220;Done&#8221; state, we start what is defined in &#8220;BEGIN USER DEFINED TASK 2 DESCRIPTION&#8221; as a &#8220;B&#8221; task. This shows us an important feature of BigJob. We can call get_state() on a task to find out if it is complete or not. The second task description is to run the same executable, /bin/echo, and print instead that it is a B task, with its task number.</p>
+<p>To give you an idea of some sample values for NUMBER_OF_PROCESSES (for the Pilot) and NUMBER_JOBS for this Coupled Ensembles tutorial example, reference the machine Lonestar in the table. Note that the valid NUMBER_OF_PROCESSES values are increments of 12. This tells us there are 12 cores per node on Lonestar. A sample job for this example might have NUMBER_JOBS=24 and PILOT_SIZE=24, which would reserve 2 nodes on Lonestar. Note that when running these examples locally, i.e. with SAGA_ADAPTOR set to either ssh or fork, you cannot request a Pilot larger than the number of cores on the machine in which you are running, e.g. a 2-core computer can run a 2-core Pilot, while a 4-core computer can run a 4-core Pilot.</p>
+</div>
+<div class="section" id="run-the-code">
+<h3>3.1.2. Run the Code<a class="headerlink" href="#run-the-code" title="Permalink to this headline">¶</a></h3>
+<p>Save the file and execute it <strong>(make sure your virtualenv is activated):</strong></p>
+<div class="highlight-bash"><div class="highlight"><pre>python chained_ensembles.py
+</pre></div>
+</div>
+<p>The output should look something like this:</p>
+<div class="highlight-none"><div class="highlight"><pre>* Submitted &#39;A&#39; task &#39;0&#39; with id &#39;cu-27ab3846-e9a9-11e2-88eb-14109fd519a1&#39;
+* Submitted &#39;A&#39; task &#39;1&#39; with id &#39;cu-27c2cca4-e9a9-11e2-88eb-14109fd519a1&#39;
+[...]
+One &#39;A&#39; task cu-27ab3846-e9a9-11e2-88eb-14109fd519a1 finished. Launching a &#39;B&#39; task.
+* Submitted &#39;B&#39; task &#39;31&#39; with id &#39;cu-352139c6-e9a9-11e2-88eb-14109fd519a1&#39;
+[...]
+Terminating BigJob...
+</pre></div>
+</div>
+</div>
+<div class="section" id="check-the-output">
+<h3>3.1.3. Check the Output<a class="headerlink" href="#check-the-output" title="Permalink to this headline">¶</a></h3>
+<p>Again, we will find all the relevant BigJob output in the directory that we defined as &#8220;WORKDIR&#8221; in the above example. Note that some of the sj-directories in their stdout.txt files will contain A task output while others will contain B task output.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">3. Chained Ensembles</a><ul>
+<li><a class="reference internal" href="#chained-ensemble-code">3.1. Chained Ensemble Code</a><ul>
+<li><a class="reference internal" href="#how-to-edit-the-examples">3.1.1. How to Edit The Examples</a></li>
+<li><a class="reference internal" href="#run-the-code">3.1.2. Run the Code</a></li>
+<li><a class="reference internal" href="#check-the-output">3.1.3. Check the Output</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="part2.html"
+                        title="previous chapter">2. Simple Ensembles</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="part4.html"
+                        title="next chapter">4. Coupled Ensembles</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/tutorial/part3.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="part4.html" title="4. Coupled Ensembles"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="part2.html" title="2. Simple Ensembles"
+             >previous</a> |</li>
+        <li><a href="../index.html">BigJob 1.0 User Manual</a> &raquo;</li>
+          <li><a href="index.html" >6. Tutorial</a> &raquo;</li> 
+      </ul>
+    </div>
+<div class="footer">
+    &copy; Copyright 2013, The SAGA Project.
+  Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+  <br />Theme based on <a href="http://readthedocs.org/">Read The Docs</a>
+
+</div>
+
+
+
+
+
+  </body>
+</html>

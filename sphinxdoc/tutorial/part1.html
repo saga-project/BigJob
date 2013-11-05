@@ -33,7 +33,7 @@
     <script type="text/javascript" src="../../_static/searchtools.js"></script>
     <link rel="top" title="BigJob 1.0 User Manual" href="../index.html" />
     <link rel="up" title="6. Tutorial" href="index.html" />
-    <link rel="next" title="2. Run BigJob Locally" href="part2.html" />
+    <link rel="next" title="2. Simple Ensembles" href="part2.html" />
     <link rel="prev" title="6. Tutorial" href="index.html" /> 
   </head>
   <body>
@@ -44,7 +44,7 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="part2.html" title="2. Run BigJob Locally"
+          <a href="part2.html" title="2. Simple Ensembles"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="index.html" title="6. Tutorial"
@@ -62,7 +62,6 @@
   <div class="section" id="introduction">
 <h1>1. Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
 <p>BigJob, a SAGA-based Pilot-Job, is a general purpose Pilot-Job framework. Pilot-Jobs support the use of container jobs with sophisticated workflow management to coordinate the launch and interaction of actual computational tasks within the container. This results in the decoupling of workload submission from resource assignment, allowing a flexible execution model that enables the distributed scale-out of applications on multiple and possibly heterogeneous resources. It allows the execution of jobs without the necessity to queue each individual job.</p>
-<p>This tutorial will explain how to run four different examples of BigJob on (1) your local computer, (2) your favorite cluster (i.e. with a batch scheduler like PBS, SGE, etc), (3) on an XSEDE machine (i.e. Stampede), and (4) on clouds.</p>
 <p>In order to proceed with this tutorial, you must install BigJob. Installation instructions are listed below.</p>
 <div class="section" id="installation">
 <h2>1.1. Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
@@ -84,7 +83,7 @@
 <div class="highlight-python"><pre>virtualenv $HOME/.bigjob/python</pre>
 </div>
 <p>If you don&#8217;t have virtualenv installed and you don&#8217;t have root access to your machine, you can use the following script instead:</p>
-<div class="highlight-python"><pre>curl --insecure -s https://raw.github.com/pypa/virtualenv/master/virtualenv.py | python - $HOME/.bigjob/python</pre>
+<div class="highlight-python"><pre>curl --insecure -s https://raw.github.com/pypa/virtualenv/1.9.X/virtualenv.py | python - $HOME/.bigjob/python</pre>
 </div>
 </div>
 <div class="section" id="activate-your-local-python-environment">
@@ -100,11 +99,11 @@
 </div>
 <div class="section" id="install-bigjob">
 <h3>1.1.2. Install BigJob<a class="headerlink" href="#install-bigjob" title="Permalink to this headline">¶</a></h3>
-<p>After your virtual environment is active, you are ready to install BigJob. BigJob is available via PyPi and can be installed using easy_install as follows:</p>
-<div class="highlight-python"><pre>easy_install BigJob</pre>
+<p>After your virtual environment is active, you are ready to install BigJob. BigJob is available via PyPi and can be installed using pip as follows:</p>
+<div class="highlight-python"><pre>pip install bigjob</pre>
 </div>
 <p>You can change the default installation directory by calling:</p>
-<div class="highlight-python"><pre>easy_install --prefix=&lt;target-dir&gt; BigJob</pre>
+<div class="highlight-python"><pre>pip install --install-option="--prefix=&lt;target-directory&gt;" bigjob</pre>
 </div>
 <p>To make sure that your installation works, run the following command to check if the BigJob module can be imported by the python interpreter:</p>
 <div class="highlight-python"><pre>python -c "import pilot; print pilot.version"</pre>
@@ -190,7 +189,7 @@ ls</pre>
 <div class="section" id="setting-up-your-own-redis-server">
 <h2>1.2. Setting Up Your Own Redis Server<a class="headerlink" href="#setting-up-your-own-redis-server" title="Permalink to this headline">¶</a></h2>
 <p>BigJob uses a Redis server for coordination and task management. Redis is the most stable and fastest backend (requires Python &gt;2.5) and the recommended way of using BigJob. BigJob will <strong>not</strong> work without a coordination backend.</p>
-<p>Redis can easily be run in user space. For additional information about redis, please visit the website, <a href="#id1"><span class="problematic" id="id2">`redis.io&lt;http://www.redis.io&gt;`_</span></a>. To proceed with the tutorial, please take the following steps:</p>
+<p>Redis can easily be run in user space. For additional information about redis, please visit the website, <a href="#id1"><span class="problematic" id="id2">`redis&lt;http://www.redis.io&gt;`_</span></a>. To proceed with the tutorial, please take the following steps:</p>
 <div class="highlight-python"><pre>wget http://download.redis.io/redis-stable.tar.gz
 tar xvzf redis-stable.tar.gz
 cd redis-stable
@@ -242,7 +241,7 @@ $ ./src/redis-server
                         title="previous chapter">6. Tutorial</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="part2.html"
-                        title="next chapter">2. Run BigJob Locally</a></p>
+                        title="next chapter">2. Simple Ensembles</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/tutorial/part1.txt"
@@ -272,7 +271,7 @@ $ ./src/redis-server
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="part2.html" title="2. Run BigJob Locally"
+          <a href="part2.html" title="2. Simple Ensembles"
              >next</a> |</li>
         <li class="right" >
           <a href="index.html" title="6. Tutorial"
