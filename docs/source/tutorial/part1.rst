@@ -1,6 +1,6 @@
-###############################
+##############################
 Introduction and Installation
-#############################
+##############################
 
 BigJob, a SAGA-based Pilot-Job, is a general purpose Pilot-Job framework. Pilot-Jobs support the use of container jobs with sophisticated workflow management to coordinate the launch and interaction of actual computational tasks within the container. This results in the decoupling of workload submission from resource assignment, allowing a flexible execution model that enables the distributed scale-out of applications on multiple and possibly heterogeneous resources. It allows the execution of jobs without the necessity to queue each individual job.
 
