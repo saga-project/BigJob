@@ -94,8 +94,8 @@ def main():
 
 	# -------- BEGIN USER DEFINED TASK 2 DESCRIPTION --------- #
                     task_desc = pilot.ComputeUnitDescription()
-                    task_desc.executable = '/bin/cat'
-                    task_desc.arguments = ['I am an $TASK_SET task with id $TASK_NO', ]
+                    task_desc.executable = '/bin/echo'
+                    task_desc.arguments = ['I am a $TASK_SET task with id $TASK_NO', ]
                     task_desc.environment = {'TASK_SET': 'B', 'TASK_NO': a_task}
 	    	    task_desc.spmd_variation = 'single'
                     task_desc.number_of_processes = 1
