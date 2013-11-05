@@ -4,8 +4,6 @@ Introduction
 
 BigJob, a SAGA-based Pilot-Job, is a general purpose Pilot-Job framework. Pilot-Jobs support the use of container jobs with sophisticated workflow management to coordinate the launch and interaction of actual computational tasks within the container. This results in the decoupling of workload submission from resource assignment, allowing a flexible execution model that enables the distributed scale-out of applications on multiple and possibly heterogeneous resources. It allows the execution of jobs without the necessity to queue each individual job.
 
-This tutorial will explain how to run four different examples of BigJob on (1) your local computer, (2) your favorite cluster (i.e. with a batch scheduler like PBS, SGE, etc), (3) on an XSEDE machine (i.e. Stampede), and (4) on clouds. 
-
 In order to proceed with this tutorial, you must install BigJob. Installation instructions are listed below.
 
 ==============
@@ -37,7 +35,7 @@ To create your local Python environment run the following command (you can insta
 
 If you don't have virtualenv installed and you don't have root access to your machine, you can use the following script instead::
 
-	curl --insecure -s https://raw.github.com/pypa/virtualenv/master/virtualenv.py | python - $HOME/.bigjob/python
+	curl --insecure -s https://raw.github.com/pypa/virtualenv/1.9.X/virtualenv.py | python - $HOME/.bigjob/python
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Activate your Local Python Environment
@@ -57,13 +55,13 @@ The last step in this process is to add your newly created virtualenv to your :c
 Install BigJob
 -----------------
 
-After your virtual environment is active, you are ready to install BigJob. BigJob is available via PyPi and can be installed using easy_install as follows::
+After your virtual environment is active, you are ready to install BigJob. BigJob is available via PyPi and can be installed using pip as follows::
 	
-	easy_install BigJob
+	pip install bigjob
 
 You can change the default installation directory by calling::
 
-	easy_install --prefix=<target-dir> BigJob
+	pip install --install-option="--prefix=<target-directory>" bigjob	
 
 To make sure that your installation works, run the following command to check if the BigJob module can be imported by the python interpreter::
 
