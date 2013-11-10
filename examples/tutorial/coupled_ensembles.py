@@ -3,8 +3,8 @@ import sys
 import pilot
 import traceback
 
-""" DESCRIPTION: Tutorial 1: A Simple Workload 
-Note: User must edit USER VARIABLES section
+""" DESCRIPTION: Tutorial 3: Coupled Ensembles
+Note: User must edit PILOT SETUP and TASK DESCRIPTION 1-3 sections
 This example will not run if these values are not set.
 """
 
@@ -63,27 +63,75 @@ def main():
         pilot_compute_service = pilot.PilotComputeService(REDIS_URL)
         pilotjob = pilot_compute_service.create_pilot(pilot_description)
 
-
-        # submit tasks to pilot job
-        tasks = list()
+        # submit 'A' tasks to pilot job
+        task_set_A = list()
         for i in range(NUMBER_JOBS):
-	# -------- BEGIN USER DEFINED TASK DESCRIPTION --------- #
+
+	# -------- BEGIN USER DEFINED TASK 1 DESCRIPTION --------- #
             task_desc = pilot.ComputeUnitDescription()
             task_desc.executable = '/bin/echo'
-            task_desc.arguments = ['I am task number $TASK_NO', ]
-            task_desc.environment = {'TASK_NO': i}
+            task_desc.arguments = ['I am an $TASK_SET task with id $TASK_NO', ]
+            task_desc.environment = {'TASK_SET': 'A', 'TASK_NO': i}
+	    task_desc.spmd_variation = 'single'
             task_desc.number_of_processes = 1
-	    task_desc.spmd_variation = single # Valid values are single or mpi
-            task_desc.output = 'simple-ensemble-stdout.txt'
-            task_desc.error = 'simple-ensemble-stderr.txt'
-	# -------- END USER DEFINED TASK DESCRIPTION --------- #
+            task_desc.output = 'A-stdout.txt'
+            task_desc.error  = 'A-stderr.txt'
+	# -------- END USER DEFINED TASK 1 DESCRIPTION --------- #
 
             task = pilotjob.submit_compute_unit(task_desc)
-            print "* Submitted task '%s' with id '%s' to %s" % (i, task.get_id(), HOSTNAME)
-            tasks.append(task)
+            print "* Submitted 'A' task '%s' with id '%s'" % (i, task.get_id())
+            task_set_A.append(task)
 
-        print "Waiting for tasks to finish..."
+
+        # submit 'B' tasks to pilot job
+        task_set_B = list()
+        for i in range(NUMBER_JOBS):
+
+	# -------- BEGIN USER DEFINED TASK 2 DESCRIPTION --------- #
+            task_desc = pilot.ComputeUnitDescription()
+            task_desc.executable = '/bin/echo'
+            task_desc.arguments = ['I am a $TASK_SET task with id $TASK_NO']
+            task_desc.environment = {'TASK_SET': 'B', 'TASK_NO': i}
+	    task_desc.spmd_variation = 'single'
+            task_desc.number_of_processes = 1
+            task_desc.output = 'B-stdout.txt'
+            task_desc.error  = 'B-stderr.txt'
+	# -------- END USER DEFINED TASK 2 DESCRIPTION --------- #
+
+            task = pilotjob.submit_compute_unit(task_desc)
+            print "* Submitted 'B' task '%s' with id '%s'" % (i, task.get_id())
+            task_set_B.append(task)
+
+        # ---------------------------------------------------------------------
+        print "Waiting for 'A' and 'B' tasks to complete..."
         pilotjob.wait()
+	print "Executing 'C' tasks now..."
+        # ---------------------------------------------------------------------
+
+        # submit 'C' tasks to pilot job. each 'C' task takes the output of
+        # an 'A' and a 'B' task and puts them together.
+        task_set_C = list()
+        for i in range(NUMBER_JOBS):
+
+	# -------- BEGIN USER DEFINED TASK 3 DESCRIPTION --------- #
+            task_desc = pilot.ComputeUnitDescription()
+            task_desc.executable = '/bin/echo'
+            task_desc.arguments = ['I am a $TASK_SET task with id $TASK_NO']
+            task_desc.environment = {'TASK_SET': 'C', 'TASK_NO': i}
+	    task_desc.spmd_variation = 'single'
+            task_desc.number_of_processes = 1
+            task_desc.output = 'C-stdout.txt'
+            task_desc.error  = 'C-stderr.txt'
+	# -------- END USER DEFINED TASK 3 DESCRIPTION --------- #
+
+            task = pilotjob.submit_compute_unit(task_desc)
+            print "* Submitted 'C' task '%s' with id '%s'" % (i, task.get_id())
+            task_set_C.append(task)
+
+        # ---------------------------------------------------------------------
+        print "Waiting for 'C' tasks to complete..."
+        pilotjob.wait()
+        # ---------------------------------------------------------------------
 
         return(0)
 
