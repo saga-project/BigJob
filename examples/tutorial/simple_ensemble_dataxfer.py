@@ -1,11 +1,14 @@
 import os
 import sys
+import saga
 import pilot
 import traceback
 
-""" DESCRIPTION: Tutorial 1: A Simple Workload 
-Note: User must edit USER VARIABLES section
+""" DESCRIPTION: Tutorial 4: Adding File Transfer
+Note: User must edit  REQUIRED PILOT SETUP and TASK DESCRIPTION sections
 This example will not run if these values are not set.
+This example will execute on the HOSTNAME (remote resource) and transfer the output
+back to the localhost.
 """
 
 # ---------------- BEGIN REQUIRED PILOT SETUP -----------------
@@ -74,8 +77,8 @@ def main():
             task_desc.environment = {'TASK_NO': i}
             task_desc.number_of_processes = 1
 	    task_desc.spmd_variation = single # Valid values are single or mpi
-            task_desc.output = 'simple-ensemble-stdout.txt'
-            task_desc.error = 'simple-ensemble-stderr.txt'
+            task_desc.output = 'stdout.txt'
+            task_desc.error = 'stderr.txt'
 	# -------- END USER DEFINED TASK DESCRIPTION --------- #
 
             task = pilotjob.submit_compute_unit(task_desc)
@@ -84,6 +87,16 @@ def main():
 
         print "Waiting for tasks to finish..."
         pilotjob.wait()
+
+	# ------------ BEGIN FILE TRANSFER LOGIC ------------- #
+        # all compute units have finished. now we can use saga-python
+        # to transfer back the output files...
+        d = saga.filesystem.Directory("sftp://%s/" % (HOSTNAME))
+        for task in tasks:
+            local_filename = "ex-2-stdout-%s.txt" % (task.get_id())
+            d.copy("%s/stdout.txt" % (task.get_local_working_directory()), "file://localhost/%s/%s" % (os.getcwd(), local_filename))
+            print "* Output for '%s' copied to: './%s'" % (task.get_id(), local_filename)
+	# ------------ END FILE TRANSFER LOGIC  ------------- #
 
         return(0)
 
