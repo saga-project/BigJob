@@ -1,0 +1,273 @@
+
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Read the Docs Sphinx Theme &mdash; BigJob 1.0 User Manual</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:'../../',
+        VERSION:'1.0',
+        COLLAPSE_INDEX:false,
+        FILE_SUFFIX:'.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+    <link rel="top" title="BigJob 1.0 User Manual" href="../../index.html"/> 
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../index.html" class="icon icon-home"> BigJob</a>
+        <form class="wy-form" action="../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search docs" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../intro/index.html">1. Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../intro/index.html#introduction-to-pilot-jobs">1.1. Introduction to Pilot-Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../intro/index.html#why-do-you-need-pilot-jobs">1.2. Why do you need Pilot-Jobs?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../intro/index.html#what-makes-bigjob-different">1.3. What makes BigJob different?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../intro/index.html#what-can-i-use-bigjob-for">1.4. What can I use BigJob for?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../intro/index.html#bigjob-overview">1.5. BigJob Overview</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../install/index.html">2. Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../install/install.html">2.1. Installing BigJob</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../install/redis.html">2.2. Setting Up a Redis Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../install/xsede.html">2.3. XSEDE Specific Tips</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../install/trouble.html">2.4. Troubleshooting</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage/index.html">3. Working with BigJob</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../usage/appwriting.html">3.1. Writing BigJob Scripts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../usage/pilotdata.html">3.2. Introduction to Pilot-Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../usage/cmdtools.html">3.3. Command-Line Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../usage/logging.html">3.4. Logging and Debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../usage/output.html">3.5. Interpreting Output</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../patterns/index.html">4. Common Usage Patterns</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../patterns/simple.html">4.1. Simple Ensemble</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../patterns/chained.html">4.2. Chained Ensembles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../patterns/coupled.html">4.3. Coupled Ensembles</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../library/index.html">5. Library Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../library/index.html#compute-and-data-services">5.1. Compute and Data Services</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../library/index.html#compute-and-data-units">5.2. Compute and Data Units</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../library/index.html#state-enumeration">5.3. State Enumeration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial/index.html">6. Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial/part1.html">1. Introduction and Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial/part2.html">2. Simple Ensembles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial/part3.html">3. Chained Ensembles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial/part4.html">4. Coupled Ensembles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial/table.html">5. Machines and Valid Parameters</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top">
+        <i data-toggle="wy-nav-top" class="icon icon-reorder"></i>
+        <a href="/">BigJob</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <ul class="wy-breadcrumbs">
+  <li><a href="../../index.html">Docs</a> &raquo;</li>
+  <li><a href="">Read the Docs Sphinx Theme</a></li>
+  
+</ul>
+<hr/>
+
+          
+  <div class="section" id="read-the-docs-sphinx-theme">
+<h1>Read the Docs Sphinx Theme<a class="headerlink" href="#read-the-docs-sphinx-theme" title="Permalink to this headline">¶</a></h1>
+<p>View a working <a class="reference external" href="http://docs.readthedocs.org">demo</a> over on <a class="reference external" href="http://www.readthedocs.org">readthedocs.org</a>.</p>
+<p>This is a prototype mobile-friendly <a class="reference external" href="http://www.sphinx-doc.org">sphinx</a> theme I made for <a class="reference external" href="http://www.readthedocs.org">readthedocs.org</a>. It&#8217;s
+currently in development and includes some rtd variable checks that can be ignored
+if you&#8217;re just trying to use it on your project outside of that site.</p>
+<p><strong>This repo also exists as a submodule within the readthedocs itself</strong>, so please make your edits to
+the SASS files here, rather than the .css files on RTD.</p>
+<img alt="../../_images/screen_mobile.png" src="../../_images/screen_mobile.png" style="width: 100%;" />
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="via-package">
+<h3>Via package<a class="headerlink" href="#via-package" title="Permalink to this headline">¶</a></h3>
+<p>Download the package or add it to your <tt class="docutils literal"><span class="pre">requirements.txt</span></tt> file:</p>
+<div class="code bash highlight-python"><pre>$ pip install sphinx_rtd_theme</pre>
+</div>
+<p>In your <tt class="docutils literal"><span class="pre">conf.py</span></tt> file:</p>
+<div class="code python highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">sphinx_rtd_theme</span>
+
+<span class="n">html_theme</span> <span class="o">=</span> <span class="s">&quot;sphinx_rtd_theme&quot;</span>
+
+<span class="n">html_theme_path</span> <span class="o">=</span> <span class="p">[</span><span class="n">sphinx_rtd_theme</span><span class="o">.</span><span class="n">get_html_theme_path</span><span class="p">()]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="via-git-or-download">
+<h3>Via git or download<a class="headerlink" href="#via-git-or-download" title="Permalink to this headline">¶</a></h3>
+<p>Symlink or subtree the <tt class="docutils literal"><span class="pre">sphinx_rtd_theme/sphinx_rtd_theme</span></tt> repository into your documentation at
+<tt class="docutils literal"><span class="pre">docs/_themes/sphinx_rtd_theme</span></tt> then add the following two settings to your Sphinx
+conf.py file:</p>
+<div class="code python highlight-python"><div class="highlight"><pre><span class="n">html_theme</span> <span class="o">=</span> <span class="s">&quot;sphinx_rtd_theme&quot;</span>
+<span class="n">html_theme_path</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;_themes&quot;</span><span class="p">,</span> <span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="how-the-table-of-contents-builds">
+<h2>How the Table of Contents builds<a class="headerlink" href="#how-the-table-of-contents-builds" title="Permalink to this headline">¶</a></h2>
+<p>Currently the left menu will build based upon any <tt class="docutils literal"><span class="pre">toctree(s)</span></tt> defined in your index.rst file.
+It outputs 2 levels of depth, which should give your visitors a high level of access to your
+docs. If no toctrees are set the theme reverts to sphinx&#8217;s usual local toctree.</p>
+<p>It&#8217;s important to note that if you don&#8217;t follow the same styling for your rST headers across
+your documents, the toctree will misbuild, and the resulting menu might not show the correct
+depth when it renders.</p>
+</div>
+<div class="section" id="contributing-or-modifying-the-theme">
+<h2>Contributing or modifying the theme<a class="headerlink" href="#contributing-or-modifying-the-theme" title="Permalink to this headline">¶</a></h2>
+<p>The sphinx_rtd_theme is primarily a <a class="reference external" href="http://www.sass-lang.com">sass</a> project that requires a few other sass libraries. I&#8217;m
+using <a class="reference external" href="http://www.bower.io">bower</a> to manage these dependencies and <a class="reference external" href="http://www.compass-style.org">compass</a> to build the css. The good news is
+I have a very nice set of <a class="reference external" href="http://www.gruntjs.com">grunt</a> operations that will not only load these dependecies, but watch
+for changes, rebuild the sphinx demo docs and build a distributable version of the theme.
+The bad news is this means you&#8217;ll need to set up your environment similar to that
+of a front-end developer (vs. that of a python developer). That means installing node and ruby.</p>
+<div class="section" id="set-up-your-environment">
+<h3>Set up your environment<a class="headerlink" href="#set-up-your-environment" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li>Install <a class="reference external" href="http://www.sphinx-doc.org">sphinx</a> into a virtual environment.</li>
+</ol>
+<div class="code highlight-python"><pre>pip install sphinx</pre>
+</div>
+<ol class="arabic simple" start="2">
+<li>Install sass and compass</li>
+</ol>
+<div class="code highlight-python"><pre>gem install sass compass</pre>
+</div>
+<ol class="arabic simple" start="2">
+<li>Install node, bower and grunt.</li>
+</ol>
+<div class="code highlight-python"><pre>// Install node
+brew install node
+
+// Install bower and grunt
+npm install -g bower grunt-cli
+
+// Now that everything is installed, let's install the theme dependecies.
+npm install</pre>
+</div>
+<p>Now that our environment is set up, make sure you&#8217;re in your virtual environment, go to
+this repository in your terminal and run grunt:</p>
+<div class="code highlight-python"><div class="highlight"><pre><span class="n">grunt</span>
+</pre></div>
+</div>
+<p>This default task will do the following <strong>very cool things that make it worth the trouble</strong>.</p>
+<ol class="arabic simple">
+<li>It&#8217;ll install and update any bower dependencies.</li>
+<li>It&#8217;ll run sphinx and build new docs.</li>
+<li>It&#8217;ll watch for changes to the sass files and build css from the changes.</li>
+<li>It&#8217;ll rebuild the sphinx docs anytime it notices a change to .rst, .html, .js
+or .css files.</li>
+</ol>
+</div>
+<div class="section" id="before-you-send-a-pull-request">
+<h3>Before you send a Pull Request<a class="headerlink" href="#before-you-send-a-pull-request" title="Permalink to this headline">¶</a></h3>
+<p>When you&#8217;re done with your edits, you can run <tt class="docutils literal"><span class="pre">grunt</span> <span class="pre">build</span></tt> to clean out the old
+files and rebuild a new distribution, compressing the css and cleaning out
+extraneous files. Please do this before you send in a PR.</p>
+</div>
+</div>
+<div class="section" id="todo">
+<h2>TODO<a class="headerlink" href="#todo" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Build real demo docs with lots of rst examples</li>
+<li>Update to font-awesome 4.0 and have it build from bower, not the copy/paste hack I have now.</li>
+<li>Separate some sass variables at the theme level so you can overwrite some basic colors.</li>
+<li>Add the ability to set a logo.</li>
+</ul>
+</div>
+</div>
+
+
+          <footer>
+  
+
+  <hr/>
+
+  <p>
+      &copy; Copyright 2013, The SAGA Project.
+  </p>
+
+  <a href="https://www.github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="http://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+</body>
+</html>
