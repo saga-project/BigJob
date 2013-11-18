@@ -1,58 +1,146 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>BigJob 1.0 User Manual &mdash; BigJob 1.0 User Manual</title>
+  
 
-    <title>BigJob 1.0 User Manual &mdash; BigJob 1.0 User Manual</title>
+  
+  
 
-<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
+  
+  
 
-    
-    <link rel="stylesheet" href="_static/rtd.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '',
-        VERSION:     '1.0',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
+        URL_ROOT:'',
+        VERSION:'1.0',
+        COLLAPSE_INDEX:false,
+        FILE_SUFFIX:'.html',
         HAS_SOURCE:  true
       };
     </script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <script type="text/javascript" src="_static/searchtools.js"></script>
-    <link rel="top" title="BigJob 1.0 User Manual" href="#" />
-    <link rel="next" title="1. Introduction" href="intro/index.html" /> 
-  </head>
-  <body>
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="intro/index.html" title="1. Introduction"
-             accesskey="N">next</a> |</li>
-        <li><a href="#">BigJob 1.0 User Manual</a> &raquo;</li> 
-      </ul>
-    </div>  
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body">
-            
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+    <link rel="top" title="BigJob 1.0 User Manual" href="#"/>
+        <link rel="next" title="1. Introduction" href="intro/index.html"/> 
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="#" class="icon icon-home"> BigJob</a>
+        <form class="wy-form" action="search.html" method="get">
+  <input type="text" name="q" placeholder="Search docs" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="intro/index.html">1. Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="intro/index.html#introduction-to-pilot-jobs">1.1. Introduction to Pilot-Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intro/index.html#why-do-you-need-pilot-jobs">1.2. Why do you need Pilot-Jobs?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intro/index.html#what-makes-bigjob-different">1.3. What makes BigJob different?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intro/index.html#what-can-i-use-bigjob-for">1.4. What can I use BigJob for?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intro/index.html#bigjob-overview">1.5. BigJob Overview</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="install/index.html">2. Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="install/install.html">2.1. Installing BigJob</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install/redis.html">2.2. Setting Up a Redis Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install/xsede.html">2.3. XSEDE Specific Tips</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install/trouble.html">2.4. Troubleshooting</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="usage/index.html">3. Working with BigJob</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="usage/appwriting.html">3.1. Writing BigJob Scripts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage/pilotdata.html">3.2. Introduction to Pilot-Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage/cmdtools.html">3.3. Command-Line Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage/logging.html">3.4. Logging and Debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage/output.html">3.5. Interpreting Output</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="patterns/index.html">4. Common Usage Patterns</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="patterns/simple.html">4.1. Simple Ensemble</a></li>
+<li class="toctree-l2"><a class="reference internal" href="patterns/chained.html">4.2. Chained Ensembles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="patterns/coupled.html">4.3. Coupled Ensembles</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="library/index.html">5. Library Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="library/index.html#compute-and-data-services">5.1. Compute and Data Services</a></li>
+<li class="toctree-l2"><a class="reference internal" href="library/index.html#compute-and-data-units">5.2. Compute and Data Units</a></li>
+<li class="toctree-l2"><a class="reference internal" href="library/index.html#state-enumeration">5.3. State Enumeration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/index.html">6. Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/part1.html">1. Introduction and Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/part2.html">2. Simple Ensembles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/part3.html">3. Chained Ensembles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/part4.html">4. Coupled Ensembles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/table.html">5. Machines and Valid Parameters</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top">
+        <i data-toggle="wy-nav-top" class="icon icon-reorder"></i>
+        <a href="/">BigJob</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <ul class="wy-breadcrumbs">
+  <li><a href="#">Docs</a> &raquo;</li>
+  <li><a href="">BigJob 1.0 User Manual</a></li>
+  
+</ul>
+<hr/>
+
+          
   <div class="section" id="bigjob-version-user-manual">
 <h1>BigJob 1.0 User Manual<a class="headerlink" href="#bigjob-version-user-manual" title="Permalink to this headline">¶</a></h1>
 <p>BigJob is a light-weight Python package that provides a Pilot-based Job and Data Management system. BigJob aims to be as flexible and extensible as possible - it installs where you want it (requiring no root access to the target machine). Unlike many other Pilot-Job systems, BigJob natively supports MPI jobs and, because of its integration with <a class="reference external" href="ttps://github.com/saga-project/saga-python/">saga-python</a>, works on a variety of backend systems (such as SGE, PBS, SLURM, etc.). BigJob has been shown to work on grids, clouds, and clusters, as well as locally on your personal computer.</p>
@@ -103,7 +191,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="patterns/index.html">4. Common Usage Patterns</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="patterns/simple.html">4.1. Simple Ensemble</a></li>
-<li class="toctree-l2"><a class="reference internal" href="patterns/chained.html">4.2. Chained Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="patterns/chained.html">4.2. Chained Ensembles</a></li>
 <li class="toctree-l2"><a class="reference internal" href="patterns/coupled.html">4.3. Coupled Ensembles</a></li>
 </ul>
 </li>
@@ -134,69 +222,31 @@
 </div>
 
 
-          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons">
+      
+        <a href="intro/index.html" class="btn btn-neutral float-right" title="1. Introduction"/>Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+    </div>
+  
+
+  <hr/>
+
+  <p>
+      &copy; Copyright 2013, The SAGA Project.
+  </p>
+
+  <a href="https://www.github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="http://readthedocs.org">Read the Docs</a>
+</footer>
         </div>
       </div>
-      <div class="sphinxsidebar">
-        <div class="sphinxsidebarwrapper">
-  <h3><a href="#">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">BigJob 1.0 User Manual</a><ul>
-<li><a class="reference internal" href="#contents">Contents</a><ul>
-<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
 
-  <h4>Next topic</h4>
-  <p class="topless"><a href="intro/index.html"
-                        title="next chapter">1. Introduction</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/index.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-        </div>
-      </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="intro/index.html" title="1. Introduction"
-             >next</a> |</li>
-        <li><a href="#">BigJob 1.0 User Manual</a> &raquo;</li> 
-      </ul>
-    </div>
-<div class="footer">
-    &copy; Copyright 2013, The SAGA Project.
-  Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
-  <br />Theme based on <a href="http://readthedocs.org/">Read The Docs</a>
+    </section>
 
-</div>
+  </div>
+  
 
-
-
-
-
-  </body>
+</body>
 </html>

@@ -1,70 +1,151 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>4. XSEDE Simple Ensemble Example &mdash; BigJob 1.0 User Manual</title>
+  
 
-    <title>4. XSEDE Simple Ensemble Example &mdash; BigJob 1.0 User Manual</title>
+  
+  
 
-<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
+  
+  
 
-    
-    <link rel="stylesheet" href="../_static/rtd.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '1.0',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
+        URL_ROOT:'../',
+        VERSION:'1.0',
+        COLLAPSE_INDEX:false,
+        FILE_SUFFIX:'.html',
         HAS_SOURCE:  true
       };
     </script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <script type="text/javascript" src="../../_static/searchtools.js"></script>
-    <link rel="top" title="BigJob 1.0 User Manual" href="../index.html" />
-    <link rel="up" title="6. Tutorial" href="index.html" />
-    <link rel="next" title="5. Remote Pilot Data Example" href="pdata.html" />
-    <link rel="prev" title="3. Mandelbrot using BigJob" href="mbrot.html" /> 
-  </head>
-  <body>
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="pdata.html" title="5. Remote Pilot Data Example"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="mbrot.html" title="3. Mandelbrot using BigJob"
-             accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">BigJob 1.0 User Manual</a> &raquo;</li>
-          <li><a href="index.html" accesskey="U">6. Tutorial</a> &raquo;</li> 
-      </ul>
-    </div>  
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body">
-            
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+    <link rel="top" title="BigJob 1.0 User Manual" href="../index.html"/> 
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../index.html" class="icon icon-home"> BigJob</a>
+        <form class="wy-form" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search docs" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../intro/index.html">1. Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../intro/index.html#introduction-to-pilot-jobs">1.1. Introduction to Pilot-Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../intro/index.html#why-do-you-need-pilot-jobs">1.2. Why do you need Pilot-Jobs?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../intro/index.html#what-makes-bigjob-different">1.3. What makes BigJob different?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../intro/index.html#what-can-i-use-bigjob-for">1.4. What can I use BigJob for?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../intro/index.html#bigjob-overview">1.5. BigJob Overview</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../install/index.html">2. Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../install/install.html">2.1. Installing BigJob</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../install/redis.html">2.2. Setting Up a Redis Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../install/xsede.html">2.3. XSEDE Specific Tips</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../install/trouble.html">2.4. Troubleshooting</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../usage/index.html">3. Working with BigJob</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../usage/appwriting.html">3.1. Writing BigJob Scripts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage/pilotdata.html">3.2. Introduction to Pilot-Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage/cmdtools.html">3.3. Command-Line Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage/logging.html">3.4. Logging and Debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage/output.html">3.5. Interpreting Output</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../patterns/index.html">4. Common Usage Patterns</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../patterns/simple.html">4.1. Simple Ensemble</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../patterns/chained.html">4.2. Chained Ensembles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../patterns/coupled.html">4.3. Coupled Ensembles</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../library/index.html">5. Library Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../library/index.html#compute-and-data-services">5.1. Compute and Data Services</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../library/index.html#compute-and-data-units">5.2. Compute and Data Units</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../library/index.html#state-enumeration">5.3. State Enumeration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">6. Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="part1.html">1. Introduction and Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="part2.html">2. Simple Ensembles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="part3.html">3. Chained Ensembles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="part4.html">4. Coupled Ensembles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="table.html">5. Machines and Valid Parameters</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top">
+        <i data-toggle="wy-nav-top" class="icon icon-reorder"></i>
+        <a href="/">BigJob</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <ul class="wy-breadcrumbs">
+  <li><a href="../index.html">Docs</a> &raquo;</li>
+  <li><a href="">4. XSEDE Simple Ensemble Example</a></li>
+  
+</ul>
+<hr/>
+
+          
   <div class="section" id="xsede-simple-ensemble-example">
-<h1>4. XSEDE Simple Ensemble Example<a class="headerlink" href="#xsede-simple-ensemble-example" title="Permalink to this headline">¶</a></h1>
+<h1>XSEDE Simple Ensemble Example<a class="headerlink" href="#xsede-simple-ensemble-example" title="Permalink to this headline">¶</a></h1>
 <p><strong>Note:</strong> If you do not have an <a class="reference external" href="http://www.xsede.org/">XSEDE account</a>, please skip this tutorial.</p>
 <p>One of the features of BigJob is the ability for application-level programmability by users. Many of the parameters in each script are customizable and configurable. There are several parameters that must be added to the PilotComputeDescription in order to run on XSEDE.</p>
 <div class="section" id="service-url">
-<h2>4.1. <tt class="code docutils literal"><span class="pre">service_url</span></tt><a class="headerlink" href="#service-url" title="Permalink to this headline">¶</a></h2>
+<h2><tt class="code docutils literal"><span class="pre">service_url</span></tt><a class="headerlink" href="#service-url" title="Permalink to this headline">¶</a></h2>
 <p>The service URL communicates what type of queueing system or middleware you want to use and where it is. The following table shows the machine type and the adaptor to use for that machine.</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -117,19 +198,19 @@
 </table>
 </div>
 <div class="section" id="project">
-<h2>4.2. <tt class="code docutils literal"><span class="pre">project</span></tt><a class="headerlink" href="#project" title="Permalink to this headline">¶</a></h2>
+<h2><tt class="code docutils literal"><span class="pre">project</span></tt><a class="headerlink" href="#project" title="Permalink to this headline">¶</a></h2>
 <p>When running on XSEDE, the project parameter must be changed to your project&#8217;s allocation number.</p>
 </div>
 <div class="section" id="number-of-processes">
-<h2>4.3. <tt class="code docutils literal"><span class="pre">number_of_processes</span></tt><a class="headerlink" href="#number-of-processes" title="Permalink to this headline">¶</a></h2>
+<h2><tt class="code docutils literal"><span class="pre">number_of_processes</span></tt><a class="headerlink" href="#number-of-processes" title="Permalink to this headline">¶</a></h2>
 <p>This refers to the number of cores used. If your machine does not have 12 cores per node, you will have to change this parameter.</p>
 </div>
 <div class="section" id="queue">
-<h2>4.4. <tt class="code docutils literal"><span class="pre">queue</span></tt><a class="headerlink" href="#queue" title="Permalink to this headline">¶</a></h2>
+<h2><tt class="code docutils literal"><span class="pre">queue</span></tt><a class="headerlink" href="#queue" title="Permalink to this headline">¶</a></h2>
 <p>This refers to the name of the queue on the submission machine. For example, two queue names on Lonestar are &#8216;normal&#8217; and &#8216;development&#8217;. Please refer to the machine-specific documentation to find out the names of the queues on the machines.</p>
 </div>
 <div class="section" id="example-pilotcomputedescription">
-<h2>4.5. Example PilotComputeDescription<a class="headerlink" href="#example-pilotcomputedescription" title="Permalink to this headline">¶</a></h2>
+<h2>Example PilotComputeDescription<a class="headerlink" href="#example-pilotcomputedescription" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">pilot_compute_description</span> <span class="o">=</span> <span class="p">{</span>
                  <span class="s">&quot;service_url&quot;</span><span class="p">:</span> <span class="s">&#39;slurm+ssh://stampede.tacc.utexas.edu&#39;</span><span class="p">,</span>
                  <span class="s">&quot;number_of_processes&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
@@ -142,7 +223,7 @@
 </div>
 </div>
 <div class="section" id="simple-ensembles-stampede-example">
-<h2>4.6. Simple Ensembles Stampede Example<a class="headerlink" href="#simple-ensembles-stampede-example" title="Permalink to this headline">¶</a></h2>
+<h2>Simple Ensembles Stampede Example<a class="headerlink" href="#simple-ensembles-stampede-example" title="Permalink to this headline">¶</a></h2>
 <p>Now that we have modified the Pilot Compute Description, we can put this together with our simple ensemble pattern to build a script that executes on Stampede. Note that the PCD is the only thing that changes in this example.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">time</span>
@@ -198,78 +279,24 @@
 </div>
 
 
-          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <p>
+      &copy; Copyright 2013, The SAGA Project.
+  </p>
+
+  <a href="https://www.github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="http://readthedocs.org">Read the Docs</a>
+</footer>
         </div>
       </div>
-      <div class="sphinxsidebar">
-        <div class="sphinxsidebarwrapper">
-  <h3><a href="../index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">4. XSEDE Simple Ensemble Example</a><ul>
-<li><a class="reference internal" href="#service-url">4.1. <tt class="code docutils literal"><span class="pre">service_url</span></tt></a></li>
-<li><a class="reference internal" href="#project">4.2. <tt class="code docutils literal"><span class="pre">project</span></tt></a></li>
-<li><a class="reference internal" href="#number-of-processes">4.3. <tt class="code docutils literal"><span class="pre">number_of_processes</span></tt></a></li>
-<li><a class="reference internal" href="#queue">4.4. <tt class="code docutils literal"><span class="pre">queue</span></tt></a></li>
-<li><a class="reference internal" href="#example-pilotcomputedescription">4.5. Example PilotComputeDescription</a></li>
-<li><a class="reference internal" href="#simple-ensembles-stampede-example">4.6. Simple Ensembles Stampede Example</a></li>
-</ul>
-</li>
-</ul>
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="mbrot.html"
-                        title="previous chapter">3. Mandelbrot using BigJob</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="pdata.html"
-                        title="next chapter">5. Remote Pilot Data Example</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="../_sources/tutorial/exsede.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-        </div>
-      </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="pdata.html" title="5. Remote Pilot Data Example"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="mbrot.html" title="3. Mandelbrot using BigJob"
-             >previous</a> |</li>
-        <li><a href="../index.html">BigJob 1.0 User Manual</a> &raquo;</li>
-          <li><a href="index.html" >6. Tutorial</a> &raquo;</li> 
-      </ul>
-    </div>
-<div class="footer">
-    &copy; Copyright 2013, The SAGA Project.
-  Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
-  <br />Theme based on <a href="http://readthedocs.org/">Read The Docs</a>
+    </section>
 
-</div>
+  </div>
+  
 
-
-
-
-
-  </body>
+</body>
 </html>
