@@ -157,9 +157,9 @@ class PilotComputeService(PilotComputeService):
         logger.debug("start bigjob at: " + gram_url)
         bj = bigjob(self.coordination_url)
 
-	if("processes_per_node" not in bj_dict or bj_dict["processes_per_node"] == 'None'):
-	    ppn="1"
-	else:
+        if("processes_per_node" not in bj_dict or bj_dict["processes_per_node"] == 'None'):
+            ppn="1"
+        else:
             ppn=bj_dict["processes_per_node"]
 
         walltime = 3600
