@@ -8,7 +8,8 @@ import socket
 import radical.utils.logger as rul
 
 version=open    (os.path.dirname (os.path.abspath (__file__)) + "/VERSION", 'r').read().strip()
-rul.log_version ('bigjob', 'bigjob', version + " on " + socket.gethostname())
+rul.getLogger   ('bigjob').info ('bigjob          version: %s on %s' % (version, socket.gethostname()))
+# rul.log_version ('bigjob', 'bigjob', version + " on " + socket.gethostname())
 
 
 
