@@ -62,7 +62,8 @@ def get_version():
             sys.exit (-1)
 
 
-        # make sure the version file exists for the runtime version inspection
+        # make sure the version files exist for the runtime version inspection
+        open (       'VERSION', 'w').write (long_version+"\n")
         open ('bigjob/VERSION', 'w').write (long_version+"\n")
 
 
