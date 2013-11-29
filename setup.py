@@ -138,7 +138,6 @@ setup_args = {
     'zip_safe'             : False,
     'scripts'              : [],
     'package_data'         :  {'' : ['VERSION', '*.conf', '*.md']},
-    'include_package_data' : True,
     'data_files'           : [('',  ['bigjob.conf',       'bigjob.conf']), 
                               ('',  ['bigjob_agent.conf', 'bigjob_agent.conf']), 
                               ('',  ['README.md',         'README.md']), 
