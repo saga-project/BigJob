@@ -13,7 +13,12 @@ recursive-include scripts *
 recursive-include tests * 
 recursive-include util * 
 
-global-exclude *.dll
-global-exclude *.pyc
-global-exclude *.pyo
-global-exclude *.so
+include bigjob/VERSION
+
+include bigjob_agent.conf
+include bigjob.conf
+
+include LICENSE.md
+include README-CONDOR.md
+include README.md
+
