@@ -1,8 +1,16 @@
+
 import os
 import sys
 import logging
 import traceback
-version = "latest"
+import socket
+
+import radical.utils.logger as rul
+
+version=open    (os.path.dirname (os.path.abspath (__file__)) + "/VERSION", 'r').read().strip()
+rul.log_version ('bigjob', 'bigjob', version + " on " + socket.gethostname())
+
+
 
 #from pkg_resources import Requirement, resource_filename
 
@@ -72,18 +80,6 @@ except:
     exc_type, exc_value, exc_traceback = sys.exc_info()
     traceback.print_exc(limit=1, file=sys.stdout)
     
-import socket
-try:
-    fn = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", 'VERSION')
-    if not os.path.exists(fn):
-        fn = os.path.join(sys.prefix, 'VERSION')
-    #print "Open Version file: " + str(fn)
-    version = open(fn).read().strip()
-    logger.info("Loading BigJob version: " + version + " on " + socket.gethostname())
-except IOError:
-    pass
-
-
 
 # define external-facing API
 from bigjob.bigjob_manager import bigjob 

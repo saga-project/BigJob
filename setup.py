@@ -1,91 +1,161 @@
-#!/usr/bin/env python
+
+__author__    = "Andre Luckow, Andre Merzky, Ole Weidner"
+__copyright__ = "Copyright 2013, RADICAL Research, Rutgers University"
+__license__   = "MIT"
+
+
+""" Setup script. Used by easy_install and pip. """
 
 import os
 import sys
-from setuptools import setup
 import subprocess
 
-try:
-    import saga
-except:
-    print "Installing BigJob and SAGA/Python."
-
-if sys.version_info < (2, 6):
-    sys.stderr.write("BigJob requires Python 2.6 and above. Installation unsuccessful!")
-    sys.exit(1)
-
-VERSION_FILE="VERSION"    
-    
-
-def update_version():
-    if not os.path.isdir(".git"):
-        print "This does not appear to be a Git repository."
-        return
-    try:
-        p = subprocess.Popen(["git", "describe",
-                              "--tags", "--always"],
-                             stdout=subprocess.PIPE)
-    except EnvironmentError:
-        print "Unable to run git, not modifying VERSION"
-        return
-    stdout = p.communicate()[0]
-    if p.returncode != 0:
-        print "Unable to run git, not modifying VERSION"
-        return
-    
-    ver = stdout.strip()
-    fn = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'VERSION')
-    f = open(fn, "w")
-    f.write(ver)
-    f.close()
-    print "BigJob VERSION: '%s'" % ver
+from setuptools              import setup, Command
+from distutils.command.sdist import sdist
 
 
+#-----------------------------------------------------------------------------
+#
+# versioning mechanism:
+#
+#   - short_version:  1.2.3 - is used for installation
+#   - long_version:  v1.2.3-9-g0684b06  - is used as runtime (ru.version)
+#   - both are derived from the last git tag
+#   - the file bigjob/VERSION is created with the long_version, und used
+#     by ru.__init__.py to provide the runtime version information. 
+#
 def get_version():
+
+    short_version = None  # 0.4.0
+    long_version  = None  # 0.4.0-9-g0684b06
+
     try:
-        fn = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'VERSION')
-        f = open(fn)
-        version = f.read().strip()
-        f.close()
-    except EnvironmentError:
-        return "-1"
-    return version    
+        import subprocess as sp
+        import re
+
+        VERSION_MATCH = re.compile (r'(([\d\.]+)\D.*)')
+
+        # attempt to get version information from git
+        p   = sp.Popen (['git', 'describe', '--tags', '--always'],
+                        stdout=sp.PIPE, stderr=sp.STDOUT)
+        out = p.communicate()[0]
+
+
+        if  p.returncode != 0 or not out :
+
+            # the git check failed -- its likely that we are called from
+            # a tarball, so use ./VERSION instead
+            out=open (os.path.dirname (os.path.abspath (__file__)) + "/VERSION", 'r').read().strip()
+
+
+        # from the full string, extract short and long versions
+        v = VERSION_MATCH.search (out)
+        if v:
+            long_version  = v.groups ()[0]
+            short_version = v.groups ()[1]
+
+
+        # sanity check if we got *something*
+        if  not short_version or not long_version :
+            sys.stderr.write ("Cannot determine version from git or ./VERSION\n")
+            import sys
+            sys.exit (-1)
+
+
+        # make sure the version file exists for the runtime version inspection
+        open ('bigjob/VERSION', 'w').write (long_version+"\n")
+
+
+    except Exception as e :
+        print 'Could not extract/set version: %s' % e
+        import sys
+        sys.exit (-1)
+
+    return short_version, long_version
+
+short_version, long_version = get_version ()
+    
+#-----------------------------------------------------------------------------
+# check python version. we need > 2.6, <3.x
+if  sys.hexversion < 0x02060000 or sys.hexversion >= 0x03000000:
+    raise RuntimeError("SAGA requires Python 2.x (2.6 or higher)")
+
+
+#-----------------------------------------------------------------------------
+class our_test(Command):
+    def run(self):
+        testdir = "%s/tests/" % os.path.dirname(os.path.realpath(__file__))
+        retval  = subprocess.call([sys.executable, 
+                                   '%s/run_tests.py'          % testdir,
+                                   '%s/configs/basetests.cfg' % testdir])
+        raise SystemExit(retval)
 
     
-update_version()
-    
-setup(name='BigJob',
-      version=get_version(),
-      description='P* Pilot-Job Implementation based on SAGA-Python',
-      author='Andre Luckow, et al.',
-      author_email='aluckow@cct.lsu.edu',
-      url='https://github.com/saga-project/BigJob',
-      classifiers = ['Development Status :: 5 - Production/Stable',                  
-                    'Programming Language :: Python',
-                    'Environment :: Console',                    
-                    'Topic :: Utilities',
-                    ],
-      platforms = ('Unix', 'Linux', 'Mac OS'),
-      packages=['bigjob', 'bigjob_dynamic', 'coordination', 'pilot', 'bigjob.job_plugin', 'pilot.api','pilot.api.compute', 'pilot.api.data', 'pilot.coordination', 
-                'pilot.filemanagement', 'pilot.impl', 'pilot.scheduler', 'examples', 'api', 'bootstrap', 'cli'],
-      include_package_data=True,
-      # data files for easy_install
-      data_files = [('', ['bigjob.conf', 'bigjob.conf']), 
-                    ('', ['bigjob_agent.conf', 'bigjob_agent.conf']), 
-                    ('', ['README.md', 'README.md']), 
-                    ('', ['VERSION', 'VERSION'])],
-      
-      # data files for pip
-      package_data = {'': ['*.conf']},
+#-----------------------------------------------------------------------------
+setup_args = {
+    'name'             : "BigJob",
+    'version'          : short_version,
+    'description'      : "P* Pilot-Job Implementation based on SAGA-Python",
+    'long_description' : "P* Pilot-Job Implementation based on SAGA-Python",
+    'author'           : "Andre Luckow, et al.",
+    'author_email'     : "aluckow@cct.lsu.edu",
+    'maintainer'       : "Andre Luckow",
+    'maintainer_email' : "aluckow@cct.lsu.edu",
+    'url'              : "https://github.com/saga-project/BigJob",
+    'license'          : "MIT",
+    'classifiers'      : [
+        'Development Status   :: 5 - Production/Stable',                  
+        'Intended Audience    :: Developers',
+        'Environment          :: Console',                    
+        'Programming Language :: Python',
+        'License              :: OSI Approved :: MIT License',
+        'Topic                :: Utilities',
+        'Topic                :: System :: Distributed Computing',
+        'Topic                :: Scientific/Engineering :: Interface Engine/Protocol Translator',
+        'Operating System     :: MacOS :: MacOS X',
+        'Operating System     :: POSIX',
+        'Operating System     :: Unix'
+        ],
+    'packages' : [
+        "bigjob", 
+        "bigjob_dynamic", 
+        "coordination", 
+        "pilot", 
+        "bigjob.job_plugin", 
+        "pilot.api", 
+        "pilot.api.compute", 
+        "pilot.api.data", 
+        "pilot.coordination", 
+        "pilot.filemanagement", 
+        "pilot.impl", 
+        "pilot.scheduler", 
+        "examples", 
+        "api", 
+        "bootstrap", 
+        "cli", 
+    ],
+    'zip_safe'             : False,
+    'scripts'              : [],
+    'package_data'         :  {'' : ['VERSION', '*.conf', '*.md']},
+    'include_package_data' : True,
+    'data_files'           : [('',  ['bigjob.conf',       'bigjob.conf']), 
+                              ('',  ['bigjob_agent.conf', 'bigjob_agent.conf']), 
+                              ('',  ['README.md',         'README.md']), 
+                              ('',  ['VERSION',           'VERSION'])],
+    'cmdclass'             : {
+        'test'         : our_test,
+      # 'sdist'        : our_sdist,
+    },
+    'install_requires' : ['setuptools', 'uuid', 'threadpool', 'virtualenv', 
+                          'redis', 'radical.utils', 'saga-python', 'pexpect', 
+                          'google-api-python-client', 'python-hostlist',
+                          'globusonline-transfer-api-client', 'boto>=2.2,<2.3', 
+                          'simplejson<2.1', 'tldextract'],
+}
 
-      install_requires=['uuid', 'threadpool', 'virtualenv', 'redis', 
-                        'radical.utils', 'saga-python', 'google-api-python-client', 'python-hostlist',
-                        'globusonline-transfer-api-client', 'boto>=2.2,<2.3', 'simplejson<2.1', 'pexpect', 'tldextract'],
-      entry_points = {
-        'console_scripts': [
-            'test-bigjob = examples.example_local_single:main',
-            'test-bigjob-dynamic = examples.example_manyjob_local:main',
-            'pilot-cli = cli.pilot_cli:main'            
-        ]
-            }
-)
+#-----------------------------------------------------------------------------
+
+setup(**setup_args)
+
+#-----------------------------------------------------------------------------
+
