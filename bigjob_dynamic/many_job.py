@@ -81,7 +81,7 @@ class many_job_service(object):
 
         if("processes_per_node" not in bj_dict or bj_dict["processes_per_node"] == 'None'):
             ppn="1"
-	    bj_dict["processes_per_node"] = ppn
+            bj_dict["processes_per_node"] = ppn
         else:
             ppn=bj_dict["processes_per_node"]
 
