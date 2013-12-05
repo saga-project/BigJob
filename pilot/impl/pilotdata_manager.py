@@ -271,7 +271,7 @@ class PilotData(PilotData):
                                                    self.security_context, 
                                                    self.pilot_data_description)
             else:
-                raise PilotError("No File Plugin found.")
+                raise PilotError("No File Plugin found for: %s" % self.service_url)
             
             self.__filemanager.initialize_pilotdata()
             self.__filemanager.get_pilotdata_size()
