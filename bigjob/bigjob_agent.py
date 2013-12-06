@@ -265,9 +265,9 @@ class bigjob_agent:
         try:
             num_cpus=1
             if self.pilot_description != None:
-                num_cpus = self.pilot_description["number_of_processes"]
+                num_cpus = int(self.pilot_description["number_of_processes"])
             else:
-                num_cpus = self.get_num_cpus()
+                num_cpus = int(self.get_num_cpus())
             for i in range(0, num_cpus): 
                 self.freenodes.append("localhost\n")
         except IOError:
