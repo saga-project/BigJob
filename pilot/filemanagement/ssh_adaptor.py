@@ -183,7 +183,7 @@ class SSHFileAdaptor(object):
         target_path = result.path
         target_user = result.username
         logger.debug("Create directory: %s"%target_path)
-        command = "mkdir %s"%target_path
+        command = "mkdir -p %s"%target_path
         rc = self.__run_ssh_command(self.userkey, target_user, target_host, command)
         if rc==0:
             return True
