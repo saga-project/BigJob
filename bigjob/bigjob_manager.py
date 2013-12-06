@@ -1178,7 +1178,7 @@ class description(SAGAJobDescription):
     # --------------------------------------------------------------------------
     #
     def _get_input_data (self) :
-        print "get caled. returning: %s" % self.input_data
+        logger.debug("_get_input_data called. returning: %s" % self.input_data)
         return self.input_data
 
     # --------------------------------------------------------------------------
