@@ -63,7 +63,7 @@ def main():
 
     Please ensure that the respective SAGA adaptor is installed and working
     """
-    lrms_url = "ssh://boskop"
+    lrms_url = "ssh://localhost"
     #lrms_url = "sge://localhost"
     #lrms_url = "fork://localhost"
 
