@@ -33,11 +33,12 @@ def get_version():
         import subprocess as sp
         import re
 
+        srcroot       = os.path.dirname (os.path.abspath (__file__))
         VERSION_MATCH = re.compile (r'(([\d\.]+)\D.*)')
 
         # attempt to get version information from git
-        p   = sp.Popen (['git', 'describe', '--tags', '--always'],
-                        stdout=sp.PIPE, stderr=sp.STDOUT)
+        p   = sp.Popen ('cd %s && git describe --tags --always' % srcroot,
+                        stdout=sp.PIPE, stderr=sp.STDOUT, shell=True)
         out = p.communicate()[0]
 
 
@@ -45,7 +46,7 @@ def get_version():
 
             # the git check failed -- its likely that we are called from
             # a tarball, so use ./VERSION instead
-            out=open (os.path.dirname (os.path.abspath (__file__)) + "/VERSION", 'r').read().strip()
+            out=open ("%s/VERSION" % srcroot, 'r').read().strip()
 
 
         # from the full string, extract short and long versions
@@ -63,8 +64,8 @@ def get_version():
 
 
         # make sure the version files exist for the runtime version inspection
-        open (       'VERSION', 'w').write (long_version+"\n")
-        open ('bigjob/VERSION', 'w').write (long_version+"\n")
+        open (       '%s/VERSION' % srcroot, 'w').write (long_version+"\n")
+        open ('%s/bigjob/VERSION' % srcroot, 'w').write (long_version+"\n")
 
 
     except Exception as e :
@@ -73,6 +74,7 @@ def get_version():
         sys.exit (-1)
 
     return short_version, long_version
+
 
 short_version, long_version = get_version ()
     
@@ -84,11 +86,13 @@ if  sys.hexversion < 0x02060000 or sys.hexversion >= 0x03000000:
 
 #-----------------------------------------------------------------------------
 class our_test(Command):
-    def run(self):
+    user_options = []
+    def initialize_options (self) : pass
+    def finalize_options   (self) : pass
+    def run (self) :
         testdir = "%s/tests/" % os.path.dirname(os.path.realpath(__file__))
         retval  = subprocess.call([sys.executable, 
-                                   '%s/run_tests.py'          % testdir,
-                                   '%s/configs/basetests.cfg' % testdir])
+                                   '%s/test_pty_exhaustion.py' % testdir])
         raise SystemExit(retval)
 
     
@@ -108,14 +112,18 @@ setup_args = {
         'Development Status   :: 5 - Production/Stable',                  
         'Intended Audience    :: Developers',
         'Environment          :: Console',                    
+        'License              :: OSI Approved :: MIT',
         'Programming Language :: Python',
-        'License              :: OSI Approved :: MIT License',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.5',
+        'Programming Language :: Python :: 2.6',
+        'Programming Language :: Python :: 2.7',
         'Topic                :: Utilities',
         'Topic                :: System :: Distributed Computing',
         'Topic                :: Scientific/Engineering :: Interface Engine/Protocol Translator',
         'Operating System     :: MacOS :: MacOS X',
         'Operating System     :: POSIX',
-        'Operating System     :: Unix'
+        'Operating System     :: Unix',
         ],
     'packages' : [
         "bigjob", 
@@ -144,9 +152,8 @@ setup_args = {
                               ('',  ['VERSION',           'VERSION'])],
     'cmdclass'             : {
         'test'         : our_test,
-      # 'sdist'        : our_sdist,
     },
-    'install_requires' : ['setuptools', 'uuid', 'threadpool', 'virtualenv', 
+    'install_requires' : ['uuid', 'threadpool', 'virtualenv', 
                           'redis', 'radical.utils', 'saga-python', 'pexpect', 
                           'google-api-python-client', 'python-hostlist',
                           'globusonline-transfer-api-client', 'boto>=2.2,<2.3', 
@@ -155,7 +162,7 @@ setup_args = {
 
 #-----------------------------------------------------------------------------
 
-setup(**setup_args)
+setup (**setup_args)
 
 #-----------------------------------------------------------------------------
 
