@@ -14,6 +14,7 @@ import socket
 import tldextract
 tldextract.tldextract.LOG.setLevel(logging.WARNING)
 import difflib
+import errno
 
 
 from pilot.api.api import PilotError
@@ -196,7 +197,14 @@ class PilotData(PilotData):
     def export_du(self, du, target_url):
         """ Export Data Unit to a local directory """
         if target_url.startswith("/") and os.path.exists(target_url)==False:
-            os.mkdir(target_url)
+            try:
+                os.makedirs(target_url)
+            except OSError as exc:
+                if exc.errno == errno.EEXIST and os.path.isdir(target_url):
+                    pass
+                else:
+                    raise
+
         logger.debug("Export Data-Unit to %s"%target_url)
         self.__filemanager.get_du(du, target_url)
             
