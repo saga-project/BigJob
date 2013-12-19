@@ -1,0 +1,18 @@
+#!/bin/bash
+# Launch Mesos with BigJob
+
+echo "Launch Mesos BigJob Executor"
+
+#BIGJOB_HOME=$HOME/.bigjob/python
+#. $BIGJOB_HOME/bin/activate
+
+#$HOME/.bigjob/python/bin/python -m bigjob.job_plugin.mesos.mesos_executor $@
+
+env
+
+cmd="python -m bigjob.job_plugin.mesos.mesos_executor $@"
+
+echo $cmd
+
+$cmd
+
