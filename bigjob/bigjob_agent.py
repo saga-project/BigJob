@@ -148,7 +148,7 @@ class bigjob_agent:
             try:
                 from coordination.bigjob_coordination_redis import bigjob_coordination
                 logger.debug("Utilizing Redis Backend: " + self.coordination_url + ".")
-	    except:
+            except:
                 logger.error("Error loading pyredis. Check configuration in bigjob_coordination_redis.py.")		
         elif (self.coordination_url.startswith("tcp://")):
             try:
@@ -990,7 +990,7 @@ if __name__ == "__main__" :
     args = sys.argv
     num_args = len(args)
     if (num_args!=3):
-        print "Usage: \n " + args[0] + " <coordination host url> <coordination namespace url>"
+        print "Usage: \n " + args[0] + " <coordination host url> <coordination namespace url> [coordination namespace url2]"
         sys.exit(1)
     
     bigjob_agent = bigjob_agent(args)    
