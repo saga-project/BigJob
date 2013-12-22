@@ -1813,10 +1813,15 @@ def create_bootstrap_script(extra_text, python_version=''):
 import os, subprocess
 def after_install(options, home_dir):
     etc = join(home_dir, 'etc')
+    print join(home_dir, 'bin', 'easy_install')
     if not os.path.exists(etc):
         os.makedirs(etc)         
-    subprocess.call([join(home_dir, 'bin', 'easy_install'),
-                 'bigjob2'])    
+    print "load distribute"
+    subprocess.call(["curl", "-O", "http://python-distribute.org/distribute_setup.py"])    
+    print "install distribute"
+    subprocess.call([join(home_dir, 'bin', 'python'), 'distribute_setup.py'])
+    print "install bigjob"
+    subprocess.call([join(home_dir, 'bin', 'easy_install'), 'bigjob'])   
 
 
 def convert(s):
