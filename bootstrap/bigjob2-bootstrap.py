@@ -1821,7 +1821,7 @@ def after_install(options, home_dir):
     print "install distribute"
     subprocess.call([join(home_dir, 'bin', 'python'), 'distribute_setup.py'])
     print "install bigjob"
-    subprocess.call([join(home_dir, 'bin', 'easy_install'), 'bigjob'])   
+    subprocess.call([join(home_dir, 'bin', 'easy_install'), 'bigjob2'])   
 
 
 def convert(s):

@@ -8,6 +8,7 @@ import uuid
 import time
 import saga
 import subprocess
+import threading
 
 """ HADOOP/JAVA Configuration"""
 JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk1.7.0_40.jdk/Contents/Home"
@@ -62,6 +63,20 @@ class Job(object):
         self.yarn_subprocess = None
         
     def run(self):
+        self.thread = threading.Thread(target=self.__run_yarn_application, args=())
+        self.thread.daemon = True
+        self.thread.start()
+    
+    def get_state(self):
+        pass
+
+    
+    def cancel(self):
+        self.yarn_subprocess.kill()
+        
+        
+    
+    def __run_yarn_application(self):
         java_cmd = os.path.join(JAVA_HOME, "bin", "java")
         bigjob_bootstrap = os.path.join(os.path.dirname(os.path.abspath( __file__ )), 
                                         "..", "..", "..", BIGJOB_BOOTSTRAP)
@@ -76,19 +91,7 @@ class Job(object):
         
         logger.debug(str(cmd))
         self.yarn_subprocess = subprocess.Popen(cmd)
-        self.yarn_subprocess.wait()                    
-    
-    def get_state(self):
-        pass
-
-    
-    def cancel(self):
-        self.yarn_subprocess.kill()
-        
-        
-    
-    def __run_yarn_application(self):
-        pass
+        #self.yarn_subprocess.wait()                    
         
 
     
