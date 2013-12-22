@@ -11,8 +11,8 @@ then
     echo "Using existing BigJob version"
 else
     mkdir -p $BIGJOB_DIRECTORY
-    BOOTSTRAP_DOWNLOAD_CMD="curl -OL --insecure -s https://raw.github.com/saga-project/BigJob/master/bootstrap/bigjob-bootstrap.py"
-    echo "## Downloading BigJob"
+    BOOTSTRAP_DOWNLOAD_CMD="curl -OL --insecure -s https://raw.github.com/saga-project/BigJob/develop/bootstrap/bigjob2-bootstrap.py"
+    echo "## Downloading BigJob2"
     echo $BOOTSTRAP_DOWNLOAD_CMD
     $BOOTSTRAP_DOWNLOAD_CMD
     OUT=$?
@@ -20,8 +20,8 @@ else
         echo "Couldn't download BigJob. Exiting"
         exit 1
     fi
-    echo "## Install BigJob"    
-    INSTALL_CMD="python bigjob-bootstrap.py $BIGJOB_DIRECTORY"
+    echo "## Install BigJob2"    
+    INSTALL_CMD="python bigjob2-bootstrap.py $BIGJOB_DIRECTORY"
     echo "Command: "$INSTALL_CMD
     $INSTALL_CMD
     OUT=$?
