@@ -989,7 +989,7 @@ class bigjob_agent:
 if __name__ == "__main__" :
     args = sys.argv
     num_args = len(args)
-    if (num_args!=3):
+    if (num_args<3):
         print "Usage: \n " + args[0] + " <coordination host url> <coordination namespace url>"
         sys.exit(1)
     
