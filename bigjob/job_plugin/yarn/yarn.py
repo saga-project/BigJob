@@ -19,7 +19,7 @@ https://github.com/drelu/BigJob-YARN
 """
 BIGJOB_YARN_CLIENT="/Users/luckow/workspace-saga/bigjob/BigJob-YARN/target/BigJob-YARN-0.1-SNAPSHOT-jar-with-dependencies.jar"
 
-BIGJOB_BOOTSTRAP="bootstrap/bigjob-bootstrap.sh"
+BIGJOB_BOOTSTRAP="bootstrap/bigjob2-bootstrap.sh"
 
 class YarnStates:
     PROVISIONING="PROVISIONING"
@@ -76,7 +76,7 @@ class Job(object):
         
         logger.debug(str(cmd))
         self.yarn_subprocess = subprocess.Popen(cmd)
-                            
+        self.yarn_subprocess.wait()                    
     
     def get_state(self):
         pass
@@ -88,8 +88,8 @@ class Job(object):
         
     
     def __run_yarn_application(self):
+        pass
         
-        output.wait()
 
     
     
