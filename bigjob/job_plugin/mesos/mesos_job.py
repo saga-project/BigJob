@@ -59,7 +59,7 @@ class Service(object):
     
 
 class Job(object):
-
+    """ Job class for managing a Mesos SchedulerDriver """
 
     def __init__(self, job_description=None, resource_manager_url=None, pilot_compute_description=None):
         self.job_description = job_description

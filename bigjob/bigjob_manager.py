@@ -49,6 +49,12 @@ try:
 except:
     pass 
 
+try:
+    from job_plugin.yarn.yarn import Service as YarnService
+except:
+    pass 
+
+
 
 # import other BigJob packages
 # import API
@@ -222,6 +228,9 @@ class bigjob(api.base.bigjob):
             self.js = EC2Service(lrms_saga_url, pilot_compute_description)    
         elif lrms_saga_url.scheme=="mesos":
             self.js = MesosService(lrms_saga_url, pilot_compute_description)          
+        elif lrms_saga_url.scheme=="yarn":
+            self.js = YarnService(lrms_saga_url, pilot_compute_description)          
+        
         
         #elif lrms_saga_url.scheme=="slurm+ssh":
         #    self.js = SlurmService(lrms_saga_url, pilot_compute_description)          
