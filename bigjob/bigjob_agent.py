@@ -658,7 +658,8 @@ class bigjob_agent:
         """create machinefile based on jobid"""
         job_id = job_dict["job-id"]                
         homedir = os.path.expanduser('~')
-        return homedir  + "/advert-launcher-machines-"+ job_id
+        #return homedir  + "/advert-launcher-machines-"+ job_id
+        return "bigjob-machinefile-cu-"+ job_id
         
     def dequeue_new_jobs(self):	    
         """Subscribe to new jobs from Redis. """ 

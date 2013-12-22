@@ -59,6 +59,7 @@ class Job(object):
         self.saga_url = resource_manager_url
         self.pilot_compute_description = pilot_compute_description
         self.id="bigjob-" + str(uuid.uuid1())
+        self.yarn_subprocess = None
         
     def run(self):
         java_cmd = os.path.join(JAVA_HOME, "bin", "java")
@@ -67,24 +68,29 @@ class Job(object):
         cmd = [java_cmd, '-jar', BIGJOB_YARN_CLIENT,  
                          '-jar', BIGJOB_YARN_CLIENT, 
                          '-debug', '-shell_script', bigjob_bootstrap, 
+                         '-shell_args',
                           self.pilot_compute_description["coordination_host"], 
                           self.pilot_compute_description["pilot_url"], 
                           self.pilot_compute_description["external_queue"]
                          ]
         
-        print str(cmd)
-        output = subprocess.Popen(cmd)
-        output.wait()
-            
+        logger.debug(str(cmd))
+        self.yarn_subprocess = subprocess.Popen(cmd)
+                            
     
     def get_state(self):
         pass
 
     
     def cancel(self):
-        pass
+        self.yarn_subprocess.kill()
+        
         
     
+    def __run_yarn_application(self):
+        
+        output.wait()
+
     
     
  
