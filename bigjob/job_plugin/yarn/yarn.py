@@ -9,11 +9,14 @@ import time
 import saga
 import subprocess
 import threading
+import tempfile
+
+from bigjob.state import Running, New, Failed, Done, Unknown
 
 """ HADOOP/JAVA Configuration"""
 JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk1.7.0_40.jdk/Contents/Home"
 YARN_HOME="/usr/local/hadoop-2.2.0/"
-
+YARN_EXECUTABLE=os.path.join(YARN_HOME, "bin/yarn")
 
 """ BigJob YARN Client
 https://github.com/drelu/BigJob-YARN
@@ -21,6 +24,8 @@ https://github.com/drelu/BigJob-YARN
 BIGJOB_YARN_CLIENT="/Users/luckow/workspace-saga/bigjob/BigJob-YARN/target/BigJob-YARN-0.1-SNAPSHOT-jar-with-dependencies.jar"
 
 BIGJOB_BOOTSTRAP="bootstrap/bigjob2-bootstrap.sh"
+
+
 
 class YarnStates:
     PROVISIONING="PROVISIONING"
@@ -59,21 +64,53 @@ class Job(object):
         self.job_description = job_description
         self.saga_url = resource_manager_url
         self.pilot_compute_description = pilot_compute_description
-        self.id="bigjob-" + str(uuid.uuid1())
+        self.id = None
         self.yarn_subprocess = None
+        self.state = Unknown
+        
         
     def run(self):
-        self.thread = threading.Thread(target=self.__run_yarn_application, args=())
-        self.thread.daemon = True
-        self.thread.start()
+#         self.thread = threading.Thread(target=self.__run_yarn_application, args=())
+#         self.thread.daemon = True
+#         self.thread.start()
+        return self.__run_yarn_application()
+    
     
     def get_state(self):
-        pass
+        logger.debug("Get State called")
+        cmd = [YARN_EXECUTABLE, 'application', '-status', self.id]
+        self.yarn_subprocess = subprocess.Popen(cmd,
+                                                bufsize=0,
+                                                stderr=subprocess.PIPE,
+                                                stdout=subprocess.PIPE
+                                                )
+        self.yarn_subprocess.wait()
+        while True:
+            line = self.yarn_subprocess.stdout.readline()
+            print line
+            if not line:
+                break       
+            elif line.find("State") >= 0:
+                new_state = line[len("State :"):]
+                print "found state: " + new_state
+                self.state = new_state
+                break
+        logger.debug("Return state: " + self.state)                       
+        return self.state
+        
+        
+        
+        
+        
+        rc = self.yarn_subprocess.wait()
+        logger.debug("GetStatus YARN job command: " + str(cmd) + " Return code: " + str(rc))
 
     
     def cancel(self):
-        self.yarn_subprocess.kill()
-        
+        cmd = [YARN_EXECUTABLE, 'application', '-kill', self.id]
+        self.yarn_subprocess = subprocess.Popen(cmd)
+        rc = self.yarn_subprocess.wait()
+        logger.debug("Cancel YARN job command: " + str(cmd) + " Return code: " + str(rc))
         
     
     def __run_yarn_application(self):
@@ -88,14 +125,26 @@ class Job(object):
                           self.pilot_compute_description["pilot_url"], 
                           self.pilot_compute_description["external_queue"]
                          ]
-        
-        logger.debug(str(cmd))
-        self.yarn_subprocess = subprocess.Popen(cmd)
-        #self.yarn_subprocess.wait()                    
-        
-
-    
-    
+        logger.debug("Submit to YARN with command: " + str(cmd))
+        self.yarn_subprocess = subprocess.Popen(cmd,
+                                                bufsize=0,
+                                                stderr=subprocess.PIPE,
+                                                stdout=subprocess.PIPE
+                                                )
+        while True:
+            line = self.yarn_subprocess.stdout.readline()
+            if not line:
+                break       
+            elif line.startswith("ApplicationId"):
+                self.id = line[len("ApplicationId:"):]
+                break
+            
+        self.yarn_subprocess.wait()                      
+        if self.id !=None:       
+            logger.debug("Submission to YARN successfull. Application ID: " + self.id)
+            return self.id
+        else:
+            return None
  
      
 if __name__ == "__main__":
