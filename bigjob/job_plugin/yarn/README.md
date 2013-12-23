@@ -17,11 +17,11 @@ BIGJOB_SOURCE_DIRECTORY/bigjob/job_plugin/yarn/BigJob-YARN-0.1-SNAPSHOT-jar-with
 
 Before using BigJob with YARN please go through the settings within the adaptor:
 
-""" HADOOP/JAVA Configuration"""
-JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk1.7.0_40.jdk/Contents/Home"
-YARN_HOME="/usr/local/hadoop-2.2.0/"
+    """ HADOOP/JAVA Configuration"""
+	JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk1.7.0_40.jdk/Contents/Home"
+	YARN_HOME="/usr/local/hadoop-2.2.0/"
 
-JAVA_HOME and YARN_HOME need to be adjusted to your environment.
+`JAVA_HOME` and `YARN_HOME` need to be adjusted to your environment.
 
 Reinstall BigJob from BigJob source directory:
 
