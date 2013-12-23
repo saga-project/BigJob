@@ -87,12 +87,11 @@ class Job(object):
         self.yarn_subprocess.wait()
         while True:
             line = self.yarn_subprocess.stdout.readline()
-            print line
             if not line:
                 break       
             elif line.find("State") >= 0:
-                new_state = line[len("State :"):]
-                print "found state: " + new_state
+                new_state = line[len("State :"):].strip()
+                logger.debug("found state: " + new_state)
                 self.state = new_state
                 break
         logger.debug("Return state: " + self.state)                       
@@ -136,7 +135,7 @@ class Job(object):
             if not line:
                 break       
             elif line.startswith("ApplicationId"):
-                self.id = line[len("ApplicationId:"):]
+                self.id = line[len("ApplicationId:"):].strip()
                 break
             
         self.yarn_subprocess.wait()                      
