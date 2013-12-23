@@ -14,7 +14,7 @@ try:
     import mesos
     import mesos_pb2
 except:
-    logger.error("Mesos libraries NOT found")
+    logger.debug("Mesos libraries NOT found")
 
 # For Testing
 TOTAL_TASKS = 1
