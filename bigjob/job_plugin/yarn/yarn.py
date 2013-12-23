@@ -21,8 +21,8 @@ YARN_EXECUTABLE=os.path.join(YARN_HOME, "bin/yarn")
 """ BigJob YARN Client
 https://github.com/drelu/BigJob-YARN
 """
-BIGJOB_YARN_CLIENT="/Users/luckow/workspace-saga/bigjob/BigJob-YARN/target/BigJob-YARN-0.1-SNAPSHOT-jar-with-dependencies.jar"
-
+#BIGJOB_YARN_CLIENT="/Users/luckow/workspace-saga/bigjob/BigJob-YARN/target/BigJob-YARN-0.1-SNAPSHOT-jar-with-dependencies.jar"
+BIGJOB_YARN_CLIENT=os.path.abspath("BigJob-YARN-0.1-SNAPSHOT-jar-with-dependencies.jar")
 BIGJOB_BOOTSTRAP="bootstrap/bigjob2-bootstrap.sh"
 
 
@@ -95,15 +95,10 @@ class Job(object):
                 self.state = new_state
                 break
         logger.debug("Return state: " + self.state)                       
-        return self.state
-        
-        
-        
-        
-        
-        rc = self.yarn_subprocess.wait()
         logger.debug("GetStatus YARN job command: " + str(cmd) + " Return code: " + str(rc))
-
+        return self.state
+        rc = self.yarn_subprocess.wait()
+        
     
     def cancel(self):
         cmd = [YARN_EXECUTABLE, 'application', '-kill', self.id]
