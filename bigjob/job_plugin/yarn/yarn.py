@@ -22,7 +22,7 @@ YARN_EXECUTABLE=os.path.join(YARN_HOME, "bin/yarn")
 https://github.com/drelu/BigJob-YARN
 """
 #BIGJOB_YARN_CLIENT="/Users/luckow/workspace-saga/bigjob/BigJob-YARN/target/BigJob-YARN-0.1-SNAPSHOT-jar-with-dependencies.jar"
-BIGJOB_YARN_CLIENT=os.path.abspath("BigJob-YARN-0.1-SNAPSHOT-jar-with-dependencies.jar")
+BIGJOB_YARN_CLIENT=os.path.join(os.path.dirname(__file__), "BigJob-YARN-0.1-SNAPSHOT-jar-with-dependencies.jar")
 BIGJOB_BOOTSTRAP="bootstrap/bigjob2-bootstrap.sh"
 
 
@@ -77,27 +77,23 @@ class Job(object):
     
     
     def get_state(self):
-        logger.debug("Get State called")
         cmd = [YARN_EXECUTABLE, 'application', '-status', self.id]
         self.yarn_subprocess = subprocess.Popen(cmd,
                                                 bufsize=0,
                                                 stderr=subprocess.PIPE,
                                                 stdout=subprocess.PIPE
                                                 )
-        self.yarn_subprocess.wait()
+        rc = self.yarn_subprocess.wait()
         while True:
             line = self.yarn_subprocess.stdout.readline()
             if not line:
                 break       
             elif line.find("State") >= 0:
-                new_state = line[len("State :"):].strip()
-                logger.debug("found state: " + new_state)
+                new_state = line[len("State : "):].strip()
                 self.state = new_state
                 break
-        logger.debug("Return state: " + self.state)                       
-        logger.debug("GetStatus YARN job command: " + str(cmd) + " Return code: " + str(rc))
-        return self.state
-        rc = self.yarn_subprocess.wait()
+        logger.debug("GetStatus YARN job command: " + str(cmd) + " State: " + str(self.state) + " Return code: " + str(rc))
+        return self.state        
         
     
     def cancel(self):

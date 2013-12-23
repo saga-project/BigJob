@@ -3,6 +3,7 @@ import os
 import time
 import logging
 import uuid
+import traceback
 #logging.basicConfig(level=logging.DEBUG)
 
 #sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
@@ -11,7 +12,9 @@ from bigjob import logger
 
 COORDINATION_URL = "redis://192.168.0.7:6379"
 
-if __name__ == "__main__":      
+if __name__ == "__main__":
+          
+    pilotjob = None
     
     try: 
         pilot_compute_service = PilotComputeService(coordination_url=COORDINATION_URL)
@@ -46,7 +49,13 @@ if __name__ == "__main__":
         logger.debug("Pilot Job State: " + str(pilotjob.get_state()))
 
     except Exception:
-        logger.warn("Exception thrown: " + sys.exc_info()[0])
+        exc_type, exc_value, exc_traceback = sys.exc_info()
+        print "*** print_tb:"
+        traceback.print_tb(exc_traceback, limit=1, file=sys.stdout)
+        print "*** print_exception:"
+        traceback.print_exception(exc_type, exc_value, exc_traceback,
+                              limit=2, file=sys.stdout)
+    
     finally:
         if pilotjob!=None:
             pilotjob.cancel()
