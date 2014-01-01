@@ -1,3 +1,0 @@
-# Hadoop Plugins for BigJob examples
-
-see `BIGJOB_SOURCE_DIR`/bigjob/job_plugin/yarn` and `BIGJOB_SOURCE_DIR`/bigjob/job_plugin/mesos` for instructions on setting up BigJob for YARN and Mesos. 
