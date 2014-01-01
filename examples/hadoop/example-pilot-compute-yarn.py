@@ -21,7 +21,7 @@ if __name__ == "__main__":
     
         # create pilot job service and initiate a pilot job
         pilot_compute_description = {
-                                    "service_url": 'yarn://localhost',
+                                    "service_url": 'yarn://localhost:8032?fs=hdfs://localhost:9000',
                                     "number_of_processes": 1                            
                                     }
         
@@ -29,7 +29,6 @@ if __name__ == "__main__":
         logger.debug("Pilot Job State: " + str(pilotjob.get_state()))
         pilotjob.wait() 
         logger.debug("Pilot Job State: " + str(pilotjob.get_state()))
-         
             
         # start compute unit
         compute_unit_description = {
