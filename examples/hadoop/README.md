@@ -11,7 +11,7 @@ This plugin depends on the BigJob YARN Application Master found here:
 
 A build of the BigJob YARN application is distributed with BigJob.
 
-BIGJOB_SOURCE_DIRECTORY/bigjob/job_plugin/yarn/BigJob-YARN-0.1-SNAPSHOT-jar-with-dependencies.jar
+	BIGJOB_SOURCE_DIRECTORY/bigjob/job_plugin/yarn/BigJob-YARN-0.1-SNAPSHOT-jar-with-dependencies.jar
 
 ## Configuration
 
@@ -20,7 +20,9 @@ The YARN and Mesos adaptors currently require some manually configurations of so
 	`BIGJOB_SOURCE_DIR`/bigjob/job_plugin/yarn` 
 	`BIGJOB_SOURCE_DIR`/bigjob/job_plugin/mesos` 
 
-Before using BigJob with YARN please go through the settings within the adaptor:
+Before using BigJob with YARN please go through the settings within the adaptor. 
+For YARN e.g. the file `BIGJOB_SOURCE_DIR`/bigjob/job_plugin/yarn/yarn.py` needs 
+to be modified to reflect the location of your Hadoop/YARN installation:
 
     """ HADOOP/JAVA Configuration"""
 	JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk1.7.0_40.jdk/Contents/Home"
@@ -34,6 +36,16 @@ Reinstall BigJob from BigJob source directory:
     
     
 ## Example Usage
+
+Pilot Description:
+
+	 pilot_compute_description = {
+                                    "service_url": 'yarn://localhost:8032?fs=hdfs://localhost:9000',
+                                    "number_of_processes": 1                            
+                                  }
+
+The URL consists of the YARN resource manager address and the HDFS namenode address (required for file staging). If the cluster
+has a shared filesystem no `fs=` parameter needs to be provided.
 
 see <https://github.com/saga-project/BigJob/blob/develop/examples/hadoop/example-pilot-compute-yarn.py>
     
