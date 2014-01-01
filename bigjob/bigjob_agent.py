@@ -67,9 +67,9 @@ class bigjob_agent:
        - starts new jobs
        - monitors running jobs """
    
-    """Constructor"""
+   
     def __init__(self, args):
-        
+        """Constructor"""
         self.coordination_url = args[1]
         # objects to store running jobs and processes
         self.jobs = []
@@ -196,6 +196,10 @@ class bigjob_agent:
         # check whether user requested a certain threadpool size
         if self.pilot_description!=None and self.pilot_description.has_key("number_executor_threads"):
             THREAD_POOL_SIZE=int(self.pilot_description["number_executor_threads"])
+            
+        # create Pilot-Data that is linked to this Pilot-Agent instance    
+            
+            
         logger.debug("Creating executor thread pool of size: %d"%(THREAD_POOL_SIZE))
         self.resource_lock=threading.RLock()
         self.threadpool = ThreadPool(THREAD_POOL_SIZE)

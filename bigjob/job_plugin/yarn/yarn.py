@@ -109,7 +109,9 @@ class Job(object):
                                         "..", "..", "..", BIGJOB_BOOTSTRAP)
         cmd = [java_cmd, '-jar', BIGJOB_YARN_CLIENT,  
                          '-jar', BIGJOB_YARN_CLIENT, 
-                         '-debug', '-shell_script', bigjob_bootstrap, 
+                         '-debug', 
+                         '-service_url', str(self.saga_url),
+                         '-shell_script', bigjob_bootstrap, 
                          '-shell_args',
                           self.pilot_compute_description["coordination_host"], 
                           self.pilot_compute_description["pilot_url"], 
