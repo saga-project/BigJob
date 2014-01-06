@@ -13,8 +13,8 @@ import traceback
 
 #------------------------------------------------------------------------------
 # Redis password and 'user' name
-REDIS_PWD   = # Fill in the password to your server
-USER_NAME   = # Fill in your username on the resource you're running on
+REDIS_PWD   = '' # Fill in the password to your server
+USER_NAME   = '' # Fill in your username on the resource you're running on
 
 # The coordination server
 COORD       = "redis://%s@localhost:6379" % REDIS_PWD
@@ -73,7 +73,7 @@ if __name__ == "__main__":
         # ---------------------------------------------------------------------
         print "Waiting for 'A' and 'B' tasks to complete..."
         pilotjob.wait()
-	print "Executing 'C' tasks now…"
+        print "Executing 'C' tasks now…"
         # ---------------------------------------------------------------------
 
         # submit 'C' tasks to pilot job. each 'C' task takes the output of
