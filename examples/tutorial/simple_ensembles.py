@@ -55,8 +55,8 @@ def main():
         pilot_description.number_of_processes = PILOT_SIZE
         pilot_description.working_directory = WORKDIR
         pilot_description.walltime = WALLTIME
-	pilot_description.processes_per_node = PROCESSES_PER_NODE
-	pilot_description.spmd_variation = SPMD_VARIATION
+        pilot_description.processes_per_node = PROCESSES_PER_NODE
+        pilot_description.spmd_variation = SPMD_VARIATION
 
         # create a new pilot job
         pilot_compute_service = pilot.PilotComputeService(REDIS_URL)
@@ -66,16 +66,16 @@ def main():
         # submit tasks to pilot job
         tasks = list()
         for i in range(NUMBER_JOBS):
-	# -------- BEGIN USER DEFINED TASK DESCRIPTION --------- #
+            # -------- BEGIN USER DEFINED TASK DESCRIPTION --------- #
             task_desc = pilot.ComputeUnitDescription()
             task_desc.executable = '/bin/echo'
             task_desc.arguments = ['I am task number $TASK_NO', ]
             task_desc.environment = {'TASK_NO': i}
             task_desc.number_of_processes = 1
-	    task_desc.spmd_variation = single # Valid values are single or mpi
+            task_desc.spmd_variation = single # Valid values are single or mpi
             task_desc.output = 'simple-ensemble-stdout.txt'
             task_desc.error = 'simple-ensemble-stderr.txt'
-	# -------- END USER DEFINED TASK DESCRIPTION --------- #
+            # -------- END USER DEFINED TASK DESCRIPTION --------- #
 
             task = pilotjob.submit_compute_unit(task_desc)
             print "* Submitted task '%s' with id '%s' to %s" % (i, task.get_id(), HOSTNAME)
