@@ -23,6 +23,8 @@ REDIS_SERVER_PORT=6379
 REDIS_URL_SCHEME="redis://"
 REDIS_BIGJOB_STATS="bigjob:stats"
 
+redis_connection_pool = None
+
 class bigjob_coordination(object):
     '''
     Encapsulates communication and coordination
@@ -70,10 +72,16 @@ class bigjob_coordination(object):
         
         logger.debug("Connect to Redis: " + server + " Port: " + str(server_port))
         
-        if self.password==None:
-            self.redis_client = redis.Redis(host=server, port=server_port, db=0)
-        else:
-            self.redis_client = redis.Redis(host=server, port=server_port, password=self.password, db=0)
+        global redis_connection_pool
+        if redis_connection_pool == None:
+            if self.password==None:
+                #self.redis_client = redis.Redis(host=server, port=server_port, db=0)
+                redis_connection_pool = redis.ConnectionPool(host=server, port=server_port, db=0)
+            else:
+                #self.redis_client = redis.Redis(host=server, port=server_port, password=self.password, db=0)
+                redis_connection_pool = redis.ConnectionPool(host=server, port=server_port, password=self.password, db=0)
+                
+        self.redis_client = redis.Redis(connection_pool=redis_connection_pool)
         #self.redis_client_pubsub = self.redis_client.pubsub() # redis pubsub client       
         self.resource_lock = threading.RLock()
         self.pipe = self.redis_client.pipeline()
@@ -147,6 +155,12 @@ class bigjob_coordination(object):
             self.pipe.delete(i)
         self.pipe.execute()
         pass
+    
+    
+    def cancel(self):
+        pass
+        #self.redis_client.connection_pool.disconnect()
+        #del self.redis_client
     
     #####################################################################################
     # Sub-Job State    
@@ -230,3 +244,7 @@ class bigjob_coordination(object):
         length = self.redis_client.llen(queue_name)
         logger.debug("Queue: " + queue_name  + " number queued items: " + str(length))        
         return length
+
+
+    #def __del__(self):
+    #    self.redis_client.connection_pool.disconnect()
