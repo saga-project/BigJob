@@ -1,4 +1,4 @@
-# YARN JOB Plugin
+# YARN BigJob Plugin
 
 ## Requirements:
 
@@ -17,8 +17,8 @@ A build of the BigJob YARN application is distributed with BigJob.
 
 The YARN and Mesos adaptors currently require some manually configurations of some command utility paths:
 
-	`BIGJOB_SOURCE_DIR`/bigjob/job_plugin/yarn` 
-	`BIGJOB_SOURCE_DIR`/bigjob/job_plugin/mesos` 
+	BIGJOB_SOURCE_DIR`/bigjob/job_plugin/yarn 
+	BIGJOB_SOURCE_DIR`/bigjob/job_plugin/mesos 
 
 Before using BigJob with YARN please go through the settings within the adaptor. 
 For YARN e.g. the file `BIGJOB_SOURCE_DIR`/bigjob/job_plugin/yarn/yarn.py` needs 
