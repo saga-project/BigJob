@@ -572,7 +572,8 @@ class DataUnit(DataUnit):
     
     def get_state(self):
         """ Return current state of DataUnit """
-        # update remote state
+        # get current state from Redis
+        logger.debug("Get DU state: " + str(self.url))
         du_dict = CoordinationAdaptor.get_du(self.url)
         self.state = du_dict["state"]
         return self.state  
