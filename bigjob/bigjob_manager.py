@@ -532,7 +532,8 @@ class bigjob(api.base.bigjob):
             if finish_counter == len(jobs):
                 break
             time.sleep(2)
-
+    
+        self.coordination.cancel()
 
     ###########################################################################
     # internal and protected methods
@@ -544,6 +545,8 @@ class bigjob(api.base.bigjob):
             self.job=None
         except:
             pass
+        self.coordination.cancel()
+        
         
     def _delete_subjob(self, job_url):
         self.coordination.delete_job(job_url) 
