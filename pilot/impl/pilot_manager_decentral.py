@@ -156,7 +156,7 @@ class ComputeDataServiceDecentral(ComputeDataService):
         if len(self.pilot_job_services)!=1:
             raise PilotError("No PilotComputeService found. Please start a PCS before submitting ComputeUnits.")
         
-        self.__wait_for_du(compute_unit)
+        #self.__wait_for_du(compute_unit)
         
         sj = subjob()
         self.pcs_coordination_namespace=self.pilot_job_services[0].coordination_queue
@@ -361,8 +361,10 @@ class ComputeDataServiceDecentral(ComputeDataService):
                 time.sleep(5)        
 
         logger.debug("Re-Scheduler terminated")
+        
+        
+
     
     
-   
     
-   
+    
