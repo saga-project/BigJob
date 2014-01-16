@@ -282,18 +282,9 @@ class ComputeDataServiceDecentral(ComputeDataService):
                              (completed_cus, number_cus, completed_dus,
                                number_dus, completed_pilots, number_pilots))
             
-                logger.debug("exit? " + str((completed_dus==number_dus and completed_cus==number_cus)))
+                #logger.debug("exit? " + str((completed_dus==number_dus and completed_cus==number_cus)))
                 if completed_dus<number_dus and completed_cus<number_cus:
                     time.sleep(2)
-            
-            
-#             for i in self.data_units.values():
-#                 i.wait()
-#             logger.debug("Wait for DUs finished")        
-#                 
-#             for i in self.compute_units.values():
-#                 i.wait()     
-#             logger.debug("CUs done")        
                    
             logger.debug("### END WAIT ###")
         except:
