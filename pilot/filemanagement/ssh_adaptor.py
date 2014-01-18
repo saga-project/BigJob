@@ -147,6 +147,10 @@ class SSHFileAdaptor(object):
             logger.debug(str((source_host, source_path, self.host, remote_path)))
             self.__run_scp_command(self.userkey, source_user, source_host, source_path, self.user, self.host, remote_path)        
     
+    
+    def put_du_rsync(self, du):
+        pass
+    
   
     def copy_du(self, du, pd_new):
         remote_url = pd_new.service_url + "/" + str(du.id)
@@ -336,9 +340,9 @@ class SSHFileAdaptor(object):
         child = pexpect.spawn(command.strip(), timeout=None)
         password_error=False
         try:
-            child.timeout=300
-            child.expect("password:",timeout=300, searchwindowsize=5024)
-            password_error=True
+            match= child.expect(["password:", os.path.basename(source_path)],timeout=300, searchwindowsize=5024)
+            if match == 1:
+                password_error=True
         except Exception as ex:
             logger.debug("No password prompt error found" + str(ex))
 
