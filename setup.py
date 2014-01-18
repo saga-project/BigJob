@@ -51,7 +51,6 @@ def get_version():
         return "-1"
     return version    
 
-    
 update_version()
     
 setup(name='BigJob2',
