@@ -341,7 +341,7 @@ class SSHFileAdaptor(object):
         password_error=False
         try:
             match= child.expect(["password:", os.path.basename(source_path)],timeout=300, searchwindowsize=5024)
-            if match == 1:
+            if match == 0:
                 password_error=True
         except Exception as ex:
             logger.debug("No password prompt error found" + str(ex))
