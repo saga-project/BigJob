@@ -15,7 +15,15 @@ from bigjob.state import Running, New, Failed, Done, Unknown
 
 """ HADOOP/JAVA Configuration"""
 JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk1.7.0_40.jdk/Contents/Home"
+
+if os.environ.has_key("JAVA_HOME"):
+    JAVA_HOME=os.environ["JAVA_HOME"]
+
+
 YARN_HOME="/usr/local/hadoop-2.2.0/"
+if os.environ.has_key("YARN_HOME"):
+    YARN_HOME=os.environ["YARN_HOME"]
+
 YARN_EXECUTABLE=os.path.join(YARN_HOME, "bin/yarn")
 
 """ BigJob YARN Client
