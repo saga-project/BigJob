@@ -10,7 +10,7 @@ import stat
 import logging
 import traceback
 import time
-import tempfile
+from tempfile import NamedTemporaryFile
 
 import saga
 from pilot.api import State
@@ -19,6 +19,7 @@ from bigjob import logger
 # from snakebite.client import Client
 #from pywebhdfs.webhdfs import PyWebHdfsClient
 from webhdfs.webhdfs import WebHDFS 
+from pilot.api.api import PilotError
 
 
 
@@ -33,11 +34,22 @@ class HDFSFileAdaptor(object):
      
     def __init__(self, resource_url, security_context=None, pilot_data_description=None):        
         self.resource_url = saga.Url(resource_url)
-        self.user = self.resource_url.username
-        self.host = self.resource_url.host
-        self.port = self.resource_url.port
-        self.path = self.resource_url.path    
         
+        self.user = self.resource_url.username
+        if self.user==None or self.user=="":
+            raise PilotError("Username required in URL: %s"%(self.resource_url))
+        self.host = self.resource_url.host
+        if self.host==None or self.host=="":
+            raise PilotError("Host required in URL: %s"%(self.resource_url))
+        self.port = self.resource_url.port
+        if self.port==None or self.port=="":
+            raise PilotError("Port required in URL: %s"%(self.resource_url))
+        
+        self.path = self.resource_url.path    
+        if self.path==None or self.path=="":
+            raise PilotError("Path required in URL: %s"%(self.resource_url))
+        
+            
         #self.client = Client(self.host, self.port)
         self.client =  WebHDFS(self.host, self.port, self.user)
         self.__state=State.New
@@ -77,8 +89,12 @@ class HDFSFileAdaptor(object):
             
     def create_du(self, du_id):
         logger.debug("create object: " + du_id)
-        self.client.mkdir(os.path.join(self.path, du_id), create_parent=True)
-        self.client.copyFromLocal(os.path.join(self.path, du_id, "du_info"), str(du_id))        
+        self.client.mkdir(os.path.join(self.path, du_id))
+        f = NamedTemporaryFile(delete=True)
+        f.write(str(du_id))
+        f.flush()
+        self.client.copyFromLocal(f.name, os.path.join(self.path, du_id, "du_info"))
+        f.close()        
                  
                  
     def put_du(self, du):
@@ -129,8 +145,9 @@ class HDFSFileAdaptor(object):
     
     
     def _get_file(self, source, target):
-        logger.debug("GET file: %s to %s"%(source, target))
-        self.client.copyToLocal(source, target, check_crc=True)
+        source_path = os.path.join(self.path, source)
+        logger.debug("GET file: %s to %s"%(source_path, target))
+        self.client.copyToLocal(source_path, target)
         
          
     def transfer(self, source_url, target_url):
@@ -153,7 +170,7 @@ class HDFSFileAdaptor(object):
 
     
 def test_hdfs():
-    hdfs = HDFSFileAdaptor("hdfs://localhost:9000/user/luckow/pilot-data-test", 
+    hdfs = HDFSFileAdaptor("hdfs://luckow@localhost:50070/user/luckow/pilot-data-test", 
                        pilot_data_description={ })
     hdfs.initialize_pilotdata()
     hdfs._put_file("test.txt", "du-7370d7b5-ed0b-11e1-95df-705681b3df0f/test.txt")
@@ -161,7 +178,7 @@ def test_hdfs():
     hdfs.get_du("du-7370d7b5-ed0b-11e1-95df-705681b3df0f", ".")
     
 
-def test__pilotapi():
+def test_pilotapi():
     COORDINATION_URL="redis://localhost:6379"
     from pilot import PilotComputeService, PilotDataService, ComputeDataService, State
     pilot_data_service = PilotDataService(coordination_url=COORDINATION_URL)
@@ -169,18 +186,14 @@ def test__pilotapi():
     ###################################################################################################
     # Pick one of the Pilot Data Descriptions below    
     
-    pilot_data_description_aws={
-                                "service_url": "hdfs://luckow@localhost:9000/pilot-data-andre-workflow",
-                                "size": 100,  
+    pilot_data_description={"service_url": "hdfs://luckow@localhost:50070/user/luckow/pilot-data-andre",                                
                                 }
 
-    pd = pilot_data_service.create_pilot(pilot_data_description=pilot_data_description_aws)
+    pd = pilot_data_service.create_pilot(pilot_data_description=pilot_data_description)
      
     data_unit_description = {
-                              "file_urls": ['s3://pilot-data-cec5d816-fa8f-11e1-ab5e-e61f1322a75c/du-67b4c762-fa90-11e1-ab5e-e61f1322a75c/ip-10-84-173-21512MB_2.input-chunk-02'],
-                              "affinity_datacenter_label": "us-east-1",              
-                              "affinity_machine_label": ""
-                             }    
+                             "file_urls": ['test.txt'],
+                            }    
       
     # submit pilot data to a pilot store 
     input_data_unit = pd.submit_data_unit(data_unit_description)
@@ -188,5 +201,5 @@ def test__pilotapi():
     
 
 if __name__ == "__main__":
-    test_hdfs()
+    test_pilotapi()
     

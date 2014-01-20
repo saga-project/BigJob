@@ -27,9 +27,9 @@ from pilot.api import PilotData, DataUnit, PilotDataService, State
 """ Load file management adaptors """
 from pilot.filemanagement.ssh_adaptor import SSHFileAdaptor 
 try:
-    from pilot.filemanagement.webhdfs_adaptor import WebHDFSFileAdaptor
+    from pilot.filemanagement.hdfs_adaptor import HDFSFileAdaptor
 except:
-    logger.warn("WebHDFS package not found.") 
+    logger.warn("HDFS package not found.") 
 try:
     from pilot.filemanagement.globusonline_adaptor import GlobusOnlineFileAdaptor
 except:
@@ -95,7 +95,8 @@ class PilotData(PilotData):
                 go://<hostname>
                 gs://google.com
                 s3://aws.amazon.com
-            
+                hdfs://localhost
+                
             In the future more SAGA/Bliss URL schemes/adaptors are supported.        
         """ 
         self.id = None
@@ -259,9 +260,6 @@ class PilotData(PilotData):
                 self.__filemanager = SSHFileAdaptor(self.service_url,
                                                     self.security_context, 
                                                     self.pilot_data_description)
-            elif self.service_url.startswith("http:"):
-                logger.debug("Use WebHDFS backend")
-                self.__filemanager = WebHDFSFileAdaptor(self.service_url)
             elif self.service_url.startswith("go:"):
                 logger.debug("Use Globus Online backend")
                 self.__filemanager = GlobusOnlineFileAdaptor(self.service_url)
@@ -276,6 +274,11 @@ class PilotData(PilotData):
                 or self.service_url.startswith("swift:"):
                 logger.debug("Use Amazon S3/Eucalyptus Walrus/SWIFT Storage backend")
                 self.__filemanager = S3FileAdaptor(self.service_url, 
+                                                   self.security_context, 
+                                                   self.pilot_data_description)
+            elif self.service_url.startswith("hdfs:"):
+                logger.debug("Use HDFS Storage backend")
+                self.__filemanager = HDFSFileAdaptor(self.service_url, 
                                                    self.security_context, 
                                                    self.pilot_data_description)
             else:

@@ -108,6 +108,7 @@ class SSHFileAdaptor(object):
             self.__state=State.Failed
             return self.__state            
             
+            
     def create_du(self, du_id):
         du_dir = os.path.join(self.path, str(du_id))
         logger.debug("mkdir: " + du_dir)
