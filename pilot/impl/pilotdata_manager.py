@@ -618,7 +618,8 @@ class DataUnit(DataUnit):
         """
         if self.get_state()!=State.Running:
             self.wait()
-        
+            self.__restore_state()
+            
         if len(self.pilot_data) > 0:
             # Search for PD that is close to local machine
             local_hostname=socket.getfqdn()
@@ -644,7 +645,7 @@ class DataUnit(DataUnit):
             logger.debug("Export from random PD")
             self.pilot_data[0].export_du(self, target_url)
         else:
-            logger.error("No Pilot Data for PD found")
+            logger.error("No Pilot Data for DU found")
     
     
     def get_url(self):
