@@ -14,7 +14,7 @@ from webhdfs.webhdfs import WebHDFS
 class WebHDFSFileAdaptor(object):
     
     HDFS_USER_NAME="luckow"
-    HDFS_SERVICE_HOST="192.168.2.108"
+    HDFS_SERVICE_HOST="localhost"
     HDFS_SERVICE_PORT=50070     
     
     def __init__(self, service_url):     
@@ -30,9 +30,10 @@ class WebHDFSFileAdaptor(object):
             
         self.__state=State.New
         self.__webhdfs= WebHDFS(self.HDFS_SERVICE_HOST, 
-                               self.HDFS_SERVICE_PORT,
-                               self.HDFS_USER_NAME)
+                                self.HDFS_SERVICE_PORT,
+                                self.HDFS_USER_NAME)
         
+
     def get_security_context(self):
         """ Returns security context that needs to be available on the distributed
             node in order to access this Pilot Data """
