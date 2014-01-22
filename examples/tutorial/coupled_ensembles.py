@@ -11,34 +11,34 @@ This example will not run if these values are not set.
 # ---------------- BEGIN REQUIRED PILOT SETUP -----------------
 
 # Distributed Coordination Service - Redis server and password
-REDIS_PWD   = # Fill in the password to your redis server
+REDIS_PWD   = ""# Fill in the password to your redis server
 REDIS_URL   = "redis://%s@localhost:6379" % REDIS_PWD
 
 # Resource Information
-HOSTNAME     = # Remote Resource URL
-USER_NAME    = # Username on the remote resource
-SAGA_ADAPTOR = # Name of the SAGA adaptor, e.g. fork, sge, pbs, slurm, etc.
+HOSTNAME     = ""# Remote Resource URL
+USER_NAME    = ""# Username on the remote resource
+SAGA_ADAPTOR = ""# Name of the SAGA adaptor, e.g. fork, sge, pbs, slurm, etc.
 # NOTE: See complete list of BigJob supported SAGA adaptors at:
 # http://saga-project.github.io/BigJob/sphinxdoc/tutorial/table.html
 
 # Fill in queue and allocation for the given resource 
 # Note: Set fields to "None" if not applicable
-QUEUE        = # Add queue you want to use
-PROJECT      = # Add project / allocation / account to charge
+QUEUE        = ""# Add queue you want to use
+PROJECT      = ""# Add project / allocation / account to charge
 
-WALLTIME     = # Maximum Runtime (minutes) for the Pilot Job
+WALLTIME     = ""# Maximum Runtime (minutes) for the Pilot Job
 
 WORKDIR      = "" # Path of Resource Working Directory
 # This is the directory where BigJob will store its output and error files
 
-SPMD_VARIATION = # Specify the WAYNESS of SGE clusters ONLY, valid input '12way' for example
+SPMD_VARIATION = ""# Specify the WAYNESS of SGE clusters ONLY, valid input '12way' for example
 
-PROCESSES_PER_NODE = # Valid on PBS clusters ONLY - this is the number of processors per node. One processor core is treated as one processor on PBS; e.g. a node with 8 cores has a maximum ppn=8
+PROCESSES_PER_NODE = ""# Valid on PBS clusters ONLY - this is the number of processors per node. One processor core is treated as one processor on PBS; e.g. a node with 8 cores has a maximum ppn=8
 
-PILOT_SIZE = # Number of cores required for the Pilot-Job
+PILOT_SIZE = ""# Number of cores required for the Pilot-Job
 
 # Job Information
-NUMBER_JOBS  = # The TOTAL number of tasks to run
+NUMBER_JOBS  = ""# The TOTAL number of tasks to run
 
 # Continue to USER DEFINED TASK DESCRIPTION to add 
 # the required information about the individual tasks.
@@ -112,17 +112,16 @@ def main():
         # an 'A' and a 'B' task and puts them together.
         task_set_C = list()
         for i in range(NUMBER_JOBS):
-
-	# -------- BEGIN USER DEFINED TASK 3 DESCRIPTION --------- #
+            # -------- BEGIN USER DEFINED TASK 3 DESCRIPTION --------- #
             task_desc = pilot.ComputeUnitDescription()
             task_desc.executable = '/bin/echo'
             task_desc.arguments = ['I am a $TASK_SET task with id $TASK_NO']
             task_desc.environment = {'TASK_SET': 'C', 'TASK_NO': i}
-	    task_desc.spmd_variation = 'single'
+            task_desc.spmd_variation = 'single'
             task_desc.number_of_processes = 1
             task_desc.output = 'C-stdout.txt'
             task_desc.error  = 'C-stderr.txt'
-	# -------- END USER DEFINED TASK 3 DESCRIPTION --------- #
+            # -------- END USER DEFINED TASK 3 DESCRIPTION --------- #
 
             task = pilotjob.submit_compute_unit(task_desc)
             print "* Submitted 'C' task '%s' with id '%s'" % (i, task.get_id())
