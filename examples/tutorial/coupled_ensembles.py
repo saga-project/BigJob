@@ -27,7 +27,6 @@ QUEUE        = '' # Add queue you want to use
 PROJECT      = '' # Add project / allocation / account to charge
 
 WALLTIME     = '' # Maximum Runtime (minutes) for the Pilot Job
-
 WORKDIR      = "" # Path of Resource Working Directory
 # This is the directory where BigJob will store its output and error files
 
@@ -112,17 +111,16 @@ def main():
         # an 'A' and a 'B' task and puts them together.
         task_set_C = list()
         for i in range(NUMBER_JOBS):
-
-	# -------- BEGIN USER DEFINED TASK 3 DESCRIPTION --------- #
+            # -------- BEGIN USER DEFINED TASK 3 DESCRIPTION --------- #
             task_desc = pilot.ComputeUnitDescription()
             task_desc.executable = '/bin/echo'
             task_desc.arguments = ['I am a $TASK_SET task with id $TASK_NO']
             task_desc.environment = {'TASK_SET': 'C', 'TASK_NO': i}
-	    task_desc.spmd_variation = 'single'
+            task_desc.spmd_variation = 'single'
             task_desc.number_of_processes = 1
             task_desc.output = 'C-stdout.txt'
             task_desc.error  = 'C-stderr.txt'
-	# -------- END USER DEFINED TASK 3 DESCRIPTION --------- #
+            # -------- END USER DEFINED TASK 3 DESCRIPTION --------- #
 
             task = pilotjob.submit_compute_unit(task_desc)
             print "* Submitted 'C' task '%s' with id '%s'" % (i, task.get_id())

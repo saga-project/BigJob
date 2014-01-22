@@ -51,10 +51,9 @@ def get_version():
         return "-1"
     return version    
 
-    
 update_version()
     
-setup(name='BigJob',
+setup(name='BigJob2',
       version=get_version(),
       description='P* Pilot-Job Implementation based on SAGA-Python',
       author='Andre Luckow, et al.',
@@ -85,7 +84,8 @@ setup(name='BigJob',
         'console_scripts': [
             'test-bigjob = examples.example_local_single:main',
             'test-bigjob-dynamic = examples.example_manyjob_local:main',
-            'pilot-cli = cli.pilot_cli:main'            
+            'pilot-cli = cli.pilot_cli:main',
+            'mesos-executor = bigjob.job_plugin.mesos_executor:main'            
         ]
-            }
+    }
 )

@@ -78,11 +78,12 @@ class many_job_service(object):
         gram_url = bj_dict["resource_url"]
         logging.debug("start bigjob at: " + gram_url)
         bj = bigjob.bigjob_manager.bigjob(self.advert_host)
-        ppn="1"
-        if ("processes_per_node" in bj_dict):
-            ppn=bj_dict["processes_per_node"]
+
+        if("processes_per_node" not in bj_dict or bj_dict["processes_per_node"] == 'None'):
+            ppn="1"
+            bj_dict["processes_per_node"] = ppn
         else:
-            bj_dict["processes_per_node"]="1"
+            ppn=bj_dict["processes_per_node"]
 
         walltime = 3600
         if ("walltime" in bj_dict):

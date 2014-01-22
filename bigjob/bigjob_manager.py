@@ -44,6 +44,17 @@ try:
 except:
     pass  
 
+try:
+    from job_plugin.mesos.mesos_job import Service as MesosService
+except:
+    pass 
+
+try:
+    from job_plugin.yarn.yarn import Service as YarnService
+except:
+    pass 
+
+
 
 # import other BigJob packages
 # import API
@@ -85,11 +96,9 @@ class bigjob(api.base.bigjob):
     
     ''' BigJob: Class for managing pilot jobs:
     
-        Example:
-        
+        Example:        
         
         bj = bigjob("redis://localhost")
-        
         bj.start_pilot_job("fork://localhost")
                         
         ..
@@ -199,7 +208,15 @@ class bigjob(api.base.bigjob):
                                        "number_of_processes": number_nodes, 
                                        "processes_per_node": processes_per_node,
                                        "working_directory": working_directory}
-        self.coordination.set_pilot_description(self.pilot_url, pilot_compute_description)    
+        
+        # put agent startup information into pilot description
+        pilot_compute_description["coordination_host"]=self.coordination.get_address()
+        pilot_compute_description["pilot_url"]=self.pilot_url
+        pilot_compute_description["external_queue"]=external_queue
+                 
+        self.coordination.set_pilot_description(self.pilot_url, pilot_compute_description)
+        
+            
         logger.debug("set pilot state to: " + str(Unknown))
 
         # Create Job Service (Default: SAGA Job Service, alternative Job Services supported)
@@ -209,6 +226,12 @@ class bigjob(api.base.bigjob):
         elif lrms_saga_url.scheme=="ec2+ssh" or lrms_saga_url.scheme=="euca+ssh" \
             or lrms_saga_url.scheme=="nova+ssh":
             self.js = EC2Service(lrms_saga_url, pilot_compute_description)    
+        elif lrms_saga_url.scheme=="mesos":
+            self.js = MesosService(lrms_saga_url, pilot_compute_description)          
+        elif lrms_saga_url.scheme=="yarn":
+            self.js = YarnService(lrms_saga_url, pilot_compute_description)          
+        
+        
         #elif lrms_saga_url.scheme=="slurm+ssh":
         #    self.js = SlurmService(lrms_saga_url, pilot_compute_description)          
         else:
@@ -304,8 +327,7 @@ class bigjob(api.base.bigjob):
                                                                           # or another external scheduler
                                                           )
         logger.debug("Adaptor specific modifications: "  + str(lrms_saga_url.scheme))
-        bootstrap_script = self.__escape_pbs(bootstrap_script)
-        #bootstrap_script = self.__escape_ssh(bootstrap_script)
+        bootstrap_script = self.__escape(bootstrap_script)
         logger.debug(bootstrap_script)
  
 
@@ -445,6 +467,7 @@ class bigjob(api.base.bigjob):
             pass
         details_dict["bigjob_id"] = self.pilot_url
         return details_dict
+    
 
     ###############################################################################################################    
     def cancel(self):        
@@ -509,7 +532,8 @@ class bigjob(api.base.bigjob):
             if finish_counter == len(jobs):
                 break
             time.sleep(2)
-
+    
+        self.coordination.cancel()
 
     ###########################################################################
     # internal and protected methods
@@ -521,6 +545,8 @@ class bigjob(api.base.bigjob):
             self.job=None
         except:
             pass
+        self.coordination.cancel()
+        
         
     def _delete_subjob(self, job_url):
         self.coordination.delete_job(job_url) 
@@ -650,6 +676,7 @@ bigjob_agent = bigjob.bigjob_agent.bigjob_agent(args)
 """ % (coordination_host, coordination_namespace, external_coordination_namespace))
         return script
     
+    
     def __generate_bootstrap_script_from_binary(self, coordination_host, coordination_namespace, 
                                                 external_coordination_namespace="", 
                                                 bigjob_home=None):
@@ -702,15 +729,15 @@ except:
         return script
 
 
+    def __escape(self, bootstrap_script):
+        logger.debug("Escape bootstrap script")
+        bootstrap_script = "\'" + bootstrap_script+ "\'"
+        return bootstrap_script
+    
+    
     def __escape_rsl(self, bootstrap_script):
         logger.debug("Escape RSL")
         bootstrap_script = bootstrap_script.replace("\"", "\"\"")        
-        return bootstrap_script
-          
-            
-    def __escape_pbs(self, bootstrap_script):
-        logger.debug("Escape bootstrap script")
-        bootstrap_script = "\'" + bootstrap_script+ "\'"
         return bootstrap_script
     
     
@@ -973,13 +1000,6 @@ except:
     def __repr__(self):
         return self.pilot_url 
 
-  # def __del__(self):
-  #     """ BJ is not cancelled when object terminates
-  #         Application can reconnect to BJ via pilot url later on"""
-  #     pass
-  #     #self.cancel()
-
-
                     
                     
 class subjob(api.base.subjob):
@@ -1178,7 +1198,7 @@ class description(SAGAJobDescription):
     # --------------------------------------------------------------------------
     #
     def _get_input_data (self) :
-        print "get caled. returning: %s" % self.input_data
+        logger.debug("_get_input_data called. returning: %s" % self.input_data)
         return self.input_data
 
     # --------------------------------------------------------------------------

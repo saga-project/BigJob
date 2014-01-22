@@ -17,4 +17,4 @@ def create_bigjob_bootstrap_script():
 
 if __name__ == "__main__" :
     output = create_bigjob_bootstrap_script()
-    f = open('bigjob-bootstrap.py', 'w').write(output)
+    f = open('bigjob-bootstrap-template.py', 'w').write(output)

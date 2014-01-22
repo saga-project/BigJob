@@ -1,4 +1,4 @@
-""" B{PilotCompute Module}: Implementation of L{PilotComputeService}, L{PilotCompute}, L{ComputeUnit}.
+""" PilotCompute Module: Implementation of PilotComputeService, PilotCompute, ComputeUnit.
 """
 
 import sys
@@ -156,11 +156,11 @@ class PilotComputeService(PilotComputeService):
         gram_url = bj_dict["resource_url"]
         logger.debug("start bigjob at: " + gram_url)
         bj = bigjob(self.coordination_url)
-        ppn="1"
-        if ("processes_per_node" in bj_dict):
-            ppn=bj_dict["processes_per_node"]
+
+        if("processes_per_node" not in bj_dict or bj_dict["processes_per_node"] == 'None'):
+            ppn="1"
         else:
-            bj_dict["processes_per_node"]="1"
+            ppn=bj_dict["processes_per_node"]
 
         walltime = 3600
         if ("walltime" in bj_dict):
@@ -183,7 +183,7 @@ class PilotComputeService(PilotComputeService):
                            walltime = walltime,
                            processes_per_node = ppn,
                            filetransfers = bj_filetransfer,
-			               spmd_variation = bj_dict["spmd_variation"],
+                           spmd_variation = bj_dict["spmd_variation"],
                            external_queue = self.coordination_queue,
                            pilot_compute_description = bj_dict["pilot_compute_description"]
                            )
