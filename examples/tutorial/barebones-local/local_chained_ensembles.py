@@ -9,8 +9,8 @@ import traceback
 
 #------------------------------------------------------------------------------
 # Redis password and 'user' name
-REDIS_PWD   = # Fill in the password to your server
-USER_NAME   = # Fill in your username on the resource you're running on
+REDIS_PWD   = ""# Fill in the password to your server
+USER_NAME   = ""# Fill in your username on the resource you're running on
 
 # The coordination server
 COORD       = "redis://%s@localhost:6379" % REDIS_PWD
@@ -76,14 +76,14 @@ def main():
                     task_set_B.append(task)
                     task_set_A.remove(a_task)
 
-       except Exception, ex:
-            print "AN ERROR OCCURRED: %s" % ((str(ex)))
-            # print a stack trace in case of an exception -
-            # this can be helpful for debugging the problem
-            traceback.print_exc()
-            sys.exit(-1)
+    except Exception, ex:
+        print "AN ERROR OCCURRED: %s" % ((str(ex)))
+        # print a stack trace in case of an exception -
+        # this can be helpful for debugging the problem
+        traceback.print_exc()
+        sys.exit(-1)
 
-      finally:
+    finally:
          # alway try to shut down pilots, otherwise jobs might end up
          # lingering in the queue
          print ("Terminating BigJob...")

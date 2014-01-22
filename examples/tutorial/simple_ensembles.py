@@ -11,7 +11,7 @@ This example will not run if these values are not set.
 # ---------------- BEGIN REQUIRED PILOT SETUP -----------------
 
 # Distributed Coordination Service - Redis server and password
-REDIS_PWD   = # Fill in the password to your redis server
+REDIS_PWD   = ""# Fill in the password to your redis server
 REDIS_URL   = "redis://%s@localhost:6379" % REDIS_PWD
 
 # Resource Information
@@ -26,7 +26,7 @@ SAGA_ADAPTOR = '' # Name of the SAGA adaptor, e.g. fork, sge, pbs, slurm, etc.
 QUEUE        = '' # Add queue you want to use
 PROJECT      = '' # Add project / allocation / account to charge
 
-WALLTIME     = # Maximum Runtime (minutes) for the Pilot Job
+WALLTIME     = ""# Maximum Runtime (minutes) for the Pilot Job
 
 WORKDIR      = "" # Path of Resource Working Directory
 # This is the directory where BigJob will store its output and error files
@@ -35,10 +35,10 @@ SPMD_VARIATION = '' # Specify the WAYNESS of SGE clusters ONLY, valid input '12w
 
 PROCESSES_PER_NODE = '' # Valid on PBS clusters ONLY - this is the number of processors per node. One processor core is treated as one processor on PBS; e.g. a node with 8 cores has a maximum ppn=8
 
-PILOT_SIZE = # Number of cores required for the Pilot-Job
+PILOT_SIZE = ""# Number of cores required for the Pilot-Job
 
 # Job Information
-NUMBER_JOBS  = # The TOTAL number of tasks to run
+NUMBER_JOBS  = ""# The TOTAL number of tasks to run
 
 # Continue to USER DEFINED TASK DESCRIPTION to add 
 # the required information about the individual tasks.
@@ -56,8 +56,8 @@ def main():
         pilot_description.number_of_processes = PILOT_SIZE
         pilot_description.working_directory = WORKDIR
         pilot_description.walltime = WALLTIME
-	pilot_description.processes_per_node = PROCESSES_PER_NODE
-	pilot_description.spmd_variation = SPMD_VARIATION
+        pilot_description.processes_per_node = PROCESSES_PER_NODE
+        pilot_description.spmd_variation = SPMD_VARIATION
 
         # create a new pilot job
         pilot_compute_service = pilot.PilotComputeService(REDIS_URL)
@@ -67,16 +67,16 @@ def main():
         # submit tasks to pilot job
         tasks = list()
         for i in range(NUMBER_JOBS):
-	# -------- BEGIN USER DEFINED TASK DESCRIPTION --------- #
+            # -------- BEGIN USER DEFINED TASK DESCRIPTION --------- #
             task_desc = pilot.ComputeUnitDescription()
             task_desc.executable = '/bin/echo'
             task_desc.arguments = ['I am task number $TASK_NO']
             task_desc.environment = {'TASK_NO': i}
             task_desc.number_of_processes = 1
-	    task_desc.spmd_variation = "single" # Valid values are single or mpi
+            task_desc.spmd_variation = "single" # Valid values are single or mpi
             task_desc.output = 'simple-ensemble-stdout.txt'
             task_desc.error = 'simple-ensemble-stderr.txt'
-	# -------- END USER DEFINED TASK DESCRIPTION --------- #
+            # -------- END USER DEFINED TASK DESCRIPTION --------- #
 
             task = pilotjob.submit_compute_unit(task_desc)
             print "* Submitted task '%s' with id '%s' to %s" % (i, task.get_id(), HOSTNAME)
