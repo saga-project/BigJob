@@ -713,7 +713,7 @@ class bigjob_agent:
                 logger.error("Failed to get job description")
                 failed=True
                 
-            if job_dict==None or failed==True:
+            if job_dict==None or job_dict=="" or type(job_dict)!=dict or failed==True:
                 self.coordination.queue_job(self.pilot_url, job_url)
                 
             logger.debug("start job: " + job_url + " data: " + str(job_dict))
