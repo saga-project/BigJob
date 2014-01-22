@@ -14,6 +14,7 @@ import socket
 import tldextract
 tldextract.tldextract.LOG.setLevel(logging.WARNING)
 import difflib
+import errno
 
 
 from pilot.api.api import PilotError
@@ -26,9 +27,9 @@ from pilot.api import PilotData, DataUnit, PilotDataService, State
 """ Load file management adaptors """
 from pilot.filemanagement.ssh_adaptor import SSHFileAdaptor 
 try:
-    from pilot.filemanagement.webhdfs_adaptor import WebHDFSFileAdaptor
+    from pilot.filemanagement.hdfs_adaptor import HDFSFileAdaptor
 except:
-    logger.warn("WebHDFS package not found.") 
+    logger.warn("HDFS package not found.") 
 try:
     from pilot.filemanagement.globusonline_adaptor import GlobusOnlineFileAdaptor
 except:
@@ -94,7 +95,8 @@ class PilotData(PilotData):
                 go://<hostname>
                 gs://google.com
                 s3://aws.amazon.com
-            
+                hdfs://localhost
+                
             In the future more SAGA/Bliss URL schemes/adaptors are supported.        
         """ 
         self.id = None
@@ -196,7 +198,14 @@ class PilotData(PilotData):
     def export_du(self, du, target_url):
         """ Export Data Unit to a local directory """
         if target_url.startswith("/") and os.path.exists(target_url)==False:
-            os.mkdir(target_url)
+            try:
+                os.makedirs(target_url)
+            except OSError as exc:
+                if exc.errno == errno.EEXIST and os.path.isdir(target_url):
+                    pass
+                else:
+                    raise
+
         logger.debug("Export Data-Unit to %s"%target_url)
         self.__filemanager.get_du(du, target_url)
             
@@ -251,9 +260,6 @@ class PilotData(PilotData):
                 self.__filemanager = SSHFileAdaptor(self.service_url,
                                                     self.security_context, 
                                                     self.pilot_data_description)
-            elif self.service_url.startswith("http:"):
-                logger.debug("Use WebHDFS backend")
-                self.__filemanager = WebHDFSFileAdaptor(self.service_url)
             elif self.service_url.startswith("go:"):
                 logger.debug("Use Globus Online backend")
                 self.__filemanager = GlobusOnlineFileAdaptor(self.service_url)
@@ -270,8 +276,13 @@ class PilotData(PilotData):
                 self.__filemanager = S3FileAdaptor(self.service_url, 
                                                    self.security_context, 
                                                    self.pilot_data_description)
+            elif self.service_url.startswith("hdfs:"):
+                logger.debug("Use HDFS Storage backend")
+                self.__filemanager = HDFSFileAdaptor(self.service_url, 
+                                                   self.security_context, 
+                                                   self.pilot_data_description)
             else:
-                raise PilotError("No File Plugin found.")
+                raise PilotError("No File Plugin found for: %s" % self.service_url)
             
             self.__filemanager.initialize_pilotdata()
             self.__filemanager.get_pilotdata_size()
@@ -564,7 +575,8 @@ class DataUnit(DataUnit):
     
     def get_state(self):
         """ Return current state of DataUnit """
-        # update remote state
+        # get current state from Redis
+        logger.debug("Get DU state: " + str(self.url))
         du_dict = CoordinationAdaptor.get_du(self.url)
         self.state = du_dict["state"]
         return self.state  
@@ -609,7 +621,8 @@ class DataUnit(DataUnit):
         """
         if self.get_state()!=State.Running:
             self.wait()
-        
+            self.__restore_state()
+            
         if len(self.pilot_data) > 0:
             # Search for PD that is close to local machine
             local_hostname=socket.getfqdn()
@@ -635,7 +648,7 @@ class DataUnit(DataUnit):
             logger.debug("Export from random PD")
             self.pilot_data[0].export_du(self, target_url)
         else:
-            logger.error("No Pilot Data for PD found")
+            logger.error("No Pilot Data for DU found")
     
     
     def get_url(self):

@@ -12,11 +12,11 @@ REDIS_PWD   = '' # Fill in the password to your server
 USER_NAME   = '' # Fill in your username on the resource you're running on
 
 # The coordination server
-COORD       = "redis://%s@localhost:6379" % REDIS_PWD
+COORD       = "redis://localhost:6379"
 # The host to run BigJob on
 HOSTNAME    = "localhost"
 # The working directory on your machine
-WORKDIR     = "/home/%s/example1" % USER_NAME
+WORKDIR     = "/tmp"
 # The number of jobs you want to run
 NUMBER_JOBS = 4
 

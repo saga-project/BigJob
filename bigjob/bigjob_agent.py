@@ -67,9 +67,9 @@ class bigjob_agent:
        - starts new jobs
        - monitors running jobs """
    
-    """Constructor"""
+   
     def __init__(self, args):
-        
+        """Constructor"""
         self.coordination_url = args[1]
         # objects to store running jobs and processes
         self.jobs = []
@@ -148,7 +148,7 @@ class bigjob_agent:
             try:
                 from coordination.bigjob_coordination_redis import bigjob_coordination
                 logger.debug("Utilizing Redis Backend: " + self.coordination_url + ".")
-	    except:
+            except:
                 logger.error("Error loading pyredis. Check configuration in bigjob_coordination_redis.py.")		
         elif (self.coordination_url.startswith("tcp://")):
             try:
@@ -196,6 +196,10 @@ class bigjob_agent:
         # check whether user requested a certain threadpool size
         if self.pilot_description!=None and self.pilot_description.has_key("number_executor_threads"):
             THREAD_POOL_SIZE=int(self.pilot_description["number_executor_threads"])
+            
+        # create Pilot-Data that is linked to this Pilot-Agent instance    
+            
+            
         logger.debug("Creating executor thread pool of size: %d"%(THREAD_POOL_SIZE))
         self.resource_lock=threading.RLock()
         self.threadpool = ThreadPool(THREAD_POOL_SIZE)
@@ -265,9 +269,9 @@ class bigjob_agent:
         try:
             num_cpus=1
             if self.pilot_description != None:
-                num_cpus = self.pilot_description["number_of_processes"]
+                num_cpus = int(self.pilot_description["number_of_processes"])
             else:
-                num_cpus = self.get_num_cpus()
+                num_cpus = int(self.get_num_cpus())
             for i in range(0, num_cpus): 
                 self.freenodes.append("localhost\n")
         except IOError:
@@ -658,7 +662,8 @@ class bigjob_agent:
         """create machinefile based on jobid"""
         job_id = job_dict["job-id"]                
         homedir = os.path.expanduser('~')
-        return homedir  + "/advert-launcher-machines-"+ job_id
+        #return homedir  + "/advert-launcher-machines-"+ job_id
+        return "bigjob-machinefile-cu-"+ job_id
         
     def dequeue_new_jobs(self):	    
         """Subscribe to new jobs from Redis. """ 
@@ -713,7 +718,7 @@ class bigjob_agent:
                 logger.error("Failed to get job description")
                 failed=True
                 
-            if job_dict==None or failed==True:
+            if job_dict==None or job_dict=="" or type(job_dict)!=dict or failed==True:
                 self.coordination.queue_job(self.pilot_url, job_url)
                 
             logger.debug("start job: " + job_url + " data: " + str(job_dict))
@@ -989,8 +994,8 @@ class bigjob_agent:
 if __name__ == "__main__" :
     args = sys.argv
     num_args = len(args)
-    if (num_args!=3):
-        print "Usage: \n " + args[0] + " <coordination host url> <coordination namespace url>"
+    if (num_args < 3):
+        print "Usage: \n " + args[0] + " <coordination host url> <coordination namespace url> [coordination namespace url2]"
         sys.exit(1)
     
     bigjob_agent = bigjob_agent(args)    

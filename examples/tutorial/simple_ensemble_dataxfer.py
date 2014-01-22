@@ -30,7 +30,6 @@ QUEUE        = '' # Add queue you want to use
 PROJECT      = '' # Add project / allocation / account to charge
 
 WALLTIME     = '' # Maximum Runtime (minutes) for the Pilot Job
-
 WORKDIR      = "" # Path of Resource Working Directory
 # This is the directory where BigJob will store its output and error files
 

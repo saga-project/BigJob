@@ -79,7 +79,7 @@ class PilotComputeDescription(dict):
 
    
     def __init__(self):
-	pass
+        pass
     
     
     def __setattr__(self, attr, value):

@@ -97,11 +97,11 @@ if __name__ == "__main__":
         # ---------------------------------------------------------------------
 
     except Exception, ex:
-            print "AN ERROR OCCURED: %s" % ((str(ex)))
-            # print a stack trace in case of an exception -
-            # this can be helpful for debugging the problem
-            traceback.print_exc()
-            sys.exit(-1)
+        print "AN ERROR OCCURED: %s" % ((str(ex)))
+        # print a stack trace in case of an exception -
+        # this can be helpful for debugging the problem
+        traceback.print_exc()
+        sys.exit(-1)
 
     finally:
         # alway try to shut down pilots, otherwise jobs might end up

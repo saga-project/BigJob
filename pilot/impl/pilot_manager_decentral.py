@@ -156,7 +156,7 @@ class ComputeDataServiceDecentral(ComputeDataService):
         if len(self.pilot_job_services)!=1:
             raise PilotError("No PilotComputeService found. Please start a PCS before submitting ComputeUnits.")
         
-        self.__wait_for_du(compute_unit)
+        #self.__wait_for_du(compute_unit)
         
         sj = subjob()
         self.pcs_coordination_namespace=self.pilot_job_services[0].coordination_queue
@@ -282,18 +282,9 @@ class ComputeDataServiceDecentral(ComputeDataService):
                              (completed_cus, number_cus, completed_dus,
                                number_dus, completed_pilots, number_pilots))
             
-                logger.debug("exit? " + str((completed_dus==number_dus and completed_cus==number_cus)))
+                #logger.debug("exit? " + str((completed_dus==number_dus and completed_cus==number_cus)))
                 if completed_dus<number_dus and completed_cus<number_cus:
                     time.sleep(2)
-            
-            
-#             for i in self.data_units.values():
-#                 i.wait()
-#             logger.debug("Wait for DUs finished")        
-#                 
-#             for i in self.compute_units.values():
-#                 i.wait()     
-#             logger.debug("CUs done")        
                    
             logger.debug("### END WAIT ###")
         except:
@@ -370,8 +361,10 @@ class ComputeDataServiceDecentral(ComputeDataService):
                 time.sleep(5)        
 
         logger.debug("Re-Scheduler terminated")
+        
+        
+
     
     
-   
     
-   
+    

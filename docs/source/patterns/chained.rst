@@ -1,6 +1,6 @@
-###############
-Chained Example
-###############
+##################
+Chained Ensembles
+##################
 
 What if you had two different executables to run? What if this second set of executables had some dependencies on data from A? Can you use one BigJob to run both jobs? Yes!
 
