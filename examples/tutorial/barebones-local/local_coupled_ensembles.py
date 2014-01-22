@@ -13,8 +13,8 @@ import traceback
 
 #------------------------------------------------------------------------------
 # Redis password and 'user' name
-REDIS_PWD   = # Fill in the password to your server
-USER_NAME   = # Fill in your username on the resource you're running on
+REDIS_PWD   = ""# Fill in the password to your server
+USER_NAME   = ""# Fill in your username on the resource you're running on
 
 # The coordination server
 COORD       = "redis://%s@localhost:6379" % REDIS_PWD
@@ -73,7 +73,7 @@ if __name__ == "__main__":
         # ---------------------------------------------------------------------
         print "Waiting for 'A' and 'B' tasks to complete..."
         pilotjob.wait()
-	print "Executing 'C' tasks now…"
+        print "Executing 'C' tasks now���"
         # ---------------------------------------------------------------------
 
         # submit 'C' tasks to pilot job. each 'C' task takes the output of
@@ -97,11 +97,11 @@ if __name__ == "__main__":
         # ---------------------------------------------------------------------
 
     except Exception, ex:
-            print "AN ERROR OCCURED: %s" % ((str(ex)))
-            # print a stack trace in case of an exception -
-            # this can be helpful for debugging the problem
-            traceback.print_exc()
-            sys.exit(-1)
+        print "AN ERROR OCCURED: %s" % ((str(ex)))
+        # print a stack trace in case of an exception -
+        # this can be helpful for debugging the problem
+        traceback.print_exc()
+        sys.exit(-1)
 
     finally:
         # alway try to shut down pilots, otherwise jobs might end up
