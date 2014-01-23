@@ -1,7 +1,7 @@
 include *.cfg
 include *.conf
 include *.md
-
+include VERSION
 recursive-include api *
 recursive-include bigjob *
 recursive-include bigjob_dynamic *
