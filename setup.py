@@ -3,9 +3,6 @@
 import os
 import sys
 
-import ez_setup
-ez_setup.use_setuptools()
-
 
 from setuptools import setup, find_packages
 
@@ -82,7 +79,7 @@ setup(name='BigJob',
                     ('', ['VERSION', 'VERSION'])],
       
       # data files for pip
-      package_data = {'': ['*.conf']},
+      package_data = {'': ["ez_setup.py", '*.conf']},
 
       install_requires=['setuptools>2.0', 'uuid', 'threadpool', 'virtualenv', 'redis', 
                         'radical.utils', 'saga-python', 'google-api-python-client', 'python-hostlist',
