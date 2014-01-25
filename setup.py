@@ -2,7 +2,12 @@
 
 import os
 import sys
-from setuptools import setup
+
+#import ez_setup
+#ez_setup.use_setuptools()
+
+from setuptools import setup, find_packages
+
 import subprocess
 
 try:
@@ -26,11 +31,11 @@ def update_version():
                               "--tags", "--always"],
                              stdout=subprocess.PIPE)
     except EnvironmentError:
-        print "Unable to run git, not modifying VERSION"
+        print "Warning: Unable to run git, not modifying VERSION"
         return
     stdout = p.communicate()[0]
     if p.returncode != 0:
-        print "Unable to run git, not modifying VERSION"
+        print "Warning: Unable to run git, not modifying VERSION"
         return
     
     ver = stdout.strip()
@@ -75,9 +80,9 @@ setup(name='BigJob2',
                     ('', ['VERSION', 'VERSION'])],
       
       # data files for pip
-      package_data = {'': ['*.conf']},
+      package_data = {'': ["ez_setup.py", '*.conf']},
 
-      install_requires=['uuid', 'threadpool', 'virtualenv', 'redis', 
+      install_requires=['setuptools>2.0', 'uuid', 'threadpool', 'virtualenv', 'redis', 
                         'radical.utils', 'saga-python', 'google-api-python-client', 'python-hostlist',
                         'globusonline-transfer-api-client', 'boto>=2.2,<2.3', 'simplejson<2.1', 'pexpect', 'tldextract'],
       entry_points = {
