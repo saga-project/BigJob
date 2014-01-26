@@ -2334,7 +2334,12 @@ def install_with_virtualenv():
 
 
 if __name__ == '__main__':
-    ret = subprocess.call(["virtualenv", "--version"])
+    ret = -1
+    try:
+        ret = subprocess.call(["virtualenv", "--version"])
+    except:
+        pass
+    
     if ret==0:
         install_with_virtualenv()
     else:
