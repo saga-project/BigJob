@@ -2319,8 +2319,26 @@ def mach_o_change(path, what, value):
     do_file(open(path, 'r+b'))
 
 
+def install_with_virtualenv():
+    parser = ConfigOptionParser(
+                      version=virtualenv_version,
+                      usage="%prog [OPTIONS] DEST_DIR",
+                      formatter=UpdatingDefaultsHelpFormatter())
+    options, args = parser.parse_args()
+    print "Install with existing Virtualenv. Dest dir: " + str(args[0])
+    subprocess.call(["virtualenv", args[0]])
+    print "install bigjob"
+    subprocess.call([os.path.join(args[0], 'bin', 'easy_install'), 'bigjob'])
+
+
+
+
 if __name__ == '__main__':
-    main()
+    ret = subprocess.call(["virtualenv", "--version"])
+    if ret==0:
+        install_with_virtualenv()
+    else:
+        main()
 
 ## TODO:
 ## Copy python.exe.manifest
