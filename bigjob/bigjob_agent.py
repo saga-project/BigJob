@@ -834,8 +834,8 @@ class bigjob_agent:
     #############################################################################
     # Private methods
     
-    def __stage_in_data_units(self, input_data=[], target_directory="."):
-        """ stage in data units specified in input_data field """
+    """def __stage_in_data_units(self, input_data=[], target_directory="."):
+        stage in data units specified in input_data field 
         try:
             logger.debug("Stage in input files to: %s"%target_directory)
             for i in input_data:
@@ -847,7 +847,56 @@ class bigjob_agent:
                 du.export(target_directory)
         except:
             logger.error("Stage-in of files failed.")
+            self.__print_traceback()"""
+            
+
+    def __stage_in_data_units(self, input_data=[], target_directory="."):
+        """ stage in data to a specified data unit pilot data """
+        logger.debug("Stage in input files")
+        
+        """ Parsing input data field of job description:
+            {
+            ...
+             "input_data": [
+                            {
+                             input_data_unit.get_url(): 
+                             ["file1","file2"]
+                            }
+                            ]
+                            
+            or
+            
+            "input_data": [
+                            input_data_unit.get_url()                                                         
+                         ]                        
+            }    
+        """   
+        
+        try:
+            logger.debug("Stage in input files to: %s"%target_directory)
+            for i in input_data:                
+                if type(i) is dict:
+                    for du_url,all_files in i.iteritems():
+                        logger.debug("Get files: " + str(all_files))                    
+                        du = DataUnit(du_url=du_url)
+                        logger.debug("Restored DU... call get state()")
+                        logger.debug("DU State: " + du.get_state())
+                        du.wait()
+                        logger.debug("Reconnected to DU. Exporting it now...")
+                        du.export(target_directory, all_files)
+                else:
+                    du = DataUnit(du_url=i)
+                    logger.debug("Restored DU... call get state()")
+                    logger.debug("DU State: " + du.get_state())
+                    du.wait()
+                    logger.debug("Reconnected to DU. Exporting it now...")
+                    du.export(target_directory)                    
+                    
+        except:
+            logger.error("Stage-in of files failed.")
             self.__print_traceback()
+            
+                        
     
     
     def __stage_out_data_units(self, output_data=[], workingdirectory=None):
