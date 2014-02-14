@@ -63,8 +63,8 @@ try:
     #           format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     logger.setLevel(logging_level)
     
-    paramiko_logger = logging.getLogger(name="paramiko.transport")
-    paramiko_logger.setLevel(logging.ERROR)
+    #paramiko_logger = logging.getLogger(name="paramiko.transport")
+    #paramiko_logger.setLevel(logging.ERROR)
     #logging.basicConfig(level=logging_level)        
         
 except:

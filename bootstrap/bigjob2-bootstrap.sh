@@ -38,8 +38,26 @@ function run_bigjob {
 
 
 echo "Check for existing BigJob installation in: $CHECK_BIGJOB_DEFAULT_DIR" 
-if [ -d $CHECK_BIGJOB_DEFAULT_DIR ] 
+
+python -c "import bigjob; print bigjob.version"
+OUT=$?
+
+if [ $OUT -eq 0 ]
 then
+	echo "Using existing BigJob in PYTHONPATH"
+    echo "Start BigJob Agent - Version: "
+    python -c "import bigjob; print bigjob.version"
+    START_BIGJOB_AGENT_CMD="python -m bigjob.bigjob_agent  $*"
+    echo $START_BIGJOB_AGENT_CMD
+    $START_BIGJOB_AGENT_CMD
+    OUT=$?
+    if [ $OUT -ne 0 ];then
+        echo "Couldn't start BigJob. Exiting"
+        exit 1
+    fi
+    
+elif [ -d $CHECK_BIGJOB_DEFAULT_DIR  ]
+then 
     echo "Using existing BigJob"
     run_bigjob $CHECK_BIGJOB_DEFAULT_DIR $*
 else
