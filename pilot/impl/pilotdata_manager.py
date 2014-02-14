@@ -597,7 +597,7 @@ class DataUnit(DataUnit):
             if self.state==State.Running or self.state==State.Failed:
                 break
             logger.debug("Waiting DU %s State: %s"%(self.get_url(), self.state))
-            time.sleep(2)
+            time.sleep(4)
     
     
     def add_pilot_data(self, pilot_data):

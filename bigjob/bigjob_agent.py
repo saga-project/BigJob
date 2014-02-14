@@ -26,7 +26,7 @@ logging.basicConfig(level=logging.DEBUG)
 try:
     import ast
 except:
-    logging.debug("Python version <2.6. AST coult not be imported. ")
+    logging.debug("Python version <2.6. AST could not be imported. ")
 
 try:
     import saga

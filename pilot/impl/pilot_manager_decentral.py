@@ -25,7 +25,6 @@ from pilot.impl.pilotcompute_manager import PilotCompute, PilotComputeService
 from pilot.impl.pilot_manager import ComputeUnit
 
 
-#from pilot.coordination.advert import AdvertCoordinationAdaptor as CoordinationAdaptor
 from pilot.coordination.redis_adaptor import RedisCoordinationAdaptor as CoordinationAdaptor
 
 """ Loaded Module determines scheduler:
@@ -35,6 +34,12 @@ from pilot.coordination.redis_adaptor import RedisCoordinationAdaptor as Coordin
     
 """
 from pilot.scheduler.data_compute_affinity_scheduler import Scheduler
+
+# Runtime for 128 DU  with 0.3 GB data each scenario
+# 4 Threads (opt): 339.698383093
+# 8 Threads (opt): 317.186771154
+# 16 Threads (opt): 313.551964998
+NUMBER_TRANSFER_THREADS=8
 
 class ComputeDataServiceDecentral(ComputeDataService):
     """ B{ComputeDataServiceDecentral.}
@@ -253,6 +258,8 @@ class ComputeDataServiceDecentral(ComputeDataService):
             completed_cus=0
             completed_pilots=0
             logger.debug("### ComputeDataService wait for completion of %d CUs/ %d DUs ###"%(len(cus), len(dus)))
+            cu_state = {}
+            du_state = {}
             
             while not (completed_dus==number_dus and completed_cus==number_cus):
                 completed_dus=0
@@ -267,16 +274,21 @@ class ComputeDataServiceDecentral(ComputeDataService):
                 if  completed_pilots==number_pilots:
                     logger.debug("All pilots done/failed. No more active pilots. Exit.")
                     break
+                
+                for du in dus:
+                    du.wait()
+                    if du_state.get(du,None) is None or ( du_state[du] != State.Running and du_state[du] != State.Failed ):                
+                        du_state[du] = du.get_state()
+                    if du_state[du]==State.Running or du_state[du]==State.Failed:
+                        completed_dus=completed_dus + 1
 
                 for cu in cus:
-                    state = cu.get_state()
-                    if state==State.Done or state==State.Failed:
+                    cu.wait()
+                    if cu_state.get(cu,None) is None or ( cu_state[cu] != State.Done and cu_state[cu] != State.Failed ):
+                        cu_state[cu] = cu.get_state()
+                    if cu_state[cu]==State.Done or cu_state[cu]==State.Failed:
                         completed_cus=completed_cus + 1
-
-                for du in dus:
-                    state = du.get_state()
-                    if state==State.Running or state==State.Failed:
-                        completed_dus=completed_dus + 1
+             
 
                 logger.debug("Compute Data Service Completion Status: %d/%d CUs %d/%d DUs %d/%d Pilots"%
                              (completed_cus, number_cus, completed_dus,
@@ -337,6 +349,8 @@ class ComputeDataServiceDecentral(ComputeDataService):
     
     
     def _scheduler_thread(self):
+        
+        started_dus=[]
         while True and self.stop.isSet()==False:            
             try:
                 #logger.debug("Scheduler Thread: " + str(self.__class__) + " Pilot Data")
@@ -346,7 +360,9 @@ class ComputeDataServiceDecentral(ComputeDataService):
                     pd=self._schedule_du(du)                
                     if(pd!=None):                        
                         logger.debug("Initiate Transfer to PD.")
+                        # for each du.add_pilot_data a separate thread is spawned
                         du.add_pilot_data(pd)
+                        started_dus.append(du)
                         #logger.debug("Transfer to PD finished.")
                         #du._update_state(State.Running) 
                         #logger.debug("Updated State to Running.")
@@ -356,6 +372,13 @@ class ComputeDataServiceDecentral(ComputeDataService):
                         self.du_queue.put(du)
             except Queue.Empty:
                 pass
+            
+            # Number of Wait for active transfers to complete
+            if len(started_dus)>=NUMBER_TRANSFER_THREADS:
+                for du in started_dus:
+                    du.wait()
+                    started_dus.remove(du) 
+                    break
                
             if self.du_queue.empty():
                 time.sleep(5)        
