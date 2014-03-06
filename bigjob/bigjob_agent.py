@@ -189,7 +189,9 @@ class bigjob_agent:
         logging.debug("Launch Method: " + self.LAUNCH_METHOD + " mpi: " + self.MPIRUN + " shell: " + self.SHELL)
         
         # init rms (SGE/PBS)
-        self.init_rms()
+        self.nodes = list(set(self.init_rms()))
+        # Set pilot nodes on coordination system.
+        self.coordination.set_nodes(self.base_url, self.nodes)
         
         ##############################################################################
         # start background thread for polling new jobs and monitoring current jobs
@@ -197,8 +199,7 @@ class bigjob_agent:
         if self.pilot_description!=None and self.pilot_description.has_key("number_executor_threads"):
             THREAD_POOL_SIZE=int(self.pilot_description["number_executor_threads"])
             
-        # create Pilot-Data that is linked to this Pilot-Agent instance    
-            
+        # create Pilot-Data that is linked to this Pilot-Agent instance      
             
         logger.debug("Creating executor thread pool of size: %d"%(THREAD_POOL_SIZE))
         self.resource_lock=threading.RLock()

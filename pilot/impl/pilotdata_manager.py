@@ -572,7 +572,12 @@ class DataUnit(DataUnit):
         return result_dict
     
    
-    
+    def list_files(self):
+        """ List all files in DU. """
+        self.__refresh()                
+        for i in self.data_unit_items:
+            yield i.filename
+                
     def get_state(self):
         """ Return current state of DataUnit """
         # get current state from Redis
@@ -622,9 +627,7 @@ class DataUnit(DataUnit):
         if self.get_state()!=State.Running:
             self.wait()
         self.__restore_state()
-            
-        logger.error("***** Pradeep ***** " + str(self.pilot_data))
-            
+                        
         if len(self.pilot_data) > 0:
             # Search for PD that is close to local machine
             local_hostname=socket.getfqdn()
