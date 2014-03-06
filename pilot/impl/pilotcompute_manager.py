@@ -11,6 +11,7 @@ import logging
 import uuid
 from pilot.api.api import PilotError
 from bigjob.bigjob_manager import BigJobError
+import copy
 
 
 """ import bigjob classes """
@@ -146,7 +147,7 @@ class PilotComputeService(PilotComputeService):
         for i in pilot_compute_description.keys():
             resource_description[i] = pilot_compute_description[i] 
         
-        resource_description["pilot_compute_description"] = pilot_compute_description
+        resource_description["pilot_compute_description"] = copy.copy(pilot_compute_description)
         
         return resource_description
 
@@ -258,6 +259,11 @@ class PilotCompute(PilotCompute):
     def get_state(self):
         """ Returns the state of the pilot """
         return self.__bigjob.get_state()    
+    
+    def get_nodes(self):
+        """ Returns the nodes of the pilot """        
+        
+        return self.__bigjob.get_nodes()
     
     
     def wait(self):

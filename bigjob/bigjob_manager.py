@@ -394,8 +394,10 @@ class bigjob(api.base.bigjob):
             logger.debug("Submission succeeded. Job ID: %s " % self.job.id)
 
         return self.pilot_url
-
-     
+    
+    def get_nodes(self):
+        return self.coordination.get_nodes(self.pilot_url)
+    
     def list_subjobs(self):
         sj_list = self.coordination.get_jobs_of_pilot(self.pilot_url)
         logger.debug(str(sj_list))
