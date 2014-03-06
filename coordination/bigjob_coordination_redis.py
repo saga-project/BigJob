@@ -202,6 +202,8 @@ class bigjob_coordination(object):
         self.redis_client.hmset(job_url, job_dict)
         self.set_job_state(job_url, "Unknown")
         
+        
+        
     def get_job(self, job_url):
         return self.redis_client.hgetall(job_url)    
     
