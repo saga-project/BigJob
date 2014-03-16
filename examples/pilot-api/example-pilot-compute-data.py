@@ -82,7 +82,7 @@ if __name__ == "__main__":
     
     
     compute_unit = compute_data_service.submit_compute_unit(compute_unit_description)
-    logging.debug("Finished setup of PSS and PDS. Waiting for scheduling of PD")
+    logging.debug("Finished setup of CDS. Waiting for scheduling of PD")
     compute_data_service.wait()
     
     data_unit.export("/tmp/output")
