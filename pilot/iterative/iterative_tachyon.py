@@ -53,10 +53,20 @@ if __name__ == '__main__':
         runtime = time.time()-start                        
         runtimes[num_bytes] = runtime
         
+        
+        args = copy.deepcopy(base_args)
+        args.extend([TACHYON_URL, "/test-" + str(num_bytes), str(num_bytes), "1", "false",  "1", "1", "2", "1"])
+        print str(args)
+        start=time.time()
+        p = subprocess.Popen(args)
+        p.wait()         
+        runtime = time.time()-start                        
+        runtimes[num_bytes] = runtime
+        
     print "\n*********************************\nResults\n******************************" 
-    print "Size,Time"
+    print "Size,Time,Backend"
     for key, value in runtimes.iteritems():
-        print str(key) + "," + str(value)
+        print str(key) + "," + str(value)+",Tachyon"
             
             
                        

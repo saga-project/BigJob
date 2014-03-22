@@ -7,7 +7,7 @@ import os, sys
 import string
 import random
 import glob
-
+import redis
 #import  pilot.iterative.redis-py-cluster.rediscluster
 from rediscluster.rediscluster  import RedisCluster
 
@@ -18,8 +18,19 @@ START_PORT=7000
 
 
 
+
 def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
-    return ''.join(random.choice(chars) for _ in range(size))
+    s = '%030x' % random.randrange(16**size)
+    return s
+    
+#     output = StringIO.StringIO()
+#     for _ in range(size):
+#         output.write(random.choice(chars))
+#     v = output.getvalue()
+#     output.close()
+#     return v
+#     
+    #return ''.join(random.choice(chars) for _ in range(size))
 
 class RedisClusterManager():
     
@@ -69,14 +80,38 @@ if __name__ == '__main__':
     ]
     
     print "Start Benchmark - connect to: " + str(startup_nodes)
-    rc = RedisCluster(startup_nodes, 32, timeout=0.1)
+    try:
+        rc = RedisCluster(startup_nodes, 32, timeout=0.1)
+        rc.set("hello", "world")
+    except:
+        # if no Redis cluster deployment use standard pyredis
+        rc = redis.Redis(host=NODE_LIST[1], port=START_PORT, db=0)
     
-    
+    runtimes = {}
+    runtimes_read = {}
     for i in range(20,29):
-        num_bytes = 2**i
+        num_bytes = long(2**i)
+        #start=time.time()
         s = id_generator(num_bytes)
+        start=time.time()
         print ("Set string with len: " + str(len(s)) + " size of: " + str(sys.getsizeof(s)))
         rc.set("hello-" + str(i), s)
+        runtime = time.time()-start                        
+        runtimes[num_bytes] = runtime
+        
+        start=time.time()
+        print ("Get string")
+        rc.get("hello-" + str(i))
+        runtime = time.time()-start                        
+        runtimes_read[num_bytes] = runtime
+        
+    
+    print "\n*********************************\nResults\n******************************" 
+    print "Size,Time,Backend"
+    for key, value in runtimes.iteritems():
+        print str(key) + "," + str(value)+",Redis,1,1,write"
+    for key, value in runtimes_read.iteritems():
+        print str(key) + "," + str(value)+",Redis,1,1,read"
     
     #time.sleep(10)
     #redis_cluster.terminate_cluster()
