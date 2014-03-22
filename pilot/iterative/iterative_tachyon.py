@@ -14,7 +14,11 @@ NODE_LIST=["127.0.0.1","127.0.0.1","127.0.0.1","127.0.0.1","127.0.0.1","127.0.0.
 
 #JAVA="/Library/Java/JavaVirtualMachines/jdk1.7.0_40.jdk/Contents/Home/bin/java"
 JAVA="java"
-TACHYON_HOME="/usr/local/tachyon-0.4.1/"
+if os.env.has_key("TACHYON_HOME"):
+    TACHYON_HOME=os.env["TACHYON_HOME"]	
+else:
+    TACHYON_HOME="/usr/local/tachyon-0.4.1/"
+
 TACHYON_JAR=os.path.join(TACHYON_HOME, "target/tachyon-0.4.1-jar-with-dependencies.jar") 
 TACHYON_URL="tachyon://localhost:19998"
 
