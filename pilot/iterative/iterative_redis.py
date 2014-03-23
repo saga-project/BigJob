@@ -13,9 +13,10 @@ import redis
 from rediscluster.rediscluster import RedisCluster
 
 #NODE_LIST=["localhost","localhost","localhost","localhost","localhost","localhost"]
-# NODE_LIST=["127.0.0.1","127.0.0.1","127.0.0.1","127.0.0.1","127.0.0.1","127.0.0.1"]
-NODE_LIST=["10.17.50.74","10.17.50.74","10.17.50.74","10.17.50.252","10.17.50.252","10.17.50.252"]
+#NODE_LIST=["127.0.0.1","127.0.0.1","127.0.0.1","127.0.0.1","127.0.0.1","127.0.0.1"]
+#NODE_LIST=["10.17.50.74","10.17.50.74","10.17.50.74","10.17.50.252","10.17.50.252","10.17.50.252"]
 #NODE_LIST=["10.17.50.74","10.17.50.74","10.17.50.74","10.17.50.74","10.17.50.74","10.17.50.74"]
+NODE_LIST=["10.17.52.116", "10.17.50.122", "10.17.55.118","10.17.50.74", "10.17.52.116", "10.17.50.122", "10.17.55.118","10.17.50.74"]
 
 
 REDIS_HOME="/home/ec2-user/redis-3.0.0b2/"
@@ -56,6 +57,7 @@ class RedisClusterManager():
             port = port + 1 
             self.redis_processes.append(p)
             
+        time.sleep(3)
         cmd = [os.path.join(REDIS_HOME, "redis-trib.rb"), "create", "--replicas", "1"]
         for i in nodes:
             cmd.append(i)
@@ -92,7 +94,7 @@ if __name__ == '__main__':
 
     # Benchmark    
     startup_nodes = [
-        {"host": NODE_LIST[1], "port": START_PORT}
+        {"host": NODE_LIST[0], "port": START_PORT}
     ]
     
     print "Start Benchmark - connect to: " + str(startup_nodes)
@@ -125,9 +127,9 @@ if __name__ == '__main__':
     print "\n*********************************\nResults\n******************************" 
     print "Size,Time,Backend"
     for key, value in runtimes.iteritems():
-        print str(key) + "," + str(value)+",Redis,1,1,write"
+        print str(key) + "," + str(value)+",Redis,"+str(len(set(NODE_LIST)))+","+str(len(NODE_LIST))+",write"
     for key, value in runtimes_read.iteritems():
-        print str(key) + "," + str(value)+",Redis,1,1,read"
+        print str(key) + "," + str(value)+",Redis,"+str(len(set(NODE_LIST)))+ ","+str(len(NODE_LIST))+",read"
     
     #time.sleep(10)
     #redis_cluster.terminate_cluster()
