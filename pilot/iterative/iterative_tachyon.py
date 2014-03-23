@@ -20,7 +20,8 @@ else:
     TACHYON_HOME="/usr/local/tachyon-0.4.1/"
 
 TACHYON_JAR=os.path.join(TACHYON_HOME, "target/tachyon-0.4.1-jar-with-dependencies.jar") 
-TACHYON_URL="tachyon://ip-10-17-51-252:19998"
+TACHYON_URL="tachyon://ip-10-17-50-74:19998"
+NUMBER_NODES=2
 
 
 class TachyonClusterManager():
@@ -45,8 +46,9 @@ if __name__ == '__main__':
     
     os.system("tachyon tfs rm /")
     
-    runtimes = {}
-    for i in range(20,32):
+    runtimes_write = {}
+    runtimes_read = {}
+    for i in range(20,29):
         num_bytes = 2**i 
         args = copy.deepcopy(base_args)
         args.extend([TACHYON_URL, "/test-" + str(num_bytes), str(num_bytes), "1", "false",  "1", "1", "1", "1"])
@@ -55,7 +57,7 @@ if __name__ == '__main__':
         p = subprocess.Popen(args)
         p.wait()         
         runtime = time.time()-start                        
-        runtimes[num_bytes] = runtime
+        runtimes_write[num_bytes] = runtime
         
         
         args = copy.deepcopy(base_args)
@@ -65,12 +67,14 @@ if __name__ == '__main__':
         p = subprocess.Popen(args)
         p.wait()         
         runtime = time.time()-start                        
-        runtimes[num_bytes] = runtime
+        runtimes_read[num_bytes] = runtime
         
     print "\n*********************************\nResults\n******************************" 
-    print "Size,Time,Backend"
-    for key, value in runtimes.iteritems():
-        print str(key) + "," + str(value)+",Tachyon"
+    print "Size,Time,Backend,NumNodes,NumInstances,Type"
+    for key, value in runtimes_write.iteritems():
+        print str(key) + "," + str(value)+",Tachyon,"+str(NUMBER_NODES)+","+str(NUMBER_NODES)+",write"
+    for key, value in runtimes_read.iteritems():
+        print str(key) + "," + str(value)+",Tachyon,"+str(NUMBER_NODES)+","+str(NUMBER_NODES)+",read"
             
             
                        
