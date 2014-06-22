@@ -170,7 +170,7 @@ class HDFSFileAdaptor(object):
 
     
 def test_hdfs():
-    hdfs = HDFSFileAdaptor("hdfs://luckow@localhost:50070/user/luckow/pilot-data-test", 
+    hdfs = HDFSFileAdaptor("hdfs://luckow@localhost:50070/user/ec2-user/pilot-data-test", 
                        pilot_data_description={ })
     hdfs.initialize_pilotdata()
     hdfs._put_file("test.txt", "du-7370d7b5-ed0b-11e1-95df-705681b3df0f/test.txt")
@@ -186,7 +186,7 @@ def test_pilotapi():
     ###################################################################################################
     # Pick one of the Pilot Data Descriptions below    
     
-    pilot_data_description={"service_url": "hdfs://luckow@localhost:50070/user/luckow/pilot-data-andre",                                
+    pilot_data_description={"service_url": "hdfs://ec2-user@ip-10-17-24-243:50070/user/ec2-user/pilot-data-andre",                                
                                 }
 
     pd = pilot_data_service.create_pilot(pilot_data_description=pilot_data_description)

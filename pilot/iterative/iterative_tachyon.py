@@ -20,8 +20,8 @@ else:
     TACHYON_HOME="/usr/local/tachyon-0.4.1/"
 
 TACHYON_JAR=os.path.join(TACHYON_HOME, "target/tachyon-0.4.1-jar-with-dependencies.jar") 
-TACHYON_URL="tachyon://ip-10-17-52-116:19998"
-NUMBER_NODES=4
+TACHYON_URL="tachyon://ip-10-17-49-38:19998"
+NUMBER_NODES=8
 
 
 class TachyonClusterManager():
