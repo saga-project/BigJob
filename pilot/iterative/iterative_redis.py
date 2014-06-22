@@ -8,12 +8,18 @@ import string
 import random
 import glob
 import redis
-#import  pilot.iterative.redis-py-cluster.rediscluster
-from rediscluster.rediscluster  import RedisCluster
+# from  pilot.iterative.rediscluster.rediscluster import RedisCluster
+
+from rediscluster.rediscluster import RedisCluster
 
 #NODE_LIST=["localhost","localhost","localhost","localhost","localhost","localhost"]
-NODE_LIST=["127.0.0.1","127.0.0.1","127.0.0.1","127.0.0.1","127.0.0.1","127.0.0.1"]
-REDIS_HOME="/usr/local/redis-3.0.0b2/"
+#NODE_LIST=["127.0.0.1","127.0.0.1","127.0.0.1","127.0.0.1","127.0.0.1","127.0.0.1"]
+#NODE_LIST=["10.17.50.74","10.17.50.74","10.17.50.74","10.17.50.252","10.17.50.252","10.17.50.252"]
+#NODE_LIST=["10.17.50.74","10.17.50.74","10.17.50.74","10.17.50.74","10.17.50.74","10.17.50.74"]
+NODE_LIST=["10.17.52.116", "10.17.50.122", "10.17.55.118","10.17.50.74", "10.17.52.116", "10.17.50.122", "10.17.55.118","10.17.50.74"]
+
+
+REDIS_HOME="/home/ec2-user/redis-3.0.0b2/"
 START_PORT=7000
 
 
@@ -43,13 +49,15 @@ class RedisClusterManager():
         nodes = []
         for i in self.nodes:
             print "Start redis instance at: %s:%d"%(i,port) 
-            p = subprocess.Popen([os.path.join(REDIS_HOME, "redis-server"), 
+            p = subprocess.Popen(["ssh", i, os.path.join(REDIS_HOME, "redis-server"), 
                                   "--bind", i, "--port", str(port),  "--cluster-enabled", "yes",
-                                  "--cluster-config-file",  "node-"+str(port)+".conf"])
+                                  "--cluster-config-file",  "node-"+str(port)+".conf",
+                                  " --daemonize", "yes"])
             nodes.append(i+":"+str(port))
             port = port + 1 
             self.redis_processes.append(p)
             
+        time.sleep(3)
         cmd = [os.path.join(REDIS_HOME, "redis-trib.rb"), "create", "--replicas", "1"]
         for i in nodes:
             cmd.append(i)
@@ -70,13 +78,23 @@ class RedisClusterManager():
             os.remove(i)
             
 
+def start_redis_cluster():
+    redis_cluster=RedisClusterManager(NODE_LIST)
+    redis_cluster.create_cluster()
+    return redis_cluster
+
 if __name__ == '__main__':
-    #redis_cluster=RedisClusterManager(NODE_LIST)
-    #redis_cluster.create_cluster()
-    
+     
+    if len(sys.argv)>1 and sys.argv[1]=="--start":
+        print "Start Redis Cluster"
+        start_redis_cluster() 
+        sys.exit(0)
+    else:
+        print "Run Benchmark" 
+
     # Benchmark    
     startup_nodes = [
-        {"host": NODE_LIST[1], "port": START_PORT}
+        {"host": NODE_LIST[0], "port": START_PORT}
     ]
     
     print "Start Benchmark - connect to: " + str(startup_nodes)
@@ -109,9 +127,9 @@ if __name__ == '__main__':
     print "\n*********************************\nResults\n******************************" 
     print "Size,Time,Backend"
     for key, value in runtimes.iteritems():
-        print str(key) + "," + str(value)+",Redis,1,1,write"
+        print str(key) + "," + str(value)+",Redis,"+str(len(set(NODE_LIST)))+","+str(len(NODE_LIST))+",write"
     for key, value in runtimes_read.iteritems():
-        print str(key) + "," + str(value)+",Redis,1,1,read"
+        print str(key) + "," + str(value)+",Redis,"+str(len(set(NODE_LIST)))+ ","+str(len(NODE_LIST))+",read"
     
     #time.sleep(10)
     #redis_cluster.terminate_cluster()

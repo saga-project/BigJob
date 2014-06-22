@@ -56,6 +56,14 @@ modified in the `yarn-site.xml`; by default these can be found at:
 
 	/tmp/hadoop-<username/nm-local-dir/usercache/<username>/appcache
 	
+In order to have YARN store this files permanently the following property must be configured in the `yarn-site.xml`:
+
+	  <property>
+    		<name>yarn.nodemanager.delete.debug-delay-sec</name>
+    		<value>3600</value>
+    		<description>delay deletion of user cache </description>
+  	  </property>
+	
 For each application a directory is created:
 
 	appcache$ ls -lt
