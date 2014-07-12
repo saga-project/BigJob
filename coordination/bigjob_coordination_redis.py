@@ -117,6 +117,21 @@ class bigjob_coordination(object):
         self.redis_client.hmset(pilot_url, state_dict)
         if stopped==True:
             self.queue_job(pilot_url, "STOP")
+            
+    def set_nodes(self, pilot_url, nodes = []):
+        """         
+        Set the nodes acquired by pilot on the coordination system.        
+        @param nodes: node list          
+        """        
+        state_dict = {'nodes': nodes }
+        self.redis_client.hmset(pilot_url, state_dict)        
+
+    def get_nodes(self, pilot_url):
+        """         
+        get the nodes acquired by pilot on the coordination system.        
+        @return: node list          
+        """        
+        return self.redis_client.hget(pilot_url, "nodes")         
         
         
     def get_pilot_state(self, pilot_url):
@@ -201,6 +216,8 @@ class bigjob_coordination(object):
     def set_job(self, job_url, job_dict):
         self.redis_client.hmset(job_url, job_dict)
         self.set_job_state(job_url, "Unknown")
+        
+        
         
     def get_job(self, job_url):
         return self.redis_client.hgetall(job_url)    

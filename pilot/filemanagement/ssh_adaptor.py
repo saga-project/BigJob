@@ -159,11 +159,11 @@ class SSHFileAdaptor(object):
         self.copy_du_to_url(du, local_url, remote_url)  
         
     
-    def get_du(self, du, target_url):
+    def get_du(self, du, target_url, all_files=None):
         remote_url = target_url
         local_url =  self.service_url  + "/" + str(du.id)
         logger.debug("get_du(): copy %s to %s:"%(local_url, remote_url))
-        self.copy_du_to_url(du, local_url, remote_url)  
+        self.copy_du_to_url(du, local_url, remote_url, all_files)  
         
         
     def remove_du(self, du):
@@ -201,9 +201,14 @@ class SSHFileAdaptor(object):
         return result.path
     
         
-    def copy_du_to_url(self, du,  local_url, remote_url):
+    def copy_du_to_url(self, du,  local_url, remote_url, all_files=None):
         self.create_remote_directory(remote_url)
-        self.__third_party_transfer_scp(local_url + "/*", remote_url)
+        if all_files:
+            logger.debug("Files to be copied %s" % all_files)
+            for fName in all_files:
+                self.__third_party_transfer_scp(os.path.join(local_url, fName), remote_url)
+        else:
+            self.__third_party_transfer_scp(local_url + "/*", remote_url)
   
             
     ###########################################################################
@@ -240,6 +245,7 @@ class SSHFileAdaptor(object):
             
 
     def __third_party_transfer_scp(self, source_url, target_url):
+        logger.debug("source_url: %s, target_url: %s" % (source_url, target_url))
         result = urlparse.urlparse(source_url)
         source_host = result.hostname
         source_path = result.path
