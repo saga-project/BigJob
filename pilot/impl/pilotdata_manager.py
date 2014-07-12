@@ -195,7 +195,7 @@ class PilotData(PilotData):
             time.sleep(2)
 
     
-    def export_du(self, du, target_url):
+    def export_du(self, du, target_url, all_files=None):
         """ Export Data Unit to a local directory """
         if target_url.startswith("/") and os.path.exists(target_url)==False:
             try:
@@ -207,7 +207,7 @@ class PilotData(PilotData):
                     raise
 
         logger.debug("Export Data-Unit to %s"%target_url)
-        self.__filemanager.get_du(du, target_url)
+        self.__filemanager.get_du(du, target_url, all_files)
             
                 
     def put_du(self, du):
@@ -572,7 +572,12 @@ class DataUnit(DataUnit):
         return result_dict
     
    
-    
+    def list_files(self):
+        """ List all files in DU. """
+        self.__refresh()                
+        for i in self.data_unit_items:
+            yield i.filename
+                
     def get_state(self):
         """ Return current state of DataUnit """
         # get current state from Redis
@@ -615,14 +620,14 @@ class DataUnit(DataUnit):
         return self.pilot_data
     
     
-    def export(self, target_url):
+    def export(self, target_url, all_files=None):
         """ simple implementation of export: 
                 copies file from first pilot data to local machine
         """
         if self.get_state()!=State.Running:
             self.wait()
-            self.__restore_state()
-            
+        self.__restore_state()
+                        
         if len(self.pilot_data) > 0:
             # Search for PD that is close to local machine
             local_hostname=socket.getfqdn()
@@ -641,12 +646,12 @@ class DataUnit(DataUnit):
                 
             if best_pd!=None:
                 logger.debug("Export from: %s"%(best_pd.service_url))
-                best_pd.export_du(self, target_url)
+                best_pd.export_du(self, target_url, all_files)
                 return
                 
             # No PD found. Utilize default PD
             logger.debug("Export from random PD")
-            self.pilot_data[0].export_du(self, target_url)
+            self.pilot_data[0].export_du(self, target_url, all_files)
         else:
             logger.error("No Pilot Data for DU found")
     
