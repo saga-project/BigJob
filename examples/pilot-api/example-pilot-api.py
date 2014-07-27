@@ -8,6 +8,7 @@ from pilot import PilotComputeService, ComputeDataService, State
 
 
 COORDINATION_URL = "redis://localhost:6379"
+COORDINATION_URL = "redis://login3.stampede.tacc.utexas.edu:6379"
 
 if __name__ == "__main__":      
     
