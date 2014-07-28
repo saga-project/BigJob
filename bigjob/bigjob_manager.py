@@ -631,7 +631,7 @@ BIGJOB_AGENT_DIR= os.path.join(home, ".bigjob")
 if not os.path.exists(BIGJOB_AGENT_DIR): os.mkdir (BIGJOB_AGENT_DIR)
 BIGJOB_PYTHON_DIR=BIGJOB_AGENT_DIR+"/python/"
 if not os.path.exists(BIGJOB_PYTHON_DIR): os.mkdir(BIGJOB_PYTHON_DIR)
-BOOTSTRAP_URL="https://raw.github.com/saga-project/BigJob/master/bootstrap/bigjob-bootstrap.py"
+BOOTSTRAP_URL="https://raw.github.com/saga-project/BigJob/develop/bootstrap/bigjob-bootstrap.py"
 BOOTSTRAP_FILE=BIGJOB_AGENT_DIR+"/bigjob-bootstrap.py"
 #ensure that BJ in .bigjob is upfront in sys.path
 sys.path.insert(0, os.getcwd() + "/../")
