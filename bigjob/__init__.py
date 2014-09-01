@@ -79,7 +79,7 @@ try:
         fn = os.path.join(sys.prefix, 'VERSION')
     #print "Open Version file: " + str(fn)
     version = open(fn).read().strip()
-    logger.info("Loading BigJob version: " + version + " on " + socket.gethostname())
+    logger.info("Loading BigJob2 version: " + version + " on " + socket.gethostname())
 except IOError:
     pass
 
