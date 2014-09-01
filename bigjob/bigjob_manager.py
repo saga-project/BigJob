@@ -57,8 +57,6 @@ except:
 
 
 # import other BigJob packages
-# import API
-import api.base
 sys.path.append(os.path.dirname(__file__))
 
 # Some python version detection
@@ -92,7 +90,7 @@ class BigJobError(Exception):
         return repr(self.value)
     
 
-class bigjob(api.base.bigjob):
+class bigjob(object):
     
     ''' BigJob: Class for managing pilot jobs:
     
@@ -1006,7 +1004,7 @@ except:
 
                     
                     
-class subjob(api.base.subjob):
+class subjob(object):
     
     def __init__(self, coordination_url=None, subjob_url=None):
         """Constructor"""
