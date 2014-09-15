@@ -156,7 +156,7 @@ class ComputeDataServiceDecentral(ComputeDataService):
         if len(self.pilot_job_services)!=1:
             raise PilotError("No PilotComputeService found. Please start a PCS before submitting ComputeUnits.")
         
-        self.__wait_for_du(compute_unit)
+        #self.__wait_for_du(compute_unit)
         
         sj = subjob()
         self.pcs_coordination_namespace=self.pilot_job_services[0].coordination_queue
@@ -253,6 +253,8 @@ class ComputeDataServiceDecentral(ComputeDataService):
             completed_cus=0
             completed_pilots=0
             logger.debug("### ComputeDataService wait for completion of %d CUs/ %d DUs ###"%(len(cus), len(dus)))
+            cu_state = {}
+            du_state = {}
             
             while not (completed_dus==number_dus and completed_cus==number_cus):
                 completed_dus=0
@@ -269,31 +271,24 @@ class ComputeDataServiceDecentral(ComputeDataService):
                     break
 
                 for cu in cus:
-                    state = cu.get_state()
-                    if state==State.Done or state==State.Failed:
+                    if cu_state.get(cu,None) is None or ( cu_state[cu] != State.Done and cu_state[cu] != State.Failed ):
+                        cu_state[cu] = cu.get_state()
+                    if cu_state[cu]==State.Done or cu_state[cu]==State.Failed:
                         completed_cus=completed_cus + 1
 
                 for du in dus:
-                    state = du.get_state()
-                    if state==State.Running or state==State.Failed:
+                    if du_state.get(du,None) is None or ( du_state[du] != State.Running and du_state[du] != State.Failed ):                
+                        du_state[du] = du.get_state()
+                    if du_state[du]==State.Running or du_state[du]==State.Failed:
                         completed_dus=completed_dus + 1
 
                 logger.debug("Compute Data Service Completion Status: %d/%d CUs %d/%d DUs %d/%d Pilots"%
                              (completed_cus, number_cus, completed_dus,
                                number_dus, completed_pilots, number_pilots))
             
-                logger.debug("exit? " + str((completed_dus==number_dus and completed_cus==number_cus)))
+                #logger.debug("exit? " + str((completed_dus==number_dus and completed_cus==number_cus)))
                 if completed_dus<number_dus and completed_cus<number_cus:
                     time.sleep(2)
-            
-            
-#             for i in self.data_units.values():
-#                 i.wait()
-#             logger.debug("Wait for DUs finished")        
-#                 
-#             for i in self.compute_units.values():
-#                 i.wait()     
-#             logger.debug("CUs done")        
                    
             logger.debug("### END WAIT ###")
         except:
@@ -370,8 +365,10 @@ class ComputeDataServiceDecentral(ComputeDataService):
                 time.sleep(5)        
 
         logger.debug("Re-Scheduler terminated")
+        
+        
+
     
     
-   
     
-   
+    

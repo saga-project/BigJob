@@ -108,6 +108,7 @@ class SSHFileAdaptor(object):
             self.__state=State.Failed
             return self.__state            
             
+            
     def create_du(self, du_id):
         du_dir = os.path.join(self.path, str(du_id))
         logger.debug("mkdir: " + du_dir)
@@ -147,6 +148,10 @@ class SSHFileAdaptor(object):
             logger.debug(str((source_host, source_path, self.host, remote_path)))
             self.__run_scp_command(self.userkey, source_user, source_host, source_path, self.user, self.host, remote_path)        
     
+    
+    def put_du_rsync(self, du):
+        pass
+    
   
     def copy_du(self, du, pd_new):
         remote_url = pd_new.service_url + "/" + str(du.id)
@@ -154,11 +159,11 @@ class SSHFileAdaptor(object):
         self.copy_du_to_url(du, local_url, remote_url)  
         
     
-    def get_du(self, du, target_url):
+    def get_du(self, du, target_url, all_files=None):
         remote_url = target_url
         local_url =  self.service_url  + "/" + str(du.id)
         logger.debug("get_du(): copy %s to %s:"%(local_url, remote_url))
-        self.copy_du_to_url(du, local_url, remote_url)  
+        self.copy_du_to_url(du, local_url, remote_url, all_files)  
         
         
     def remove_du(self, du):
@@ -183,7 +188,7 @@ class SSHFileAdaptor(object):
         target_path = result.path
         target_user = result.username
         logger.debug("Create directory: %s"%target_path)
-        command = "mkdir %s"%target_path
+        command = "mkdir -p %s"%target_path
         rc = self.__run_ssh_command(self.userkey, target_user, target_host, command)
         if rc==0:
             return True
@@ -196,9 +201,14 @@ class SSHFileAdaptor(object):
         return result.path
     
         
-    def copy_du_to_url(self, du,  local_url, remote_url):
+    def copy_du_to_url(self, du,  local_url, remote_url, all_files=None):
         self.create_remote_directory(remote_url)
-        self.__third_party_transfer_scp(local_url + "/*", remote_url)
+        if all_files:
+            logger.debug("Files to be copied %s" % all_files)
+            for fName in all_files:
+                self.__third_party_transfer_scp(os.path.join(local_url, fName), remote_url)
+        else:
+            self.__third_party_transfer_scp(local_url + "/*", remote_url)
   
             
     ###########################################################################
@@ -235,6 +245,7 @@ class SSHFileAdaptor(object):
             
 
     def __third_party_transfer_scp(self, source_url, target_url):
+        logger.debug("source_url: %s, target_url: %s" % (source_url, target_url))
         result = urlparse.urlparse(source_url)
         source_host = result.hostname
         source_path = result.path
@@ -336,9 +347,9 @@ class SSHFileAdaptor(object):
         child = pexpect.spawn(command.strip(), timeout=None)
         password_error=False
         try:
-            child.timeout=300
-            child.expect("password:",timeout=300, searchwindowsize=5024)
-            password_error=True
+            match= child.expect(["password:", os.path.basename(source_path)],timeout=300, searchwindowsize=5024)
+            if match == 0:
+                password_error=True
         except Exception as ex:
             logger.debug("No password prompt error found" + str(ex))
 
