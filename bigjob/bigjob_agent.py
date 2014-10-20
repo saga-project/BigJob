@@ -343,6 +343,7 @@ class bigjob_agent:
                 for j in range(0, node_dict[i]):
                     logger.debug("add host: " + i.strip())
                     self.freenodes.append(i)
+        return self.freenodes
 
     def get_num_cpus(self):
         cpuinfo = open("/proc/cpuinfo", "r")
