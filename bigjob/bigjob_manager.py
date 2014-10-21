@@ -393,8 +393,15 @@ class bigjob(object):
 
         return self.pilot_url
     
-    def get_nodes(self):
-        return self.coordination.get_nodes(self.pilot_url)
+    def get_nodes(self):        
+        while True:
+            nodeStr = self.coordination.get_nodes(self.pilot_url)
+            if nodeStr != None:
+                break
+            time.sleep(2)        
+        nodeList = eval(nodeStr)
+        nodeList = [i.replace('\n','') for i in nodeList]
+        return nodeList
     
     def list_subjobs(self):
         sj_list = self.coordination.get_jobs_of_pilot(self.pilot_url)
@@ -621,6 +628,8 @@ import os
 import urllib
 import sys
 import time
+try:import bigjob.bigjob_agent
+except: print "bigjob import failed"
 start_time = time.time()
 home = os.environ.get("HOME")
 #print "Home: " + home
