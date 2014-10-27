@@ -521,17 +521,18 @@ class DataUnit(DataUnit):
             CoordinationAdaptor.update_du(self)
 
             
-    def add_files(self, file_url_list=[]):
+    def add_files(self, file_url_list=[], exists=False):
         """Add files referenced in list to Data Unit"""
         self._update_state(State.Pending)
         item_list = DataUnitItem.create_data_unit_from_urls(None, file_url_list)
         for i in item_list:
             self.data_unit_items.append(i)
-        CoordinationAdaptor.update_du(self)    
-        if len(self.pilot_data) > 0: 
-            for i in self.pilot_data:
-                logger.debug("Update Pilot Data %s"%(i.get_url()))
-                i.put_du(self)
+        CoordinationAdaptor.update_du(self)
+        if not exists:    
+            if len(self.pilot_data) > 0: 
+                for i in self.pilot_data:
+                    logger.debug("Update Pilot Data %s"%(i.get_url()))
+                    i.put_du(self)
         self._update_state(State.Running)
         CoordinationAdaptor.update_du(self)    
         

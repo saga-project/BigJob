@@ -56,7 +56,7 @@ try:
       
     #print("Set logging level: %s"%(logging_level))
     logging.basicConfig(datefmt='%m/%d/%Y %I:%M:%S %p',
-               format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+               format='%(asctime)s - %(name)s - %(levelname)s - %(filename)s: %(lineno)d - %(message)s')
     logger = logging.getLogger(name='bigjob')
     
     #logger.basicConfig(datefmt='%m/%d/%Y %I:%M:%S %p',
