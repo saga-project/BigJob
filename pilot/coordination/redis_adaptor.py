@@ -1,11 +1,13 @@
 from pilot import *
 from bigjob import logger
 from redis.client import Lock
+import redis
 
 try:
     import json
 except ImportError:
     import simplejson as json
+
 
 from saga import Url as SAGAUrl
 
@@ -21,6 +23,8 @@ class RedisCoordinationAdaptor:
     PILOT_DATA_SERVICE_PATH=PILOT_DATA_PATH + SEPARATOR + "pds"
     DATA_UNIT_SERVICE_PATH=PILOT_DATA_PATH + SEPARATOR +"dus"
     COMPUTE_DATA_SERVICE_PATH = PILOT_DATA_PATH + SEPARATOR + "cds"
+    
+    redis_client = None    
 
     ###########################################################################
     # Construct a base url for an application
@@ -228,23 +232,23 @@ class RedisCoordinationAdaptor:
     # internal Redis-related methods
     @classmethod
     def __get_redis_api_client(cls):
-        import redis
         ''' Initialize Redis API Client     '''
-        saga_url = SAGAUrl(RedisCoordinationAdaptor.BASE_URL)
-        username = saga_url.username
-        server = saga_url.host
-        server_port = saga_url.port
-        if username==None or username=="":
-            redis_client = redis.Redis(host=server, port=server_port, db=0)
-        else:
-            redis_client = redis.Redis(host=server, port=server_port, password=username, db=0)
-        
-        try:
-            redis_client.ping()
-        except:
-            logger.error("Please start Redis server!")
-            raise Exception("Please start Redis server!")
-        return redis_client
+        if cls.redis_client == None:
+            saga_url = SAGAUrl(RedisCoordinationAdaptor.BASE_URL)
+            username = saga_url.username
+            server = saga_url.host
+            server_port = saga_url.port
+            if username==None or username=="":
+                cls.redis_client = redis.Redis(host=server, port=server_port, db=0)
+            else:
+                cls.redis_client = redis.Redis(host=server, port=server_port, password=username, db=0)
+            
+            try:
+                cls.redis_client.ping()
+            except:
+                logger.error("Please start Redis server!")
+                raise Exception("Please start Redis server!")            
+        return cls.redis_client
     
     
     @classmethod
