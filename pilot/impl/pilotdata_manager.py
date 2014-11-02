@@ -508,7 +508,7 @@ class DataUnit(DataUnit):
         else:
             self.id = DataUnit._get_du_id(du_url)
             self.url = du_url   
-            logger.debug("Restore du: %s"%self.id)         
+            logger.debug("Restore du: %s"%self.id) 
             self.__restore_state()
             
         self.transfer_threads=[]
@@ -627,7 +627,7 @@ class DataUnit(DataUnit):
         """
         if self.get_state()!=State.Running:
             self.wait()
-        self.__restore_state()
+            self.__restore_state()
                         
         if len(self.pilot_data) > 0:
             # Search for PD that is close to local machine
