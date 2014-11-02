@@ -891,8 +891,8 @@ class bigjob_agent:
                             logger.debug("Reconnected to DU. Exporting it now...")
                         du.export(target_directory, all_files)
                 else:
-                    if du_url in self.duUrls:
-                        du= self.duUrls[du_url]
+                    if i in self.duUrls:
+                        du= self.duUrls[i]
                     else:
                         du = DataUnit(du_url=i)
                         logger.debug("Restored DU... call get state()")
