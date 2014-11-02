@@ -77,6 +77,7 @@ class bigjob_agent:
         self.freenodes = []
         self.busynodes = []
         self.restarted = {}
+        self.duUrls = {}
 
         # read config file
         conf_file = os.path.dirname(os.path.abspath( __file__ )) + "/../" + CONFIG_FILE
@@ -879,19 +880,25 @@ class bigjob_agent:
             for i in input_data:                
                 if type(i) is dict:
                     for du_url,all_files in i.iteritems():
-                        logger.debug("Get files: " + str(all_files))                    
-                        du = DataUnit(du_url=du_url)
+                        logger.debug("Get files: " + str(all_files))
+                        if du_url in self.duUrls:
+                            du= self.duUrls[du_url]
+                        else:                                        
+                            du = DataUnit(du_url=du_url)
+                            logger.debug("Restored DU... call get state()")
+                            logger.debug("DU State: " + du.get_state())
+                            du.wait()
+                            logger.debug("Reconnected to DU. Exporting it now...")
+                        du.export(target_directory, all_files)
+                else:
+                    if du_url in self.duUrls:
+                        du= self.duUrls[du_url]
+                    else:
+                        du = DataUnit(du_url=i)
                         logger.debug("Restored DU... call get state()")
                         logger.debug("DU State: " + du.get_state())
                         du.wait()
                         logger.debug("Reconnected to DU. Exporting it now...")
-                        du.export(target_directory, all_files)
-                else:
-                    du = DataUnit(du_url=i)
-                    logger.debug("Restored DU... call get state()")
-                    logger.debug("DU State: " + du.get_state())
-                    du.wait()
-                    logger.debug("Reconnected to DU. Exporting it now...")
                     du.export(target_directory)                    
                     
         except:

@@ -300,6 +300,6 @@ class RedisCoordinationAdaptor:
         redis_client = cls.__get_redis_api_client()
         content = redis_client.hgetall(entry_url)
         
-        logger.debug("Retrieve Redis entry at: " + entry_url 
-                      + " Content: " + str(json.dumps(content)))
+        #logger.debug("Retrieve Redis entry at: " + entry_url 
+        #              + " Content: " + str(json.dumps(content)))
         return content
