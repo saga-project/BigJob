@@ -11,16 +11,21 @@ import string
 import random
 import copy
 import datetime
+import urlparse
+import pwd
+import math
+import pdb
 
 from webhdfs.webhdfs import WebHDFS 
 
  
-HDFS_URL="hdfs://localhost:50070"
+#HDFS_URL="hdfs://localhost:50070"
+HDFS_URL="http://c454-604:50070"
 RESULT_FILE_PREFIX="hdfs-inmem"
 RESULT_DIR="results"
 
 MIN_SIZE=28 # 2**28 bytes
-MAX_SIZE=29 # 2**29 bytes
+MAX_SIZE=34 # 2**29 bytes
 
 class HDFSClusterManager():
     
@@ -36,11 +41,30 @@ class HDFSClusterManager():
 
 
 def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
-    s = '%030x' % random.randrange(long(16L**size))
+    if size>268435456:
+        s = '%030x' % random.randrange(long(16L**268435456))
+        for i in range(28, int(math.log(size, 2))):
+           s = s + s 
+    else:
+        s = '%030x' % random.randrange(long(16L**size))
     return s
 
-def get_number_hadoop_nodes():
-    fname = "/etc/hadoop/conf/slaves"
+def id_generator_file(size=6, chars=string.ascii_uppercase + string.digits, filename=None):
+    f = open(filename, "w")
+    if size>268435456:
+        s = '%030x' % random.randrange(long(16L**268435456))
+        # Base Unit of Data written to disk is 2^28 = 268,435,456 bytes = 256 MB
+        #for i in range(28, int(math.log(size, 2))):
+        # how often do we need to write 256 MB
+        number_of_writes = size/pow(2, 28) 
+        for j in range(0, number_of_writes):
+            f.write(s)
+    else:
+        s = '%030x' % random.randrange(long(16L**size))
+        f.write(s)
+    f.close()
+
+def get_number_hadoop_nodes(fname="/etc/hadoop/conf/slaves"):
     with open(fname) as f:
         for i, l in enumerate(f):
             pass
@@ -126,24 +150,89 @@ def test_with_caching(number_of_nodes, number_replicas, f, client):
             f.write(result + "\n")
 
 
+def test_with_inmem(number_of_nodes, number_replicas, f, client, cache=True):
+    """ Test Hadoop 2.6 Memory capbilities:
+        https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-hdfs/ArchivalStorage.html
+        https://issues.apache.org/jira/browse/HDFS-5851
+    """
+    client.rmdir("/tmp/test")
+    client.mkdir("/tmp/test/")
+
+    print "\n*********************************\nResults\n******************************"
+    print "Size, Time, Backend, NumNodes, NumInstances, Type, NumReplicas "
+    for repeat in range(0, 3):
+        runtimes = {}
+        runtimes_write = {}
+        for i in range(MIN_SIZE, MAX_SIZE):
+            num_bytes_scenario = 2 ** i
+            filename = "/tmp/test/test_" + str(num_bytes_scenario)
+            try:
+                os.mkdir(os.path.dirname(filename))
+            except:
+                pass
+            print "PUT File Size: %s MB" % str(num_bytes_scenario / 1024 / 1024)
+            id_generator_file(num_bytes_scenario, filename=filename)
+            print "CREATED FILE with size of: " + str(os.path.getsize(filename))
+            num_bytes=os.path.getsize(filename)
+            scenario="write"
+            if cache:
+                command = "hdfs dfs -put -l %s %s"%(filename,filename)
+                scenario="write_memory"
+            else:
+                command = "hdfs dfs -put %s %s"%(filename,filename)
+            print "PUT FILE TO HDFS: %s"%command
+            start = time.time()
+            os.system(command)
+            runtime = time.time() - start
+            runtimes[num_bytes_scenario] = runtime
+
+            print "GET File Size: %s MB" % str(num_bytes / 1024 / 1024)
+            command="hadoop fs -text %s > /dev/null"%(filename)
+            print command
+            start = time.time()
+            #s = client.get("/tmp/test/test_" + str(num_bytes))
+            os.system(command)
+            runtime = time.time() - start
+            runtimes_write[num_bytes_scenario] = runtime
+            
+            os.system("hadoop fs -rm -r %s"%(filename))
+            os.remove(filename)
+
+        time.sleep(1)
+
+        for key, value in runtimes.iteritems():
+            result = str(key) + "," + str(value) + ",HDFS," + str(number_of_nodes) + "," + str(number_of_nodes) + "," + scenario + "," + str(number_replicas)+ "," + str(repeat)
+            print result
+            f.write(result + "\n")
+        f.flush()
+        scenario_write = scenario.replace("write", "read")
+        for key, value in runtimes_write.iteritems():
+            result = str(key) + "," + str(value) + ",HDFS," + str(number_of_nodes) + "," + str(number_of_nodes) + "," + scenario_write + "," + str(number_replicas) + "," + str(repeat)
+            print result
+            f.write(result + "\n")
+            f.flush()
+
 
 if __name__ == '__main__':
     
     # Preparation and configuration
-    number_of_nodes = get_number_hadoop_nodes()
-    number_replicas = 1 
+    slaves=None
+    if os.environ.has_key("HADOOP_CONF_DIR"):
+        slaves=os.path.join(os.environ["HADOOP_CONF_DIR"], "slaves")
+    number_of_nodes = get_number_hadoop_nodes(slaves)
+    number_replicas = 3 
     d = datetime.datetime.now()
     result_filename = RESULT_FILE_PREFIX + d.strftime("%Y%m%d-%H%M%S") + ".csv"
     f = open(os.path.join(RESULT_DIR, result_filename), "w")
-    f.write("Size, Time, Backend, NumNodes, NumInstances, Type, NumReplicas\n")
+    f.write("Size, Time, Backend, NumNodes, NumInstances, Type, NumReplicas,Repeat\n")
 
-
-
-    client =  WebHDFS("ip-10-17-24-243", 
-                      50070, 
-                      "ec2-user")
+    u = urlparse.urlparse(HDFS_URL)
+    user = pwd.getpwuid(os.getuid())[0]
+    client =  WebHDFS(u.hostname, u.port, user)
     
-    test_without_caching(number_of_nodes, number_replicas, f, client)
-    test_with_caching(number_of_nodes, number_replicas, f, client)
+    test_with_inmem(number_of_nodes, number_replicas, f, client,cache=False)
+    test_with_inmem(number_of_nodes, number_replicas, f, client, cache=True)
+    #test_without_caching(number_of_nodes, number_replicas, f, client)
+    #test_with_caching(number_of_nodes, number_replicas, f, client)
     
     f.close()
