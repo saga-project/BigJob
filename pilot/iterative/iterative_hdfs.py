@@ -20,12 +20,12 @@ from webhdfs.webhdfs import WebHDFS
 
  
 #HDFS_URL="hdfs://localhost:50070"
-HDFS_URL="http://c401-202:50070"
+HDFS_URL="http://c520-303:50070"
 RESULT_FILE_PREFIX="hdfs-inmem"
 RESULT_DIR="results"
 
 MIN_SIZE=28 # 2**28 bytes
-MAX_SIZE=34 # 2**29 bytes
+MAX_SIZE=36 # 2**29 bytes
 
 class HDFSClusterManager():
     
@@ -271,6 +271,7 @@ def test_with_inmem_mr(number_of_nodes, number_replicas, f, client, cache=True):
             
             os.system("hadoop fs -rm -r %s"%(filename))
             os.system("hadoop fs -rm -r /tmp/out")
+            os.system("hadoop fs -expunge")
             os.remove(filename)
 
         time.sleep(1)
@@ -312,3 +313,4 @@ if __name__ == '__main__':
     #test_with_caching(number_of_nodes, number_replicas, f, client)
     
     f.close()
+    os.system("cd /home1/01131/tg804093; /home1/01131/tg804093/clean.sh")
