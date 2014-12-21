@@ -20,7 +20,7 @@ from webhdfs.webhdfs import WebHDFS
 
  
 #HDFS_URL="hdfs://localhost:50070"
-HDFS_URL="http://c520-303:50070"
+HDFS_URL="http://c452-903:50070"
 RESULT_FILE_PREFIX="hdfs-inmem"
 RESULT_DIR="results"
 
