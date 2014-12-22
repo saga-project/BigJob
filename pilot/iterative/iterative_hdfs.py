@@ -19,13 +19,13 @@ from webhdfs.webhdfs import WebHDFS
 
  
 #HDFS_URL="hdfs://localhost:50070"
-HDFS_URL="http://c520-303:50070"
+HDFS_URL="http://c477-101:50070"
 RESULT_FILE_PREFIX="hdfs-inmem"
 RESULT_DIR="results"
 
 MIN_SIZE=28 # 2**28 bytes
 MAX_SIZE=36 # 2**29 bytes
-NUMBER_REPEATS=3    
+NUMBER_REPEATS=2    
 
 # Temp Directory
 TMP_DIR="/oasis/scratch/luckow/temp_project"
@@ -271,7 +271,7 @@ def test_with_inmem_mr(number_of_nodes, number_replicas, f, client, cache=True):
 
             print "GET File Size: %s MB with" % str(num_bytes / 1024 / 1024)
             #command="hadoop jar /home1/01131/tg804093/work/hadoop-2.6.0/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.6.0.jar grep %s %s %s"%(filename, "/tmp/out", "testtest")
-            command="hadoop jar $HADOOP_STREAMING_JAR -input %s -output %s -numReduceTasks 0"%(filename, "/tmp/out")
+            command="hadoop jar  " + HADOOP_STREAMING_JAR + " -input %s -output %s -numReduceTasks 0"%(filename, "/tmp/out")
             print command
             start = time.time()
             #s = client.get("/tmp/test/test_" + str(num_bytes))
