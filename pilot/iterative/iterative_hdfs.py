@@ -13,6 +13,7 @@ import urlparse
 import pwd
 import math
 import pdb
+import shutil
 
 from webhdfs.webhdfs import WebHDFS 
 
@@ -298,6 +299,7 @@ def test_with_inmem_mr(number_of_nodes, number_replicas, f, client, cache=True):
 def test_with_filesystem(number_of_nodes, number_replicas, f, client, target_dir="/tmp", type="Lustre"):
     """ Test Lustre/local flash
     """
+    os.system("rm " + target_dir + "/test_*")
     print "\n*********************************\nResults\n******************************"
     print "Size, Time, Backend, NumNodes, NumInstances, Type, NumReplicas "
     for repeat in range(0, NUMBER_REPEATS):
@@ -305,7 +307,7 @@ def test_with_filesystem(number_of_nodes, number_replicas, f, client, target_dir
         runtimes_write = {}
         for i in range(MIN_SIZE, MAX_SIZE):
             num_bytes_scenario = 2 ** i
-            filename = "/tmp/test/test_" + str(num_bytes_scenario)
+            filename = os.path.join(TMP_DIR, "test/test_" + str(num_bytes_scenario))
             try:
                 os.mkdir(os.path.dirname(filename))
             except:
@@ -314,9 +316,9 @@ def test_with_filesystem(number_of_nodes, number_replicas, f, client, target_dir
             id_generator_file_line(num_bytes_scenario, filename=filename)
             print "CREATED FILE with size of: " + str(os.path.getsize(filename))
             num_bytes=os.path.getsize(filename)
-            target_filename=os.path.join(LUSTRE_DIR, os.path.basename(filename))
+            target_filename=os.path.join(target_dir, os.path.basename(filename))
             scenario="write_%s"%(type)
-            command = "cp %s %s"%(filename, os.path.join(LUSTRE_DIR, os.path.basename(filename)))
+            command = "cp %s %s"%(filename, target_filename)
             print "PUT FILE TO LOCAL: %s"%command
             start = time.time()
             os.system(command)
@@ -324,25 +326,29 @@ def test_with_filesystem(number_of_nodes, number_replicas, f, client, target_dir
             runtimes[num_bytes_scenario] = runtime
 
             print "GET File Size: %s MB with" % str(num_bytes / 1024 / 1024)
-            command="hadoop jar $HADOOP_STREAMING_JAR -input %s -output %s -numReduceTasks 0"%(target_filename, os.path.join(target_dir, "out")
+            output_dir=os.path.join(target_dir, "out")
+            command="hadoop jar " + HADOOP_STREAMING_JAR + " -input file://%s -output file://%s -numReduceTasks 0"%(target_filename, output_dir)
             print command
             start = time.time()
             os.system(command)
             runtime = time.time() - start
             runtimes_write[num_bytes_scenario] = runtime
             os.remove(filename)
+            os.remove(target_filename)
+            shutil.rmtree(output_dir)
 
         time.sleep(1)
         for key, value in runtimes.iteritems():
-            result = str(key) + "," + str(value) + ",HDFS," + str(number_of_nodes) + "," + str(number_of_nodes) + "," + scenario + "," + str(number_replicas)+ "," + str(repeat)
+            result = str(key) + "," + str(value) + ","+type+"," + str(number_of_nodes) + "," + str(number_of_nodes) + "," + scenario + "," + str(number_replicas)+ "," + str(repeat)
             print result
             f.write(result + "\n")
         f.flush()
         scenario_write = scenario.replace("write", "read")
         scenario_write = scenario_write + "_mr"
         for key, value in runtimes_write.iteritems():
-            result = str(key) + "," + str(value) + ",HDFS," + str(number_of_nodes) + "," + str(number_of_nodes) + "," + scenario_write + "," + str(number_replicas) + "," + str(repeat)
+            result = str(key) + "," + str(value) + ","+type+"," + str(number_of_nodes) + "," + str(number_of_nodes) + "," + scenario_write + "," + str(number_replicas) + "," + str(repeat)
             print result
+
 if __name__ == '__main__':
     
     # Preparation and configuration
@@ -360,7 +366,8 @@ if __name__ == '__main__':
     user = pwd.getpwuid(os.getuid())[0]
     client =  WebHDFS(u.hostname, u.port, user)
 
-    test_with_filesystem(number_of_nodes, number_replicas, f, client, target_dir=LUSTRE_DIR, type="lustre")
+    test_with_filesystem(number_of_nodes, number_replicas, f, client, target_dir=os.path.join(LUSTRE_DIR, "test"), type="lustre")
+    #test_with_filesystem(number_of_nodes, number_replicas, f, client, target_dir=FLASH_DIR, type="flash")
     
     #test_with_inmem_mr(number_of_nodes, number_replicas, f, client,cache=False)
     #test_with_inmem_mr(number_of_nodes, number_replicas, f, client,cache=True)
