@@ -184,7 +184,7 @@ def test_with_inmem(number_of_nodes, number_replicas, f, client, cache=True):
         runtimes_write = {}
         for i in range(MIN_SIZE, MAX_SIZE):
             num_bytes_scenario = 2 ** i
-            filename = "/tmp/test/test_" + str(num_bytes_scenario)
+            filename = os.path.join(TMP_DIR, "test/test_" + str(num_bytes_scenario))
             try:
                 os.mkdir(os.path.dirname(filename))
             except:
@@ -231,6 +231,7 @@ def test_with_inmem(number_of_nodes, number_replicas, f, client, cache=True):
             f.write(result + "\n")
             f.flush()
 
+
 def test_with_inmem_mr(number_of_nodes, number_replicas, f, client, cache=True):
     """ Test Hadoop 2.6 Memory capbilities:
         https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-hdfs/ArchivalStorage.html
@@ -246,7 +247,8 @@ def test_with_inmem_mr(number_of_nodes, number_replicas, f, client, cache=True):
         runtimes_write = {}
         for i in range(MIN_SIZE, MAX_SIZE):
             num_bytes_scenario = 2 ** i
-            filename = "/tmp/test/test_" + str(num_bytes_scenario)
+            #filename = "/tmp/test/test_" + str(num_bytes_scenario)
+            filename = os.path.join(TMP_DIR, "test/test_" + str(num_bytes_scenario))
             try:
                 os.mkdir(os.path.dirname(filename))
             except:
@@ -366,13 +368,13 @@ if __name__ == '__main__':
     user = pwd.getpwuid(os.getuid())[0]
     client =  WebHDFS(u.hostname, u.port, user)
 
-    test_with_filesystem(number_of_nodes, number_replicas, f, client, target_dir=os.path.join(LUSTRE_DIR, "test"), type="lustre")
+    #test_with_filesystem(number_of_nodes, number_replicas, f, client, target_dir=os.path.join(LUSTRE_DIR, "test"), type="lustre")
     #test_with_filesystem(number_of_nodes, number_replicas, f, client, target_dir=FLASH_DIR, type="flash")
     
-    #test_with_inmem_mr(number_of_nodes, number_replicas, f, client,cache=False)
-    #test_with_inmem_mr(number_of_nodes, number_replicas, f, client,cache=True)
-    #test_with_inmem(number_of_nodes, number_replicas, f, client,cache=False)
-    #test_with_inmem(number_of_nodes, number_replicas, f, client, cache=True)
+    test_with_inmem_mr(number_of_nodes, number_replicas, f, client,cache=False)
+    test_with_inmem_mr(number_of_nodes, number_replicas, f, client,cache=True)
+    test_with_inmem(number_of_nodes, number_replicas, f, client,cache=False)
+    test_with_inmem(number_of_nodes, number_replicas, f, client, cache=True)
     #test_without_caching(number_of_nodes, number_replicas, f, client)
     #test_with_caching(number_of_nodes, number_replicas, f, client)
     
