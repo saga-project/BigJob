@@ -18,7 +18,7 @@ from webhdfs.webhdfs import WebHDFS
 
  
 #HDFS_URL="hdfs://localhost:50070"
-HDFS_URL="http://c452-903:50070"
+HDFS_URL="http://c431-503:50070"
 RESULT_FILE_PREFIX="hdfs-inmem"
 RESULT_DIR="results"
 
@@ -324,7 +324,7 @@ def test_with_filesystem(number_of_nodes, number_replicas, f, client, target_dir
             runtimes[num_bytes_scenario] = runtime
 
             print "GET File Size: %s MB with" % str(num_bytes / 1024 / 1024)
-            command="hadoop jar $HADOOP_STREAMING_JAR -input %s -output %s -numReduceTasks 0"%(target_filename, os.path.join(target_dir, "out")
+            command="hadoop jar " + HADOOP_STREAMING_JAR + " -input %s -output %s -numReduceTasks 0"%(target_filename, os.path.join(target_dir, "out"))
             print command
             start = time.time()
             os.system(command)
@@ -360,12 +360,12 @@ if __name__ == '__main__':
     user = pwd.getpwuid(os.getuid())[0]
     client =  WebHDFS(u.hostname, u.port, user)
 
-    test_with_filesystem(number_of_nodes, number_replicas, f, client, target_dir=LUSTRE_DIR, type="lustre")
+    #test_with_filesystem(number_of_nodes, number_replicas, f, client, target_dir=LUSTRE_DIR, type="lustre")
     
-    #test_with_inmem_mr(number_of_nodes, number_replicas, f, client,cache=False)
-    #test_with_inmem_mr(number_of_nodes, number_replicas, f, client,cache=True)
-    #test_with_inmem(number_of_nodes, number_replicas, f, client,cache=False)
-    #test_with_inmem(number_of_nodes, number_replicas, f, client, cache=True)
+    test_with_inmem_mr(number_of_nodes, number_replicas, f, client,cache=False)
+    test_with_inmem_mr(number_of_nodes, number_replicas, f, client,cache=True)
+    test_with_inmem(number_of_nodes, number_replicas, f, client,cache=False)
+    test_with_inmem(number_of_nodes, number_replicas, f, client, cache=True)
     #test_without_caching(number_of_nodes, number_replicas, f, client)
     #test_with_caching(number_of_nodes, number_replicas, f, client)
     
