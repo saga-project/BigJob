@@ -25,13 +25,15 @@ RESULT_DIR="results"
 
 MIN_SIZE=28 # 2**28 bytes
 MAX_SIZE=36 # 2**29 bytes
-NUMBER_REPEATS=2    
+NUMBER_REPEATS=3    
 
 # Temp Directory
-TMP_DIR="/oasis/scratch/luckow/temp_project"
+#TMP_DIR="/oasis/scratch/luckow/temp_project"
+TMP_DIR="/tmp"
 
 #Directory on Lustre
-LUSTRE_DIR=TMP_DIR
+#LUSTRE_DIR=TMP_DIR
+LUSTRE_DIR="/scratch/01131/tg804093/lustre_test"
 FLASH_DIR=os.path.expandvars("/scratch/$USER/$PBS_JOBID")
 HADOOP_STREAMING_JAR=os.path.expandvars("$HOME/work/hadoop-2.6.0/share/hadoop/tools/lib/hadoop-streaming-2.6.0.jar")
 
@@ -317,6 +319,10 @@ def test_with_filesystem(number_of_nodes, number_replicas, f, client, target_dir
             print "CREATED FILE with size of: " + str(os.path.getsize(filename))
             num_bytes=os.path.getsize(filename)
             target_filename=os.path.join(target_dir, os.path.basename(filename))
+            try:
+                os.mkdir(os.path.dirname(target_filename))
+            except:
+                pass
             scenario="write_%s"%(type)
             command = "cp %s %s"%(filename, target_filename)
             print "PUT FILE TO LOCAL: %s"%command
@@ -348,6 +354,8 @@ def test_with_filesystem(number_of_nodes, number_replicas, f, client, target_dir
         for key, value in runtimes_write.iteritems():
             result = str(key) + "," + str(value) + ","+type+"," + str(number_of_nodes) + "," + str(number_of_nodes) + "," + scenario_write + "," + str(number_replicas) + "," + str(repeat)
             print result
+        f.flush()
+
 
 if __name__ == '__main__':
     
@@ -366,13 +374,13 @@ if __name__ == '__main__':
     user = pwd.getpwuid(os.getuid())[0]
     client =  WebHDFS(u.hostname, u.port, user)
 
-    #test_with_filesystem(number_of_nodes, number_replicas, f, client, target_dir=os.path.join(LUSTRE_DIR, "test"), type="lustre")
+    test_with_filesystem(number_of_nodes, number_replicas, f, client, target_dir=os.path.join(LUSTRE_DIR, "test"), type="lustre")
     #test_with_filesystem(number_of_nodes, number_replicas, f, client, target_dir=FLASH_DIR, type="flash")
     
-    test_with_inmem_mr(number_of_nodes, number_replicas, f, client,cache=False)
-    test_with_inmem_mr(number_of_nodes, number_replicas, f, client,cache=True)
-    test_with_inmem(number_of_nodes, number_replicas, f, client,cache=False)
-    test_with_inmem(number_of_nodes, number_replicas, f, client, cache=True)
+    #test_with_inmem_mr(number_of_nodes, number_replicas, f, client,cache=False)
+    #test_with_inmem_mr(number_of_nodes, number_replicas, f, client,cache=True)
+    #test_with_inmem(number_of_nodes, number_replicas, f, client,cache=False)
+    #test_with_inmem(number_of_nodes, number_replicas, f, client, cache=True)
     #test_without_caching(number_of_nodes, number_replicas, f, client)
     #test_with_caching(number_of_nodes, number_replicas, f, client)
     
