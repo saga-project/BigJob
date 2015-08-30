@@ -1,8 +1,6 @@
 '''
 In-Memory engine based on HDFS In-Memory (Hadoop >2.3)
 
-
-
 '''
 import subprocess
 import time
@@ -15,17 +13,31 @@ import urlparse
 import pwd
 import math
 import pdb
+import shutil
+import socket
 
 from webhdfs.webhdfs import WebHDFS 
 
  
 #HDFS_URL="hdfs://localhost:50070"
-HDFS_URL="http://c520-303:50070"
+HDFS_URL="http://c530-203:50070"
 RESULT_FILE_PREFIX="hdfs-inmem"
 RESULT_DIR="results"
 
-MIN_SIZE=28 # 2**28 bytes
+#MIN_SIZE=28 # 2**28 bytes
+MIN_SIZE=30 # 2**28 bytes
 MAX_SIZE=36 # 2**29 bytes
+NUMBER_REPEATS=3    
+
+# Temp Directory
+#TMP_DIR="/oasis/scratch/luckow/temp_project"
+TMP_DIR="/tmp"
+
+#Directory on Lustre
+#LUSTRE_DIR=TMP_DIR
+LUSTRE_DIR="/scratch/01131/tg804093/lustre_test"
+FLASH_DIR=os.path.expandvars("/scratch/$USER/$PBS_JOBID")
+HADOOP_STREAMING_JAR=os.path.expandvars("$HOME/work/hadoop-2.6.0/share/hadoop/tools/lib/hadoop-streaming-2.6.0.jar")
 
 class HDFSClusterManager():
     
@@ -98,11 +110,11 @@ def test_without_caching(number_of_nodes, number_replicas, f, client):
     print "\n*********************************\nResults\n******************************"
     print "Size, Time, Backend, NumNodes, NumInstances, Type, NumReplicas "
     for key, value in runtimes.iteritems():
-        result = str(key) + "," + str(value) + ",HDFS," + str(number_of_nodes) + "," + str(number_of_nodes) + ",write," + str(number_replicas)
+        result = str(key) + "," + str(value) + ",HDFS," + str(number_of_nodes) + "," + str(number_of_nodes) + ",write," + str(number_replicas)+","+socket.gethostname()
         print result
         f.write(result + "\n")
     
-    for repeat in range(0, 10):
+    for repeat in range(0, NUMBER_REPEATS):
         runtimes = {}
         for i in range(MIN_SIZE, MAX_SIZE):
             num_bytes = 2 ** i
@@ -114,7 +126,7 @@ def test_without_caching(number_of_nodes, number_replicas, f, client):
             runtimes[num_bytes] = runtime
         
         for key, value in runtimes.iteritems():
-            result = str(key) + "," + str(value) + ",HDFS," + str(number_of_nodes) + "," + str(number_of_nodes) + ",read," + str(number_replicas) + "," + str(repeat)
+            result = str(key) + "," + str(value) + ",HDFS," + str(number_of_nodes) + "," + str(number_of_nodes) + ",read," + str(number_replicas) + "," + str(repeat)+","+socket.gethostname()
             print result
             f.write(result + "\n")
 
@@ -140,11 +152,11 @@ def test_with_caching(number_of_nodes, number_replicas, f, client):
     print "\n*********************************\nResults\n******************************"
     print "Size, Time, Backend, NumNodes, NumInstances, Type, NumReplicas "
     for key, value in runtimes.iteritems():
-        result = str(key) + "," + str(value) + ",HDFS," + str(number_of_nodes) + "," + str(number_of_nodes) + ",write," + str(number_replicas)
+        result = str(key) + "," + str(value) + ",HDFS," + str(number_of_nodes) + "," + str(number_of_nodes) + ",write," + str(number_replicas)+","+socket.gethostname()
         print result
         f.write(result + "\n")
     
-    for repeat in range(0, 10):
+    for repeat in range(0, NUMBER_REPEATS):
         runtimes = {}
         for i in range(MIN_SIZE, MAX_SIZE):
             num_bytes = 2 ** i
@@ -156,7 +168,7 @@ def test_with_caching(number_of_nodes, number_replicas, f, client):
             runtimes[num_bytes] = runtime
         
         for key, value in runtimes.iteritems():
-            result = str(key) + "," + str(value) + ",HDFS," + str(number_of_nodes) + "," + str(number_of_nodes) + ",read_cache," + str(number_replicas) + "," + str(repeat)
+            result = str(key) + "," + str(value) + ",HDFS," + str(number_of_nodes) + "," + str(number_of_nodes) + ",read_cache," + str(number_replicas) + "," + str(repeat)+","+socket.gethostname() 
             print result
             f.write(result + "\n")
 
@@ -170,13 +182,14 @@ def test_with_inmem(number_of_nodes, number_replicas, f, client, cache=True):
     client.mkdir("/tmp/test/")
 
     print "\n*********************************\nResults\n******************************"
-    print "Size, Time, Backend, NumNodes, NumInstances, Type, NumReplicas "
-    for repeat in range(0, 3):
+    print "Size, Time, Backend, NumNodes, NumInstances, Type, NumReplicas,Hostname "
+    for repeat in range(0, NUMBER_REPEATS):
         runtimes = {}
         runtimes_write = {}
         for i in range(MIN_SIZE, MAX_SIZE):
             num_bytes_scenario = 2 ** i
-            filename = "/tmp/test/test_" + str(num_bytes_scenario)
+            hdfs_filename = "/tmp/test/test_" + str(num_bytes_scenario)
+            filename = os.path.join(TMP_DIR, "test/test_" + str(num_bytes_scenario))
             try:
                 os.mkdir(os.path.dirname(filename))
             except:
@@ -187,10 +200,10 @@ def test_with_inmem(number_of_nodes, number_replicas, f, client, cache=True):
             num_bytes=os.path.getsize(filename)
             scenario="write"
             if cache:
-                command = "hdfs dfs -put -l %s %s"%(filename,filename)
+                command = "hdfs dfs -put -l %s %s"%(filename,hdfs_filename)
                 scenario="write_memory"
             else:
-                command = "hdfs dfs -put %s %s"%(filename,filename)
+                command = "hdfs dfs -put %s %s"%(filename,hdfs_filename)
             print "PUT FILE TO HDFS: %s"%command
             start = time.time()
             os.system(command)
@@ -198,7 +211,7 @@ def test_with_inmem(number_of_nodes, number_replicas, f, client, cache=True):
             runtimes[num_bytes_scenario] = runtime
 
             print "GET File Size: %s MB" % str(num_bytes / 1024 / 1024)
-            command="hadoop fs -text %s > /dev/null"%(filename)
+            command="hadoop fs -text %s > /dev/null"%(hdfs_filename)
             print command
             start = time.time()
             #s = client.get("/tmp/test/test_" + str(num_bytes))
@@ -206,22 +219,23 @@ def test_with_inmem(number_of_nodes, number_replicas, f, client, cache=True):
             runtime = time.time() - start
             runtimes_write[num_bytes_scenario] = runtime
             
-            os.system("hadoop fs -rm -r %s"%(filename))
+            os.system("hadoop fs -rm -r %s"%(hdfs_filename))
             os.remove(filename)
 
         time.sleep(1)
 
         for key, value in runtimes.iteritems():
-            result = str(key) + "," + str(value) + ",HDFS," + str(number_of_nodes) + "," + str(number_of_nodes) + "," + scenario + "," + str(number_replicas)+ "," + str(repeat)
+            result = str(key) + "," + str(value) + ",HDFS," + str(number_of_nodes) + "," + str(number_of_nodes) + "," + scenario + "," + str(number_replicas)+ "," + str(repeat)+","+socket.gethostname()
             print result
             f.write(result + "\n")
         f.flush()
         scenario_write = scenario.replace("write", "read")
         for key, value in runtimes_write.iteritems():
-            result = str(key) + "," + str(value) + ",HDFS," + str(number_of_nodes) + "," + str(number_of_nodes) + "," + scenario_write + "," + str(number_replicas) + "," + str(repeat)
+            result = str(key) + "," + str(value) + ",HDFS," + str(number_of_nodes) + "," + str(number_of_nodes) + "," + scenario_write + "," + str(number_replicas) + "," + str(repeat)+","+socket.gethostname()
             print result
             f.write(result + "\n")
             f.flush()
+
 
 def test_with_inmem_mr(number_of_nodes, number_replicas, f, client, cache=True):
     """ Test Hadoop 2.6 Memory capbilities:
@@ -233,12 +247,13 @@ def test_with_inmem_mr(number_of_nodes, number_replicas, f, client, cache=True):
 
     print "\n*********************************\nResults\n******************************"
     print "Size, Time, Backend, NumNodes, NumInstances, Type, NumReplicas "
-    for repeat in range(0, 3):
+    for repeat in range(0, NUMBER_REPEATS):
         runtimes = {}
         runtimes_write = {}
         for i in range(MIN_SIZE, MAX_SIZE):
             num_bytes_scenario = 2 ** i
-            filename = "/tmp/test/test_" + str(num_bytes_scenario)
+            hdfs_filename = "/tmp/test/test_" + str(num_bytes_scenario)
+            filename = os.path.join(TMP_DIR, "test/test_" + str(num_bytes_scenario))
             try:
                 os.mkdir(os.path.dirname(filename))
             except:
@@ -249,10 +264,10 @@ def test_with_inmem_mr(number_of_nodes, number_replicas, f, client, cache=True):
             num_bytes=os.path.getsize(filename)
             scenario="write"
             if cache:
-                command = "hdfs dfs -put -l %s %s"%(filename,filename)
+                command = "hdfs dfs -put -l %s %s"%(filename,hdfs_filename)
                 scenario="write_memory"
             else:
-                command = "hdfs dfs -put %s %s"%(filename,filename)
+                command = "hdfs dfs -put %s %s"%(filename,hdfs_filename)
             print "PUT FILE TO HDFS: %s"%command
             start = time.time()
             os.system(command)
@@ -261,7 +276,7 @@ def test_with_inmem_mr(number_of_nodes, number_replicas, f, client, cache=True):
 
             print "GET File Size: %s MB with" % str(num_bytes / 1024 / 1024)
             #command="hadoop jar /home1/01131/tg804093/work/hadoop-2.6.0/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.6.0.jar grep %s %s %s"%(filename, "/tmp/out", "testtest")
-            command="hadoop jar /home1/01131/tg804093/work/hadoop-2.6.0/share/hadoop/tools/lib/hadoop-streaming-2.6.0.jar -input %s -output %s -numReduceTasks 0"%(filename, "/tmp/out")
+            command="hadoop jar  " + HADOOP_STREAMING_JAR + " -input %s -output %s -numReduceTasks 0"%(hdfs_filename, "/tmp/out")
             print command
             start = time.time()
             #s = client.get("/tmp/test/test_" + str(num_bytes))
@@ -269,24 +284,82 @@ def test_with_inmem_mr(number_of_nodes, number_replicas, f, client, cache=True):
             runtime = time.time() - start
             runtimes_write[num_bytes_scenario] = runtime
             
-            os.system("hadoop fs -rm -r %s"%(filename))
+            os.system("hadoop fs -rm -r %s"%(hdfs_filename))
             os.system("hadoop fs -rm -r /tmp/out")
             os.system("hadoop fs -expunge")
             os.remove(filename)
 
         time.sleep(1)
         for key, value in runtimes.iteritems():
-            result = str(key) + "," + str(value) + ",HDFS," + str(number_of_nodes) + "," + str(number_of_nodes) + "," + scenario + "," + str(number_replicas)+ "," + str(repeat)
+            result = str(key) + "," + str(value) + ",HDFS," + str(number_of_nodes) + "," + str(number_of_nodes) + "," + scenario + "," + str(number_replicas)+ "," + str(repeat)+","+socket.gethostname()
             print result
             f.write(result + "\n")
         f.flush()
         scenario_write = scenario.replace("write", "read")
         scenario_write = scenario_write + "_mr"
         for key, value in runtimes_write.iteritems():
-            result = str(key) + "," + str(value) + ",HDFS," + str(number_of_nodes) + "," + str(number_of_nodes) + "," + scenario_write + "," + str(number_replicas) + "," + str(repeat)
+            result = str(key) + "," + str(value) + ",HDFS," + str(number_of_nodes) + "," + str(number_of_nodes) + "," + scenario_write + "," + str(number_replicas) + "," + str(repeat)+","+socket.gethostname()
             print result
             f.write(result + "\n")
 
+
+def test_with_filesystem(number_of_nodes, number_replicas, f, client, target_dir="/tmp", type="Lustre"):
+    """ Test Lustre/local flash
+    """
+    os.system("rm " + target_dir + "/test_*")
+    print "\n*********************************\nResults\n******************************"
+    print "Size, Time, Backend, NumNodes, NumInstances, Type, NumReplicas "
+    for repeat in range(0, NUMBER_REPEATS):
+        runtimes = {}
+        runtimes_write = {}
+        for i in range(MIN_SIZE, MAX_SIZE):
+            num_bytes_scenario = 2 ** i
+            filename = os.path.join(TMP_DIR, "test/test_" + str(num_bytes_scenario))
+            try:
+                os.mkdir(os.path.dirname(filename))
+            except:
+                pass
+            print "PUT File Size: %s MB" % str(num_bytes_scenario / 1024 / 1024)
+            id_generator_file_line(num_bytes_scenario, filename=filename)
+            print "CREATED FILE with size of: " + str(os.path.getsize(filename))
+            num_bytes=os.path.getsize(filename)
+            target_filename=os.path.join(target_dir, os.path.basename(filename))
+            try:
+                os.mkdir(os.path.dirname(target_filename))
+            except:
+                pass
+            scenario="write_%s"%(type)
+            command = "cp %s %s"%(filename, target_filename)
+            print "PUT FILE TO LOCAL: %s"%command
+            start = time.time()
+            os.system(command)
+            runtime = time.time() - start
+            runtimes[num_bytes_scenario] = runtime
+
+            print "GET File Size: %s MB with" % str(num_bytes / 1024 / 1024)
+            output_dir=os.path.join(target_dir, "out")
+            command="hadoop jar " + HADOOP_STREAMING_JAR + " -input file://%s -output file://%s -numReduceTasks 0"%(target_filename, output_dir)
+            print command
+            start = time.time()
+            os.system(command)
+            runtime = time.time() - start
+            runtimes_write[num_bytes_scenario] = runtime
+            os.remove(filename)
+            os.remove(target_filename)
+            shutil.rmtree(output_dir)
+
+        time.sleep(1)
+        for key, value in runtimes.iteritems():
+            result = str(key) + "," + str(value) + ","+type+"," + str(number_of_nodes) + "," + str(number_of_nodes) + "," + scenario + "," + str(number_replicas)+ "," + str(repeat)+","+socket.gethostname()
+            print result
+            f.write(result + "\n")
+        scenario_write = scenario.replace("write", "read")
+        scenario_write = scenario_write + "_mr"
+        for key, value in runtimes_write.iteritems():
+            result = str(key) + "," + str(value) + ","+type+"," + str(number_of_nodes) + "," + str(number_of_nodes) + "," + scenario_write + "," + str(number_replicas) + "," + str(repeat)+","+socket.gethostname() 
+            print result
+            f.write(result + "\n")
+        f.flush()
 
 if __name__ == '__main__':
     
@@ -304,13 +377,18 @@ if __name__ == '__main__':
     u = urlparse.urlparse(HDFS_URL)
     user = pwd.getpwuid(os.getuid())[0]
     client =  WebHDFS(u.hostname, u.port, user)
+
+    test_with_filesystem(number_of_nodes, number_replicas, f, client, target_dir=os.path.join(LUSTRE_DIR, "test"), type="lustre")
+    #test_with_filesystem(number_of_nodes, number_replicas, f, client, target_dir=FLASH_DIR, type="flash")
     
-    test_with_inmem_mr(number_of_nodes, number_replicas, f, client,cache=False)
-    test_with_inmem_mr(number_of_nodes, number_replicas, f, client,cache=True)
-    test_with_inmem(number_of_nodes, number_replicas, f, client,cache=False)
-    test_with_inmem(number_of_nodes, number_replicas, f, client, cache=True)
+    #test_with_inmem_mr(number_of_nodes, number_replicas, f, client,cache=False)
+    #test_with_inmem_mr(number_of_nodes, number_replicas, f, client,cache=True)
+    #test_with_inmem(number_of_nodes, number_replicas, f, client,cache=False)
+    #test_with_inmem(number_of_nodes, number_replicas, f, client, cache=True)
     #test_without_caching(number_of_nodes, number_replicas, f, client)
     #test_with_caching(number_of_nodes, number_replicas, f, client)
     
     f.close()
-    os.system("cd /home1/01131/tg804093; /home1/01131/tg804093/clean.sh")
+    clean_command = "cd $HOME; $HOME/clean.sh"
+    clean_command = os.path.expandvars(clean_command)
+    os.system(clean_command)
