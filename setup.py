@@ -39,6 +39,8 @@ def update_version():
         return
     
     ver = stdout.strip()
+    ver = ver[:ver.rfind("-")]
+    ver = ver.replace("-",".")
     fn = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'VERSION')
     f = open(fn, "w")
     f.write(ver)
@@ -85,7 +87,7 @@ setup(name='BigJob2',
 
       install_requires=['setuptools>2.0', 'uuid', 'threadpool', 'virtualenv', 'redis', 
                         'radical.utils', 'saga-python', 'google-api-python-client', 'python-hostlist',
-                        'globusonline-transfer-api-client', 'boto>=2.2,<2.3', 'simplejson<2.1', 'pexpect', 'tldextract'],
+                        'globusonline-transfer-api-client', 'boto>=2.2,<2.3', 'pexpect', 'tldextract'],
       entry_points = {
         'console_scripts': [
             'test-bigjob = examples.example_local_single:main',
