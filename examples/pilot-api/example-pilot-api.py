@@ -4,7 +4,7 @@ import time
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 sys.path.insert(0, os.getcwd() + "/../")
-from pilot import PilotComputeService, ComputeDataService, State
+from pilot import PilotComputeService, ComputeDataServiceDecentral, State
 
 
 COORDINATION_URL = "redis://localhost:6379"
@@ -16,7 +16,7 @@ if __name__ == "__main__":
 
     # create pilot job service and initiate a pilot job
     pilot_compute_description = {
-                             "service_url": 'fork://localhost',
+                             "service_url": 'subprocess://localhost',
                              #"service_url": 'ssh://localhost',
                              "number_of_processes": 1,                             
                              #"working_directory": "/tmp",
@@ -25,13 +25,13 @@ if __name__ == "__main__":
     pilotjob = pilot_compute_service.create_pilot(pilot_compute_description=pilot_compute_description)
     #pilotjob2 = pilot_compute_service.create_pilot(pilot_compute_description=pilot_compute_description)
          
-    compute_data_service = ComputeDataService()
+    compute_data_service = ComputeDataServiceDecentral()
     compute_data_service.add_pilot_compute_service(pilot_compute_service)
     
     # start work unit
     compute_unit_description = {
-            "executable": "/bin/sleep",
-            "arguments": ["0"],
+            "executable": "/bin/date",
+            "arguments": [""],
             "number_of_processes": 1,            
             "output": "stdout.txt",
             "error": "stderr.txt",   

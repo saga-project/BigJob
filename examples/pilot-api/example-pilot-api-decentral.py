@@ -15,7 +15,7 @@ if __name__ == "__main__":
     # create pilot job service and initiate a pilot job
     pilot_compute_description = {
                              "service_url": 'fork://localhost',
-                             "number_of_processes": 1,                             
+                             "number_of_processes": 8,
                              "working_directory": os.path.join(os.getcwd(),"work"),
                              'affinity_datacenter_label': "eu-de-south",              
                              'affinity_machine_label': "mymachine" 

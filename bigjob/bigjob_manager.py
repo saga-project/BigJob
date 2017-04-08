@@ -54,8 +54,13 @@ except:
 try:
     from job_plugin.yarn.yarn import Service as YarnService
 except:
-    pass 
+    pass
 
+
+try:
+    from job_plugin.local_subprocess import Service as SubprocessService
+except:
+    pass
 
 
 # import other BigJob packages
@@ -215,24 +220,24 @@ class bigjob(object):
         pilot_compute_description["external_queue"]=external_queue
                  
         self.coordination.set_pilot_description(self.pilot_url, pilot_compute_description)
-        
-            
-        logger.debug("set pilot state to: " + str(Unknown))
+
+        logger.debug("Resource URL: %s Pilot state: %s "%(lrms_saga_url.schema,str(Unknown)))
 
         # Create Job Service (Default: SAGA Job Service, alternative Job Services supported)
-        self.js =None
-        if lrms_saga_url.scheme=="gce+ssh":
+        self.js=None
+        url_scheme = lrms_saga_url.scheme
+        if url_scheme=="gce+ssh":
             self.js = GCEService(lrms_saga_url, pilot_compute_description) 
-        elif lrms_saga_url.scheme=="ec2+ssh" or lrms_saga_url.scheme=="euca+ssh" \
-            or lrms_saga_url.scheme=="nova+ssh":
+        elif url_scheme=="ec2+ssh" or url_scheme=="euca+ssh" \
+            or url_scheme=="nova+ssh":
             self.js = EC2Service(lrms_saga_url, pilot_compute_description)    
-        elif lrms_saga_url.scheme=="mesos":
+        elif url_scheme=="mesos":
             self.js = MesosService(lrms_saga_url, pilot_compute_description)          
-        elif lrms_saga_url.scheme=="yarn":
-            self.js = YarnService(lrms_saga_url, pilot_compute_description)          
-        
-        
-        #elif lrms_saga_url.scheme=="slurm+ssh":
+        elif url_scheme=="yarn":
+            self.js = YarnService(lrms_saga_url, pilot_compute_description)
+        elif url_scheme=="subprocess":
+            self.js = SubprocessService(lrms_saga_url, pilot_compute_description)
+            #elif lrms_saga_url.scheme=="slurm+ssh":
         #    self.js = SlurmService(lrms_saga_url, pilot_compute_description)          
         else:
             self.js = self._ocache.get_obj (lrms_saga_url, lambda : SAGAJobService (lrms_saga_url))
@@ -367,13 +372,23 @@ class bigjob(object):
                     bj_file_transfers.append(t)
             logger.debug("Condor file transfers: " + str(bj_file_transfers))
             jd.file_transfer = bj_file_transfers
+        elif lrms_saga_url.scheme.startswith("subprocess")==True:
+            jd.total_cpu_count=int(number_nodes)
+            jd.spmd_variation = "single"
+            if pilot_compute_description!=None and pilot_compute_description.has_key("spmd_variation"):
+                jd.spmd_variation=pilot_compute_description["spmd_variation"]
+            jd.arguments = [self.coordination.get_address(),
+                            self.pilot_url, # Queue 1 used by this BJ object
+                            external_queue ]
+            jd.executable = "python"
         else:
             jd.total_cpu_count=int(number_nodes)                   
             jd.spmd_variation = "single"
             if pilot_compute_description!=None and pilot_compute_description.has_key("spmd_variation"):
                 jd.spmd_variation=pilot_compute_description["spmd_variation"]
             jd.arguments = ["python", "-c", bootstrap_script]
-            jd.executable = "/usr/bin/env"           
+            jd.executable = "/usr/bin/env"
+
       
         logger.debug("Working directory: " + jd.working_directory + " Job Description: " + str(jd))
         
@@ -606,8 +621,47 @@ class bigjob(object):
             except:
                 self.__print_traceback()
                 time.sleep(2)
-                
-                
+
+    def _add_subjobs(self, queue_url, jd, job_url, job_id):
+        """ """
+        logger.debug("add subjob to queue of PJ: " + str(queue_url))
+        for i in range(0,3):
+            try:
+                logger.debug("create dictionary for job description. Job-URL: " + job_url)
+                # put job description attributes to Coordination Service
+                job_dict = {}
+                # to accomendate current bug in saga (Number of processes is not returned from list attributes)
+                job_dict["NumberOfProcesses"] = "1"
+                attributes = jd.list_attributes()
+                logger.debug("SJ Attributes: " + str(jd))
+                for i in attributes:
+                    if jd.attribute_is_vector(i):
+                        vector_attr = []
+                        for j in jd.get_vector_attribute(i):
+                            vector_attr.append(j)
+                        job_dict[i]=vector_attr
+                    else:
+                        #logger.debug("Add attribute: " + str(i) + " Value: " + jd.get_attribute(i))
+                        job_dict[i] = jd.get_attribute(i)
+
+                # Other pilot state information
+                job_dict["state"] = str(Unknown)
+                job_dict["job-id"] = str(job_id)
+                logger.debug("job dict: " + str(job_dict))
+
+
+                if job_dict.has_key("FileTransfer"):
+                    files = job_dict["FileTransfer"]
+                    sj_work_dir = self.__get_subjob_working_dir(job_id)
+                    self.__stage_files(files, sj_work_dir)
+
+                #logger.debug("update job description at communication & coordination sub-system")
+                self.coordination.set_job(job_url, job_dict)
+                self.coordination.queue_job(queue_url, job_url)
+                break
+            except:
+                self.__print_traceback()
+                time.sleep(2)
                 
     
     def _get_subjob_url(self, subjob_url):
@@ -1055,6 +1109,18 @@ class subjob(object):
             self.bj=_pilot_url_dict[pilot_url]    
         self.bj._add_subjob(pilot_url, jd, self.job_url, self.uuid)
 
+
+    def submit_jobs_batch(self, pilot_url, jd=[]):
+        """ submit multipe subjobs to referenced bigjob in pilot URL
+            TODO: Fix method
+        """
+        if self.job_url==None:
+            self.job_url=self.__get_subjob_url(pilot_url)
+
+        if self.pilot_url==None:
+            self.pilot_url = pilot_url
+            self.bj=_pilot_url_dict[pilot_url]
+        self.bj._add_subjob(pilot_url, jd, self.job_url, self.uuid)
 
     def get_state(self, pilot_url=None):        
         """ duck typing for saga.job  """

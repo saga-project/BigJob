@@ -179,11 +179,49 @@ class bigjob_coordination(object):
     
     #####################################################################################
     # Sub-Job State    
+    # def set_job_state(self, job_url, new_state):
+    #     self.resource_lock.acquire()
+    #     try:
+    #         logger.debug("set job state to: " + str(new_state))
+    #         timestamp =time.time()
+    #         if new_state=="Unknown":
+    #             #self.redis_client.hset(job_url,"start_time", str(timestamp))
+    #             self.pipe.hset(job_url,"start_time", str(timestamp))
+    #         elif new_state=="Staging":
+    #             self.pipe.hset(job_url,"start_staging_time", str(timestamp))
+    #         elif new_state=="Running":
+    #             self.pipe.hset(job_url,"agent_start_time", str(self.redis_adaptor_start_time))
+    #             self.pipe.hset(job_url,"end_queue_time", str(timestamp))
+    #         elif new_state=="Done":
+    #             self.pipe.hset(job_url, "run_host", socket.gethostname())
+    #             self.pipe.hset(job_url, "end_time", str(timestamp))
+    #         self.pipe.hset(job_url, "state", str(new_state))
+    #
+    #         # update last contact time in pilot hash
+    #         pilot_url = job_url[:job_url.index(":jobs")]
+    #         self.pipe.hset(pilot_url, "last_contact", str(timestamp))
+    #         # execute pipe
+    #         self.pipe.execute()
+    #     except:
+    #         pass
+    #     self.resource_lock.release()
+
     def set_job_state(self, job_url, new_state):
-        self.resource_lock.acquire()        
+        self.resource_lock.acquire()
+        try:
+            self.set_job_state_pipe_async(job_url, new_state)
+            # execute pipe
+            self.pipe.execute()
+        except:
+            pass
+        self.resource_lock.release()
+
+
+
+    def set_job_state_pipe_async(self, job_url, new_state):
         try:
             logger.debug("set job state to: " + str(new_state))
-            timestamp =time.time() 
+            timestamp =time.time()
             if new_state=="Unknown":
                 #self.redis_client.hset(job_url,"start_time", str(timestamp))
                 self.pipe.hset(job_url,"start_time", str(timestamp))
@@ -194,17 +232,15 @@ class bigjob_coordination(object):
                 self.pipe.hset(job_url,"end_queue_time", str(timestamp))
             elif new_state=="Done":
                 self.pipe.hset(job_url, "run_host", socket.gethostname())
-                self.pipe.hset(job_url, "end_time", str(timestamp))       
+                self.pipe.hset(job_url, "end_time", str(timestamp))
             self.pipe.hset(job_url, "state", str(new_state))
-            
-            # update last contact time in pilot hash        
+
+            # update last contact time in pilot hash
             pilot_url = job_url[:job_url.index(":jobs")]
             self.pipe.hset(pilot_url, "last_contact", str(timestamp))
-            # execute pipe
-            self.pipe.execute()
         except:
             pass
-        self.resource_lock.release()
+
         
         
     def get_job_state(self, job_url):
@@ -216,9 +252,12 @@ class bigjob_coordination(object):
     def set_job(self, job_url, job_dict):
         self.redis_client.hmset(job_url, job_dict)
         self.set_job_state(job_url, "Unknown")
-        
-        
-        
+
+    def set_jobs_batch(self, job_urls=[], job_dict=[]):
+        for idx, job in enumerate(job_urls):
+            self.pipe.hmset(job_urls[idx], job_dict[idx])
+            self.set_job_state_pipe_async(job_urls[idx], "Unknown")
+
     def get_job(self, job_url):
         return self.redis_client.hgetall(job_url)    
     
@@ -234,8 +273,14 @@ class bigjob_coordination(object):
         queue_name = pilot_url + ":queue"
         self.redis_client.set(queue_name + ':last_in', pickle.dumps(datetime.datetime.now()))
         self.redis_client.lpush(queue_name, job_url)
-                
-        
+
+    def queue_job_async(self, pilot_url, job_url):
+        """ queue new job to pilot """
+        queue_name = pilot_url + ":queue"
+        self.pipe.set(queue_name + ':last_in', pickle.dumps(datetime.datetime.now()))
+        self.pipe.lpush(queue_name, job_url)
+
+
     def dequeue_job(self, pilot_url, pilot_url2=None):
         """ deque to new job  of a certain pilot """
         queue_list = []
@@ -263,5 +308,10 @@ class bigjob_coordination(object):
         return length
 
 
-    #def __del__(self):
+    #####################################################################################
+    # Execute Pipe
+    def perform_updates(self):
+        self.pipe.execute()
+
+        #def __del__(self):
     #    self.redis_client.connection_pool.disconnect()
