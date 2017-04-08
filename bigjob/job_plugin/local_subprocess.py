@@ -8,12 +8,15 @@ import traceback
 import sys
 import subprocess
 import saga
-
+import datetime
 
 class State:
     UNKNOWN="unknown"
     PENDING="pending"
     RUNNING="running"
+    FAILED="failed"
+    DONE="done"
+
 
 
 class Service(object):
@@ -60,37 +63,35 @@ class Job(object):
 
         self.id="bigjob-" + str(uuid.uuid1())
         self.subprocess_handle=None
-
-
-
-
+        self.job_timestamp=datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+        self.job_output = open("bigjob_agent_output_"+self.job_timestamp+".log", "w")
+        self.job_error = open("bigjob_agent_error_"+self.job_timestamp+".log", "w")
 
 
     def run(self):
         """ Start VM and start BJ agent via SSH on VM """
 
         # Submit job
-        working_directory = os.getcwd("working_directory")
-        if self.pilot_compute_description.has_key():
+        working_directory = os.getcwd()
+        if self.pilot_compute_description.has_key("working_directory"):
             working_directory=self.pilot_compute_description["working_directory"]
 
-
-        args =
-        subprocess.Popen
-
-        session = saga.Session()
-        session.add_context(ctx)
-
-        TRIAL_MAX=30
+        TRIAL_MAX=3
         trials=0
         while trials < TRIAL_MAX:
             try:
-                js = saga.job.Service(url, session=session)
-                logger.debug("Job Description Type: " + str(type(self.job_description)))
-                job = js.create_job(self.job_description)
-                logger.debug("Attempt: %d, submit pilot job to: %s "%(trials,str(url)))
-                job.run()
-                if job.get_state()==saga.job.FAILED:
+                args = []
+                #args.append(self.job_description.executable)
+                #args.extend(self.job_description.arguments)
+                args.extend(["python", "-m", "bigjob.bigjob_agent"])
+                args.extend(self.job_description.arguments)
+                logger.debug("Execute: " + str(args))
+                self.subprocess_handle=subprocess.Popen(args=args,
+                                                        stdout=self.job_output,
+                                                        stderr=self.job_error,
+                                                        cwd=working_directory,
+                                                        shell=False)
+                if self.subprocess_handle.poll() != None and self.subprocess_handle.poll()!=0:
                     logger.warning("Submission failed.")
                     trials = trials + 1
                     time.sleep(30)
@@ -102,31 +103,41 @@ class Job(object):
                 logger.warning("Submission failed: " + str(exc_value))
                 #self.__print_traceback()
                 trials = trials + 1
-                time.sleep(30)
+                time.sleep(3)
                 if trials == TRIAL_MAX:
                     raise Exception("Submission of agent failed.")
 
-        logger.debug("Job State : %s" % (job.get_state()))
+        logger.debug("Job State : %s" % (self.get_state()))
 
 
 
     def wait_for_running(self):
-        while self.get_state()!=State.RUNNING:
-            time.sleep(5)
+        pass
+        #while self.get_state()!=State.RUNNING:
+        #    time.sleep(5)
 
 
     def get_state(self):
         result = State.UNKNOWN
         try:
-            self.instance.update()
-            result=self.instance.state
+            if self.subprocess_handle != None:
+                rc = self.subprocess_handle.poll()
+                if rc==None:
+                    result = State.RUNNING
+                elif rc!=0:
+                    result = State.FAILED
+                elif rc==0:
+                    result = State.DONE
         except:
             logger.warning("Instance not reachable/active yet...")
         return result
 
 
     def cancel(self):
-        self.instance.terminate()
+        if self.subprocess_handle!=None: self.subprocess_handle.terminate()
+        self.job_output.close()
+        self.job_error.close()
+
 
 
     ###########################################################################
