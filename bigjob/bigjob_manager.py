@@ -8,6 +8,17 @@ Background: This approach avoids queueing delays since only the BigJob-Agent mus
 All shortrunning task will be started using the protocol implemented by subjob() and bigjob_agent.py
 """
 
+# the one and only saga
+import saga
+from saga.job import Description
+from saga     import Url         as SAGAUrl
+from saga.job import Description as SAGAJobDescription
+from saga.job import Service     as SAGAJobService
+from saga     import Session     as SAGASession
+from saga     import Context     as SAGAContext
+
+from radical.utils.object_cache import ObjectCache
+
 import sys
 import time
 import os
@@ -19,16 +30,7 @@ import types
 import subprocess
 import pdb
  
-# the one and only saga
-import saga
-from saga.job import Description
-from saga     import Url         as SAGAUrl
-from saga.job import Description as SAGAJobDescription
-from saga.job import Service     as SAGAJobService
-from saga     import Session     as SAGASession
-from saga     import Context     as SAGAContext
 
-from radical.utils.object_cache import ObjectCache
 
 from bigjob.state import Running, New, Failed, Done, Unknown
 from bigjob import logger

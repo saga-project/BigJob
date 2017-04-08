@@ -29,14 +29,14 @@ if __name__ == "__main__":
     
     # start work unit
     compute_unit_description = {
-            "executable": "/bin/date",
-            "arguments": [""],
+            "executable": "/bin/sleep",
+            "arguments": ["0"],
             "number_of_processes": 1,            
             "output": "stdout.txt",
             "error": "stderr.txt",
     }    
     
-    for i in range(0,4):
+    for i in range(0,14):
         compute_unit = compute_data_service.submit_compute_unit(compute_unit_description)
     
     
