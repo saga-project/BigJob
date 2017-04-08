@@ -3,6 +3,7 @@
 env
 whoami
 
+<<<<<<< HEAD
 ANACONDA_BIGJOB_DIRECTORY=$HOME/.bigjob/python
 
 BIGJOB_DIRECTORY=./.bigjob/python
@@ -15,6 +16,11 @@ elif   [ -d $ANACONDA_BIGJOB_DIRECTORY ]
 then
     echo "Using existing BigJob (Anaconda) version"
     BIGJOB_DIRECTORY=ANACONDA_BIGJOB_DIRECTORY
+#BIGJOB_DIRECTORY=./.bigjob/python
+#echo "BigJob directory: $BIGJOB_DIRECTORY"
+#if [ -d $BIGJOB_DIRECTORY ]
+#then
+#    echo "Using existing BigJob version"
 else
     mkdir -p $BIGJOB_DIRECTORY
     BOOTSTRAP_DOWNLOAD_CMD="curl -OL --insecure -s https://raw.github.com/saga-project/BigJob/develop/bootstrap/bigjob2-bootstrap.py"

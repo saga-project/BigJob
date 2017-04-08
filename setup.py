@@ -39,6 +39,8 @@ def update_version():
         return
     
     ver = stdout.strip()
+    ver = ver[:ver.rfind("-")]
+    ver = ver.replace("-",".")
     fn = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'VERSION')
     f = open(fn, "w")
     f.write(ver)
