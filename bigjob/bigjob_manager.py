@@ -526,7 +526,12 @@ class bigjob(object):
             pass
             #traceback.print_stack()
         logger.debug("Cancel Pilot Job finished")
-        
+
+
+    def commit_subjobs(self):
+        self.coordination.perform_updates()
+
+
 
     def wait(self):
         """ Waits for completion of all sub-jobs """        
@@ -622,7 +627,7 @@ class bigjob(object):
                 self.__print_traceback()
                 time.sleep(2)
 
-    def _add_subjobs(self, queue_url, jd, job_url, job_id):
+    def _add_subjob_async(self, queue_url, jd, job_url, job_id):
         """ """
         logger.debug("add subjob to queue of PJ: " + str(queue_url))
         for i in range(0,3):
@@ -656,8 +661,8 @@ class bigjob(object):
                     self.__stage_files(files, sj_work_dir)
 
                 #logger.debug("update job description at communication & coordination sub-system")
-                self.coordination.set_job(job_url, job_dict)
-                self.coordination.queue_job(queue_url, job_url)
+                self.coordination.set_jobs_async(job_url, job_dict)
+                self.coordination.queue_job_async(queue_url, job_url)
                 break
             except:
                 self.__print_traceback()
@@ -1110,8 +1115,9 @@ class subjob(object):
         self.bj._add_subjob(pilot_url, jd, self.job_url, self.uuid)
 
 
-    def submit_jobs_batch(self, pilot_url, jd=[]):
-        """ submit multipe subjobs to referenced bigjob in pilot URL
+    def submit_jobs_async(self, pilot_url, jd, commit_sj=True):
+        """ submit subjobs to referenced bigjob in pilot URL async
+            (explicit commit required)
             TODO: Fix method
         """
         if self.job_url==None:
@@ -1120,7 +1126,13 @@ class subjob(object):
         if self.pilot_url==None:
             self.pilot_url = pilot_url
             self.bj=_pilot_url_dict[pilot_url]
-        self.bj._add_subjob(pilot_url, jd, self.job_url, self.uuid)
+        self.bj._add_subjob_async(pilot_url, jd, self.job_url, self.uuid)
+
+        if commit_sj==True:
+            self.bj.commit_subjobs()
+
+
+
 
     def get_state(self, pilot_url=None):        
         """ duck typing for saga.job  """
@@ -1165,8 +1177,8 @@ class subjob(object):
         for  i in  sj["Arguments"]:
             arguments = arguments + " " + i
         return arguments
-    
-      
+
+
     def __repr__(self):        
         if(self.job_url==None):
             return "None"

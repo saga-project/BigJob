@@ -134,6 +134,26 @@ class ComputeDataServiceDecentral(ComputeDataService):
         self.compute_units[cu.id]=cu
         self.__submit_cu(cu)        
         return cu
+
+
+    def submit_compute_unit_batch(self, compute_unit_descriptions=[]):
+        """ Submit a CU to this Compute Data Service.
+            @param compute_unit_descriptions:  List of L{ComputeUnitDescription} from the application
+            @return: List of L{ComputeUnit} objects
+        """
+        cu_list = []
+        commit_cu=False
+        for idx, cu_desc in enumerate(compute_unit_descriptions):
+            cu = ComputeUnit(cu_desc, self)
+            self.compute_units[cu.id]=cu
+            if idx == len(compute_unit_descriptions)-1:
+                commit_cu=True
+                logger.debug("Commit CU: %d"%idx)
+
+            cu=self.__submit_cu(cu, commit_cu=commit_cu)
+            cu_list.append(cu)
+
+        return cu_list
     
     
     def list_pilot_compute(self):
@@ -155,7 +175,7 @@ class ComputeDataServiceDecentral(ComputeDataService):
     
     ###########################################################################
     # Compute Data Service private methods
-    def __submit_cu(self, compute_unit):
+    def __submit_cu(self, compute_unit, commit_cu=True):
         """ Submits compute unit to Bigjob """
                 
         if len(self.pilot_job_services)!=1:
@@ -166,11 +186,11 @@ class ComputeDataServiceDecentral(ComputeDataService):
         sj = subjob()
         self.pcs_coordination_namespace=self.pilot_job_services[0].coordination_queue
         logger.debug("Submit CU to big-job via external queue: %s"%self.pcs_coordination_namespace)
-        sj.submit_job(self.pcs_coordination_namespace, compute_unit.subjob_description)
-
+        sj.submit_jobs_async(self.pcs_coordination_namespace, compute_unit.subjob_description, commit_cu)
         compute_unit._update_subjob(sj)
         return compute_unit
-    
+
+
     
     def __wait_for_du(self, compute_unit):
         """ wait for Data Units that are required for Compute Unit """
