@@ -253,10 +253,9 @@ class bigjob_coordination(object):
         self.redis_client.hmset(job_url, job_dict)
         self.set_job_state(job_url, "Unknown")
 
-    def set_jobs_batch(self, job_urls=[], job_dict=[]):
-        for idx, job in enumerate(job_urls):
-            self.pipe.hmset(job_urls[idx], job_dict[idx])
-            self.set_job_state_pipe_async(job_urls[idx], "Unknown")
+    def set_jobs_async(self, job_urls, job_dict):
+        self.pipe.hmset(job_urls, job_dict)
+        self.set_job_state_pipe_async(job_urls, "Unknown")
 
     def get_job(self, job_url):
         return self.redis_client.hgetall(job_url)    
