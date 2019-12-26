@@ -60,7 +60,7 @@ Examples:
 
 Please modify COORDINATION_URL on top of example to the correct Redis backend!
 
-Development & Packaging
+Development & Packaging 
 -------------------------------------
 
 Requirements:
